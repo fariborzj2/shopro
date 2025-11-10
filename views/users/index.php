@@ -34,12 +34,26 @@
                         <p class="text-gray-900 whitespace-no-wrap"><?= htmlspecialchars($user['mobile']) ?></p>
                     </td>
                     <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                        <p class="text-gray-900 whitespace-no-wrap"><?= htmlspecialchars($user['created_at']) ?></p>
+                        <p class="text-gray-900 whitespace-no-wrap"><?= date('Y-m-d', strtotime($user['created_at'])) ?></p>
                     </td>
                     <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                        <span class="relative inline-block px-3 py-1 font-semibold leading-tight <?= $user['status'] === 'فعال' ? 'text-green-900' : 'text-red-900' ?>">
-                            <span aria-hidden class="absolute inset-0 <?= $user['status'] === 'فعال' ? 'bg-green-200' : 'bg-red-200' ?> opacity-50 rounded-full"></span>
-                            <span class="relative"><?= htmlspecialchars($user['status']) ?></span>
+                        <?php
+                            $status_classes = [
+                                'active' => 'text-green-900 bg-green-200',
+                                'inactive' => 'text-yellow-900 bg-yellow-200',
+                                'banned' => 'text-red-900 bg-red-200',
+                            ];
+                            $status_text = [
+                                'active' => 'فعال',
+                                'inactive' => 'غیرفعال',
+                                'banned' => 'مسدود',
+                            ];
+                            $class = $status_classes[$user['status']] ?? 'text-gray-900 bg-gray-200';
+                            $text = $status_text[$user['status']] ?? 'نامشخص';
+                        ?>
+                        <span class="relative inline-block px-3 py-1 font-semibold leading-tight <?= $class ?>">
+                            <span aria-hidden class="absolute inset-0 opacity-50 rounded-full <?= explode(' ', $class)[1] ?>"></span>
+                            <span class="relative"><?= htmlspecialchars($text) ?></span>
                         </span>
                     </td>
                     <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm text-center">

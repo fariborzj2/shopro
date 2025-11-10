@@ -2,7 +2,7 @@
 
 namespace App\Controllers;
 
-use App\Core\Database;
+use App\Models\User;
 
 class UsersController
 {
@@ -11,20 +11,41 @@ class UsersController
      */
     public function index()
     {
-        // For now, we'll use mock data.
-        // Later, this will come from the database.
-        // $users = Database::query("SELECT * FROM users")->fetchAll();
-
-        $users = [
-            ['id' => 1, 'name' => 'علی رضایی', 'mobile' => '09123456789', 'status' => 'فعال', 'created_at' => '2023-10-26'],
-            ['id' => 2, 'name' => 'مریم احمدی', 'mobile' => '09129876543', 'status' => 'مسدود', 'created_at' => '2023-10-25'],
-            ['id' => 3, 'name' => 'رضا حسینی', 'mobile' => '09121112233', 'status' => 'فعال', 'created_at' => '2023-10-24'],
-        ];
-
+        $users = User::all();
         return view('main', 'users/index', [
             'title' => 'مدیریت کاربران',
             'users' => $users
         ]);
+    }
+
+    /**
+     * Show the form for creating a new user.
+     */
+    public function create()
+    {
+        return view('main', 'users/create', [
+            'title' => 'افزودن کاربر جدید'
+        ]);
+    }
+
+    /**
+     * Store a new user in the database.
+     */
+    public function store()
+    {
+        // Basic validation
+        if (empty($_POST['name']) || empty($_POST['mobile'])) {
+            die('Name and mobile are required.');
+        }
+
+        User::create([
+            'name' => $_POST['name'],
+            'mobile' => $_POST['mobile'],
+            'status' => $_POST['status'] ?? 'active'
+        ]);
+
+        header('Location: /users');
+        exit();
     }
 
     /**
@@ -34,6 +55,37 @@ class UsersController
      */
     public function edit($id)
     {
-        echo "<h1>Editing user with ID: {$id}</h1>";
+        $user = User::find($id);
+        if (!$user) {
+            // Handle user not found
+            die('User not found.');
+        }
+
+        return view('main', 'users/edit', [
+            'title' => 'ویرایش کاربر',
+            'user' => $user
+        ]);
+    }
+
+    /**
+     * Update an existing user in the database.
+     *
+     * @param int $id
+     */
+    public function update($id)
+    {
+        // Basic validation
+        if (empty($_POST['name']) || empty($_POST['mobile'])) {
+            die('Name and mobile are required.');
+        }
+
+        User::update($id, [
+            'name' => $_POST['name'],
+            'mobile' => $_POST['mobile'],
+            'status' => $_POST['status'] ?? 'active'
+        ]);
+
+        header('Location: /users');
+        exit();
     }
 }

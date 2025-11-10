@@ -30,18 +30,23 @@ class Router
 
     public function dispatch($uri, $requestMethod)
     {
+        // Handle the root URI case explicitly
+        if ($uri === '' && isset($this->routes[$requestMethod]['/'])) {
+             list($controller, $method) = explode('@', $this->routes[$requestMethod]['/']);
+             return $this->callAction($controller, $method);
+        }
+
         foreach ($this->routes[$requestMethod] as $route => $action) {
+            // Escape forward slashes for regex
+            $route = str_replace('/', '\/', $route);
+
             // Convert route with params like {id} to a regex
             $pattern = preg_replace('/\{([a-zA-Z0-9_]+)\}/', '(?P<$1>[a-zA-Z0-9_]+)', $route);
             $pattern = "#^" . $pattern . "$#";
 
             if (preg_match($pattern, $uri, $matches)) {
-                // Get controller and method from action string
                 list($controller, $method) = explode('@', $action);
-
-                // Get named parameters from the URL
                 $params = array_filter($matches, 'is_string', ARRAY_FILTER_USE_KEY);
-
                 return $this->callAction($controller, $method, $params);
             }
         }
@@ -63,7 +68,6 @@ class Router
             throw new Exception("{$controllerClass} does not respond to the {$method} action.");
         }
 
-        // Call the method with parameters
         return call_user_func_array([$controllerInstance, $method], $params);
     }
 }
