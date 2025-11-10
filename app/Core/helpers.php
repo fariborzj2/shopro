@@ -48,3 +48,15 @@ function is_active($path)
 {
     return Request::uri() === trim($path, '/');
 }
+
+/**
+ * Render a partial view.
+ *
+ * @param string $partial The name of the partial view file
+ * @param array $data Data to be extracted for the partial
+ */
+function partial($partial, $data = [])
+{
+    extract($data);
+    require __DIR__ . "/../../views/partials/{$partial}.php";
+}

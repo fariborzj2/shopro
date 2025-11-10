@@ -4,18 +4,28 @@ namespace App\Controllers;
 
 use App\Models\Product;
 use App\Models\Category;
+use App\Core\Paginator;
 
 class ProductsController
 {
+    const ITEMS_PER_PAGE = 15;
+
     /**
-     * Show a list of all products.
+     * Show a paginated list of all products.
      */
     public function index()
     {
-        $products = Product::all();
+        $current_page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+        $total_products = Product::count();
+
+        $paginator = new Paginator($total_products, self::ITEMS_PER_PAGE, $current_page, '/products');
+
+        $products = Product::paginated(self::ITEMS_PER_PAGE, $paginator->getOffset());
+
         return view('main', 'products/index', [
             'title' => 'مدیریت محصولات',
-            'products' => $products
+            'products' => $products,
+            'paginator' => $paginator
         ]);
     }
 

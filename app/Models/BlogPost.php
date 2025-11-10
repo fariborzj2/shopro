@@ -8,19 +8,39 @@ use PDO;
 class BlogPost
 {
     /**
-     * Get all blog posts, including category and author names.
+     * Get a paginated list of blog posts.
      *
+     * @param int $limit
+     * @param int $offset
      * @return array
      */
-    public static function all()
+    public static function paginated($limit, $offset)
     {
         $sql = "SELECT bp.*, bc.name_fa as category_name, a.name as author_name
                 FROM blog_posts bp
                 LEFT JOIN blog_categories bc ON bp.category_id = bc.id
                 LEFT JOIN admins a ON bp.author_id = a.id
-                ORDER BY bp.published_at DESC, bp.created_at DESC";
-        $stmt = Database::query($sql);
+                ORDER BY bp.published_at DESC, bp.created_at DESC
+                LIMIT :limit OFFSET :offset";
+
+        $pdo = Database::getConnection();
+        $stmt = $pdo->prepare($sql);
+        $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
+        $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
+        $stmt->execute();
+
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    /**
+     * Get the total count of blog posts.
+     *
+     * @return int
+     */
+    public static function count()
+    {
+        $stmt = Database::query("SELECT COUNT(id) FROM blog_posts");
+        return (int) $stmt->fetchColumn();
     }
 
     /**

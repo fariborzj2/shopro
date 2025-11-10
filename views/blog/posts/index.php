@@ -71,4 +71,9 @@
             <?php endforeach; ?>
         </tbody>
     </table>
+
+    <!-- Pagination -->
+    <div class="p-4">
+        <?php partial('pagination', ['paginator' => $paginator]); ?>
+    </div>
 </div>

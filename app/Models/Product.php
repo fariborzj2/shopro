@@ -8,18 +8,38 @@ use PDO;
 class Product
 {
     /**
-     * Get all products from the database, including category name.
+     * Get a paginated list of products from the database.
      *
+     * @param int $limit
+     * @param int $offset
      * @return array
      */
-    public static function all()
+    public static function paginated($limit, $offset)
     {
         $sql = "SELECT p.*, c.name_fa as category_name
                 FROM products p
                 LEFT JOIN categories c ON p.category_id = c.id
-                ORDER BY p.position ASC, p.id DESC";
-        $stmt = Database::query($sql);
+                ORDER BY p.position ASC, p.id DESC
+                LIMIT :limit OFFSET :offset";
+
+        $pdo = Database::getConnection();
+        $stmt = $pdo->prepare($sql);
+        $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
+        $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
+        $stmt->execute();
+
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    /**
+     * Get the total count of products.
+     *
+     * @return int
+     */
+    public static function count()
+    {
+        $stmt = Database::query("SELECT COUNT(id) FROM products");
+        return (int) $stmt->fetchColumn();
     }
 
     /**

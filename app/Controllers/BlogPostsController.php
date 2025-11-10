@@ -5,18 +5,28 @@ namespace App\Controllers;
 use App\Models\BlogPost;
 use App\Models\BlogCategory;
 use App\Models\Admin;
+use App\Core\Paginator;
 
 class BlogPostsController
 {
+    const ITEMS_PER_PAGE = 15;
+
     /**
-     * Show a list of all blog posts.
+     * Show a paginated list of all blog posts.
      */
     public function index()
     {
-        $posts = BlogPost::all();
+        $current_page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+        $total_posts = BlogPost::count();
+
+        $paginator = new Paginator($total_posts, self::ITEMS_PER_PAGE, $current_page, '/blog/posts');
+
+        $posts = BlogPost::paginated(self::ITEMS_PER_PAGE, $paginator->getOffset());
+
         return view('main', 'blog/posts/index', [
             'title' => 'مدیریت نوشته‌ها',
-            'posts' => $posts
+            'posts' => $posts,
+            'paginator' => $paginator
         ]);
     }
 
