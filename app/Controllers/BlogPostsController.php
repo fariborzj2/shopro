@@ -5,6 +5,7 @@ namespace App\Controllers;
 use App\Models\BlogPost;
 use App\Models\BlogCategory;
 use App\Models\Admin;
+use App\Models\BlogTag;
 use App\Core\Paginator;
 
 class BlogPostsController
@@ -37,11 +38,13 @@ class BlogPostsController
     {
         $categories = BlogCategory::all();
         $authors = Admin::all();
+        $tags = BlogTag::all();
 
         return view('main', 'blog/posts/create', [
             'title' => 'افزودن نوشته جدید',
             'categories' => $categories,
-            'authors' => $authors
+            'authors' => $authors,
+            'tags' => $tags
         ]);
     }
 
@@ -55,7 +58,7 @@ class BlogPostsController
             die('Title, slug, category, and author are required.');
         }
 
-        BlogPost::create([
+        $post_id = BlogPost::create([
             'category_id' => $_POST['category_id'],
             'author_id' => $_POST['author_id'],
             'title' => $_POST['title'],
@@ -64,6 +67,10 @@ class BlogPostsController
             'excerpt' => $_POST['excerpt'],
             'status' => $_POST['status']
         ]);
+
+        // Sync tags
+        $tags = $_POST['tags'] ?? [];
+        BlogPost::syncTags($post_id, $tags);
 
         header('Location: /blog/posts');
         exit();
@@ -83,12 +90,16 @@ class BlogPostsController
 
         $categories = BlogCategory::all();
         $authors = Admin::all();
+        $tags = BlogTag::all();
+        $post_tags = BlogPost::getTagsByPostId($id);
 
         return view('main', 'blog/posts/edit', [
             'title' => 'ویرایش نوشته',
             'post' => $post,
             'categories' => $categories,
-            'authors' => $authors
+            'authors' => $authors,
+            'tags' => $tags,
+            'post_tags' => $post_tags
         ]);
     }
 
@@ -114,6 +125,22 @@ class BlogPostsController
             'status' => $_POST['status']
         ]);
 
+        // Sync tags
+        $tags = $_POST['tags'] ?? [];
+        BlogPost::syncTags($id, $tags);
+
+        header('Location: /blog/posts');
+        exit();
+    }
+
+    /**
+     * Delete a blog post.
+     *
+     * @param int $id
+     */
+    public function delete($id)
+    {
+        BlogPost::delete($id);
         header('Location: /blog/posts');
         exit();
     }

@@ -88,4 +88,18 @@ class UsersController
         header('Location: /users');
         exit();
     }
+
+    /**
+     * Delete a user.
+     *
+     * @param int $id
+     */
+    public function delete($id)
+    {
+        // In a real app, you'd want to use POST for deletion and add CSRF protection.
+        // For simplicity, we'll use GET for now as defined in routes.
+        User::delete($id);
+        header('Location: /users');
+        exit();
+    }
 }

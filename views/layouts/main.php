@@ -46,17 +46,32 @@
                             <div x-show="open" class="submenu bg-gray-700 rounded mt-1 mr-4">
                                 <a href="/blog/posts" class="sidebar-link block py-2 px-3 hover:bg-gray-600 <?= is_active('/blog/posts') ? 'active' : '' ?>">نوشته‌ها</a>
                                 <a href="/blog/categories" class="sidebar-link block py-2 px-3 hover:bg-gray-600 <?= is_active('/blog/categories') ? 'active' : '' ?>">دسته‌بندی‌ها</a>
+                                <a href="/blog/tags" class="sidebar-link block py-2 px-3 hover:bg-gray-600 <?= is_active('/blog/tags') ? 'active' : '' ?>">برچسب‌ها</a>
                             </div>
                         </div>
+                    </li>
+                    <li>
+                        <a href="/admins" class="sidebar-link block py-2 px-4 rounded hover:bg-gray-700 <?= is_active('/admins') ? 'active' : '' ?>">مدیران</a>
                     </li>
                 </ul>
             </nav>
         </aside>
 
         <!-- Main Content -->
-        <main class="flex-1 p-8">
-            {{ content }}
-        </main>
+        <div class="flex-1 flex flex-col">
+            <header class="bg-white shadow-md p-4 flex justify-between items-center">
+                <h1 class="text-2xl font-semibold">{{ title }}</h1>
+                <div class="flex items-center">
+                    <span class="text-gray-600 mr-4">خوش آمدید، <?= htmlspecialchars($_SESSION['admin_name'] ?? 'کاربر') ?></span>
+                    <a href="/logout" class="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600">
+                        خروج
+                    </a>
+                </div>
+            </header>
+            <main class="flex-1 p-8 overflow-y-auto">
+                {{ content }}
+            </main>
+        </div>
     </div>
     <script src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.x.x/dist/alpine.min.js" defer></script>
 </body>

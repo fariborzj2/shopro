@@ -98,4 +98,16 @@ class BlogCategoriesController
         header('Location: /blog/categories');
         exit();
     }
+
+    /**
+     * Delete a blog category.
+     *
+     * @param int $id
+     */
+    public function delete($id)
+    {
+        BlogCategory::delete($id);
+        header('Location: /blog/categories');
+        exit();
+    }
 }

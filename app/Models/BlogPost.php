@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Core\Database;
+use App\Core\SitemapGenerator;
 use PDO;
 
 class BlogPost
@@ -44,6 +45,21 @@ class BlogPost
     }
 
     /**
+     * Get all published blog posts for the sitemap.
+     *
+     * @return array
+     */
+    public static function getAllPublished()
+    {
+        $sql = "SELECT slug, created_at, updated_at
+                FROM blog_posts
+                WHERE status = 'published'
+                ORDER BY published_at DESC";
+        $stmt = Database::query($sql);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    /**
      * Find a single blog post by its ID.
      *
      * @param int $id
@@ -56,6 +72,19 @@ class BlogPost
     }
 
     /**
+     * Get all tags associated with a specific post.
+     *
+     * @param int $post_id
+     * @return array
+     */
+    public static function getTagsByPostId($post_id)
+    {
+        $sql = "SELECT tag_id FROM blog_post_tags WHERE post_id = :post_id";
+        $stmt = Database::query($sql, ['post_id' => $post_id]);
+        return $stmt->fetchAll(PDO::FETCH_COLUMN);
+    }
+
+    /**
      * Create a new blog post.
      *
      * @param array $data
@@ -65,7 +94,11 @@ class BlogPost
     {
         $sql = "INSERT INTO blog_posts (category_id, author_id, title, slug, content, excerpt, status, published_at)
                 VALUES (:category_id, :author_id, :title, :slug, :content, :excerpt, :status, :published_at)";
-        Database::query($sql, [
+
+        $pdo = Database::getConnection();
+        $stmt = $pdo->prepare($sql);
+
+        $stmt->execute([
             'category_id' => $data['category_id'],
             'author_id' => $data['author_id'],
             'title' => $data['title'],
@@ -75,7 +108,15 @@ class BlogPost
             'status' => $data['status'],
             'published_at' => ($data['status'] === 'published') ? date('Y-m-d H:i:s') : null
         ]);
-        return true;
+
+        $post_id = $pdo->lastInsertId();
+
+        // Regenerate sitemap if the post is published
+        if ($data['status'] === 'published') {
+            SitemapGenerator::generate();
+        }
+
+        return $post_id;
     }
 
     /**
@@ -108,6 +149,12 @@ class BlogPost
             'status' => $data['status'],
             'published_at' => $published_at
         ]);
+
+        // Regenerate sitemap if the post's status has changed to published or was already published
+        if ($data['status'] === 'published') {
+            SitemapGenerator::generate();
+        }
+
         return true;
     }
 
@@ -121,5 +168,31 @@ class BlogPost
     {
         Database::query("DELETE FROM blog_posts WHERE id = :id", ['id' => $id]);
         return true;
+    }
+
+    /**
+     * Sync tags for a blog post.
+     *
+     * @param int $post_id
+     * @param array $tag_ids
+     */
+    public static function syncTags($post_id, $tag_ids = [])
+    {
+        // First, remove all existing tags for the post
+        Database::query("DELETE FROM blog_post_tags WHERE post_id = :post_id", ['post_id' => $post_id]);
+
+        // Then, add the new tags
+        if (!empty($tag_ids)) {
+            $sql = "INSERT INTO blog_post_tags (post_id, tag_id) VALUES ";
+            $params = [];
+            $placeholders = [];
+            foreach ($tag_ids as $tag_id) {
+                $placeholders[] = '(?, ?)';
+                $params[] = $post_id;
+                $params[] = $tag_id;
+            }
+            $sql .= implode(', ', $placeholders);
+            Database::query($sql, $params);
+        }
     }
 }

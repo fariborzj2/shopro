@@ -1,18 +1,35 @@
 <h1 class="text-3xl font-bold mb-4">داشبورد</h1>
-<script>
-    console.log('Dashboard KPIs:', <?= json_encode($kpis); ?>);
-    console.log('Sales Chart Data:', <?= json_encode($salesChartData); ?>);
-    console.log('Users Chart Data:', <?= json_encode($usersChartData); ?>);
-</script>
 
 <!-- Stat Cards -->
 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mt-6">
-    <!-- ... (kpi cards) ... -->
+    <div class="bg-white p-6 rounded-lg shadow-md">
+        <h3 class="text-sm font-medium text-gray-500">فروش امروز</h3>
+        <p class="mt-2 text-3xl font-bold text-gray-800"><?= $kpis['sales_today'] ?> تومان</p>
+    </div>
+    <div class="bg-white p-6 rounded-lg shadow-md">
+        <h3 class="text-sm font-medium text-gray-500">سفارشات امروز</h3>
+        <p class="mt-2 text-3xl font-bold text-gray-800"><?= $kpis['orders_today'] ?></p>
+    </div>
+    <div class="bg-white p-6 rounded-lg shadow-md">
+        <h3 class="text-sm font-medium text-gray-500">کاربران جدید امروز</h3>
+        <p class="mt-2 text-3xl font-bold text-gray-800"><?= $kpis['new_users_today'] ?></p>
+    </div>
+    <div class="bg-white p-6 rounded-lg shadow-md">
+        <h3 class="text-sm font-medium text-gray-500">سفارشات این ماه</h3>
+        <p class="mt-2 text-3xl font-bold text-gray-800"><?= $kpis['orders_this_month'] ?></p>
+    </div>
 </div>
 
 <!-- Charts -->
 <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-8">
-    <!-- ... (chart canvases) ... -->
+    <div class="bg-white p-6 rounded-lg shadow-md">
+        <h3 class="text-lg font-semibold mb-4">روند فروش (۷ روز گذشته)</h3>
+        <canvas id="salesChart"></canvas>
+    </div>
+    <div class="bg-white p-6 rounded-lg shadow-md">
+        <h3 class="text-lg font-semibold mb-4">کاربران جدید (این ماه)</h3>
+        <canvas id="usersChart"></canvas>
+    </div>
 </div>
 
 <!-- Recent Orders -->
@@ -63,8 +80,57 @@
     </div>
 </div>
 
-
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-    // ... (chart scripts) ...
+    // Sales Chart
+    const salesCtx = document.getElementById('salesChart').getContext('2d');
+    new Chart(salesCtx, {
+        type: 'line',
+        data: {
+            labels: <?= json_encode($salesChartData['labels']) ?>,
+            datasets: [{
+                label: 'فروش',
+                data: <?= json_encode($salesChartData['data']) ?>,
+                backgroundColor: 'rgba(79, 70, 229, 0.1)',
+                borderColor: 'rgba(79, 70, 229, 1)',
+                borderWidth: 2,
+                tension: 0.3
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+
+    // Users Chart
+    const usersCtx = document.getElementById('usersChart').getContext('2d');
+    new Chart(usersCtx, {
+        type: 'bar',
+        data: {
+            labels: <?= json_encode($usersChartData['labels']) ?>,
+            datasets: [{
+                label: 'کاربران جدید',
+                data: <?= json_encode($usersChartData['data']) ?>,
+                backgroundColor: 'rgba(219, 39, 119, 0.8)',
+                borderColor: 'rgba(219, 39, 119, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        stepSize: 1
+                    }
+                }
+            }
+        }
+    });
 </script>

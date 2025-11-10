@@ -9,6 +9,18 @@ class Database
 {
     /** @var PDO|null */
     private static $pdo = null;
+    /** @var array|null */
+    private static $config = null;
+
+    /**
+     * Set the database configuration manually.
+     * Useful for testing or CLI scripts.
+     * @param array $config
+     */
+    public static function setConfig(array $config)
+    {
+        self::$config = $config;
+    }
 
     /**
      * Get the PDO database connection.
@@ -18,11 +30,12 @@ class Database
     public static function getConnection()
     {
         if (self::$pdo === null) {
-            // Simple file logging for debugging
-            file_put_contents(__DIR__ . '/../../db.log', "Attempting to connect...\n", FILE_APPEND);
-
-            $config = require __DIR__ . '/../../config.php';
-            $dbConfig = $config['database'];
+            if (self::$config === null) {
+                $config = require __DIR__ . '/../../config.php';
+                $dbConfig = $config['database'];
+            } else {
+                $dbConfig = self::$config;
+            }
 
             $dsn = "mysql:host={$dbConfig['host']};port={$dbConfig['port']};dbname={$dbConfig['dbname']};charset={$dbConfig['charset']}";
 
@@ -34,11 +47,10 @@ class Database
 
             try {
                 self::$pdo = new PDO($dsn, $dbConfig['user'], $dbConfig['password'], $options);
-                file_put_contents(__DIR__ . '/../../db.log', "Connection successful.\n", FILE_APPEND);
             } catch (PDOException $e) {
-                file_put_contents(__DIR__ . '/../../db.log', "Connection failed: " . $e->getMessage() . "\n", FILE_APPEND);
                 // In a real application, you would log this error, not die()
-                die('Database connection failed: ' . $e->getMessage());
+                error_log('Database connection failed: ' . $e->getMessage());
+                die('Database connection failed. Please check the logs.');
             }
         }
 

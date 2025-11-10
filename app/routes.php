@@ -2,6 +2,11 @@
 
 // app/routes.php
 
+// Auth
+$router->get('/login', 'LoginController@index');
+$router->post('/login', 'LoginController@login');
+$router->get('/logout', 'LoginController@logout');
+
 // Dashboard
 $router->get('/', 'DashboardController@index');
 $router->get('/dashboard', 'DashboardController@index');
@@ -39,6 +44,10 @@ $router->get('/orders/show/{id}', 'OrdersController@show');
 $router->post('/orders/update_status/{id}', 'OrdersController@updateStatus');
 
 
+// Admins
+$router->get('/admins', 'AdminsController@index');
+
+
 // Blog Categories
 $router->get('/blog/categories', 'BlogCategoriesController@index');
 $router->get('/blog/categories/create', 'BlogCategoriesController@create');
@@ -46,6 +55,15 @@ $router->post('/blog/categories/store', 'BlogCategoriesController@store');
 $router->get('/blog/categories/edit/{id}', 'BlogCategoriesController@edit');
 $router->post('/blog/categories/update/{id}', 'BlogCategoriesController@update');
 $router->get('/blog/categories/delete/{id}', 'BlogCategoriesController@delete');
+
+
+// Blog Tags
+$router->get('/blog/tags', 'BlogTagsController@index');
+$router->get('/blog/tags/create', 'BlogTagsController@create');
+$router->post('/blog/tags/store', 'BlogTagsController@store');
+$router->get('/blog/tags/edit/{id}', 'BlogTagsController@edit');
+$router->post('/blog/tags/update/{id}', 'BlogTagsController@update');
+$router->get('/blog/tags/delete/{id}', 'BlogTagsController@delete');
 
 
 // Blog Posts

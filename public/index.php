@@ -5,14 +5,22 @@
 use App\Core\Request;
 use App\Core\Router;
 
+// Start the session
+session_start();
+
+// Middleware-like check for authentication
+$is_login_page = (strpos(Request::uri(), 'login') !== false);
+if (!isset($_SESSION['admin_id']) && !$is_login_page) {
+    header('Location: /login');
+    exit();
+}
+
 // Show all errors for development
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
 // A simple autoloader
 spl_autoload_register(function ($class) {
-    file_put_contents('autoload.log', "Attempting to load class: {$class}\n", FILE_APPEND);
-
     // Project-specific namespace prefix
     $prefix = 'App\\';
 
@@ -31,9 +39,6 @@ spl_autoload_register(function ($class) {
 
     if (file_exists($file)) {
         require $file;
-        file_put_contents('autoload.log', "Successfully loaded class: {$class}\n", FILE_APPEND);
-    } else {
-        file_put_contents('autoload.log', "File not found for class: {$class} at path: {$file}\n", FILE_APPEND);
     }
 });
 

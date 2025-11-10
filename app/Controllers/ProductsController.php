@@ -111,4 +111,16 @@ class ProductsController
         header('Location: /products');
         exit();
     }
+
+    /**
+     * Delete a product.
+     *
+     * @param int $id
+     */
+    public function delete($id)
+    {
+        Product::delete($id);
+        header('Location: /products');
+        exit();
+    }
 }

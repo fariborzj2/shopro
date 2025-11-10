@@ -96,4 +96,18 @@ class CategoriesController
         header('Location: /categories');
         exit();
     }
+
+    /**
+     * Delete a category.
+     *
+     * @param int $id
+     */
+    public function delete($id)
+    {
+        // Add logic here to handle products in this category before deleting.
+        // For now, we'll just delete the category.
+        Category::delete($id);
+        header('Location: /categories');
+        exit();
+    }
 }
