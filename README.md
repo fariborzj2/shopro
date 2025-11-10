@@ -1,0 +1,2 @@
+# premium
+Store admin panel
