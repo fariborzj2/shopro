@@ -123,4 +123,28 @@ class ProductsController
         header('Location: /products');
         exit();
     }
+
+    /**
+     * Handle the reordering of products.
+     */
+    public function reorder()
+    {
+        header('Content-Type: application/json');
+
+        $input = json_decode(file_get_contents('php://input'), true);
+        $ids = $input['ids'] ?? [];
+
+        if (empty($ids) || !is_array($ids)) {
+            echo json_encode(['success' => false, 'message' => 'Invalid data.']);
+            http_response_code(400);
+            return;
+        }
+
+        if (Product::updateOrder($ids)) {
+            echo json_encode(['success' => true, 'message' => 'Order updated successfully.']);
+        } else {
+            echo json_encode(['success' => false, 'message' => 'Failed to update order.']);
+            http_response_code(500);
+        }
+    }
 }

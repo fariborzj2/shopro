@@ -27,6 +27,7 @@ $router->post('/categories/store', 'CategoriesController@store');
 $router->get('/categories/edit/{id}', 'CategoriesController@edit');
 $router->post('/categories/update/{id}', 'CategoriesController@update');
 $router->get('/categories/delete/{id}', 'CategoriesController@delete');
+$router->post('/categories/reorder', 'CategoriesController@reorder');
 
 
 // Products
@@ -36,6 +37,7 @@ $router->post('/products/store', 'ProductsController@store');
 $router->get('/products/edit/{id}', 'ProductsController@edit');
 $router->post('/products/update/{id}', 'ProductsController@update');
 $router->get('/products/delete/{id}', 'ProductsController@delete');
+$router->post('/products/reorder', 'ProductsController@reorder');
 
 
 // Orders

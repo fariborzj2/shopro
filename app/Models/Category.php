@@ -90,4 +90,36 @@ class Category
         Database::query("DELETE FROM categories WHERE id = :id", ['id' => $id]);
         return true;
     }
+
+    /**
+     * Update the display order of categories.
+     *
+     * @param array $ids
+     * @return bool
+     */
+    public static function updateOrder(array $ids)
+    {
+        if (empty($ids)) {
+            return false;
+        }
+
+        $case_sql = "";
+        $params = [];
+        foreach ($ids as $position => $id) {
+            $case_sql .= "WHEN ? THEN ? ";
+            $params[] = (int) $id;
+            $params[] = $position;
+        }
+
+        $id_list = implode(',', array_fill(0, count($ids), '?'));
+
+        $sql = "UPDATE categories SET position = CASE id {$case_sql} END WHERE id IN ({$id_list})";
+
+        foreach ($ids as $id) {
+            $params[] = (int) $id;
+        }
+
+        Database::query($sql, $params);
+        return true;
+    }
 }

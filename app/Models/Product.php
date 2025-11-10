@@ -112,4 +112,38 @@ class Product
         Database::query("DELETE FROM products WHERE id = :id", ['id' => $id]);
         return true;
     }
+
+    /**
+     * Update the display order of products.
+     *
+     * @param array $ids
+     * @return bool
+     */
+    public static function updateOrder(array $ids)
+    {
+        if (empty($ids)) {
+            return false;
+        }
+
+        $pdo = Database::getConnection();
+        $case_sql = "";
+        $params = [];
+        foreach ($ids as $position => $id) {
+            $case_sql .= "WHEN ? THEN ? ";
+            $params[] = (int) $id;
+            $params[] = $position;
+        }
+
+        $id_list = implode(',', array_fill(0, count($ids), '?'));
+
+        $sql = "UPDATE products SET position = CASE id {$case_sql} END WHERE id IN ({$id_list})";
+
+        // Add the IDs for the IN clause to the params array
+        foreach ($ids as $id) {
+            $params[] = (int) $id;
+        }
+
+        Database::query($sql, $params);
+        return true;
+    }
 }
