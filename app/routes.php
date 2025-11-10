@@ -27,6 +27,10 @@ $router->post('/products/store', 'ProductsController@store');
 $router->get('/products/edit/{id}', 'ProductsController@edit');
 $router->post('/products/update/{id}', 'ProductsController@update');
 
-// Other sections (temporary placeholders)
+// Orders
 $router->get('/orders', 'OrdersController@index');
+$router->get('/orders/show/{id}', 'OrdersController@show');
+$router->post('/orders/update_status/{id}', 'OrdersController@updateStatus');
+
+// Other sections (temporary placeholders)
 $router->get('/blog', 'BlogController@index');
