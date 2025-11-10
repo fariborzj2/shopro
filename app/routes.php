@@ -20,7 +20,13 @@ $router->post('/categories/store', 'CategoriesController@store');
 $router->get('/categories/edit/{id}', 'CategoriesController@edit');
 $router->post('/categories/update/{id}', 'CategoriesController@update');
 
+// Products
+$router->get('/products', 'ProductsController@index');
+$router->get('/products/create', 'ProductsController@create');
+$router->post('/products/store', 'ProductsController@store');
+$router->get('/products/edit/{id}', 'ProductsController@edit');
+$router->post('/products/update/{id}', 'ProductsController@update');
+
 // Other sections (temporary placeholders)
 $router->get('/orders', 'OrdersController@index');
-$router->get('/products', 'ProductsController@index');
 $router->get('/blog', 'BlogController@index');
