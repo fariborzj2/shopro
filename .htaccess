@@ -1,0 +1,39 @@
+<IfModule mod_rewrite.c>
+    # فعال کردن موتور بازنویسی URL
+    RewriteEngine On
+
+    # تنظیم مسیر پایه برای پروژه‌هایی که در ساب‌فولدر هستند
+    # اگر پروژه در ریشه اصلی دامنه است، این خط را کامنت کنید یا روی / تنظیم کنید
+    # RewriteBase /your-project-folder/
+
+    # ریدایرکت HTTP به HTTPS (اختیاری)
+    # برای فعال‌سازی، این دو خط را از حالت کامنت خارج کنید
+    # RewriteCond %{HTTPS} off
+    # RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+    # حذف index.php از URL
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule ^(.*)$ index.php/$1 [L]
+
+    # جلوگیری از دسترسی مستقیم به فایل‌های حساس
+    <Files ".env">
+        Require all denied
+    </Files>
+    <Files "composer.json">
+        Require all denied
+    </Files>
+    <Files "composer.lock">
+        Require all denied
+    </Files>
+</IfModule>
+
+# تنظیمات امنیتی بیشتر
+# جلوگیری از لیست شدن محتوای دایرکتوری‌ها
+Options -Indexes
+
+# محافظت در برابر حملات XSS
+<IfModule mod_headers.c>
+    Header set X-XSS-Protection "1; mode=block"
+    Header set X-Content-Type-Options "nosniff"
+</IfModule>
