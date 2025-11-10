@@ -18,6 +18,9 @@ class Database
     public static function getConnection()
     {
         if (self::$pdo === null) {
+            // Simple file logging for debugging
+            file_put_contents(__DIR__ . '/../../db.log', "Attempting to connect...\n", FILE_APPEND);
+
             $config = require __DIR__ . '/../../config.php';
             $dbConfig = $config['database'];
 
@@ -31,7 +34,9 @@ class Database
 
             try {
                 self::$pdo = new PDO($dsn, $dbConfig['user'], $dbConfig['password'], $options);
+                file_put_contents(__DIR__ . '/../../db.log', "Connection successful.\n", FILE_APPEND);
             } catch (PDOException $e) {
+                file_put_contents(__DIR__ . '/../../db.log', "Connection failed: " . $e->getMessage() . "\n", FILE_APPEND);
                 // In a real application, you would log this error, not die()
                 die('Database connection failed: ' . $e->getMessage());
             }
