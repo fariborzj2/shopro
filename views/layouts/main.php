@@ -21,19 +21,19 @@
             <nav>
                 <ul>
                     <li>
-                        <a href="/" class="sidebar-link block py-2 px-4 rounded hover:bg-gray-700 active">داشبورد</a>
+                        <a href="/" class="sidebar-link block py-2 px-4 rounded hover:bg-gray-700 <?= is_active('/') ? 'active' : '' ?>">داشبورد</a>
                     </li>
                     <li>
-                        <a href="/orders" class="sidebar-link block py-2 px-4 rounded hover:bg-gray-700">سفارشات</a>
+                        <a href="/orders" class="sidebar-link block py-2 px-4 rounded hover:bg-gray-700 <?= is_active('/orders') ? 'active' : '' ?>">سفارشات</a>
                     </li>
                     <li>
-                        <a href="/products" class="sidebar-link block py-2 px-4 rounded hover:bg-gray-700">محصولات</a>
+                        <a href="/products" class="sidebar-link block py-2 px-4 rounded hover:bg-gray-700 <?= is_active('/products') ? 'active' : '' ?>">محصولات</a>
                     </li>
                     <li>
-                        <a href="/users" class="sidebar-link block py-2 px-4 rounded hover:bg-gray-700">کاربران</a>
+                        <a href="/users" class="sidebar-link block py-2 px-4 rounded hover:bg-gray-700 <?= is_active('/users') ? 'active' : '' ?>">کاربران</a>
                     </li>
                      <li>
-                        <a href="/blog" class="sidebar-link block py-2 px-4 rounded hover:bg-gray-700">وبلاگ</a>
+                        <a href="/blog" class="sidebar-link block py-2 px-4 rounded hover:bg-gray-700 <?= is_active('/blog') ? 'active' : '' ?>">وبلاگ</a>
                     </li>
                 </ul>
             </nav>

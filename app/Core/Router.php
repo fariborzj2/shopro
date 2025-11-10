@@ -6,36 +6,11 @@ use Exception;
 
 class Router
 {
-    protected $routes = [];
+    protected $routes = [
+        'GET' => [],
+        'POST' => []
+    ];
 
-    /**
-     * Add a GET route
-     *
-     * @param string $uri
-     * @param string $controllerAction
-     */
-    public function get($uri, $controllerAction)
-    {
-        $this->routes['GET'][$uri] = $controllerAction;
-    }
-
-    /**
-     * Add a POST route
-     *
-     * @param string $uri
-     * @param string $controllerAction
-     */
-    public function post($uri, $controllerAction)
-    {
-        $this->routes['POST'][$uri] = $controllerAction;
-    }
-
-    /**
-     * Load the router file
-     *
-     * @param string $file
-     * @return Router
-     */
     public static function load($file)
     {
         $router = new static;
@@ -43,32 +18,38 @@ class Router
         return $router;
     }
 
-    /**
-     * Dispatch the request to the appropriate controller and action.
-     *
-     * @param string $uri
-     * @param string $requestMethod
-     */
+    public function get($uri, $controllerAction)
+    {
+        $this->routes['GET'][$uri] = $controllerAction;
+    }
+
+    public function post($uri, $controllerAction)
+    {
+        $this->routes['POST'][$uri] = $controllerAction;
+    }
+
     public function dispatch($uri, $requestMethod)
     {
-        if (array_key_exists($uri, $this->routes[$requestMethod])) {
-            // Explode the controller and method string, e.g., 'PagesController@home'
-            list($controller, $method) = explode('@', $this->routes[$requestMethod][$uri]);
+        foreach ($this->routes[$requestMethod] as $route => $action) {
+            // Convert route with params like {id} to a regex
+            $pattern = preg_replace('/\{([a-zA-Z0-9_]+)\}/', '(?P<$1>[a-zA-Z0-9_]+)', $route);
+            $pattern = "#^" . $pattern . "$#";
 
-            // Call the controller action
-            return $this->callAction($controller, $method);
+            if (preg_match($pattern, $uri, $matches)) {
+                // Get controller and method from action string
+                list($controller, $method) = explode('@', $action);
+
+                // Get named parameters from the URL
+                $params = array_filter($matches, 'is_string', ARRAY_FILTER_USE_KEY);
+
+                return $this->callAction($controller, $method, $params);
+            }
         }
 
         throw new Exception('No route defined for this URI.');
     }
 
-    /**
-     * Load the controller and call the method.
-     *
-     * @param string $controller
-     * @param string $method
-     */
-    protected function callAction($controller, $method)
+    protected function callAction($controller, $method, $params = [])
     {
         $controllerClass = "App\\Controllers\\{$controller}";
 
@@ -79,11 +60,10 @@ class Router
         $controllerInstance = new $controllerClass;
 
         if (!method_exists($controllerInstance, $method)) {
-            throw new Exception(
-                "{$controllerClass} does not respond to the {$method} action."
-            );
+            throw new Exception("{$controllerClass} does not respond to the {$method} action.");
         }
 
-        return $controllerInstance->$method();
+        // Call the method with parameters
+        return call_user_func_array([$controllerInstance, $method], $params);
     }
 }

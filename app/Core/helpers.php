@@ -1,5 +1,7 @@
 <?php
 
+use App\Core\Request;
+
 // app/Core/helpers.php
 
 /**
@@ -34,4 +36,15 @@ function view($layout, $view, $data = [])
         [$content, $data['title'] ?? 'داشبورد'],
         file_get_contents(__DIR__ . "/../../views/layouts/{$layout}.php")
     );
+}
+
+/**
+ * Check if the current URI matches a given path.
+ *
+ * @param string $path
+ * @return bool
+ */
+function is_active($path)
+{
+    return Request::uri() === trim($path, '/');
 }
