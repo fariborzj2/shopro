@@ -6,10 +6,12 @@
     <title>{{ title }} - پنل مدیریت</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        /* A simple style for the active sidebar link */
         .sidebar-link.active {
-            background-color: #4a5568; /* gray-700 */
-            color: #ffffff; /* white */
+            background-color: #4a5568;
+            color: #ffffff;
+        }
+        .submenu {
+            display: none;
         }
     </style>
 </head>
@@ -35,8 +37,17 @@
                     <li>
                         <a href="/users" class="sidebar-link block py-2 px-4 rounded hover:bg-gray-700 <?= is_active('/users') ? 'active' : '' ?>">کاربران</a>
                     </li>
-                     <li>
-                        <a href="/blog" class="sidebar-link block py-2 px-4 rounded hover:bg-gray-700 <?= is_active('/blog') ? 'active' : '' ?>">وبلاگ</a>
+                    <li>
+                        <div x-data="{ open: false }">
+                            <button @click="open = !open" class="w-full text-right sidebar-link flex justify-between items-center py-2 px-4 rounded hover:bg-gray-700">
+                                <span>وبلاگ</span>
+                                <svg :class="{'rotate-180': open}" class="w-4 h-4 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                            </button>
+                            <div x-show="open" class="submenu bg-gray-700 rounded mt-1 mr-4">
+                                <a href="/blog/posts" class="sidebar-link block py-2 px-3 hover:bg-gray-600 <?= is_active('/blog/posts') ? 'active' : '' ?>">نوشته‌ها</a>
+                                <a href="/blog/categories" class="sidebar-link block py-2 px-3 hover:bg-gray-600 <?= is_active('/blog/categories') ? 'active' : '' ?>">دسته‌بندی‌ها</a>
+                            </div>
+                        </div>
                     </li>
                 </ul>
             </nav>
@@ -47,5 +58,6 @@
             {{ content }}
         </main>
     </div>
+    <script src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.x.x/dist/alpine.min.js" defer></script>
 </body>
 </html>

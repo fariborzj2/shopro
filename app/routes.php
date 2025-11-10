@@ -2,35 +2,12 @@
 
 // app/routes.php
 
-// Define application routes.
-$router->get('', 'DashboardController@index');
-$router->get('/', 'DashboardController@index');
+// ... (other routes)
 
-// Users
-$router->get('/users', 'UsersController@index');
-$router->get('/users/create', 'UsersController@create');
-$router->post('/users/store', 'UsersController@store');
-$router->get('/users/edit/{id}', 'UsersController@edit');
-$router->post('/users/update/{id}', 'UsersController@update');
-
-// Categories
-$router->get('/categories', 'CategoriesController@index');
-$router->get('/categories/create', 'CategoriesController@create');
-$router->post('/categories/store', 'CategoriesController@store');
-$router->get('/categories/edit/{id}', 'CategoriesController@edit');
-$router->post('/categories/update/{id}', 'CategoriesController@update');
-
-// Products
-$router->get('/products', 'ProductsController@index');
-$router->get('/products/create', 'ProductsController@create');
-$router->post('/products/store', 'ProductsController@store');
-$router->get('/products/edit/{id}', 'ProductsController@edit');
-$router->post('/products/update/{id}', 'ProductsController@update');
-
-// Orders
-$router->get('/orders', 'OrdersController@index');
-$router->get('/orders/show/{id}', 'OrdersController@show');
-$router->post('/orders/update_status/{id}', 'OrdersController@updateStatus');
-
-// Other sections (temporary placeholders)
-$router->get('/blog', 'BlogController@index');
+// Blog
+$router->get('/blog', 'BlogCategoriesController@index'); // Temp redirect
+$router->get('/blog/categories', 'BlogCategoriesController@index');
+$router->get('/blog/categories/create', 'BlogCategoriesController@create');
+$router->post('/blog/categories/store', 'BlogCategoriesController@store');
+$router->get('/blog/categories/edit/{id}', 'BlogCategoriesController@edit');
+$router->post('/blog/categories/update/{id}', 'BlogCategoriesController@update');
