@@ -93,6 +93,13 @@ class BlogPostsController
         $tags = BlogTag::all();
         $post_tags = BlogPost::getTagsByPostId($id);
 
+        // Convert gregorian published_at to jalali for the view
+        if (!empty($post['published_at'])) {
+            $ts = strtotime($post['published_at']);
+            list($jy, $jm, $jd) = gregorian_to_jalali(date('Y', $ts), date('m', $ts), date('d', $ts));
+            $post['published_at_jalali'] = "$jy/$jm/$jd";
+        }
+
         return view('main', 'blog/posts/edit', [
             'title' => 'ویرایش نوشته',
             'post' => $post,

@@ -8,6 +8,9 @@ use App\Core\Router;
 // Start the session
 session_start();
 
+// Set the default timezone to Tehran
+date_default_timezone_set('Asia/Tehran');
+
 // Show all errors for development
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
@@ -37,6 +40,7 @@ if (!isset($_SESSION['admin_id']) && !$is_login_page) {
 
 // Load helpers
 require __DIR__ . '/../app/Core/helpers.php';
+require __DIR__ . '/../app/Core/jdf.php';
 
 try {
     $uri = Request::uri();

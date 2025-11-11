@@ -53,6 +53,13 @@
         </div>
 
         <div class="mb-4">
+            <label for="published_at_jalali" class="block text-gray-700 text-sm font-bold mb-2">تاریخ انتشار (اختیاری):</label>
+            <input type="text" id="published_at_jalali" name="published_at_jalali" autocomplete="off"
+                   class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+            <input type="hidden" id="published_at" name="published_at">
+        </div>
+
+        <div class="mb-4">
             <label for="tags" class="block text-gray-700 text-sm font-bold mb-2">برچسب‌ها:</label>
             <select id="tags" name="tags[]" multiple class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline h-32">
                 <?php foreach ($tags as $tag): ?>
@@ -71,3 +78,18 @@
         </div>
     </form>
 </div>
+
+<script>
+    // Initialize KamaDatepicker
+    kamaDatepicker('published_at_jalali', {
+        twelveHour: false,
+        gotoToday: true,
+        buttonsColor: "blue",
+    });
+
+    // Sync the Jalali date to the hidden field before form submission
+    document.querySelector('form').addEventListener('submit', function() {
+        const jalaliDate = document.getElementById('published_at_jalali').value;
+        document.getElementById('published_at').value = jalaliDate;
+    });
+</script>

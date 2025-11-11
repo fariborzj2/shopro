@@ -92,6 +92,22 @@ class BlogPost
      */
     public static function create($data)
     {
+        $status = $data['status'];
+        $published_at = null;
+
+        if (!empty($data['published_at'])) {
+            list($jy, $jm, $jd) = explode('/', $data['published_at']);
+            list($gy, $gm, $gd) = jalali_to_gregorian((int)$jy, (int)$jm, (int)$jd);
+            $published_at_gregorian = "$gy-$gm-$gd 00:00:00";
+
+            if (strtotime($published_at_gregorian) > time()) {
+                $status = 'scheduled';
+            }
+            $published_at = $published_at_gregorian;
+        } elseif ($status === 'published') {
+            $published_at = date('Y-m-d H:i:s');
+        }
+
         $sql = "INSERT INTO blog_posts (category_id, author_id, title, slug, content, excerpt, status, published_at)
                 VALUES (:category_id, :author_id, :title, :slug, :content, :excerpt, :status, :published_at)";
 
@@ -105,8 +121,8 @@ class BlogPost
             'slug' => $data['slug'],
             'content' => $data['content'],
             'excerpt' => $data['excerpt'],
-            'status' => $data['status'],
-            'published_at' => ($data['status'] === 'published') ? date('Y-m-d H:i:s') : null
+            'status' => $status,
+            'published_at' => $published_at
         ]);
 
         $post_id = $pdo->lastInsertId();
@@ -128,11 +144,26 @@ class BlogPost
      */
     public static function update($id, $data)
     {
-        // Get the current post status to check if it's being published now
-        $current = self::find($id);
-        $published_at = $current['published_at'];
-        if ($current['status'] !== 'published' && $data['status'] === 'published') {
-            $published_at = date('Y-m-d H:i:s');
+        $status = $data['status'];
+        $published_at = null;
+
+        if (!empty($data['published_at'])) {
+            list($jy, $jm, $jd) = explode('/', $data['published_at']);
+            list($gy, $gm, $gd) = jalali_to_gregorian((int)$jy, (int)$jm, (int)$jd);
+            $published_at_gregorian = "$gy-$gm-$gd 00:00:00";
+
+            if (strtotime($published_at_gregorian) > time()) {
+                $status = 'scheduled';
+            }
+            $published_at = $published_at_gregorian;
+        } elseif ($status === 'published') {
+            $current = self::find($id);
+            // Only set publish date if it's not already published
+            if ($current['status'] !== 'published') {
+                $published_at = date('Y-m-d H:i:s');
+            } else {
+                $published_at = $current['published_at'];
+            }
         }
 
         $sql = "UPDATE blog_posts
@@ -146,7 +177,7 @@ class BlogPost
             'slug' => $data['slug'],
             'content' => $data['content'],
             'excerpt' => $data['excerpt'],
-            'status' => $data['status'],
+            'status' => $status,
             'published_at' => $published_at
         ]);
 
