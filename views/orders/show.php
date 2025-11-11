@@ -106,4 +106,22 @@
             </div>
         </div>
     </div>
+
+    <?php if (!empty($customFieldsData)): ?>
+    <div class="mt-8 bg-white shadow-md rounded-lg p-6">
+        <h3 class="text-xl font-bold mb-4 border-b pb-2">اطلاعات فیلدهای سفارشی</h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4">
+            <?php foreach ($customFieldsData as $fieldId => $value): ?>
+                <?php
+                    // Look up the field label from the pre-fetched array
+                    $fieldLabel = $allCustomFields[$fieldId]['label_fa'] ?? "فیلد نامشخص (ID: {$fieldId})";
+                ?>
+                <div>
+                    <p class="text-gray-500 font-semibold"><?= htmlspecialchars($fieldLabel) ?>:</p>
+                    <p class="text-gray-800 text-lg"><?= htmlspecialchars($value) ?></p>
+                </div>
+            <?php endforeach; ?>
+        </div>
+    </div>
+    <?php endif; ?>
 </div>

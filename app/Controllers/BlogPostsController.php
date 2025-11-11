@@ -55,7 +55,7 @@ class BlogPostsController
     {
         // Basic validation
         if (empty($_POST['title']) || empty($_POST['slug']) || empty($_POST['category_id']) || empty($_POST['author_id'])) {
-            die('Title, slug, category, and author are required.');
+            redirect_back_with_error('Title, slug, category, and author are required.');
         }
 
         $post_id = BlogPost::create([
@@ -85,7 +85,7 @@ class BlogPostsController
     {
         $post = BlogPost::find($id);
         if (!$post) {
-            die('Blog post not found.');
+            redirect_back_with_error('Blog post not found.');
         }
 
         $categories = BlogCategory::all();
@@ -118,8 +118,13 @@ class BlogPostsController
     public function update($id)
     {
         // Basic validation
+        $post = BlogPost::find($id);
+        if (!$post) {
+            redirect_back_with_error('Blog post not found.');
+        }
+
         if (empty($_POST['title']) || empty($_POST['slug']) || empty($_POST['category_id']) || empty($_POST['author_id'])) {
-            die('Title, slug, category, and author are required.');
+            redirect_back_with_error('Title, slug, category, and author are required.');
         }
 
         BlogPost::update($id, [

@@ -38,7 +38,29 @@
             </select>
         </div>
 
-        <div class="flex items-center justify-between">
+        <div class="mt-8 border-t pt-6">
+             <h3 class="text-lg font-semibold text-gray-800 mb-4">اتصال پارامترها (فیلدهای سفارشی)</h3>
+             <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                <?php foreach ($customFields as $field): ?>
+                    <div class="flex items-center">
+                        <input
+                            type="checkbox"
+                            name="custom_fields[]"
+                            value="<?php echo $field['id']; ?>"
+                            id="field_<?php echo $field['id']; ?>"
+                            class="h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500"
+                            <?php echo in_array($field['id'], $attachedFieldIds) ? 'checked' : ''; ?>
+                        >
+                        <label for="field_<?php echo $field['id']; ?>" class="ml-2 block text-sm text-gray-900">
+                            <?php echo htmlspecialchars($field['label_fa']); ?> (<code><?php echo htmlspecialchars($field['name']); ?></code>)
+                        </label>
+                    </div>
+                <?php endforeach; ?>
+             </div>
+             <p class="text-xs text-gray-500 mt-2">فیلدهای انتخاب شده در فرم ثبت سفارش برای محصولات این دسته‌بندی نمایش داده خواهند شد.</p>
+        </div>
+
+        <div class="flex items-center justify-between mt-8">
             <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
                 به‌روزرسانی
             </button>

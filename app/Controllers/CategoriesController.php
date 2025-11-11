@@ -3,6 +3,7 @@
 namespace App\Controllers;
 
 use App\Models\Category;
+use App\Models\CustomOrderField;
 
 class CategoriesController
 {
@@ -37,16 +38,20 @@ class CategoriesController
     {
         // Basic validation
         if (empty($_POST['name_fa'])) {
-            die('Persian name is required.');
+            redirect_back_with_error('Persian name is required.');
         }
 
-        Category::create([
+        $id = Category::create([
             'parent_id' => $_POST['parent_id'],
             'name_fa' => $_POST['name_fa'],
             'name_en' => $_POST['name_en'],
             'status' => $_POST['status'],
             'position' => $_POST['position']
         ]);
+
+        // Sync custom fields
+        $customFieldIds = $_POST['custom_fields'] ?? [];
+        Category::syncCustomFields($id, $customFieldIds);
 
         header('Location: /categories');
         exit();
@@ -61,15 +66,19 @@ class CategoriesController
     {
         $category = Category::find($id);
         if (!$category) {
-            die('Category not found.');
+            redirect_back_with_error('Category not found.');
         }
 
         $allCategories = Category::all();
+        $customFields = CustomOrderField::all();
+        $attachedFieldIds = Category::getAttachedCustomFieldIds($id);
 
         return view('main', 'categories/edit', [
             'title' => 'ویرایش دسته‌بندی',
             'category' => $category,
-            'allCategories' => $allCategories
+            'allCategories' => $allCategories,
+            'customFields' => $customFields,
+            'attachedFieldIds' => $attachedFieldIds
         ]);
     }
 
@@ -81,8 +90,12 @@ class CategoriesController
     public function update($id)
     {
         // Basic validation
+        $category = Category::find($id);
+        if (!$category) {
+            redirect_back_with_error('Category not found.');
+        }
         if (empty($_POST['name_fa'])) {
-            die('Persian name is required.');
+            redirect_back_with_error('Persian name is required.');
         }
 
         Category::update($id, [
@@ -92,6 +105,10 @@ class CategoriesController
             'status' => $_POST['status'],
             'position' => $_POST['position']
         ]);
+
+        // Sync custom fields
+        $customFieldIds = $_POST['custom_fields'] ?? [];
+        Category::syncCustomFields($id, $customFieldIds);
 
         header('Location: /categories');
         exit();

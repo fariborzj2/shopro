@@ -32,7 +32,7 @@ class BlogTagsController
     public function store()
     {
         if (empty($_POST['name']) || empty($_POST['slug'])) {
-            die('Name and slug are required.');
+            redirect_back_with_error('Name and slug are required.');
         }
         BlogTag::create($_POST);
         header('Location: /blog/tags');
@@ -58,8 +58,12 @@ class BlogTagsController
      */
     public function update($id)
     {
+        $tag = BlogTag::find($id);
+        if (!$tag) {
+            redirect_back_with_error('Tag not found.');
+        }
         if (empty($_POST['name']) || empty($_POST['slug'])) {
-            die('Name and slug are required.');
+            redirect_back_with_error('Name and slug are required.');
         }
         BlogTag::update($id, $_POST);
         header('Location: /blog/tags');

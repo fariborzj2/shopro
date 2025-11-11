@@ -3,6 +3,7 @@
 namespace App\Controllers;
 
 use App\Models\Order;
+use App\Models\CustomOrderField;
 
 class OrdersController
 {
@@ -28,12 +29,17 @@ class OrdersController
     {
         $order = Order::find($id);
         if (!$order) {
-            die('Order not found.');
+            redirect_back_with_error('Order not found.');
         }
+
+        $allCustomFields = CustomOrderField::getAllFieldsById();
+        $customFieldsData = json_decode($order['custom_fields_data'] ?? '[]', true);
 
         return view('main', 'orders/show', [
             'title' => "جزئیات سفارش {$order['order_code']}",
-            'order' => $order
+            'order' => $order,
+            'allCustomFields' => $allCustomFields,
+            'customFieldsData' => $customFieldsData
         ]);
     }
 
@@ -44,9 +50,14 @@ class OrdersController
      */
     public function updateStatus($id)
     {
+        $order = Order::find($id);
+        if (!$order) {
+            redirect_back_with_error('Order not found.');
+        }
+
         // Basic validation
         if (empty($_POST['status'])) {
-            die('Status is required.');
+            redirect_back_with_error('Status is required.');
         }
 
         Order::updateStatus($id, $_POST['status']);

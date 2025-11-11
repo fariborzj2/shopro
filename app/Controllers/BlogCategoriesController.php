@@ -37,7 +37,7 @@ class BlogCategoriesController
     {
         // Basic validation
         if (empty($_POST['name_fa']) || empty($_POST['slug'])) {
-            die('Persian name and slug are required.');
+            return redirect_back_with_error('نام فارسی و اسلاگ الزامی است.');
         }
 
         BlogCategory::create([
@@ -62,7 +62,7 @@ class BlogCategoriesController
     {
         $category = BlogCategory::find($id);
         if (!$category) {
-            die('Blog category not found.');
+            return redirect_back_with_error('دسته‌بندی وبلاگ پیدا نشد.');
         }
 
         $allCategories = BlogCategory::all();
@@ -83,7 +83,7 @@ class BlogCategoriesController
     {
         // Basic validation
         if (empty($_POST['name_fa']) || empty($_POST['slug'])) {
-            die('Persian name and slug are required.');
+            return redirect_back_with_error('نام فارسی و اسلاگ الزامی است.');
         }
 
         BlogCategory::update($id, [

@@ -2,6 +2,7 @@
 <html lang="fa" dir="rtl">
 <head>
     <meta charset="UTF-8">
+    <meta name="csrf-token" content="<?= csrf_token() ?>">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ title }} - پنل مدیریت</title>
     <link href="https://cdn.jsdelivr.net/npm/kamadatepicker/dist/kamadatepicker.min.css" rel="stylesheet">
@@ -54,6 +55,12 @@
                     <li>
                         <a href="/admins" class="sidebar-link block py-2 px-4 rounded hover:bg-gray-700 <?= is_active('/admins') ? 'active' : '' ?>">مدیران</a>
                     </li>
+                    <li>
+                        <a href="/custom-fields" class="sidebar-link block py-2 px-4 rounded hover:bg-gray-700 <?= is_active('/custom-fields') ? 'active' : '' ?>">پارامترهای سفارش</a>
+                    </li>
+                    <li>
+                        <a href="/settings" class="sidebar-link block py-2 px-4 rounded hover:bg-gray-700 <?= is_active('/settings') ? 'active' : '' ?>">تنظیمات</a>
+                    </li>
                 </ul>
             </nav>
         </aside>
@@ -70,6 +77,7 @@
                 </div>
             </header>
             <main class="flex-1 p-8 overflow-y-auto">
+                <?php partial('error_message'); ?>
                 {{ content }}
             </main>
         </div>

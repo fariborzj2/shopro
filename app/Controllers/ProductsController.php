@@ -48,7 +48,7 @@ class ProductsController
     {
         // Basic validation
         if (empty($_POST['name_fa']) || empty($_POST['price']) || empty($_POST['category_id'])) {
-            die('Name, price, and category are required.');
+            redirect_back_with_error('Name, price, and category are required.');
         }
 
         Product::create([
@@ -74,7 +74,7 @@ class ProductsController
     {
         $product = Product::find($id);
         if (!$product) {
-            die('Product not found.');
+            redirect_back_with_error('Product not found.');
         }
 
         $categories = Category::all();
@@ -94,8 +94,12 @@ class ProductsController
     public function update($id)
     {
         // Basic validation
+        $product = Product::find($id);
+        if (!$product) {
+            redirect_back_with_error('Product not found.');
+        }
         if (empty($_POST['name_fa']) || empty($_POST['price']) || empty($_POST['category_id'])) {
-            die('Name, price, and category are required.');
+            redirect_back_with_error('Name, price, and category are required.');
         }
 
         Product::update($id, [

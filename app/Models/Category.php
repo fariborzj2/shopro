@@ -42,16 +42,18 @@ class Category
      */
     public static function create($data)
     {
+        $db = Database::getConnection();
         $sql = "INSERT INTO categories (parent_id, name_fa, name_en, status, position)
                 VALUES (:parent_id, :name_fa, :name_en, :status, :position)";
-        Database::query($sql, [
+        $stmt = $db->prepare($sql);
+        $stmt->execute([
             'parent_id' => $data['parent_id'] ?: null,
             'name_fa' => $data['name_fa'],
             'name_en' => $data['name_en'],
             'status' => $data['status'],
             'position' => $data['position'] ?? 0
         ]);
-        return true;
+        return $db->lastInsertId();
     }
 
     /**
@@ -123,3 +125,59 @@ class Category
         return true;
     }
 }
+
+    /**
+     * Get the IDs of custom fields attached to a category.
+     *
+     * @param int $categoryId
+     * @return array
+     */
+    public static function getAttachedCustomFieldIds($categoryId)
+    {
+        $db = Database::getConnection();
+        $stmt = $db->prepare('SELECT field_id FROM category_custom_field WHERE category_id = ?');
+        $stmt->execute([$categoryId]);
+        return $stmt->fetchAll(\PDO::FETCH_COLUMN, 0); // Returns a flat array of IDs
+    }
+
+    /**
+     * Sync the custom fields for a category.
+     * Deletes old associations and inserts new ones.
+     *
+     * @param int $categoryId
+     * @param array $fieldIds
+     * @return bool
+     */
+    public static function syncCustomFields($categoryId, array $fieldIds)
+    {
+        $db = Database::getConnection();
+        $db->beginTransaction();
+
+        try {
+            // Delete old associations
+            $stmtDelete = $db->prepare('DELETE FROM category_custom_field WHERE category_id = ?');
+            $stmtDelete->execute([$categoryId]);
+
+            // Insert new associations if any
+            if (!empty($fieldIds)) {
+                $sqlInsert = "INSERT INTO category_custom_field (category_id, field_id) VALUES ";
+                $placeholders = [];
+                $values = [];
+                foreach ($fieldIds as $fieldId) {
+                    $placeholders[] = '(?, ?)';
+                    $values[] = $categoryId;
+                    $values[] = (int)$fieldId;
+                }
+                $sqlInsert .= implode(', ', $placeholders);
+                $stmtInsert = $db->prepare($sqlInsert);
+                $stmtInsert->execute($values);
+            }
+
+            $db->commit();
+            return true;
+        } catch (\Exception $e) {
+            $db->rollBack();
+            // In a real app, log the error: error_log($e->getMessage());
+            return false;
+        }
+    }

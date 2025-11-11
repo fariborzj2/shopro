@@ -35,7 +35,7 @@ class UsersController
     {
         // Basic validation
         if (empty($_POST['name']) || empty($_POST['mobile'])) {
-            die('Name and mobile are required.');
+            redirect_back_with_error('Name and mobile are required.');
         }
 
         User::create([
@@ -58,7 +58,7 @@ class UsersController
         $user = User::find($id);
         if (!$user) {
             // Handle user not found
-            die('User not found.');
+            redirect_back_with_error('User not found.');
         }
 
         return view('main', 'users/edit', [
@@ -74,9 +74,14 @@ class UsersController
      */
     public function update($id)
     {
+        $user = User::find($id);
+        if (!$user) {
+            redirect_back_with_error('User not found.');
+        }
+
         // Basic validation
         if (empty($_POST['name']) || empty($_POST['mobile'])) {
-            die('Name and mobile are required.');
+            redirect_back_with_error('Name and mobile are required.');
         }
 
         User::update($id, [

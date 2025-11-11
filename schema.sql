@@ -67,6 +67,7 @@ CREATE TABLE `orders` (
   `quantity` INT NOT NULL,
   `payment_method` VARCHAR(50),
   `delivery_address` TEXT,
+  `custom_fields_data` JSON,
   FOREIGN KEY (`user_id`) REFERENCES `users`(`id`),
   FOREIGN KEY (`product_id`) REFERENCES `products`(`id`),
   FOREIGN KEY (`category_id`) REFERENCES `categories`(`id`)
@@ -139,8 +140,45 @@ CREATE TABLE `blog_post_tags` (
   FOREIGN KEY (`tag_id`) REFERENCES `blog_tags`(`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+-- ----------------------------
+-- Table structure for settings
+-- ----------------------------
+DROP TABLE IF EXISTS `settings`;
+CREATE TABLE `settings` (
+  `setting_key` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `setting_value` text COLLATE utf8mb4_unicode_ci,
+  PRIMARY KEY (`setting_key`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 -- Insert some sample data for users
 INSERT INTO `users` (`name`, `mobile`, `status`) VALUES
 ('علی رضایی', '09123456789', 'active'),
 ('مریم احمدی', '09129876543', 'inactive'),
 ('رضا حسینی', '09121112233', 'banned');
+
+-- Custom Order Fields Table
+CREATE TABLE `custom_order_fields` (
+  `id` INT PRIMARY KEY AUTO_INCREMENT,
+  `name` VARCHAR(255) NOT NULL,
+  `label_fa` VARCHAR(255) NOT NULL,
+  `type` ENUM('text', 'textarea', 'number', 'select', 'radio', 'checkbox', 'date', 'file', 'color', 'wysiwyg') NOT NULL,
+  `options` TEXT COMMENT 'JSON encoded options for select, radio, checkbox',
+  `is_required` BOOLEAN DEFAULT FALSE,
+  `default_value` VARCHAR(255),
+  `placeholder` VARCHAR(255),
+  `validation_rules` VARCHAR(255) COMMENT 'e.g., regex:/^[0-9]+$/|min:5|max:10',
+  `help_text` VARCHAR(255),
+  `position` INT DEFAULT 0,
+  `status` ENUM('active', 'inactive') NOT NULL DEFAULT 'active',
+  `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Category Custom Fields (Pivot Table)
+CREATE TABLE `category_custom_field` (
+  `category_id` INT NOT NULL,
+  `field_id` INT NOT NULL,
+  PRIMARY KEY (`category_id`, `field_id`),
+  FOREIGN KEY (`category_id`) REFERENCES `categories`(`id`) ON DELETE CASCADE,
+  FOREIGN KEY (`field_id`) REFERENCES `custom_order_fields`(`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

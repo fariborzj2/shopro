@@ -60,3 +60,53 @@ function partial($partial, $data = [])
     extract($data);
     require __DIR__ . "/../../views/partials/{$partial}.php";
 }
+
+/**
+ * Generate and store a CSRF token if one doesn't exist.
+ *
+ * @return string
+ */
+function csrf_token()
+{
+    if (empty($_SESSION['csrf_token'])) {
+        $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+    }
+    return $_SESSION['csrf_token'];
+}
+
+/**
+ * Verify the CSRF token.
+ *
+ * @return bool
+ */
+function verify_csrf_token()
+{
+    $token = null;
+    if (isset($_POST['csrf_token'])) {
+        $token = $_POST['csrf_token'];
+    } elseif (isset($_SERVER['HTTP_X_CSRF_TOKEN'])) {
+        $token = $_SERVER['HTTP_X_CSRF_TOKEN'];
+    }
+
+    if ($token && isset($_SESSION['csrf_token']) && hash_equals($_SESSION['csrf_token'], $token)) {
+        // Invalidate the token after use for AJAX requests as well for better security
+        unset($_SESSION['csrf_token']);
+        return true;
+    }
+
+    return false;
+}
+
+/**
+ * Redirect back to the previous page with an error message.
+ *
+ * @param string $message
+ */
+function redirect_back_with_error($message)
+{
+    $referer = $_SERVER['HTTP_REFERER'] ?? '/';
+    // Append error message to the URL
+    $url = $referer . (strpos($referer, '?') === false ? '?' : '&') . 'error_msg=' . urlencode($message);
+    header("Location: " . $url);
+    exit();
+}

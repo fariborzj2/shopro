@@ -42,6 +42,17 @@ if (!isset($_SESSION['admin_id']) && !$is_login_page) {
 require __DIR__ . '/../app/Core/helpers.php';
 require __DIR__ . '/../app/Core/jdf.php';
 
+// CSRF Protection for POST requests
+if (Request::method() === 'POST') {
+    if (!verify_csrf_token()) {
+        // Handle invalid token.
+        http_response_code(403);
+        echo "<h1>403 Forbidden</h1><p>Invalid CSRF token.</p>";
+        exit();
+    }
+}
+
+
 try {
     $uri = Request::uri();
     $method = Request::method();
@@ -50,5 +61,10 @@ try {
         ->dispatch($uri, $method);
 
 } catch (Exception $e) {
-    die($e->getMessage());
+    // In a real app, you would log the error.
+    http_response_code(500);
+    return view('main', 'errors/500', [
+        'title' => 'خطای سرور',
+        'message' => $e->getMessage()
+    ]);
 }

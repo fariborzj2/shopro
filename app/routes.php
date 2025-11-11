@@ -17,7 +17,7 @@ $router->get('/users/create', 'UsersController@create');
 $router->post('/users/store', 'UsersController@store');
 $router->get('/users/edit/{id}', 'UsersController@edit');
 $router->post('/users/update/{id}', 'UsersController@update');
-$router->get('/users/delete/{id}', 'UsersController@delete');
+$router->post('/users/delete/{id}', 'UsersController@delete');
 
 
 // Categories
@@ -26,7 +26,7 @@ $router->get('/categories/create', 'CategoriesController@create');
 $router->post('/categories/store', 'CategoriesController@store');
 $router->get('/categories/edit/{id}', 'CategoriesController@edit');
 $router->post('/categories/update/{id}', 'CategoriesController@update');
-$router->get('/categories/delete/{id}', 'CategoriesController@delete');
+$router->post('/categories/delete/{id}', 'CategoriesController@delete');
 $router->post('/categories/reorder', 'CategoriesController@reorder');
 
 
@@ -36,7 +36,7 @@ $router->get('/products/create', 'ProductsController@create');
 $router->post('/products/store', 'ProductsController@store');
 $router->get('/products/edit/{id}', 'ProductsController@edit');
 $router->post('/products/update/{id}', 'ProductsController@update');
-$router->get('/products/delete/{id}', 'ProductsController@delete');
+$router->post('/products/delete/{id}', 'ProductsController@delete');
 $router->post('/products/reorder', 'ProductsController@reorder');
 
 
@@ -50,13 +50,18 @@ $router->post('/orders/update_status/{id}', 'OrdersController@updateStatus');
 $router->get('/admins', 'AdminsController@index');
 
 
+// Settings
+$router->get('/settings', 'SettingsController@index');
+$router->post('/settings', 'SettingsController@update');
+
+
 // Blog Categories
 $router->get('/blog/categories', 'BlogCategoriesController@index');
 $router->get('/blog/categories/create', 'BlogCategoriesController@create');
 $router->post('/blog/categories/store', 'BlogCategoriesController@store');
 $router->get('/blog/categories/edit/{id}', 'BlogCategoriesController@edit');
 $router->post('/blog/categories/update/{id}', 'BlogCategoriesController@update');
-$router->get('/blog/categories/delete/{id}', 'BlogCategoriesController@delete');
+$router->post('/blog/categories/delete/{id}', 'BlogCategoriesController@delete');
 
 
 // Blog Tags
@@ -65,7 +70,7 @@ $router->get('/blog/tags/create', 'BlogTagsController@create');
 $router->post('/blog/tags/store', 'BlogTagsController@store');
 $router->get('/blog/tags/edit/{id}', 'BlogTagsController@edit');
 $router->post('/blog/tags/update/{id}', 'BlogTagsController@update');
-$router->get('/blog/tags/delete/{id}', 'BlogTagsController@delete');
+$router->post('/blog/tags/delete/{id}', 'BlogTagsController@delete');
 
 
 // Blog Posts
@@ -75,4 +80,12 @@ $router->get('/blog/posts/create', 'BlogPostsController@create');
 $router->post('/blog/posts/store', 'BlogPostsController@store');
 $router->get('/blog/posts/edit/{id}', 'BlogPostsController@edit');
 $router->post('/blog/posts/update/{id}', 'BlogPostsController@update');
-$router->get('/blog/posts/delete/{id}', 'BlogPostsController@delete');
+$router->post('/blog/posts/delete/{id}', 'BlogPostsController@delete');
+
+// Custom Order Fields
+$router->get('/custom-fields', 'CustomOrderFieldsController@index');
+$router->get('/custom-fields/create', 'CustomOrderFieldsController@create');
+$router->post('/custom-fields/store', 'CustomOrderFieldsController@store');
+$router->get('/custom-fields/edit/{id}', 'CustomOrderFieldsController@edit');
+$router->post('/custom-fields/update/{id}', 'CustomOrderFieldsController@update');
+$router->post('/custom-fields/delete/{id}', 'CustomOrderFieldsController@delete');
