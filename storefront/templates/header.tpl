@@ -19,7 +19,7 @@
         <!-- ===== Header ===== -->
         <header class="flex justify-between items-center py-6">
             <div>
-                <a href="index.php" class="text-2xl font-bold text-gray-900">لوگو</a>
+                <a href="/" class="text-2xl font-bold text-gray-900">لوگو</a>
             </div>
             <div>
                 <a href="#" class="bg-gray-800 text-white px-5 py-2 rounded-lg text-sm font-semibold hover:bg-gray-900 transition-colors">

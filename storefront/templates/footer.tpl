@@ -8,10 +8,10 @@
                     <div class="space-y-4">
                         <h4 class="font-semibold text-gray-800">لینک‌های مهم</h4>
                         <ul class="space-y-2">
-                            <li><a href="page.php?slug=about-us" class="text-gray-600 hover:text-gray-900">درباره ما</a></li>
-                            <li><a href="page.php?slug=terms" class="text-gray-600 hover:text-gray-900">قوانین و مقررات</a></li>
-                            <li><a href="page.php?slug=contact-us" class="text-gray-600 hover:text-gray-900">تماس با ما</a></li>
-                            <li><a href="page.php?slug=faq" class="text-gray-600 hover:text-gray-900">سوالات متداول</a></li>
+                            <li><a href="/page/about-us" class="text-gray-600 hover:text-gray-900">درباره ما</a></li>
+                            <li><a href="/page/terms" class="text-gray-600 hover:text-gray-900">قوانین و مقررات</a></li>
+                            <li><a href="/page/contact-us" class="text-gray-600 hover:text-gray-900">تماس با ما</a></li>
+                            <li><a href="/page/faq" class="text-gray-600 hover:text-gray-900">سوالات متداول</a></li>
                         </ul>
                     </div>
                     <div class="space-y-4">

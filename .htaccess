@@ -1,0 +1,32 @@
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteBase /
+
+    # ----------------------------------------------------------------------
+    # Security Settings
+    # ----------------------------------------------------------------------
+    Options -Indexes
+
+    # Protect sensitive files - we will use separate .htaccess files in subdirectories for more robust protection.
+    <Files ~ "^(composer\.(json|lock)|config\.php|README\.md|schema\.sql)$">
+        Require all denied
+    </Files>
+
+    # ----------------------------------------------------------------------
+    # Storefront Routing Rules
+    # ----------------------------------------------------------------------
+    RewriteRule ^page/([a-zA-Z0-9_-]+)$ storefront/page.php?slug=$1 [L]
+    RewriteRule ^$ storefront/index.php [L]
+
+    # Allow access to storefront assets (if any are added later, e.g. css, js)
+    RewriteCond %{REQUEST_URI} ^/storefront/
+    RewriteRule ^ - [L]
+
+    # ----------------------------------------------------------------------
+    # Admin Panel (Backend) Routing
+    # ----------------------------------------------------------------------
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule ^(.*)$ public/index.php?url=$1 [QSA,L]
+
+</IfModule>
