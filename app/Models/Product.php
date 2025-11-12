@@ -146,4 +146,26 @@ class Product
         Database::query($sql, $params);
         return true;
     }
+
+    /**
+     * Get active products formatted for the storefront API.
+     *
+     * @return array
+     */
+    public static function getActiveProductsForStore()
+    {
+        $sql = "
+            SELECT
+                p.id,
+                p.name_fa as name,
+                FORMAT(p.price, 0) as price,
+                p.category_id as category,
+                p.image_url as imageUrl
+            FROM products p
+            WHERE p.status = 'available'
+            ORDER BY p.position ASC
+        ";
+        $stmt = Database::query($sql);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
 }

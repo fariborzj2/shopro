@@ -4,25 +4,23 @@
 header('Content-Type: application/json');
 
 // --- Basic Security Checks ---
-// This is a simplified check. In a real-world scenario, you MUST implement
-// robust authentication and authorization to ensure only logged-in admins can upload.
-/*
+// This check is now ACTIVE. Ensure your application sets this session
+// variable upon successful admin login.
 session_start();
 if (!isset($_SESSION['admin_id'])) {
     http_response_code(403);
     echo json_encode(['error' => 'Authentication required.']);
     exit;
 }
-*/
 
 // --- Configuration ---
-// The path is relative to the project root, but the URL should be absolute from the domain.
 $uploadDir = __DIR__ . '/../uploads/images/';
 $uploadUrl = '/uploads/images/';
 
 // --- Ensure the upload directory exists ---
 if (!is_dir($uploadDir)) {
-    if (!mkdir($uploadDir, 0777, true)) {
+    // Create directory with secure permissions (0755)
+    if (!mkdir($uploadDir, 0755, true)) {
         http_response_code(500);
         echo json_encode(['error' => 'Failed to create upload directory.']);
         exit;
@@ -54,7 +52,7 @@ if ($fileError !== UPLOAD_ERR_OK) {
 // --- Validation ---
 // 1. File Size
 if ($fileSize > $maxFileSize) {
-    http_response_code(413); // Payload Too Large
+    http_response_code(413);
     echo json_encode(['error' => 'File size exceeds the limit of 5 MB.']);
     exit;
 }
@@ -62,12 +60,12 @@ if ($fileSize > $maxFileSize) {
 // 2. File Extension
 $fileExtension = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
 if (!in_array($fileExtension, $allowedExtensions)) {
-    http_response_code(415); // Unsupported Media Type
+    http_response_code(415);
     echo json_encode(['error' => 'Invalid file type. Allowed types: ' . implode(', ', $allowedExtensions)]);
     exit;
 }
 
-// 3. MIME Type (more reliable than extension)
+// 3. MIME Type
 $finfo = finfo_open(FILEINFO_MIME_TYPE);
 $mimeType = finfo_file($finfo, $fileTmpName);
 finfo_close($finfo);
@@ -85,18 +83,13 @@ if (getimagesize($fileTmpName) === false) {
     exit;
 }
 
-
-// --- Generate a unique filename to prevent overwriting ---
-// Example: timestamp_randomstring.extension
+// --- Generate a unique filename ---
 $newFileName = time() . '_' . bin2hex(random_bytes(8)) . '.' . $fileExtension;
 $destination = $uploadDir . $newFileName;
 
 // --- Move the file ---
 if (move_uploaded_file($fileTmpName, $destination)) {
-    // The URL that TinyMCE needs to embed the image.
     $location = $uploadUrl . $newFileName;
-
-    // TinyMCE's expected JSON response
     echo json_encode(['location' => $location]);
 } else {
     http_response_code(500);

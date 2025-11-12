@@ -89,3 +89,6 @@ $router->post('/custom-fields/store', 'CustomOrderFieldsController@store');
 $router->get('/custom-fields/edit/{id}', 'CustomOrderFieldsController@edit');
 $router->post('/custom-fields/update/{id}', 'CustomOrderFieldsController@update');
 $router->post('/custom-fields/delete/{id}', 'CustomOrderFieldsController@delete');
+
+// Storefront API
+$router->get('/api/store/data', 'StoreController@getStoreData');
