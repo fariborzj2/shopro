@@ -3,7 +3,7 @@
 <h1 class="text-3xl font-bold mb-6">مدیریت صفحات</h1>
 
 <div class="mb-4">
-    <a href="/pages/create" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+    <a href="<?= url('/pages/create') ?>" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
         ایجاد صفحه جدید
     </a>
 </div>
@@ -34,8 +34,8 @@
                         </span>
                     </td>
                     <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm text-center">
-                        <a href="/pages/edit/<?= $page['id'] ?>" class="text-indigo-600 hover:text-indigo-900">ویرایش</a>
-                        <form action="/pages/delete/<?= $page['id'] ?>" method="POST" class="inline-block ml-4" onsubmit="return confirm('آیا از حذف این صفحه مطمئن هستید؟');">
+                        <a href="<?= url('/pages/edit/' . $page['id']) ?>" class="text-indigo-600 hover:text-indigo-900">ویرایش</a>
+                        <form action="<?= url('/pages/delete/' . $page['id']) ?>" method="POST" class="inline-block ml-4" onsubmit="return confirm('آیا از حذف این صفحه مطمئن هستید؟');">
                             <button type="submit" class="text-red-600 hover:text-red-900">حذف</button>
                         </form>
                     </td>

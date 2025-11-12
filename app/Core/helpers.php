@@ -46,7 +46,12 @@ function view($layout, $view, $data = [])
  */
 function is_active($path)
 {
-    return Request::uri() === trim($path, '/');
+    $current_uri = trim(Request::uri(), '/');
+    // Special handling for admin dashboard
+    if ($path === '/' || $path === '/dashboard') {
+        return $current_uri === 'admin' || $current_uri === 'admin/dashboard';
+    }
+    return str_starts_with($current_uri, 'admin' . rtrim($path, '/'));
 }
 
 /**
@@ -109,4 +114,17 @@ function redirect_back_with_error($message)
     $url = $referer . (strpos($referer, '?') === false ? '?' : '&') . 'error_msg=' . urlencode($message);
     header("Location: " . $url);
     exit();
+}
+
+/**
+ * Generate a clean URL for the admin panel.
+ *
+ * @param string $path
+ * @return string
+ */
+function url($path)
+{
+    // Ensure the path starts with a slash and is prefixed with /admin
+    $path = ltrim($path, '/');
+    return "/admin/{$path}";
 }

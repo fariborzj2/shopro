@@ -3,7 +3,7 @@
 <h1 class="text-3xl font-bold mb-6">مدیریت سوالات متداول</h1>
 
 <div class="mb-4">
-    <a href="/faq/create" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+    <a href="<?= url('/faq/create') ?>" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
         افزودن سوال جدید
     </a>
 </div>
@@ -34,8 +34,8 @@
                         </span>
                     </td>
                     <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm text-center">
-                        <a href="/faq/edit/<?= $item['id'] ?>" class="text-indigo-600 hover:text-indigo-900">ویرایش</a>
-                        <form action="/faq/delete/<?= $item['id'] ?>" method="POST" class="inline-block ml-4" onsubmit="return confirm('آیا از حذف این سوال مطمئن هستید؟');">
+                        <a href="<?= url('/faq/edit/' . $item['id']) ?>" class="text-indigo-600 hover:text-indigo-900">ویرایش</a>
+                        <form action="<?= url('/faq/delete/' . $item['id']) ?>" method="POST" class="inline-block ml-4" onsubmit="return confirm('آیا از حذف این سوال مطمئن هستید؟');">
                             <button type="submit" class="text-red-600 hover:text-red-900">حذف</button>
                         </form>
                     </td>

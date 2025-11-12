@@ -5,26 +5,24 @@
     # ----------------------------------------------------------------------
     # Security Settings
     # ----------------------------------------------------------------------
+    # Disable directory browsing
     Options -Indexes
 
-    # Protect sensitive files - we will use separate .htaccess files in subdirectories for more robust protection.
-    <Files ~ "^(composer\.(json|lock)|config\.php|README\.md|schema\.sql)$">
+    # Protect sensitive files from direct web access
+    <Files ~ "^(composer\.(json|lock)|config\.php|README\.md|schema\.sql|package\.json)$">
+        Require all denied
+    </Files>
+
+    # Deny access to .htaccess itself
+    <Files .htaccess>
         Require all denied
     </Files>
 
     # ----------------------------------------------------------------------
-    # Storefront Routing Rules
+    # Global Front Controller
     # ----------------------------------------------------------------------
-    RewriteRule ^page/([a-zA-Z0-9_-]+)$ storefront/page.php?slug=$1 [L]
-    RewriteRule ^$ storefront/index.php [L]
-
-    # Allow access to storefront assets (if any are added later, e.g. css, js)
-    RewriteCond %{REQUEST_URI} ^/storefront/
-    RewriteRule ^ - [L]
-
-    # ----------------------------------------------------------------------
-    # Admin Panel (Backend) Routing
-    # ----------------------------------------------------------------------
+    # Send all requests for non-existent files or directories to the main router.
+    # This allows for clean URLs for both the storefront and the admin panel.
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteCond %{REQUEST_FILENAME} !-d
     RewriteRule ^(.*)$ public/index.php?url=$1 [QSA,L]

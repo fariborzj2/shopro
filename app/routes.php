@@ -2,106 +2,117 @@
 
 // app/routes.php
 
+// ----------------------------------------------------------------------
+// Storefront Routes
+// ----------------------------------------------------------------------
+$router->get('/', 'StorefrontController@home');
+$router->get('/page/{slug}', 'StorefrontController@page');
+
+
+// ----------------------------------------------------------------------
+// Admin Panel Routes
+// ----------------------------------------------------------------------
+
 // Auth
-$router->get('/login', 'LoginController@index');
-$router->post('/login', 'LoginController@login');
-$router->get('/logout', 'LoginController@logout');
+$router->get('/admin/login', 'LoginController@index');
+$router->post('/admin/login', 'LoginController@login');
+$router->get('/admin/logout', 'LoginController@logout');
 
 // Dashboard
-$router->get('/', 'DashboardController@index');
-$router->get('/dashboard', 'DashboardController@index');
+$router->get('/admin', 'DashboardController@index');
+$router->get('/admin/dashboard', 'DashboardController@index');
 
 // Users
-$router->get('/users', 'UsersController@index');
-$router->get('/users/create', 'UsersController@create');
-$router->post('/users/store', 'UsersController@store');
-$router->get('/users/edit/{id}', 'UsersController@edit');
-$router->post('/users/update/{id}', 'UsersController@update');
-$router->post('/users/delete/{id}', 'UsersController@delete');
+$router->get('/admin/users', 'UsersController@index');
+$router->get('/admin/users/create', 'UsersController@create');
+$router->post('/admin/users/store', 'UsersController@store');
+$router->get('/admin/users/edit/{id}', 'UsersController@edit');
+$router->post('/admin/users/update/{id}', 'UsersController@update');
+$router->post('/admin/users/delete/{id}', 'UsersController@delete');
 
 
 // Categories
-$router->get('/categories', 'CategoriesController@index');
-$router->get('/categories/create', 'CategoriesController@create');
-$router->post('/categories/store', 'CategoriesController@store');
-$router->get('/categories/edit/{id}', 'CategoriesController@edit');
-$router->post('/categories/update/{id}', 'CategoriesController@update');
-$router->post('/categories/delete/{id}', 'CategoriesController@delete');
-$router->post('/categories/reorder', 'CategoriesController@reorder');
+$router->get('/admin/categories', 'CategoriesController@index');
+$router->get('/admin/categories/create', 'CategoriesController@create');
+$router->post('/admin/categories/store', 'CategoriesController@store');
+$router->get('/admin/categories/edit/{id}', 'CategoriesController@edit');
+$router->post('/admin/categories/update/{id}', 'CategoriesController@update');
+$router->post('/admin/categories/delete/{id}', 'CategoriesController@delete');
+$router->post('/admin/categories/reorder', 'CategoriesController@reorder');
 
 
 // Products
-$router->get('/products', 'ProductsController@index');
-$router->get('/products/create', 'ProductsController@create');
-$router->post('/products/store', 'ProductsController@store');
-$router->get('/products/edit/{id}', 'ProductsController@edit');
-$router->post('/products/update/{id}', 'ProductsController@update');
-$router->post('/products/delete/{id}', 'ProductsController@delete');
-$router->post('/products/reorder', 'ProductsController@reorder');
+$router->get('/admin/products', 'ProductsController@index');
+$router->get('/admin/products/create', 'ProductsController@create');
+$router->post('/admin/products/store', 'ProductsController@store');
+$router->get('/admin/products/edit/{id}', 'ProductsController@edit');
+$router->post('/admin/products/update/{id}', 'ProductsController@update');
+$router->post('/admin/products/delete/{id}', 'ProductsController@delete');
+$router->post('/admin/products/reorder', 'ProductsController@reorder');
 
 
 // Orders
-$router->get('/orders', 'OrdersController@index');
-$router->get('/orders/show/{id}', 'OrdersController@show');
-$router->post('/orders/update_status/{id}', 'OrdersController@updateStatus');
+$router->get('/admin/orders', 'OrdersController@index');
+$router->get('/admin/orders/show/{id}', 'OrdersController@show');
+$router->post('/admin/orders/update_status/{id}', 'OrdersController@updateStatus');
 
 
 // Admins
-$router->get('/admins', 'AdminsController@index');
+$router->get('/admin/admins', 'AdminsController@index');
 
 
 // Settings
-$router->get('/settings', 'SettingsController@index');
-$router->post('/settings', 'SettingsController@update');
+$router->get('/admin/settings', 'SettingsController@index');
+$router->post('/admin/settings', 'SettingsController@update');
 
 
 // Blog Categories
-$router->get('/blog/categories', 'BlogCategoriesController@index');
-$router->get('/blog/categories/create', 'BlogCategoriesController@create');
-$router->post('/blog/categories/store', 'BlogCategoriesController@store');
-$router->get('/blog/categories/edit/{id}', 'BlogCategoriesController@edit');
-$router->post('/blog/categories/update/{id}', 'BlogCategoriesController@update');
-$router->post('/blog/categories/delete/{id}', 'BlogCategoriesController@delete');
+$router->get('/admin/blog/categories', 'BlogCategoriesController@index');
+$router->get('/admin/blog/categories/create', 'BlogCategoriesController@create');
+$router->post('/admin/blog/categories/store', 'BlogCategoriesController@store');
+$router->get('/admin/blog/categories/edit/{id}', 'BlogCategoriesController@edit');
+$router->post('/admin/blog/categories/update/{id}', 'BlogCategoriesController@update');
+$router->post('/admin/blog/categories/delete/{id}', 'BlogCategoriesController@delete');
 
 
 // Blog Tags
-$router->get('/blog/tags', 'BlogTagsController@index');
-$router->get('/blog/tags/create', 'BlogTagsController@create');
-$router->post('/blog/tags/store', 'BlogTagsController@store');
-$router->get('/blog/tags/edit/{id}', 'BlogTagsController@edit');
-$router->post('/blog/tags/update/{id}', 'BlogTagsController@update');
-$router->post('/blog/tags/delete/{id}', 'BlogTagsController@delete');
+$router->get('/admin/blog/tags', 'BlogTagsController@index');
+$router->get('/admin/blog/tags/create', 'BlogTagsController@create');
+$router->post('/admin/blog/tags/store', 'BlogTagsController@store');
+$router->get('/admin/blog/tags/edit/{id}', 'BlogTagsController@edit');
+$router->post('/admin/blog/tags/update/{id}', 'BlogTagsController@update');
+$router->post('/admin/blog/tags/delete/{id}', 'BlogTagsController@delete');
 
 
 // Blog Posts
-$router->get('/blog', 'BlogPostsController@index');
-$router->get('/blog/posts', 'BlogPostsController@index');
-$router->get('/blog/posts/create', 'BlogPostsController@create');
-$router->post('/blog/posts/store', 'BlogPostsController@store');
-$router->get('/blog/posts/edit/{id}', 'BlogPostsController@edit');
-$router->post('/blog/posts/update/{id}', 'BlogPostsController@update');
-$router->post('/blog/posts/delete/{id}', 'BlogPostsController@delete');
+$router->get('/admin/blog', 'BlogPostsController@index');
+$router->get('/admin/blog/posts', 'BlogPostsController@index');
+$router->get('/admin/blog/posts/create', 'BlogPostsController@create');
+$router->post('/admin/blog/posts/store', 'BlogPostsController@store');
+$router->get('/admin/blog/posts/edit/{id}', 'BlogPostsController@edit');
+$router->post('/admin/blog/posts/update/{id}', 'BlogPostsController@update');
+$router->post('/admin/blog/posts/delete/{id}', 'BlogPostsController@delete');
 
 // Custom Order Fields
-$router->get('/custom-fields', 'CustomOrderFieldsController@index');
-$router->get('/custom-fields/create', 'CustomOrderFieldsController@create');
-$router->post('/custom-fields/store', 'CustomOrderFieldsController@store');
-$router->get('/custom-fields/edit/{id}', 'CustomOrderFieldsController@edit');
-$router->post('/custom-fields/update/{id}', 'CustomOrderFieldsController@update');
-$router->post('/custom-fields/delete/{id}', 'CustomOrderFieldsController@delete');
+$router->get('/admin/custom-fields', 'CustomOrderFieldsController@index');
+$router->get('/admin/custom-fields/create', 'CustomOrderFieldsController@create');
+$router->post('/admin/custom-fields/store', 'CustomOrderFieldsController@store');
+$router->get('/admin/custom-fields/edit/{id}', 'CustomOrderFieldsController@edit');
+$router->post('/admin/custom-fields/update/{id}', 'CustomOrderFieldsController@update');
+$router->post('/admin/custom-fields/delete/{id}', 'CustomOrderFieldsController@delete');
 
 // Pages Management
-$router->get('/pages', 'PagesController@index');
-$router->get('/pages/create', 'PagesController@create');
-$router->post('/pages/store', 'PagesController@store');
-$router->get('/pages/edit/{id}', 'PagesController@edit');
-$router->post('/pages/update/{id}', 'PagesController@update');
-$router->post('/pages/delete/{id}', 'PagesController@delete');
+$router->get('/admin/pages', 'PagesController@index');
+$router->get('/admin/pages/create', 'PagesController@create');
+$router->post('/admin/pages/store', 'PagesController@store');
+$router->get('/admin/pages/edit/{id}', 'PagesController@edit');
+$router->post('/admin/pages/update/{id}', 'PagesController@update');
+$router->post('/admin/pages/delete/{id}', 'PagesController@delete');
 
 // FAQ Management
-$router->get('/faq', 'FaqController@index');
-$router->get('/faq/create', 'FaqController@create');
-$router->post('/faq/store', 'FaqController@store');
-$router->get('/faq/edit/{id}', 'FaqController@edit');
-$router->post('/faq/update/{id}', 'FaqController@update');
-$router->post('/faq/delete/{id}', 'FaqController@delete');
+$router->get('/admin/faq', 'FaqController@index');
+$router->get('/admin/faq/create', 'FaqController@create');
+$router->post('/admin/faq/store', 'FaqController@store');
+$router->get('/admin/faq/edit/{id}', 'FaqController@edit');
+$router->post('/admin/faq/update/{id}', 'FaqController@update');
+$router->post('/admin/faq/delete/{id}', 'FaqController@delete');

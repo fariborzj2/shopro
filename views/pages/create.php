@@ -3,7 +3,7 @@
 <h1 class="text-3xl font-bold mb-6">ایجاد صفحه جدید</h1>
 
 <div class="bg-white shadow-md rounded-lg p-8">
-    <form action="/pages/store" method="POST">
+    <form action="<?= url('/pages/store') ?>" method="POST">
         <div class="mb-4">
             <label for="title" class="block text-gray-700 text-sm font-bold mb-2">عنوان</label>
             <input type="text" id="title" name="title" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
@@ -29,7 +29,7 @@
 
         <div class="flex items-center justify-between mt-6">
             <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">ذخیره</button>
-            <a href="/pages" class="text-gray-600">انصراف</a>
+            <a href="<?= url('/pages') ?>" class="text-gray-600">انصراف</a>
         </div>
     </form>
 </div>

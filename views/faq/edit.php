@@ -3,7 +3,7 @@
 <h1 class="text-3xl font-bold mb-6">ویرایش سوال</h1>
 
 <div class="bg-white shadow-md rounded-lg p-8">
-    <form action="/faq/update/<?= $item['id'] ?>" method="POST">
+    <form action="<?= url('/faq/update/' . $item['id']) ?>" method="POST">
         <div class="mb-4">
             <label for="question" class="block text-gray-700 text-sm font-bold mb-2">سوال</label>
             <input type="text" id="question" name="question" value="<?= htmlspecialchars($item['question']) ?>" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700" required>
@@ -29,7 +29,7 @@
 
         <div class="flex items-center justify-between mt-6">
             <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">به‌روزرسانی</button>
-            <a href="/faq" class="text-gray-600">انصراف</a>
+            <a href="<?= url('/faq') ?>" class="text-gray-600">انصراف</a>
         </div>
     </form>
 </div>
