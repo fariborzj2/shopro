@@ -97,3 +97,11 @@ $router->post('/pages/store', 'PagesController@store');
 $router->get('/pages/edit/{id}', 'PagesController@edit');
 $router->post('/pages/update/{id}', 'PagesController@update');
 $router->post('/pages/delete/{id}', 'PagesController@delete');
+
+// FAQ Management
+$router->get('/faq', 'FaqController@index');
+$router->get('/faq/create', 'FaqController@create');
+$router->post('/faq/store', 'FaqController@store');
+$router->get('/faq/edit/{id}', 'FaqController@edit');
+$router->post('/faq/update/{id}', 'FaqController@update');
+$router->post('/faq/delete/{id}', 'FaqController@delete');
