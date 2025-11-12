@@ -1,0 +1,8 @@
+# Log files
+*.log
+
+# Composer dependencies
+/vendor/
+
+# Configuration file
+config.php
