@@ -87,8 +87,6 @@ class Category
      */
     public static function delete($id)
     {
-        // Note: Depending on DB constraints, deleting a parent category might fail.
-        // This simple delete assumes child categories will be handled (e.g., set parent_id to NULL).
         Database::query("DELETE FROM categories WHERE id = :id", ['id' => $id]);
         return true;
     }
@@ -124,7 +122,6 @@ class Category
         Database::query($sql, $params);
         return true;
     }
-}
 
     /**
      * Get the IDs of custom fields attached to a category.
@@ -137,12 +134,11 @@ class Category
         $db = Database::getConnection();
         $stmt = $db->prepare('SELECT field_id FROM category_custom_field WHERE category_id = ?');
         $stmt->execute([$categoryId]);
-        return $stmt->fetchAll(\PDO::FETCH_COLUMN, 0); // Returns a flat array of IDs
+        return $stmt->fetchAll(\PDO::FETCH_COLUMN, 0);
     }
 
     /**
      * Sync the custom fields for a category.
-     * Deletes old associations and inserts new ones.
      *
      * @param int $categoryId
      * @param array $fieldIds
@@ -177,7 +173,23 @@ class Category
             return true;
         } catch (\Exception $e) {
             $db->rollBack();
-            // In a real app, log the error: error_log($e->getMessage());
             return false;
         }
     }
+
+    /**
+     * Get active categories formatted for the storefront API.
+     *
+     * @return array
+     */
+    public static function getActiveCategoriesForStore()
+    {
+        $allOption = [['id' => 'all', 'name' => 'همه']];
+
+        $sql = "SELECT id, name_fa as name FROM categories WHERE status = 'active' ORDER BY position ASC";
+        $stmt = Database::query($sql);
+        $activeCategories = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        return array_merge($allOption, $activeCategories);
+    }
+}
