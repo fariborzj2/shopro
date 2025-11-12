@@ -99,3 +99,7 @@
         document.getElementById('published_at').value = jalaliDate;
     });
 </script>
+
+<!-- TinyMCE -->
+<script src="https://cdn.tiny.cloud/1/zhm469md3gofl79o8eo7l5581mn5292pu4o6zawa7p8nmna8/tinymce/8/tinymce.min.js" referrerpolicy="origin"></script>
+<script src="/js/tinymce-config.js"></script>
