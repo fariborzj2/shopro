@@ -28,6 +28,7 @@ CREATE TABLE `categories` (
   `parent_id` INT DEFAULT NULL,
   `position` INT DEFAULT 0,
   `title` VARCHAR(255) NOT NULL,
+  `slug` VARCHAR(255) NOT NULL UNIQUE,
   `name_fa` VARCHAR(255),
   `name_en` VARCHAR(255),
   `image_url` VARCHAR(255),
@@ -174,6 +175,16 @@ CREATE TABLE `custom_order_fields` (
   `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+-- FAQ Items Table
+CREATE TABLE `faq_items` (
+  `id` INT PRIMARY KEY AUTO_INCREMENT,
+  `question` VARCHAR(255) NOT NULL,
+  `answer` TEXT NOT NULL,
+  `position` INT DEFAULT 0,
+  `status` ENUM('active', 'inactive') NOT NULL DEFAULT 'active',
+  `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 -- Category Custom Fields (Pivot Table)
 CREATE TABLE `category_custom_field` (
   `category_id` INT NOT NULL,
@@ -181,4 +192,15 @@ CREATE TABLE `category_custom_field` (
   PRIMARY KEY (`category_id`, `field_id`),
   FOREIGN KEY (`category_id`) REFERENCES `categories`(`id`) ON DELETE CASCADE,
   FOREIGN KEY (`field_id`) REFERENCES `custom_order_fields`(`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Pages Table
+CREATE TABLE `pages` (
+  `id` INT PRIMARY KEY AUTO_INCREMENT,
+  `title` VARCHAR(255) NOT NULL,
+  `slug` VARCHAR(255) NOT NULL UNIQUE,
+  `content` LONGTEXT,
+  `status` ENUM('published', 'draft') NOT NULL DEFAULT 'draft',
+  `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

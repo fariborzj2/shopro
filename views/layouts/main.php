@@ -25,19 +25,19 @@
             <nav>
                 <ul>
                     <li>
-                        <a href="/" class="sidebar-link block py-2 px-4 rounded hover:bg-gray-700 <?= is_active('/') ? 'active' : '' ?>">داشبورد</a>
+                        <a href="<?= url('/') ?>" class="sidebar-link block py-2 px-4 rounded hover:bg-gray-700 <?= is_active('/') ? 'active' : '' ?>">داشبورد</a>
                     </li>
                     <li>
-                        <a href="/orders" class="sidebar-link block py-2 px-4 rounded hover:bg-gray-700 <?= is_active('/orders') ? 'active' : '' ?>">سفارشات</a>
+                        <a href="<?= url('/orders') ?>" class="sidebar-link block py-2 px-4 rounded hover:bg-gray-700 <?= is_active('/orders') ? 'active' : '' ?>">سفارشات</a>
                     </li>
                     <li>
-                        <a href="/categories" class="sidebar-link block py-2 px-4 rounded hover:bg-gray-700 <?= is_active('/categories') ? 'active' : '' ?>">دسته‌بندی‌ها</a>
+                        <a href="<?= url('/categories') ?>" class="sidebar-link block py-2 px-4 rounded hover:bg-gray-700 <?= is_active('/categories') ? 'active' : '' ?>">دسته‌بندی‌ها</a>
                     </li>
                     <li>
-                        <a href="/products" class="sidebar-link block py-2 px-4 rounded hover:bg-gray-700 <?= is_active('/products') ? 'active' : '' ?>">محصولات</a>
+                        <a href="<?= url('/products') ?>" class="sidebar-link block py-2 px-4 rounded hover:bg-gray-700 <?= is_active('/products') ? 'active' : '' ?>">محصولات</a>
                     </li>
                     <li>
-                        <a href="/users" class="sidebar-link block py-2 px-4 rounded hover:bg-gray-700 <?= is_active('/users') ? 'active' : '' ?>">کاربران</a>
+                        <a href="<?= url('/users') ?>" class="sidebar-link block py-2 px-4 rounded hover:bg-gray-700 <?= is_active('/users') ? 'active' : '' ?>">کاربران</a>
                     </li>
                     <li>
                         <div x-data="{ open: false }">
@@ -46,20 +46,26 @@
                                 <svg :class="{'rotate-180': open}" class="w-4 h-4 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                             </button>
                             <div x-show="open" class="submenu bg-gray-700 rounded mt-1 mr-4">
-                                <a href="/blog/posts" class="sidebar-link block py-2 px-3 hover:bg-gray-600 <?= is_active('/blog/posts') ? 'active' : '' ?>">نوشته‌ها</a>
-                                <a href="/blog/categories" class="sidebar-link block py-2 px-3 hover:bg-gray-600 <?= is_active('/blog/categories') ? 'active' : '' ?>">دسته‌بندی‌ها</a>
-                                <a href="/blog/tags" class="sidebar-link block py-2 px-3 hover:bg-gray-600 <?= is_active('/blog/tags') ? 'active' : '' ?>">برچسب‌ها</a>
+                                <a href="<?= url('/blog/posts') ?>" class="sidebar-link block py-2 px-3 hover:bg-gray-600 <?= is_active('/blog/posts') ? 'active' : '' ?>">نوشته‌ها</a>
+                                <a href="<?= url('/blog/categories') ?>" class="sidebar-link block py-2 px-3 hover:bg-gray-600 <?= is_active('/blog/categories') ? 'active' : '' ?>">دسته‌بندی‌ها</a>
+                                <a href="<?= url('/blog/tags') ?>" class="sidebar-link block py-2 px-3 hover:bg-gray-600 <?= is_active('/blog/tags') ? 'active' : '' ?>">برچسب‌ها</a>
                             </div>
                         </div>
                     </li>
                     <li>
-                        <a href="/admins" class="sidebar-link block py-2 px-4 rounded hover:bg-gray-700 <?= is_active('/admins') ? 'active' : '' ?>">مدیران</a>
+                        <a href="<?= url('/admins') ?>" class="sidebar-link block py-2 px-4 rounded hover:bg-gray-700 <?= is_active('/admins') ? 'active' : '' ?>">مدیران</a>
                     </li>
                     <li>
-                        <a href="/custom-fields" class="sidebar-link block py-2 px-4 rounded hover:bg-gray-700 <?= is_active('/custom-fields') ? 'active' : '' ?>">پارامترهای سفارش</a>
+                        <a href="<?= url('/custom-fields') ?>" class="sidebar-link block py-2 px-4 rounded hover:bg-gray-700 <?= is_active('/custom-fields') ? 'active' : '' ?>">پارامترهای سفارش</a>
                     </li>
                     <li>
-                        <a href="/settings" class="sidebar-link block py-2 px-4 rounded hover:bg-gray-700 <?= is_active('/settings') ? 'active' : '' ?>">تنظیمات</a>
+                        <a href="<?= url('/settings') ?>" class="sidebar-link block py-2 px-4 rounded hover:bg-gray-700 <?= is_active('/settings') ? 'active' : '' ?>">تنظیمات</a>
+                    </li>
+                    <li>
+                        <a href="<?= url('/pages') ?>" class="sidebar-link block py-2 px-4 rounded hover:bg-gray-700 <?= is_active('/pages') ? 'active' : '' ?>">مدیریت صفحات</a>
+                    </li>
+                    <li>
+                        <a href="<?= url('/faq') ?>" class="sidebar-link block py-2 px-4 rounded hover:bg-gray-700 <?= is_active('/faq') ? 'active' : '' ?>">سوالات متداول</a>
                     </li>
                 </ul>
             </nav>
@@ -71,7 +77,7 @@
                 <h1 class="text-2xl font-semibold">{{ title }}</h1>
                 <div class="flex items-center">
                     <span class="text-gray-600 mr-4">خوش آمدید، <?= htmlspecialchars($_SESSION['admin_name'] ?? 'کاربر') ?></span>
-                    <a href="/logout" class="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600">
+                    <a href="<?= url('/logout') ?>" class="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600">
                         خروج
                     </a>
                 </div>
