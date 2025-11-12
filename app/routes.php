@@ -90,5 +90,10 @@ $router->get('/custom-fields/edit/{id}', 'CustomOrderFieldsController@edit');
 $router->post('/custom-fields/update/{id}', 'CustomOrderFieldsController@update');
 $router->post('/custom-fields/delete/{id}', 'CustomOrderFieldsController@delete');
 
-// Storefront API
-$router->get('/api/store/data', 'StoreController@getStoreData');
+// Pages Management
+$router->get('/pages', 'PagesController@index');
+$router->get('/pages/create', 'PagesController@create');
+$router->post('/pages/store', 'PagesController@store');
+$router->get('/pages/edit/{id}', 'PagesController@edit');
+$router->post('/pages/update/{id}', 'PagesController@update');
+$router->post('/pages/delete/{id}', 'PagesController@delete');

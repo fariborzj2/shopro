@@ -182,3 +182,14 @@ CREATE TABLE `category_custom_field` (
   FOREIGN KEY (`category_id`) REFERENCES `categories`(`id`) ON DELETE CASCADE,
   FOREIGN KEY (`field_id`) REFERENCES `custom_order_fields`(`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Pages Table
+CREATE TABLE `pages` (
+  `id` INT PRIMARY KEY AUTO_INCREMENT,
+  `title` VARCHAR(255) NOT NULL,
+  `slug` VARCHAR(255) NOT NULL UNIQUE,
+  `content` LONGTEXT,
+  `status` ENUM('published', 'draft') NOT NULL DEFAULT 'draft',
+  `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
