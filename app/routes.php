@@ -7,6 +7,13 @@
 // ----------------------------------------------------------------------
 $router->get('/', 'StorefrontController@home');
 $router->get('/page/{slug}', 'StorefrontController@page');
+$router->get('/category/{slug}', 'StorefrontController@category');
+
+
+// ----------------------------------------------------------------------
+// API Routes
+// ----------------------------------------------------------------------
+$router->get('/api/product-details/{id}', 'ApiController@productDetails');
 
 
 // ----------------------------------------------------------------------

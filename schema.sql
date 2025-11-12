@@ -28,6 +28,7 @@ CREATE TABLE `categories` (
   `parent_id` INT DEFAULT NULL,
   `position` INT DEFAULT 0,
   `title` VARCHAR(255) NOT NULL,
+  `slug` VARCHAR(255) NOT NULL UNIQUE,
   `name_fa` VARCHAR(255),
   `name_en` VARCHAR(255),
   `image_url` VARCHAR(255),

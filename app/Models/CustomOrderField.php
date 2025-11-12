@@ -12,7 +12,7 @@ class CustomOrderField
     {
         $db = Database::getConnection();
         $stmt = $db->query('SELECT * FROM ' . self::$table . ' ORDER BY position ASC, id DESC');
-        return $stmt->fetchAll();
+        return $stmt->fetchAll(\PDO::FETCH_OBJ);
     }
 
     public static function find($id)
@@ -20,7 +20,7 @@ class CustomOrderField
         $db = Database::getConnection();
         $stmt = $db->prepare('SELECT * FROM ' . self::$table . ' WHERE id = ?');
         $stmt->execute([$id]);
-        return $stmt->fetch();
+        return $stmt->fetch(\PDO::FETCH_OBJ);
     }
 
     public static function create(array $data)
@@ -56,7 +56,7 @@ class CustomOrderField
     }
 
     /**
-     * Get all fields associated with a specific category.
+     * Get all active fields associated with a specific category.
      *
      * @param int $categoryId
      * @return array
@@ -65,14 +65,13 @@ class CustomOrderField
     {
         $db = Database::getConnection();
         $sql = "SELECT cof.* FROM custom_order_fields cof
-                JOIN category_custom_field ccf ON cof.id = ccf.field_id
+                INNER JOIN category_custom_field ccf ON cof.id = ccf.field_id
                 WHERE ccf.category_id = ? AND cof.status = 'active'
-                ORDER BY ccf.position ASC"; // Assuming a position column in pivot table
+                ORDER BY cof.position ASC";
         $stmt = $db->prepare($sql);
         $stmt->execute([$categoryId]);
-        return $stmt->fetchAll();
+        return $stmt->fetchAll(\PDO::FETCH_OBJ);
     }
-}
 
     /**
      * Get all fields indexed by their ID.
@@ -84,7 +83,8 @@ class CustomOrderField
         $fields = self::all();
         $fieldsById = [];
         foreach ($fields as $field) {
-            $fieldsById[$field['id']] = $field;
+            $fieldsById[$field->id] = $field;
         }
         return $fieldsById;
     }
+}
