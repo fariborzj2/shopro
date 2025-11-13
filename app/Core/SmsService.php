@@ -5,7 +5,7 @@ namespace App\Core;
 class SmsService
 {
     /**
-     * Sends an OTP to a mobile number using a generic pattern-based SMS API.
+     * Sends an OTP using the specified IPPanel API structure.
      *
      * @param string $mobile The recipient's mobile number.
      * @param string $otp The one-time password.
@@ -24,40 +24,40 @@ class SmsService
             return false;
         }
 
-        // This is a generic payload for a pattern-based SMS service like Kavenegar or IPPanel.
-        // The structure may need to be adjusted for a different provider.
-        $payload = [
-            'pattern_code' => $pattern_code,
-            'originator' => $sender,
-            'recipient' => $mobile,
-            'values' => [
-                'code' => $otp,
-            ],
+        $url = "https://api2.ippanel.com/api/v1/sms/pattern/normal/send";
+
+        $data = [
+            "code" => $pattern_code,
+            "sender" => $sender,
+            "recipient" => $mobile,
+            "variable" => [
+                "verification-code" => $otp
+            ]
         ];
 
-        // Example for IPPanel SMS Gateway URL
-        $url = 'http://rest.ippanel.com/v1/messages/patterns/send';
+        $header = [
+            "apikey: " . $api_key,
+            "Content-Type: application/json"
+        ];
 
-        $ch = curl_init($url);
-        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
-        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($payload));
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, [
-            'Content-Type: application/json',
-            'Authorization: AccessKey ' . $api_key
+        $ch = curl_init();
+        curl_setopt_array($ch, [
+            CURLOPT_URL => $url,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_POST => true,
+            CURLOPT_POSTFIELDS => json_encode($data),
+            CURLOPT_HTTPHEADER => $header
         ]);
 
-        $result = curl_exec($ch);
+        $response = curl_exec($ch);
         $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
         curl_close($ch);
 
         if ($http_code >= 200 && $http_code < 300) {
-            // Successfully sent
-            error_log("SMS sent successfully to {$mobile}. Response: {$result}");
+            error_log("SMS sent successfully to {$mobile}. Response: {$response}");
             return true;
         } else {
-            // Failed to send
-            error_log("Failed to send SMS to {$mobile}. HTTP Code: {$http_code}, Response: {$result}");
+            error_log("Failed to send SMS to {$mobile}. HTTP Code: {$http_code}, Response: {$response}");
             return false;
         }
     }
