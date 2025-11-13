@@ -3,62 +3,51 @@
 namespace App\Controllers;
 
 use App\Models\FaqItem;
-use App\Core\Request;
 
 class FaqController
 {
     public function index()
     {
-        $items = FaqItem::all();
-        view('faq/index', ['items' => $items]);
+        $faq_items = FaqItem::findAll();
+        view('admin/faq/index', ['faq_items' => $faq_items]);
     }
 
     public function create()
     {
-        view('faq/create');
+        view('admin/faq/create');
     }
 
     public function store()
     {
-        $request = new Request();
-        $data = $request->all();
-
-        if (empty($data['question']) || empty($data['answer'])) {
-            redirect('/faq/create');
-            return;
-        }
-
+        $data = [
+            'question' => $_POST['question'],
+            'answer' => $_POST['answer'],
+            'status' => $_POST['status'],
+        ];
         FaqItem::create($data);
-        redirect('/faq');
+        redirect('/admin/faq');
     }
 
     public function edit($id)
     {
-        $item = FaqItem::find($id);
-        if (!$item) {
-            redirect('/faq');
-            return;
-        }
-        view('faq/edit', ['item' => $item]);
+        $faq_item = FaqItem::find($id);
+        view('admin/faq/edit', ['faq_item' => $faq_item]);
     }
 
     public function update($id)
     {
-        $request = new Request();
-        $data = $request->all();
-
-        if (empty($data['question']) || empty($data['answer'])) {
-            redirect('/faq/edit/' . $id);
-            return;
-        }
-
+        $data = [
+            'question' => $_POST['question'],
+            'answer' => $_POST['answer'],
+            'status' => $_POST['status'],
+        ];
         FaqItem::update($id, $data);
-        redirect('/faq');
+        redirect('/admin/faq');
     }
 
-    public function delete($id)
+    public function destroy($id)
     {
         FaqItem::delete($id);
-        redirect('/faq');
+        redirect('/admin/faq');
     }
 }
