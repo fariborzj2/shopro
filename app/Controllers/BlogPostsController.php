@@ -73,6 +73,10 @@ class BlogPostsController
         $tags = $_POST['tags'] ?? [];
         BlogPost::syncTags($post_id, $tags);
 
+        // Sync FAQ items
+        $faq_items = $_POST['faq_items'] ?? [];
+        BlogPost::syncFaqItems($post_id, $faq_items);
+
         header('Location: /blog/posts');
         exit();
     }

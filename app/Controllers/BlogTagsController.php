@@ -3,81 +3,52 @@
 namespace App\Controllers;
 
 use App\Models\BlogTag;
+use App\Core\Database;
 
 class BlogTagsController
 {
-    /**
-     * Show a list of all tags.
-     */
     public function index()
     {
-        $tags = BlogTag::all();
-        return view('main', 'blog/tags/index', [
-            'title' => 'مدیریت برچسب‌ها',
-            'tags' => $tags
-        ]);
+        $tags = BlogTag::findAll();
+        view('admin/blog/tags/index', ['tags' => $tags]);
     }
 
-    /**
-     * Show the form for creating a new tag.
-     */
     public function create()
     {
-        return view('main', 'blog/tags/create', ['title' => 'افزودن برچسب جدید']);
+        view('admin/blog/tags/create');
     }
 
-    /**
-     * Store a new tag.
-     */
     public function store()
     {
-        if (empty($_POST['name']) || empty($_POST['slug'])) {
-            redirect_back_with_error('Name and slug are required.');
-        }
-        BlogTag::create($_POST);
-        header('Location: /blog/tags');
-        exit();
+        $data = [
+            'name' => $_POST['name'],
+            'slug' => $_POST['slug'],
+            'status' => $_POST['status'],
+        ];
+        BlogTag::create($data);
+        redirect('/admin/blog/tags');
     }
 
-    /**
-     * Show the form for editing a tag.
-     * @param int $id
-     */
     public function edit($id)
     {
         $tag = BlogTag::find($id);
-        return view('main', 'blog/tags/edit', [
-            'title' => 'ویرایش برچسب',
-            'tag' => $tag
-        ]);
+        view('admin/blog/tags/edit', ['tag' => $tag]);
     }
 
-    /**
-     * Update an existing tag.
-     * @param int $id
-     */
     public function update($id)
     {
-        $tag = BlogTag::find($id);
-        if (!$tag) {
-            redirect_back_with_error('Tag not found.');
-        }
-        if (empty($_POST['name']) || empty($_POST['slug'])) {
-            redirect_back_with_error('Name and slug are required.');
-        }
-        BlogTag::update($id, $_POST);
-        header('Location: /blog/tags');
-        exit();
+        $data = [
+            'name' => $_POST['name'],
+            'slug' => $_POST['slug'],
+            'status' => $_POST['status'],
+        ];
+        BlogTag::update($id, $data);
+        redirect('/admin/blog/tags');
     }
 
-    /**
-     * Delete a tag.
-     * @param int $id
-     */
-    public function delete($id)
+    public function destroy($id)
     {
         BlogTag::delete($id);
-        header('Location: /blog/tags');
-        exit();
+        redirect('/admin/blog/tags');
     }
 }
