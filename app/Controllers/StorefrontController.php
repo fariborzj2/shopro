@@ -92,6 +92,10 @@ class StorefrontController
         }
 
         $products = Product::findAllBy('category_id', $category->id, 'position ASC');
+        $reviews = [];
+        foreach ($products as $product) {
+            $reviews[$product->id] = \App\Models\Review::findByProductId($product->id);
+        }
 
         $store_data = json_encode([
             'category' => [
@@ -99,12 +103,13 @@ class StorefrontController
                 'name' => $category->name_fa,
                 'description' => $category->description,
             ],
-            'products' => array_map(function($p) {
+            'products' => array_map(function($p) use ($reviews) {
                 return [
                     'id' => $p->id,
                     'name' => $p->name_fa,
                     'price' => (float)$p->price,
                     'imageUrl' => $p->image_url ?? 'https://placehold.co/400x400/EEE/31343C?text=No+Image',
+                    'reviews' => $reviews[$p->id] ?? []
                 ];
             }, $products),
             'isUserLoggedIn' => isset($_SESSION['user_id'])
@@ -114,7 +119,8 @@ class StorefrontController
         echo $template->render('category', [
             'pageTitle' => $category->name_fa,
             'category' => $category,
-            'store_data' => $store_data
+            'store_data' => $store_data,
+            'reviews' => $reviews
         ]);
     }
 }
