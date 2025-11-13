@@ -90,4 +90,12 @@ class BlogCategory
         Database::query("DELETE FROM blog_categories WHERE id = :id", ['id' => $id]);
         return true;
     }
+
+    public static function findBy($column, $value)
+    {
+        $db = Database::getConnection();
+        $stmt = $db->prepare("SELECT * FROM blog_categories WHERE $column = ?");
+        $stmt->execute([$value]);
+        return $stmt->fetch(\PDO::FETCH_OBJ);
+    }
 }

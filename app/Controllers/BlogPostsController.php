@@ -6,6 +6,7 @@ use App\Models\BlogPost;
 use App\Models\BlogCategory;
 use App\Models\Admin;
 use App\Models\BlogTag;
+use App\Models\FaqItem;
 use App\Core\Paginator;
 
 class BlogPostsController
@@ -93,6 +94,9 @@ class BlogPostsController
         $tags = BlogTag::all();
         $post_tags = BlogPost::getTagsByPostId($id);
 
+        $all_faq_items = FaqItem::all();
+        $post_faq_items = BlogPost::getFaqItemsByPostId($id);
+
         // Convert gregorian published_at to jalali for the view
         if (!empty($post['published_at'])) {
             $ts = strtotime($post['published_at']);
@@ -106,7 +110,9 @@ class BlogPostsController
             'categories' => $categories,
             'authors' => $authors,
             'tags' => $tags,
-            'post_tags' => $post_tags
+            'post_tags' => $post_tags,
+            'all_faq_items' => $all_faq_items,
+            'post_faq_items' => $post_faq_items
         ]);
     }
 
@@ -140,6 +146,10 @@ class BlogPostsController
         // Sync tags
         $tags = $_POST['tags'] ?? [];
         BlogPost::syncTags($id, $tags);
+
+        // Sync FAQ items
+        $faq_items = $_POST['faq_items'] ?? [];
+        BlogPost::syncFaqItems($id, $faq_items);
 
         header('Location: /blog/posts');
         exit();

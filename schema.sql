@@ -12,6 +12,7 @@ DROP TABLE IF EXISTS `categories`;
 DROP TABLE IF EXISTS `users`;
 DROP TABLE IF EXISTS `otp_codes`;
 DROP TABLE IF EXISTS `transactions`;
+DROP TABLE IF EXISTS `blog_post_faq_items`;
 
 -- Users Table
 CREATE TABLE `users` (
@@ -175,6 +176,15 @@ CREATE TABLE `custom_order_fields` (
   `status` ENUM('active', 'inactive') NOT NULL DEFAULT 'active',
   `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Blog Post FAQ Items (Pivot Table)
+CREATE TABLE `blog_post_faq_items` (
+  `post_id` INT NOT NULL,
+  `faq_item_id` INT NOT NULL,
+  PRIMARY KEY (`post_id`, `faq_item_id`),
+  FOREIGN KEY (`post_id`) REFERENCES `blog_posts`(`id`) ON DELETE CASCADE,
+  FOREIGN KEY (`faq_item_id`) REFERENCES `faq_items`(`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Transactions Table
