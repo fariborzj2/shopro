@@ -27,7 +27,7 @@ class UserDashboardController
     {
         $orders = Order::findAllBy('user_id', $_SESSION['user_id']);
 
-        echo $this->template->render('dashboard_orders', [
+        echo $this->template->render('dashboard/orders', [
             'pageTitle' => 'تاریخچه سفارشات',
             'orders' => $orders
         ]);
@@ -45,7 +45,7 @@ class UserDashboardController
 
         $transaction = Transaction::findBy('order_id', $id);
 
-        echo $this->template->render('dashboard_order_details', [
+        echo $this->template->render('dashboard/order_details', [
             'pageTitle' => 'جزئیات سفارش #' . $order->order_code,
             'order' => $order,
             'transaction' => $transaction

@@ -30,7 +30,7 @@ class BlogController
         $posts = BlogPost::findAllPublished(self::POSTS_PER_PAGE, $paginator->getOffset(), $search, $category_id);
         $categories = BlogCategory::findAllBy('status', 'active');
 
-        echo $this->template->render('blog_index', [
+        echo $this->template->render('blog/index', [
             'pageTitle' => 'بلاگ',
             'posts' => $posts,
             'categories' => $categories,
@@ -54,7 +54,7 @@ class BlogController
         $paginator = new Paginator($total_posts, self::POSTS_PER_PAGE, $page, '/blog/category/' . $slug);
         $posts = BlogPost::findAllPublished(self::POSTS_PER_PAGE, $paginator->getOffset(), null, $category->id);
 
-        echo $this->template->render('blog_category', [
+        echo $this->template->render('blog/category', [
             'pageTitle' => 'دسته‌بندی: ' . $category->name_fa,
             'category' => $category,
             'posts' => $posts,
@@ -106,7 +106,7 @@ class BlogController
             ] : null,
         ];
 
-        echo $this->template->render('blog_show', [
+        echo $this->template->render('blog/show', [
             'pageTitle' => $post->title,
             'metaDescription' => $post->excerpt,
             'canonicalUrl' => $canonical_url,
