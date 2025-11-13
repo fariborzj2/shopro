@@ -11,6 +11,8 @@ $router->get('/category/{slug}', 'StorefrontController@category');
 
 // Blog Routes
 $router->get('/blog', 'BlogController@index');
+$router->get('/blog/tags', 'BlogController@tags');
+$router->get('/blog/tags/{slug}', 'BlogController@showTag');
 $router->get('/blog/category/{slug}', 'BlogController@category');
 $router->get('/blog/{slug}', 'BlogController@show');
 
@@ -110,6 +112,14 @@ $router->get('/admin/blog/tags/edit/{id}', 'BlogTagsController@edit');
 $router->post('/admin/blog/tags/update/{id}', 'BlogTagsController@update');
 $router->post('/admin/blog/tags/delete/{id}', 'BlogTagsController@delete');
 
+
+// Blog Tags
+$router->get('/admin/blog/tags', 'BlogTagsController@index');
+$router->get('/admin/blog/tags/create', 'BlogTagsController@create');
+$router->post('/admin/blog/tags/store', 'BlogTagsController@store');
+$router->get('/admin/blog/tags/edit/{id}', 'BlogTagsController@edit');
+$router->post('/admin/blog/tags/update/{id}', 'BlogTagsController@update');
+$router->post('/admin/blog/tags/delete/{id}', 'BlogTagsController@destroy');
 
 // Blog Posts
 $router->get('/admin/blog', 'BlogPostsController@index');
