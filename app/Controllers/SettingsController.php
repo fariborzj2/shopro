@@ -12,10 +12,12 @@ class SettingsController
     public function index()
     {
         $settings = Setting::getAll();
+        $blog_categories = \App\Models\BlogCategory::all();
 
         return view('main', 'settings/index', [
             'title' => 'تنظیمات سایت',
-            'settings' => $settings
+            'settings' => $settings,
+            'blog_categories' => $blog_categories
         ]);
     }
 

@@ -1,142 +1,146 @@
-<?php include 'header.tpl'; ?>
-
-<!-- App Container -->
-<div
-    x-data="categoryStore(<?php echo htmlspecialchars($store_data, ENT_QUOTES, 'UTF-8'); ?>)"
-    x-init="init()"
-    x-cloak
->
-    <!-- Category Header -->
-    <section class="text-center py-12 bg-gray-50">
-        <h1 class="text-4xl font-extrabold text-gray-900" x-text="category.name"></h1>
-        <p class="mt-4 max-w-2xl mx-auto text-lg text-gray-600" x-text="category.description"></p>
-    </section>
-
-    <!-- Product Grid -->
-    <section id="products" class="py-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
-            <template x-for="product in products" :key="product.id">
-                <div @click="selectProduct(product)" class="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-lg transition-shadow cursor-pointer group">
-                    <img :src="product.imageUrl" :alt="product.name" class="w-full h-48 object-cover">
-                    <div class="p-4">
-                        <h3 class="text-lg font-semibold text-gray-800" x-text="product.name"></h3>
-                        <p class="mt-2 text-gray-600" x-text="product.price + ' تومان'"></p>
-                    </div>
-                </div>
-            </template>
-        </div>
-    </section>
-
-    <!-- Purchase Modal -->
-    <div x-show="isModalOpen" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" class="fixed inset-0 bg-black bg-opacity-50 z-40" @click="isModalOpen = false"></div>
-    <div x-show="isModalOpen" class="fixed inset-0 z-50 flex items-end md:items-center justify-center">
-        <div
-            x-show="isModalOpen"
-            x-transition:enter="ease-out duration-300"
-            x-transition:enter-start="opacity-0 translate-y-full md:translate-y-0 md:scale-95"
-            x-transition:enter-end="opacity-100 translate-y-0 md:scale-100"
-            x-transition:leave="ease-in duration-200"
-            x-transition:leave-start="opacity-100 translate-y-0 md:scale-100"
-            x-transition:leave-end="opacity-0 translate-y-full md:translate-y-0 md:scale-95"
-            @click.outside="isModalOpen = false"
-            class="bg-white w-full max-w-lg rounded-t-2xl md:rounded-2xl shadow-xl transform"
-        >
-             <div class="p-8" x-if="selectedProduct">
-                <img :src="selectedProduct.imageUrl" :alt="selectedProduct.name" class="w-full h-48 object-cover rounded-lg mb-4">
-                <h3 class="text-2xl font-bold text-center" x-text="selectedProduct.name"></h3>
-                <form @submit.prevent="submitOrder" id="purchaseFormCategory" class="mt-6">
-                    <div class="space-y-4 text-right">
-                        <template x-for="field in customFields" :key="field.id">
-                            <div>
-                                <label :for="'field_' + field.id" class="block text-sm font-medium text-gray-700 mb-1" x-text="field.label"></label>
-
-                                <input x-if="['text', 'number', 'date', 'color'].includes(field.type)" :type="field.type" :name="field.name" :id="'field_' + field.id" :placeholder="field.placeholder" :required="field.is_required" class="w-full border-gray-300 rounded-md">
-
-                                <textarea x-if="field.type === 'textarea'" :name="field.name" :id="'field_' + field.id" :placeholder="field.placeholder" :required="field.is_required" class="w-full border-gray-300 rounded-md"></textarea>
-
-                                <select x-if="field.type === 'select'" :name="field.name" :id="'field_' + field.id" :required="field.is_required" class="w-full border-gray-300 rounded-md">
-                                    <template x-for="option in field.options" :key="option.value">
-                                        <option :value="option.value" x-text="option.label"></option>
-                                    </template>
-                                </select>
-
-                                <!-- Add more field types like radio/checkbox if needed -->
-
+<?php partial('storefront/header', ['title' => $pageTitle]) ?>
+<div class="container">
+    <div class="row">
+        <div class="col-lg-8">
+            <h1 class="mb-4"><?= $category->name_fa ?></h1>
+            <p><?= $category->description ?></p>
+            <div class="row">
+                <?php foreach (json_decode($store_data)->products as $product) : ?>
+                    <div class="col-md-6">
+                        <div class="card mb-4">
+                            <img src="<?= $product->imageUrl ?>" class="card-img-top" alt="<?= $product->name ?>">
+                            <div class="card-body">
+                                <h5 class="card-title"><?= $product->name ?></h5>
+                                <p class="card-text"><?= $product->price ?> تومان</p>
+                                <button class="btn btn-primary" @click="showReviews(<?= $product->id ?>)">مشاهده نظرات</button>
                             </div>
-                        </template>
+                        </div>
                     </div>
-                    <div class="mt-8 space-y-3">
-                        <button type="submit" class="w-full bg-blue-600 text-white py-3">پرداخت</button>
-                        <button @click="isModalOpen = false" type="button" class="w-full bg-gray-200 py-3">انصراف</button>
-                    </div>
-                </form>
-             </div>
+                <?php endforeach; ?>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <?php partial('blog/_sidebar', ['sidebar' => $sidebar ?? []]); ?>
+        </div>
+    </div>
+</div>
+
+<div x-data="reviews" x-show="showModal" class="modal fade" id="reviewsModal" tabindex="-1" role="dialog" aria-labelledby="reviewsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="reviewsModalLabel">Reviews for <span x-text="product.name"></span></h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close" @click="showModal = false">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="reviews-list">
+                    <template x-for="review in product.reviews" :key="review.id">
+                        <div class="review">
+                            <p><strong><span x-text="review.user_name"></span></strong> - <span x-text="review.rating"></span>/5</p>
+                            <p x-text="review.comment"></p>
+                            <template x-if="review.admin_reply">
+                                <div class="admin-reply">
+                                    <p><strong>Admin Reply:</strong></p>
+                                    <p x-text="review.admin_reply"></p>
+                                </div>
+                            </template>
+                        </div>
+                    </template>
+                </div>
+                <hr>
+                <div class="review-form">
+                    <?php if (isset($_SESSION['user_id'])) : ?>
+                        <form action="/reviews/store" method="POST">
+                            <input type="hidden" name="product_id" :value="product.id">
+                            <div class="form-group">
+                                <label for="name">Name</label>
+                                <input type="text" name="name" id="name" class="form-control" value="<?= $_SESSION['user_name'] ?? '' ?>">
+                            </div>
+                            <div class="form-group">
+                                <label for="mobile">Mobile</label>
+                                <input type="text" name="mobile" id="mobile" class="form-control" value="<?= $_SESSION['user_mobile'] ?? '' ?>">
+                            </div>
+                            <div class="form-group">
+                                <label for="rating">Rating</label>
+                                <div class="rating">
+                                    <template x-for="i in 5">
+                                        <span @click="rating = i" :class="{ 'fas fa-star': i <= rating, 'far fa-star': i > rating }"></span>
+                                    </template>
+                                </div>
+                                <input type="hidden" name="rating" x-model="rating">
+                            </div>
+                            <div class="form-group">
+                                <label for="comment">Comment</label>
+                                <textarea name="comment" id="comment" class="form-control" rows="3"></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Submit Review</button>
+                        </form>
+                    <?php else : ?>
+                        <p>برای ثبت نظر ابتدا وارد حساب کاربری شوید.</p>
+                    <?php endif; ?>
+                </div>
+            </div>
         </div>
     </div>
 </div>
 
 <script>
-function categoryStore(data) {
-    return {
-        category: {},
-        products: [],
-        selectedProduct: null,
-        customFields: [],
-        isModalOpen: false,
-        isUserLoggedIn: false,
-
-        init() {
-            this.category = data.category || {};
-            this.products = data.products || [];
-            this.isUserLoggedIn = data.isUserLoggedIn || false;
-        },
-        selectProduct(product) {
-            if (!this.isUserLoggedIn) {
-                window.dispatchEvent(new CustomEvent('open-auth-modal'));
-                return;
+    document.addEventListener('alpine:init', () => {
+        Alpine.data('reviews', () => ({
+            showModal: false,
+            product: {},
+            rating: 0,
+            showReviews(productId) {
+                this.product = <?= $store_data ?>.products.find(p => p.id === productId);
+                this.showModal = true;
+                $('#reviewsModal').modal('show');
             }
+        }))
+    })
+</script>
 
-            this.selectedProduct = product;
-            this.isModalOpen = true;
-
-            fetch(`/api/product-details/${product.id}`)
-                .then(response => response.json())
-                .then(data => {
-                    if (data.error) {
-                        alert(data.error);
-                        this.isModalOpen = false;
-                    } else {
-                        this.customFields = data.custom_fields;
-                    }
-                });
-        },
-        submitOrder() {
-            const form = document.getElementById('purchaseFormCategory');
-            const formData = new FormData(form);
-            const customFieldsData = {};
-            for (const [key, value] of formData.entries()) {
-                customFieldsData[key] = value;
-            }
-
-            fetch('/api/payment/start', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    product_id: this.selectedProduct.id,
-                    custom_fields: customFieldsData
-                })
-            })
-            .then(res => res.json().then(data => ({ status: res.status, body: data })))
-            .then(({ status, body }) => {
-                if (status === 200 && body.payment_url) {
-                    window.location.href = body.payment_url;
-                } else {
-                    alert('خطا: ' + (body.error || 'امکان اتصال به درگاه پرداخت وجود ندارد.'));
-                }
-            });
-        }
-    }
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    "itemListElement": [
+        <?php foreach (json_decode($store_data)->products as $index => $product) : ?>
+        {
+            "@type": "Product",
+            "name": "<?= $product->name ?>",
+            "image": "<?= $product->imageUrl ?>",
+            "offers": {
+                "@type": "Offer",
+                "price": "<?= $product->price ?>",
+                "priceCurrency": "IRR"
+            },
+            "aggregateRating": {
+                "@type": "AggregateRating",
+                "ratingValue": "<?= count($reviews[$product->id]) > 0 ? array_sum(array_column($reviews[$product->id], 'rating')) / count($reviews[$product->id]) : 0 ?>",
+                "reviewCount": "<?= count($reviews[$product->id]) ?>"
+            },
+            "review": [
+                <?php foreach ($reviews[$product->id] as $reviewIndex => $review) : ?>
+                {
+                    "@type": "Review",
+                    "author": {
+                        "@type": "Person",
+                        "name": "<?= $review['user_name'] ?>"
+                    },
+                    "reviewRating": {
+                        "@type": "Rating",
+                        "ratingValue": "<?= $review['rating'] ?>"
+                    },
+                    "reviewBody": "<?= $review['comment'] ?>"
+                }<?= $reviewIndex < count($reviews[$product->id]) - 1 ? ',' : '' ?>
+                <?php endforeach; ?>
+            ]
+        }<?= $index < count(json_decode($store_data)->products) - 1 ? ',' : '' ?>
+        <?php endforeach; ?>
+    ]
 }
 </script>
 
-<?php include 'footer.tpl'; ?>
+<?php partial('storefront/footer') ?>

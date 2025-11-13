@@ -30,12 +30,13 @@ spl_autoload_register(function ($class) {
     }
 });
 
-// Middleware-like check for authentication
-// This logic must come *after* the autoloader, as it uses the Request class.
-$is_login_page = (strpos(Request::uri(), 'login') !== false);
-if (!isset($_SESSION['admin_id']) && !$is_login_page) {
-    header('Location: /login');
-    exit();
+// Middleware-like check for admin authentication
+$uri = Request::uri();
+if (strpos($uri, '/admin') === 0 && !strpos($uri, '/admin/login')) {
+    if (!isset($_SESSION['admin_id'])) {
+        header('Location: /admin/login');
+        exit();
+    }
 }
 
 // Load helpers

@@ -79,7 +79,17 @@ class BlogPost
      */
     public static function getTagsByPostId($post_id)
     {
-        $sql = "SELECT tag_id FROM blog_post_tags WHERE post_id = :post_id";
+        $sql = "SELECT t.name, t.slug
+                FROM blog_tags t
+                JOIN blog_post_tags bpt ON t.id = bpt.tag_id
+                WHERE bpt.post_id = :post_id";
+        $stmt = Database::query($sql, ['post_id' => $post_id]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public static function getFaqItemsByPostId($post_id)
+    {
+        $sql = "SELECT faq_item_id FROM blog_post_faq_items WHERE post_id = :post_id";
         $stmt = Database::query($sql, ['post_id' => $post_id]);
         return $stmt->fetchAll(PDO::FETCH_COLUMN);
     }
@@ -108,8 +118,8 @@ class BlogPost
             $published_at = date('Y-m-d H:i:s');
         }
 
-        $sql = "INSERT INTO blog_posts (category_id, author_id, title, slug, content, excerpt, status, published_at)
-                VALUES (:category_id, :author_id, :title, :slug, :content, :excerpt, :status, :published_at)";
+        $sql = "INSERT INTO blog_posts (category_id, author_id, title, slug, content, excerpt, status, published_at, is_editors_pick)
+                VALUES (:category_id, :author_id, :title, :slug, :content, :excerpt, :status, :published_at, :is_editors_pick)";
 
         $pdo = Database::getConnection();
         $stmt = $pdo->prepare($sql);
@@ -117,12 +127,13 @@ class BlogPost
         $stmt->execute([
             'category_id' => $data['category_id'],
             'author_id' => $data['author_id'],
-            'title' => $data['title'],
+            'title' => htmlspecialchars($data['title'], ENT_QUOTES, 'UTF-8'),
             'slug' => $data['slug'],
-            'content' => $data['content'],
-            'excerpt' => $data['excerpt'],
+            'content' => htmlspecialchars($data['content'], ENT_QUOTES, 'UTF-8'),
+            'excerpt' => htmlspecialchars($data['excerpt'], ENT_QUOTES, 'UTF-8'),
             'status' => $status,
-            'published_at' => $published_at
+            'published_at' => $published_at,
+            'is_editors_pick' => isset($data['is_editors_pick']) ? 1 : 0
         ]);
 
         $post_id = $pdo->lastInsertId();
@@ -167,18 +178,19 @@ class BlogPost
         }
 
         $sql = "UPDATE blog_posts
-                SET category_id = :category_id, author_id = :author_id, title = :title, slug = :slug, content = :content, excerpt = :excerpt, status = :status, published_at = :published_at
+                SET category_id = :category_id, author_id = :author_id, title = :title, slug = :slug, content = :content, excerpt = :excerpt, status = :status, published_at = :published_at, is_editors_pick = :is_editors_pick
                 WHERE id = :id";
         Database::query($sql, [
             'id' => $id,
             'category_id' => $data['category_id'],
             'author_id' => $data['author_id'],
-            'title' => $data['title'],
+            'title' => htmlspecialchars($data['title'], ENT_QUOTES, 'UTF-8'),
             'slug' => $data['slug'],
-            'content' => $data['content'],
-            'excerpt' => $data['excerpt'],
+            'content' => htmlspecialchars($data['content'], ENT_QUOTES, 'UTF-8'),
+            'excerpt' => htmlspecialchars($data['excerpt'], ENT_QUOTES, 'UTF-8'),
             'status' => $status,
-            'published_at' => $published_at
+            'published_at' => $published_at,
+            'is_editors_pick' => isset($data['is_editors_pick']) ? 1 : 0
         ]);
 
         // Regenerate sitemap if the post's status has changed to published or was already published
@@ -227,6 +239,26 @@ class BlogPost
         }
     }
 
+    public static function syncFaqItems($post_id, $faq_ids = [])
+    {
+        // First, remove all existing FAQ items for the post
+        Database::query("DELETE FROM blog_post_faq_items WHERE post_id = :post_id", ['post_id' => $post_id]);
+
+        // Then, add the new FAQ items
+        if (!empty($faq_ids)) {
+            $sql = "INSERT INTO blog_post_faq_items (post_id, faq_item_id) VALUES ";
+            $params = [];
+            $placeholders = [];
+            foreach ($faq_ids as $faq_id) {
+                $placeholders[] = '(?, ?)';
+                $params[] = $post_id;
+                $params[] = $faq_id;
+            }
+            $sql .= implode(', ', $placeholders);
+            Database::query($sql, $params);
+        }
+    }
+
     public static function findBySlug($slug)
     {
         $sql = "SELECT bp.*, bc.name_fa as category_name, bc.slug as category_slug, a.name as author_name
@@ -238,14 +270,17 @@ class BlogPost
         return $stmt->fetch(PDO::FETCH_OBJ);
     }
 
-    public static function findAllPublished($limit, $offset, $search = null, $category_id = null)
+    public static function findAllPublished($limit, $offset, $search = null, $category_id = null, $tag_id = null)
     {
         $params = [];
         $sql = "SELECT bp.*, bc.name_fa as category_name, bc.slug as category_slug, a.name as author_name
                 FROM blog_posts bp
                 LEFT JOIN blog_categories bc ON bp.category_id = bc.id
-                LEFT JOIN admins a ON bp.author_id = a.id
-                WHERE bp.status = 'published' AND (bp.published_at IS NULL OR bp.published_at <= NOW())";
+                LEFT JOIN admins a ON bp.author_id = a.id";
+        if ($tag_id) {
+            $sql .= " JOIN blog_post_tags bpt ON bp.id = bpt.post_id";
+        }
+        $sql .= " WHERE bp.status = 'published' AND (bp.published_at IS NULL OR bp.published_at <= NOW())";
 
         if ($search) {
             $sql .= " AND (bp.title LIKE :search OR bp.content LIKE :search)";
@@ -254,6 +289,10 @@ class BlogPost
         if ($category_id) {
             $sql .= " AND bp.category_id = :category_id";
             $params['category_id'] = $category_id;
+        }
+        if ($tag_id) {
+            $sql .= " AND bpt.tag_id = :tag_id";
+            $params['tag_id'] = $tag_id;
         }
 
         $sql .= " ORDER BY bp.published_at DESC LIMIT :limit OFFSET :offset";
@@ -269,11 +308,14 @@ class BlogPost
         return $stmt->fetchAll(PDO::FETCH_OBJ);
     }
 
-    public static function countAllPublished($search = null, $category_id = null)
+    public static function countAllPublished($search = null, $category_id = null, $tag_id = null)
     {
         $params = [];
-        $sql = "SELECT COUNT(bp.id) FROM blog_posts bp
-                WHERE bp.status = 'published' AND (bp.published_at IS NULL OR bp.published_at <= NOW())";
+        $sql = "SELECT COUNT(bp.id) FROM blog_posts bp";
+        if ($tag_id) {
+            $sql .= " JOIN blog_post_tags bpt ON bp.id = bpt.post_id";
+        }
+        $sql .= " WHERE bp.status = 'published' AND (bp.published_at IS NULL OR bp.published_at <= NOW())";
 
         if ($search) {
             $sql .= " AND (bp.title LIKE :search OR bp.content LIKE :search)";
@@ -283,8 +325,82 @@ class BlogPost
             $sql .= " AND bp.category_id = :category_id";
             $params['category_id'] = $category_id;
         }
+        if ($tag_id) {
+            $sql .= " AND bpt.tag_id = :tag_id";
+            $params['tag_id'] = $tag_id;
+        }
 
         $stmt = Database::query($sql, $params);
         return (int) $stmt->fetchColumn();
+    }
+
+    public static function findRelatedPosts($post_id, $limit = 5)
+    {
+        $sql = "SELECT bp.*, COUNT(bpt.tag_id) as common_tags
+                FROM blog_post_tags bpt
+                JOIN blog_posts bp ON bpt.post_id = bp.id
+                WHERE bpt.tag_id IN (SELECT tag_id FROM blog_post_tags WHERE post_id = :post_id)
+                AND bp.id != :post_id
+                GROUP BY bp.id
+                ORDER BY common_tags DESC
+                LIMIT :limit";
+
+        $pdo = Database::getConnection();
+        $stmt = $pdo->prepare($sql);
+        $stmt->bindValue(':post_id', $post_id, PDO::PARAM_INT);
+        $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
+        $stmt->execute();
+
+        return $stmt->fetchAll(PDO::FETCH_OBJ);
+    }
+
+    public static function findMostViewed($limit, $days)
+    {
+        $date = date('Y-m-d H:i:s', strtotime("-$days days"));
+        $sql = "SELECT * FROM blog_posts
+                WHERE status = 'published' AND published_at >= :date
+                ORDER BY views_count DESC
+                LIMIT :limit";
+
+        $pdo = Database::getConnection();
+        $stmt = $pdo->prepare($sql);
+        $stmt->bindValue(':date', $date);
+        $stmt->bindValue(':limit', (int) $limit, PDO::PARAM_INT);
+        $stmt->execute();
+
+        return $stmt->fetchAll(PDO::FETCH_OBJ);
+    }
+
+    public static function findMostCommented($limit)
+    {
+        $sql = "SELECT bp.*, COUNT(c.id) as comments_count
+                FROM blog_posts bp
+                LEFT JOIN blog_post_comments c ON bp.id = c.post_id
+                WHERE bp.status = 'published' AND c.status = 'approved'
+                GROUP BY bp.id
+                ORDER BY comments_count DESC
+                LIMIT :limit";
+
+        $pdo = Database::getConnection();
+        $stmt = $pdo->prepare($sql);
+        $stmt->bindValue(':limit', (int) $limit, PDO::PARAM_INT);
+        $stmt->execute();
+
+        return $stmt->fetchAll(PDO::FETCH_OBJ);
+    }
+
+    public static function findEditorsPicks($limit)
+    {
+        $sql = "SELECT * FROM blog_posts
+                WHERE status = 'published' AND is_editors_pick = 1
+                ORDER BY published_at DESC
+                LIMIT :limit";
+
+        $pdo = Database::getConnection();
+        $stmt = $pdo->prepare($sql);
+        $stmt->bindValue(':limit', (int) $limit, PDO::PARAM_INT);
+        $stmt->execute();
+
+        return $stmt->fetchAll(PDO::FETCH_OBJ);
     }
 }

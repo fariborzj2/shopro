@@ -30,13 +30,34 @@ class BlogController
         $posts = BlogPost::findAllPublished(self::POSTS_PER_PAGE, $paginator->getOffset(), $search, $category_id);
         $categories = BlogCategory::findAllBy('status', 'active');
 
+        $sidebar_data = $this->_getSidebarData();
+
+        // Slider and featured categories
+        $settings = \App\Models\Setting::getAll();
+        $slider_posts = BlogPost::findMostViewed($settings['slider_posts_limit'] ?? 5, $settings['slider_time_range'] ?? 40);
+        $featured_category_ids = json_decode($settings['featured_categories'] ?? '[]', true);
+        $featured_categories = [];
+        if (!empty($featured_category_ids)) {
+            $posts_limit = $settings['featured_category_posts_limit'] ?? 3;
+            $all_categories = \App\Models\BlogCategory::all();
+            foreach ($all_categories as $category) {
+                if (in_array($category['id'], $featured_category_ids)) {
+                    $category['posts'] = BlogPost::findAllPublished($posts_limit, 0, null, $category['id']);
+                    $featured_categories[] = $category;
+                }
+            }
+        }
+
         echo $this->template->render('blog/index', [
             'pageTitle' => 'بلاگ',
             'posts' => $posts,
             'categories' => $categories,
             'paginator' => $paginator,
             'search' => $search,
-            'selected_category' => $category_id
+            'selected_category' => $category_id,
+            'sidebar' => $sidebar_data,
+            'slider_posts' => $slider_posts,
+            'featured_categories' => $featured_categories
         ]);
     }
 
@@ -54,11 +75,14 @@ class BlogController
         $paginator = new Paginator($total_posts, self::POSTS_PER_PAGE, $page, '/blog/category/' . $slug);
         $posts = BlogPost::findAllPublished(self::POSTS_PER_PAGE, $paginator->getOffset(), null, $category->id);
 
+        $sidebar_data = $this->_getSidebarData();
+
         echo $this->template->render('blog/category', [
             'pageTitle' => 'دسته‌بندی: ' . $category->name_fa,
             'category' => $category,
             'posts' => $posts,
-            'paginator' => $paginator
+            'paginator' => $paginator,
+            'sidebar' => $sidebar_data
         ]);
     }
 
@@ -73,6 +97,14 @@ class BlogController
 
         $faq_ids = BlogPost::getFaqItemsByPostId($post->id);
         $faq_items = !empty($faq_ids) ? FaqItem::findByIds($faq_ids) : [];
+
+        $tags = BlogPost::getTagsByPostId($post->id);
+
+        $settings = \App\Models\Setting::getAll();
+        $related_posts_limit = $settings['related_posts_limit'] ?? 5;
+        $related_posts = BlogPost::findRelatedPosts($post->id, $related_posts_limit);
+
+        $comments = \App\Models\Comment::findByPostId($post->id);
 
         // Prepare data for SEO and Schema
         $base_url = (isset($_SERVER['HTTPS']) ? "https" : "http") . "://$_SERVER[HTTP_HOST]";
@@ -112,7 +144,54 @@ class BlogController
             'canonicalUrl' => $canonical_url,
             'post' => $post,
             'faq_items' => $faq_items,
+            'tags' => $tags,
+            'related_posts' => $related_posts,
+            'comments' => $comments,
+            'sidebar' => $this->_getSidebarData(),
             'schema_data' => $schema_data,
         ]);
+    }
+
+    public function tags()
+    {
+        $tags = \App\Models\BlogTag::findAll();
+        echo $this->template->render('blog/tags', [
+            'pageTitle' => 'Tags',
+            'tags' => $tags,
+        ]);
+    }
+
+    public function showTag($slug)
+    {
+        $tag = \App\Models\BlogTag::findBy('slug', $slug);
+        if (!$tag) {
+            http_response_code(404);
+            echo "Tag not found.";
+            return;
+        }
+
+        $page = $_GET['page'] ?? 1;
+        $total_posts = BlogPost::countAllPublished(null, null, $tag->id);
+        $paginator = new Paginator($total_posts, self::POSTS_PER_PAGE, $page, '/blog/tags/' . $slug);
+        $posts = BlogPost::findAllPublished(self::POSTS_PER_PAGE, $paginator->getOffset(), null, null, $tag->id);
+
+        $sidebar_data = $this->_getSidebarData();
+
+        echo $this->template->render('blog/tag_posts', [
+            'pageTitle' => 'Posts tagged with: ' . $tag->name,
+            'tag' => $tag,
+            'posts' => $posts,
+            'paginator' => $paginator,
+            'sidebar' => $sidebar_data
+        ]);
+    }
+
+    private function _getSidebarData()
+    {
+        return [
+            'most_commented' => BlogPost::findMostCommented(5),
+            'most_viewed' => BlogPost::findMostViewed(5, 365), // For all time
+            'editors_picks' => BlogPost::findEditorsPicks(5)
+        ];
     }
 }
