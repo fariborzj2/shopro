@@ -55,4 +55,15 @@ class FaqItem
         Database::query("DELETE FROM faq_items WHERE id = :id", ['id' => $id]);
         return true;
     }
+
+    public static function findByIds(array $ids)
+    {
+        if (empty($ids)) {
+            return [];
+        }
+        $placeholders = implode(',', array_fill(0, count($ids), '?'));
+        $sql = "SELECT * FROM faq_items WHERE id IN ($placeholders) AND status = 'active' ORDER BY position ASC";
+        $stmt = Database::query($sql, $ids);
+        return $stmt->fetchAll(PDO::FETCH_OBJ);
+    }
 }

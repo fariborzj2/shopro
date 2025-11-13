@@ -3,9 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?php echo $title ?? 'فروشگاه مدرن'; ?></title>
+    <title><?php echo $pageTitle ?? 'فروشگاه مدرن'; ?></title>
+
+    <meta name="description" content="<?php echo $metaDescription ?? 'توضیحات پیش‌فرض سایت'; ?>">
+    <?php if (isset($canonicalUrl)): ?>
+        <link rel="canonical" href="<?php echo $canonicalUrl; ?>">
+    <?php endif; ?>
+
     <script src="https://cdn.tailwindcss.com"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
+    <?php if (isset($schema_data)): ?>
+        <?php foreach ($schema_data as $schema): if($schema): ?>
+            <script type="application/ld+json"><?php echo json_encode($schema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE); ?></script>
+        <?php endif; endforeach; ?>
+    <?php endif; ?>
+
     <style>
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }

@@ -226,4 +226,65 @@ class BlogPost
             Database::query($sql, $params);
         }
     }
+
+    public static function findBySlug($slug)
+    {
+        $sql = "SELECT bp.*, bc.name_fa as category_name, bc.slug as category_slug, a.name as author_name
+                FROM blog_posts bp
+                LEFT JOIN blog_categories bc ON bp.category_id = bc.id
+                LEFT JOIN admins a ON bp.author_id = a.id
+                WHERE bp.slug = :slug AND bp.status = 'published' AND (bp.published_at IS NULL OR bp.published_at <= NOW())";
+        $stmt = Database::query($sql, ['slug' => $slug]);
+        return $stmt->fetch(PDO::FETCH_OBJ);
+    }
+
+    public static function findAllPublished($limit, $offset, $search = null, $category_id = null)
+    {
+        $params = [];
+        $sql = "SELECT bp.*, bc.name_fa as category_name, bc.slug as category_slug, a.name as author_name
+                FROM blog_posts bp
+                LEFT JOIN blog_categories bc ON bp.category_id = bc.id
+                LEFT JOIN admins a ON bp.author_id = a.id
+                WHERE bp.status = 'published' AND (bp.published_at IS NULL OR bp.published_at <= NOW())";
+
+        if ($search) {
+            $sql .= " AND (bp.title LIKE :search OR bp.content LIKE :search)";
+            $params['search'] = '%' . $search . '%';
+        }
+        if ($category_id) {
+            $sql .= " AND bp.category_id = :category_id";
+            $params['category_id'] = $category_id;
+        }
+
+        $sql .= " ORDER BY bp.published_at DESC LIMIT :limit OFFSET :offset";
+
+        $pdo = Database::getConnection();
+        $stmt = $pdo->prepare($sql);
+        $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
+        $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
+        foreach ($params as $key => $value) {
+            $stmt->bindValue(':' . $key, $value);
+        }
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_OBJ);
+    }
+
+    public static function countAllPublished($search = null, $category_id = null)
+    {
+        $params = [];
+        $sql = "SELECT COUNT(bp.id) FROM blog_posts bp
+                WHERE bp.status = 'published' AND (bp.published_at IS NULL OR bp.published_at <= NOW())";
+
+        if ($search) {
+            $sql .= " AND (bp.title LIKE :search OR bp.content LIKE :search)";
+            $params['search'] = '%' . $search . '%';
+        }
+        if ($category_id) {
+            $sql .= " AND bp.category_id = :category_id";
+            $params['category_id'] = $category_id;
+        }
+
+        $stmt = Database::query($sql, $params);
+        return (int) $stmt->fetchColumn();
+    }
 }

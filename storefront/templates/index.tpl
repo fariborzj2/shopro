@@ -56,7 +56,7 @@
              <div class="p-8" x-if="selectedProduct">
                 <img :src="selectedProduct.imageUrl" :alt="selectedProduct.name" class="w-full h-48 object-cover rounded-lg mb-4">
                 <h3 class="text-2xl font-bold text-center" x-text="selectedProduct.name"></h3>
-                <form @submit.prevent="submitOrder" class="mt-6">
+                <form @submit.prevent="submitOrder" id="purchaseForm" class="mt-6">
                     <div class="space-y-4 text-right">
                         <template x-for="field in customFields" :key="field.id">
                             <div>
@@ -129,8 +129,29 @@ function store(data) {
                 });
         },
         submitOrder() {
-            alert('سفارش شما ثبت شد!');
-            this.isModalOpen = false;
+            const form = document.getElementById('purchaseForm');
+            const formData = new FormData(form);
+            const customFieldsData = {};
+            for (const [key, value] of formData.entries()) {
+                customFieldsData[key] = value;
+            }
+
+            fetch('/api/payment/start', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    product_id: this.selectedProduct.id,
+                    custom_fields: customFieldsData
+                })
+            })
+            .then(res => res.json().then(data => ({ status: res.status, body: data })))
+            .then(({ status, body }) => {
+                if (status === 200 && body.payment_url) {
+                    window.location.href = body.payment_url;
+                } else {
+                    alert('خطا: ' + (body.error || 'امکان اتصال به درگاه پرداخت وجود ندارد.'));
+                }
+            });
         }
     }
 }
