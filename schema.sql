@@ -11,6 +11,7 @@ DROP TABLE IF EXISTS `products`;
 DROP TABLE IF EXISTS `categories`;
 DROP TABLE IF EXISTS `users`;
 DROP TABLE IF EXISTS `otp_codes`;
+DROP TABLE IF EXISTS `transactions`;
 
 -- Users Table
 CREATE TABLE `users` (
@@ -62,7 +63,7 @@ CREATE TABLE `orders` (
   `mobile` VARCHAR(20),
   `product_id` INT NOT NULL,
   `category_id` INT,
-  `status` ENUM('pending', 'processing', 'shipped', 'delivered', 'cancelled') NOT NULL DEFAULT 'pending',
+  `status` ENUM('pending', 'paid', 'processing', 'shipped', 'delivered', 'cancelled', 'failed') NOT NULL DEFAULT 'pending',
   `order_time` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   `amount` DECIMAL(10, 2) NOT NULL,
   `discount_used` DECIMAL(10, 2) DEFAULT 0,
@@ -174,6 +175,22 @@ CREATE TABLE `custom_order_fields` (
   `status` ENUM('active', 'inactive') NOT NULL DEFAULT 'active',
   `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Transactions Table
+CREATE TABLE `transactions` (
+  `id` INT PRIMARY KEY AUTO_INCREMENT,
+  `order_id` INT NOT NULL,
+  `user_id` INT NOT NULL,
+  `track_id` VARCHAR(255) NULL,
+  `amount` DECIMAL(10, 2) NOT NULL,
+  `status` ENUM('pending', 'successful', 'failed') NOT NULL DEFAULT 'pending',
+  `payment_gateway` VARCHAR(50) DEFAULT 'zibal',
+  `gateway_response` TEXT,
+  `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  FOREIGN KEY (`order_id`) REFERENCES `orders`(`id`) ON DELETE CASCADE,
+  FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- OTP Codes Table

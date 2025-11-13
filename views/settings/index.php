@@ -31,6 +31,9 @@
             <a href="#" @click.prevent="tab = 'sms'" :class="{ 'border-indigo-500 text-indigo-600': tab === 'sms' }" class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">
                 پیامک
             </a>
+            <a href="#" @click.prevent="tab = 'payment'" :class="{ 'border-indigo-500 text-indigo-600': tab === 'payment' }" class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">
+                درگاه پرداخت
+            </a>
         </nav>
     </div>
 
@@ -141,6 +144,15 @@
             <div class="mb-4">
                 <label for="sms_sender_number" class="block text-gray-700 text-sm font-bold mb-2">شماره فرستنده:</label>
                 <input type="text" id="sms_sender_number" name="sms_sender_number" value="<?= htmlspecialchars($settings['sms_sender_number'] ?? '') ?>" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 ltr">
+            </div>
+        </div>
+
+        <!-- Payment Gateway Settings -->
+        <div x-show="tab === 'payment'" class="bg-white p-6 rounded-lg shadow-md">
+            <h2 class="text-xl font-semibold mb-4">تنظیمات درگاه پرداخت (زیبال)</h2>
+            <div class="mb-4">
+                <label for="zibal_merchant_id" class="block text-gray-700 text-sm font-bold mb-2">کد مرچنت (Merchant ID):</label>
+                <input type="text" id="zibal_merchant_id" name="zibal_merchant_id" value="<?= htmlspecialchars($settings['zibal_merchant_id'] ?? '') ?>" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 ltr">
             </div>
         </div>
 

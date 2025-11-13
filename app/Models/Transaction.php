@@ -4,9 +4,9 @@ namespace App\Models;
 
 use App\Core\Database;
 
-class Order
+class Transaction
 {
-    protected static $table = 'orders';
+    protected static $table = 'transactions';
 
     public static function create(array $data)
     {
@@ -30,19 +30,22 @@ class Order
         return $stmt->execute($values);
     }
 
-    public static function find($id)
+    public static function updateByOrderId($order_id, array $data)
     {
         $db = Database::getConnection();
-        $stmt = $db->prepare("SELECT * FROM " . self::$table . " WHERE id = ?");
-        $stmt->execute([$id]);
-        return $stmt->fetch(\PDO::FETCH_OBJ);
+        $set_clause = implode(', ', array_map(fn($key) => "$key = ?", array_keys($data)));
+        $sql = "UPDATE " . self::$table . " SET $set_clause WHERE order_id = ?";
+        $stmt = $db->prepare($sql);
+        $values = array_values($data);
+        $values[] = $order_id;
+        return $stmt->execute($values);
     }
 
-    public static function findAllBy($column, $value)
+    public static function findBy($column, $value)
     {
         $db = Database::getConnection();
-        $stmt = $db->prepare("SELECT * FROM " . self::$table . " WHERE $column = ? ORDER BY order_time DESC");
+        $stmt = $db->prepare("SELECT * FROM " . self::$table . " WHERE $column = ?");
         $stmt->execute([$value]);
-        return $stmt->fetchAll(\PDO::FETCH_OBJ);
+        return $stmt->fetch(\PDO::FETCH_OBJ);
     }
 }

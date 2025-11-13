@@ -16,6 +16,19 @@ $router->get('/category/{slug}', 'StorefrontController@category');
 $router->get('/api/product-details/{id}', 'ApiController@productDetails');
 $router->post('/api/auth/send-otp', 'AuthController@sendOtp');
 $router->post('/api/auth/verify-otp', 'AuthController@verifyOtp');
+$router->post('/api/payment/start', 'PaymentController@startPayment');
+
+
+// Payment Gateway Callback
+// ----------------------------------------------------------------------
+$router->get('/payment/callback', 'PaymentController@verifyPayment');
+$router->post('/payment/callback', 'PaymentController@verifyPayment');
+
+
+// User Dashboard
+// ----------------------------------------------------------------------
+$router->get('/dashboard/orders', 'UserDashboardController@orders');
+$router->get('/dashboard/orders/{id}', 'UserDashboardController@orderDetails');
 
 
 // ----------------------------------------------------------------------
