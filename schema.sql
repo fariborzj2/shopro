@@ -10,6 +10,7 @@ DROP TABLE IF EXISTS `orders`;
 DROP TABLE IF EXISTS `products`;
 DROP TABLE IF EXISTS `categories`;
 DROP TABLE IF EXISTS `users`;
+DROP TABLE IF EXISTS `otp_codes`;
 
 -- Users Table
 CREATE TABLE `users` (
@@ -173,6 +174,17 @@ CREATE TABLE `custom_order_fields` (
   `status` ENUM('active', 'inactive') NOT NULL DEFAULT 'active',
   `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- OTP Codes Table
+CREATE TABLE `otp_codes` (
+  `id` INT PRIMARY KEY AUTO_INCREMENT,
+  `mobile` VARCHAR(20) NOT NULL,
+  `otp_hash` VARCHAR(255) NOT NULL,
+  `expires_at` TIMESTAMP NOT NULL,
+  `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  `is_used` BOOLEAN DEFAULT FALSE,
+  INDEX `idx_mobile` (`mobile`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- FAQ Items Table

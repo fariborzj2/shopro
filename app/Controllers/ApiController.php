@@ -33,7 +33,7 @@ class ApiController
                 'id' => $product->id,
                 'name' => $product->name_fa,
                 'price' => (float)$product->price,
-                'imageUrl' => $product->image_url ?? '/path/to/default/image.jpg',
+                'imageUrl' => $product->image_url ?? 'https://placehold.co/400x400/EEE/31343C?text=No+Image',
                 'description' => $product->description ?? ''
             ],
             'custom_fields' => array_map(function($field) {
