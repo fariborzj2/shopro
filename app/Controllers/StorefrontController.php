@@ -10,29 +10,53 @@ use App\Core\Template;
 
 class StorefrontController
 {
+    public function __construct()
+    {
+        if (session_status() == PHP_SESSION_NONE) {
+            session_start();
+        }
+    }
+
     /**
      * Display the home page.
      */
     public function home()
     {
-        // For now, it just renders a simple template.
-        // This can be expanded to include dynamic data.
-        $template = new Template(__DIR__ . '/../../storefront/views');
+        $categories = Category::findAllBy('status', 'active', 'position ASC');
+        $products = Product::findAllBy('status', 'available', 'position ASC');
+
+        $store_data = json_encode([
+            'categories' => array_map(function($c) {
+                return ['id' => $c->id, 'name' => $c->name_fa];
+            }, $categories),
+            'products' => array_map(function($p) {
+                return [
+                    'id' => $p->id,
+                    'name' => $p->name_fa,
+                    'price' => (float)$p->price,
+                    'category' => $p->category_id,
+                    'imageUrl' => $p->image_url ?? 'https://placehold.co/400x400/EEE/31343C?text=No+Image',
+                ];
+            }, $products),
+            'isUserLoggedIn' => isset($_SESSION['user_id'])
+        ]);
+
+        $template = new Template(__DIR__ . '/../../storefront/templates');
         echo $template->render('index', [
-            'pageTitle' => 'صفحه اصلی'
+            'pageTitle' => 'صفحه اصلی',
+            'store_data' => $store_data
         ]);
     }
 
     /**
      * Display a static page by its slug.
-     *
-     * @param string $slug
      */
     public function page($slug)
     {
+        $template = new Template(__DIR__ . '/../../storefront/templates');
+
         if ($slug === 'faq') {
-            $faqItems = FaqItem::findAll('display_order ASC');
-            $template = new Template(__DIR__ . '/../../storefront/views');
+            $faqItems = FaqItem::findAll('position ASC');
             echo $template->render('faq', [
                 'pageTitle' => 'سوالات متداول',
                 'faqItems' => $faqItems
@@ -42,14 +66,12 @@ class StorefrontController
 
         $page = Page::findBy('slug', $slug);
 
-        if (!$page || !$page->is_published) {
-            // Simple 404 handler
+        if (!$page || $page->status !== 'published') {
             header("HTTP/1.0 404 Not Found");
             echo "404 - Page not found.";
             exit();
         }
 
-        $template = new Template(__DIR__ . '/../../storefront/views');
         echo $template->render('page', [
             'pageTitle' => $page->title,
             'content' => $page->content
@@ -58,13 +80,9 @@ class StorefrontController
 
     /**
      * Display a category page with its products.
-     *
-     * @param string $slug
      */
     public function category($slug)
     {
-        // Note: We need a findBy method in the Category model that can handle slugs.
-        // Assuming the model has a `findBySlug` static method for this.
         $category = Category::findBy('slug', $slug);
 
         if (!$category || $category->status !== 'active') {
@@ -75,7 +93,6 @@ class StorefrontController
 
         $products = Product::findAllBy('category_id', $category->id, 'position ASC');
 
-        // We need to pass the data in a JSON format for Alpine.js, similar to the home page.
         $store_data = json_encode([
             'category' => [
                 'id' => $category->id,
@@ -87,9 +104,10 @@ class StorefrontController
                     'id' => $p->id,
                     'name' => $p->name_fa,
                     'price' => (float)$p->price,
-                    'imageUrl' => $p->image_url ?? '/path/to/default/image.jpg', // Add a default image
+                    'imageUrl' => $p->image_url ?? 'https://placehold.co/400x400/EEE/31343C?text=No+Image',
                 ];
-            }, $products)
+            }, $products),
+            'isUserLoggedIn' => isset($_SESSION['user_id'])
         ]);
 
         $template = new Template(__DIR__ . '/../../storefront/templates');

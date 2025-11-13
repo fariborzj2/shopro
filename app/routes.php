@@ -14,6 +14,8 @@ $router->get('/category/{slug}', 'StorefrontController@category');
 // API Routes
 // ----------------------------------------------------------------------
 $router->get('/api/product-details/{id}', 'ApiController@productDetails');
+$router->post('/api/auth/send-otp', 'AuthController@sendOtp');
+$router->post('/api/auth/verify-otp', 'AuthController@verifyOtp');
 
 
 // ----------------------------------------------------------------------

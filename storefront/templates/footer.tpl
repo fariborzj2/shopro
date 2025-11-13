@@ -34,5 +34,116 @@
 
     </div>
 
+    <!-- Auth Modal -->
+    <div
+        x-data="authModal()"
+        @open-auth-modal.window="openModal()"
+        x-show="isOpen"
+        x-cloak
+        class="fixed inset-0 bg-black bg-opacity-60 z-50 flex items-center justify-center"
+    >
+        <div
+            @click.outside="closeModal()"
+            x-show="isOpen"
+            x-transition:enter="ease-out duration-300"
+            x-transition:enter-start="opacity-0 scale-90"
+            x-transition:enter-end="opacity-100 scale-100"
+            class="bg-white rounded-lg shadow-xl w-full max-w-sm p-8"
+        >
+            <h2 class="text-2xl font-bold text-center mb-6" x-text="currentTitle()"></h2>
+
+            <!-- Step 1: Enter Mobile -->
+            <div x-show="step === 'mobile'">
+                <form @submit.prevent="sendOtp()">
+                    <input type="tel" x-model="mobile" placeholder="شماره موبایل (مثال: 09123456789)" class="w-full border-gray-300 rounded-md text-center">
+                    <button type="submit" :disabled="isLoading" class="w-full bg-blue-600 text-white py-2 rounded-md mt-4">
+                        <span x-show="!isLoading">ارسال کد تایید</span>
+                        <span x-show="isLoading">در حال ارسال...</span>
+                    </button>
+                </form>
+            </div>
+
+            <!-- Step 2: Verify OTP -->
+            <div x-show="step === 'otp'">
+                <p class="text-center text-sm text-gray-600 mb-4">کد ۶ رقمی ارسال شده به <span x-text="mobile"></span> را وارد کنید.</p>
+                <form @submit.prevent="verifyOtp()">
+                    <input type="text" x-model="otp" maxlength="6" placeholder="------" class="w-full border-gray-300 rounded-md text-center tracking-[1em]">
+                    <button type="submit" :disabled="isLoading" class="w-full bg-green-600 text-white py-2 rounded-md mt-4">
+                        <span x-show="!isLoading">تایید و ورود</span>
+                        <span x-show="isLoading">در حال بررسی...</span>
+                    </button>
+                </form>
+                <button @click="step = 'mobile'; errorMessage = ''" class="text-sm text-blue-600 mt-4 text-center w-full">تغییر شماره موبایل</button>
+            </div>
+
+            <p x-show="errorMessage" x-text="errorMessage" class="text-red-500 text-sm text-center mt-4"></p>
+        </div>
+    </div>
+
+<script>
+function authModal() {
+    return {
+        isOpen: false,
+        step: 'mobile', // 'mobile' or 'otp'
+        mobile: '',
+        otp: '',
+        isLoading: false,
+        errorMessage: '',
+
+        openModal() { this.isOpen = true; },
+        closeModal() { this.isOpen = false; this.reset(); },
+        reset() {
+            this.step = 'mobile';
+            this.mobile = '';
+            this.otp = '';
+            this.isLoading = false;
+            this.errorMessage = '';
+        },
+        currentTitle() {
+            return this.step === 'mobile' ? 'ورود یا ثبت‌نام' : 'کد تایید را وارد کنید';
+        },
+
+        sendOtp() {
+            this.isLoading = true;
+            this.errorMessage = '';
+            fetch('/api/auth/send-otp', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ mobile: this.mobile })
+            })
+            .then(res => res.json().then(data => ({ status: res.status, body: data })))
+            .then(({ status, body }) => {
+                if (status === 200) {
+                    this.step = 'otp';
+                } else {
+                    this.errorMessage = body.error || 'خطایی رخ داده است.';
+                }
+            })
+            .finally(() => { this.isLoading = false; });
+        },
+
+        verifyOtp() {
+            this.isLoading = true;
+            this.errorMessage = '';
+            fetch('/api/auth/verify-otp', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ mobile: this.mobile, otp: this.otp })
+            })
+            .then(res => res.json().then(data => ({ status: res.status, body: data })))
+            .then(({ status, body }) => {
+                if (status === 200) {
+                    alert('شما با موفقیت وارد شدید!');
+                    this.closeModal();
+                    window.location.reload(); // Reload to update user state
+                } else {
+                    this.errorMessage = body.error || 'کد تایید نامعتبر است.';
+                }
+            })
+            .finally(() => { this.isLoading = false; });
+        }
+    }
+}
+</script>
 </body>
 </html>
