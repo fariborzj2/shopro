@@ -178,6 +178,22 @@ CREATE TABLE `custom_order_fields` (
   `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+-- Reviews Table
+CREATE TABLE `reviews` (
+  `id` INT PRIMARY KEY AUTO_INCREMENT,
+  `product_id` INT NOT NULL,
+  `user_id` INT NOT NULL,
+  `name` VARCHAR(255) NOT NULL,
+  `mobile` VARCHAR(20) NOT NULL,
+  `rating` TINYINT NOT NULL,
+  `comment` TEXT NOT NULL,
+  `admin_reply` TEXT,
+  `status` ENUM('pending', 'approved', 'rejected') NOT NULL DEFAULT 'pending',
+  `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (`product_id`) REFERENCES `products`(`id`) ON DELETE CASCADE,
+  FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 -- Blog Post FAQ Items (Pivot Table)
 CREATE TABLE `blog_post_faq_items` (
   `post_id` INT NOT NULL,
