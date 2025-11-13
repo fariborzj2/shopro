@@ -28,6 +28,9 @@
             <a href="#" @click.prevent="tab = 'store'" :class="{ 'border-indigo-500 text-indigo-600': tab === 'store' }" class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">
                 فروشگاه
             </a>
+            <a href="#" @click.prevent="tab = 'sms'" :class="{ 'border-indigo-500 text-indigo-600': tab === 'sms' }" class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">
+                پیامک
+            </a>
         </nav>
     </div>
 
@@ -121,6 +124,23 @@
                     <option value="toman" <?= ($settings['currency'] ?? 'toman') === 'toman' ? 'selected' : '' ?>>تومان</option>
                     <option value="rial" <?= ($settings['currency'] ?? '') === 'rial' ? 'selected' : '' ?>>ریال</option>
                 </select>
+            </div>
+        </div>
+
+        <!-- SMS Settings -->
+        <div x-show="tab === 'sms'" class="bg-white p-6 rounded-lg shadow-md">
+            <h2 class="text-xl font-semibold mb-4">تنظیمات سرویس پیامک (OTP)</h2>
+            <div class="mb-4">
+                <label for="sms_api_key" class="block text-gray-700 text-sm font-bold mb-2">کلید API:</label>
+                <input type="text" id="sms_api_key" name="sms_api_key" value="<?= htmlspecialchars($settings['sms_api_key'] ?? '') ?>" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 ltr">
+            </div>
+            <div class="mb-4">
+                <label for="sms_pattern_code" class="block text-gray-700 text-sm font-bold mb-2">کد پترن (الگو):</label>
+                <input type="text" id="sms_pattern_code" name="sms_pattern_code" value="<?= htmlspecialchars($settings['sms_pattern_code'] ?? '') ?>" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 ltr">
+            </div>
+            <div class="mb-4">
+                <label for="sms_sender_number" class="block text-gray-700 text-sm font-bold mb-2">شماره فرستنده:</label>
+                <input type="text" id="sms_sender_number" name="sms_sender_number" value="<?= htmlspecialchars($settings['sms_sender_number'] ?? '') ?>" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 ltr">
             </div>
         </div>
 

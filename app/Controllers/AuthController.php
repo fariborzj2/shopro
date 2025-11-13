@@ -4,7 +4,9 @@ namespace App\Controllers;
 
 use App\Models\User;
 use App\Models\OtpCode;
+use App\Models\Setting;
 use App\Core\Request;
+use App\Core\SmsService;
 
 class AuthController
 {
@@ -40,12 +42,21 @@ class AuthController
         $otp_hash = password_hash((string)$otp, PASSWORD_DEFAULT);
         $expires_at = date('Y-m-d H:i:s', time() + (self::OTP_EXPIRATION_MINUTES * 60));
 
-        // Save OTP to database
-        OtpCode::create($mobile, $otp_hash, $expires_at);
+        // Get SMS settings
+        $settings = Setting::getAll();
 
-        // --- In a real application, you would send the OTP via an SMS gateway here ---
-        // For demonstration, we can log it or send it in the response (NOT FOR PRODUCTION)
-        error_log("OTP for {$mobile}: {$otp}");
+        // Send OTP via SMS Service
+        $sms_sent = SmsService::sendOtp($mobile, (string)$otp, $settings);
+
+        if (!$sms_sent) {
+            echo json_encode(['error' => 'خطا در ارسال کد تایید. لطفاً بعداً تلاش کنید.']);
+            http_response_code(500);
+            // We don't save the OTP if SMS sending fails
+            return;
+        }
+
+        // Save OTP to database only after successful sending
+        OtpCode::create($mobile, $otp_hash, $expires_at);
 
         echo json_encode(['message' => 'کد تایید با موفقیت ارسال شد.']);
     }
