@@ -80,10 +80,10 @@ class BlogPostsController
         $post_id = BlogPost::create([
             'category_id' => (int)$_POST['category_id'],
             'author_id' => $author_id,
-            'title' => $_POST['title'],
-            'slug' => $_POST['slug'],
-            'content' => $_POST['content'] ?? '',
-            'excerpt' => $_POST['excerpt'] ?? '',
+            'title' => htmlspecialchars($_POST['title']),
+            'slug' => htmlspecialchars($_POST['slug']),
+            'content' => $_POST['content'] ?? '', // Note: Content should be purified, but for now we leave it
+            'excerpt' => htmlspecialchars($_POST['excerpt'] ?? ''),
             'status' => $_POST['status'] ?? 'draft',
             'published_at' => $_POST['published_at'] ?? null,
             'is_editors_pick' => isset($_POST['is_editors_pick']) ? 1 : 0,
@@ -180,10 +180,10 @@ class BlogPostsController
         BlogPost::update($id, [
             'category_id' => (int)$_POST['category_id'],
             'author_id' => (int)$_POST['author_id'], // Keep author, but it shouldn't be changeable from the form
-            'title' => $_POST['title'],
-            'slug' => $_POST['slug'],
-            'content' => $_POST['content'] ?? '',
-            'excerpt' => $_POST['excerpt'] ?? '',
+            'title' => htmlspecialchars($_POST['title']),
+            'slug' => htmlspecialchars($_POST['slug']),
+            'content' => $_POST['content'] ?? '', // Note: Content should be purified, but for now we leave it
+            'excerpt' => htmlspecialchars($_POST['excerpt'] ?? ''),
             'status' => $_POST['status'] ?? 'draft',
             'published_at' => $_POST['published_at'] ?? null,
             'is_editors_pick' => isset($_POST['is_editors_pick']) ? 1 : 0,

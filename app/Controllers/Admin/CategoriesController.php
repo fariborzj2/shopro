@@ -56,9 +56,9 @@ class CategoriesController
 
         $id = Category::create([
             'parent_id' => (int)$_POST['parent_id'] ?: null,
-            'name_fa' => $_POST['name_fa'],
-            'name_en' => $_POST['name_en'] ?? '',
-            'slug' => $_POST['slug'],
+            'name_fa' => htmlspecialchars($_POST['name_fa']),
+            'name_en' => htmlspecialchars($_POST['name_en'] ?? ''),
+            'slug' => htmlspecialchars($_POST['slug']),
             'status' => $_POST['status'] ?? 'draft',
             'position' => (int)($_POST['position'] ?? 0)
         ]);
@@ -132,9 +132,9 @@ class CategoriesController
 
         Category::update($id, [
             'parent_id' => (int)$_POST['parent_id'] ?: null,
-            'name_fa' => $_POST['name_fa'],
-            'name_en' => $_POST['name_en'] ?? '',
-            'slug' => $_POST['slug'],
+            'name_fa' => htmlspecialchars($_POST['name_fa']),
+            'name_en' => htmlspecialchars($_POST['name_en'] ?? ''),
+            'slug' => htmlspecialchars($_POST['slug']),
             'status' => $_POST['status'] ?? 'draft',
             'position' => (int)($_POST['position'] ?? 0)
         ]);

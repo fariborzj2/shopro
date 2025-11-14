@@ -25,9 +25,12 @@ class BlogController
         $search = $_GET['search'] ?? null;
         $category_id = $_GET['category'] ?? null;
 
-        $total_posts = BlogPost::countAllPublished($search, $category_id);
+        $offset = ($page - 1) * self::POSTS_PER_PAGE;
+        $result = BlogPost::findAllPublishedWithCount(self::POSTS_PER_PAGE, $offset, $search, $category_id);
+        $posts = $result['posts'];
+        $total_posts = $result['total_count'];
+
         $paginator = new Paginator($total_posts, self::POSTS_PER_PAGE, $page, '/blog');
-        $posts = BlogPost::findAllPublished(self::POSTS_PER_PAGE, $paginator->getOffset(), $search, $category_id);
         $categories = BlogCategory::findAllBy('status', 'active');
 
         $sidebar_data = $this->_getSidebarData();
@@ -71,10 +74,13 @@ class BlogController
         }
 
         $page = $_GET['page'] ?? 1;
-        $total_posts = BlogPost::countAllPublished(null, $category->id);
-        $paginator = new Paginator($total_posts, self::POSTS_PER_PAGE, $page, '/blog/category/' . $slug);
-        $posts = BlogPost::findAllPublished(self::POSTS_PER_PAGE, $paginator->getOffset(), null, $category->id);
+        $offset = ($page - 1) * self::POSTS_PER_PAGE;
 
+        $result = BlogPost::findAllPublishedWithCount(self::POSTS_PER_PAGE, $offset, null, $category->id);
+        $posts = $result['posts'];
+        $total_posts = $result['total_count'];
+
+        $paginator = new Paginator($total_posts, self::POSTS_PER_PAGE, $page, '/blog/category/' . $slug);
         $sidebar_data = $this->_getSidebarData();
 
         echo $this->template->render('blog/category', [
@@ -167,9 +173,13 @@ class BlogController
         }
 
         $page = $_GET['page'] ?? 1;
-        $total_posts = BlogPost::countAllPublished(null, null, $tag->id);
+        $offset = ($page - 1) * self::POSTS_PER_PAGE;
+
+        $result = BlogPost::findAllPublishedWithCount(self::POSTS_PER_PAGE, $offset, null, null, $tag->id);
+        $posts = $result['posts'];
+        $total_posts = $result['total_count'];
+
         $paginator = new Paginator($total_posts, self::POSTS_PER_PAGE, $page, '/blog/tags/' . $slug);
-        $posts = BlogPost::findAllPublished(self::POSTS_PER_PAGE, $paginator->getOffset(), null, null, $tag->id);
 
         echo $this->template->render('blog/tag_posts', [
             'pageTitle' => 'Posts tagged with: ' . $tag->name,
