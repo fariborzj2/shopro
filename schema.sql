@@ -49,6 +49,7 @@ CREATE TABLE `products` (
   `name_fa` VARCHAR(255) NOT NULL,
   `name_en` VARCHAR(255),
   `price` DECIMAL(10, 2) NOT NULL,
+  `dollar_price` DECIMAL(10, 2) DEFAULT NULL,
   `old_price` DECIMAL(10, 2),
   `status` ENUM('available', 'unavailable', 'draft') NOT NULL DEFAULT 'available',
   `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
