@@ -121,7 +121,20 @@ class PaymentController
         $result = $zibal->verify($track_id);
 
         if ($result['success'] && $result['status'] == 1) {
-            // Payment successful
+            // Security Check: Verify amount paid matches the transaction amount
+            $paid_amount = $result['response']['amount']; // Amount from gateway is in Rials
+            $transaction_amount_rials = $transaction->amount * 10; // Amount in DB is in Tomans
+
+            if ($paid_amount != $transaction_amount_rials) {
+                // Amount mismatch - potential fraud
+                Order::update($transaction->order_id, ['status' => 'failed']);
+                $mismatch_response = "مغایرت در مبلغ پرداخت شده. مبلغ تراکنش: {$transaction_amount_rials} ریال، مبلغ پرداخت شده: {$paid_amount} ریال.";
+                Transaction::update($transaction->id, ['status' => 'failed', 'gateway_response' => $mismatch_response]);
+                header('Location: /dashboard/orders/' . $transaction->order_id . '?status=mismatch');
+                exit();
+            }
+
+            // Payment successful and amount is correct
             Order::update($transaction->order_id, ['status' => 'paid']);
             Transaction::update($transaction->id, ['status' => 'successful', 'gateway_response' => json_encode($result['response'])]);
             // Redirect to a success/receipt page
