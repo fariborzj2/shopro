@@ -13,7 +13,7 @@ class Request
     {
         // Use parse_url to get the path and remove query string
         $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
-        // Ensure it starts with a slash
+        // Ensure the path is not empty and always starts with a slash
         return '/' . trim($uri, '/');
     }
 

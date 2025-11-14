@@ -30,34 +30,35 @@ class Router
 
     public function dispatch($uri, $requestMethod)
     {
-        // First, check for a direct match for static routes
+        // First, check for a direct match for static routes.
         if (array_key_exists($uri, $this->routes[$requestMethod])) {
             list($controller, $method) = explode('@', $this->routes[$requestMethod][$uri]);
             return $this->callAction($controller, $method);
         }
 
-        // If not found, check for dynamic routes with parameters
+        // If not found, check for dynamic routes with parameters.
         foreach ($this->routes[$requestMethod] as $route => $action) {
-            // Skip routes without parameters
+            // Skip routes that don't have placeholders to avoid unnecessary regex.
             if (strpos($route, '{') === false) {
                 continue;
             }
 
-            // Convert the route to a regex pattern
+            // Convert the route pattern to a regex.
+            // Example: /users/{id}/edit -> #^/users/([^/]+)/edit$#
             $pattern = preg_replace('/\{([a-zA-Z0-9_]+)\}/', '(?P<$1>[^/]+)', $route);
             $pattern = '#^' . str_replace('/', '\/', $pattern) . '$#';
 
             if (preg_match($pattern, $uri, $matches)) {
                 list($controller, $method) = explode('@', $action);
 
-                // Filter out numeric keys from matches to get only named parameters
+                // Get named parameters from the matches.
                 $params = array_filter($matches, 'is_string', ARRAY_FILTER_USE_KEY);
 
                 return $this->callAction($controller, $method, $params);
             }
         }
 
-        throw new Exception('No route defined for this URI: ' . $uri);
+        throw new Exception('No route defined for this URI: ' . htmlspecialchars($uri));
     }
 
     protected function callAction($controller, $method, $params = [])
