@@ -11,12 +11,10 @@ class Request
      */
     public static function uri()
     {
-        // We use trim to remove slashes from the beginning and end of the URI
-        return trim(
-            // We use parse_url to handle query strings
-            parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH),
-            '/'
-        );
+        // Use parse_url to get the path and remove query string
+        $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+        // Ensure it starts with a slash
+        return '/' . trim($uri, '/');
     }
 
     /**
