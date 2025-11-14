@@ -25,7 +25,6 @@ $router->post('/api/auth/send-otp', 'AuthController@sendOtp');
 $router->post('/api/auth/verify-otp', 'AuthController@verifyOtp');
 $router->post('/api/payment/start', 'PaymentController@startPayment');
 $router->post('/reviews/store', 'ReviewsController@store');
-$router->post('/comments/store', 'CommentController@store');
 
 
 // Payment Gateway Callback
@@ -161,9 +160,3 @@ $router->get('/admin/reviews', 'Admin\ReviewsController@index');
 $router->get('/admin/reviews/edit/{id}', 'Admin\ReviewsController@edit');
 $router->post('/admin/reviews/update/{id}', 'Admin\ReviewsController@update');
 $router->post('/admin/reviews/delete/{id}', 'Admin\ReviewsController@destroy');
-
-// Comments Management
-$router->get('/admin/comments', 'Admin\CommentsController@index');
-$router->get('/admin/comments/edit/{id}', 'Admin\CommentsController@edit');
-$router->post('/admin/comments/update/{id}', 'Admin\CommentsController@update');
-$router->post('/admin/comments/delete/{id}', 'Admin\CommentsController@destroy');
