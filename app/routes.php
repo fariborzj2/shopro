@@ -111,8 +111,7 @@ $router->get('/admin/blog/tags/create', 'BlogTagsController@create');
 $router->post('/admin/blog/tags/store', 'BlogTagsController@store');
 $router->get('/admin/blog/tags/edit/{id}', 'BlogTagsController@edit');
 $router->post('/admin/blog/tags/update/{id}', 'BlogTagsController@update');
-$router->post('/admin/blog/tags/delete/{id}', 'BlogTagsController@delete');
-
+$router->post('/admin/blog/tags/delete/{id}', 'BlogTagsController@destroy');
 
 // Blog Tags
 $router->get('/admin/blog/tags', 'BlogTagsController@index');

@@ -127,10 +127,10 @@ class BlogPost
         $stmt->execute([
             'category_id' => $data['category_id'],
             'author_id' => $data['author_id'],
-            'title' => $data['title'],
+            'title' => htmlspecialchars($data['title'], ENT_QUOTES, 'UTF-8'),
             'slug' => $data['slug'],
-            'content' => $data['content'],
-            'excerpt' => $data['excerpt'],
+            'content' => htmlspecialchars($data['content'], ENT_QUOTES, 'UTF-8'),
+            'excerpt' => htmlspecialchars($data['excerpt'], ENT_QUOTES, 'UTF-8'),
             'status' => $status,
             'published_at' => $published_at
         ]);
@@ -183,10 +183,10 @@ class BlogPost
             'id' => $id,
             'category_id' => $data['category_id'],
             'author_id' => $data['author_id'],
-            'title' => $data['title'],
+            'title' => htmlspecialchars($data['title'], ENT_QUOTES, 'UTF-8'),
             'slug' => $data['slug'],
-            'content' => $data['content'],
-            'excerpt' => $data['excerpt'],
+            'content' => htmlspecialchars($data['content'], ENT_QUOTES, 'UTF-8'),
+            'excerpt' => htmlspecialchars($data['excerpt'], ENT_QUOTES, 'UTF-8'),
             'status' => $status,
             'published_at' => $published_at
         ]);
