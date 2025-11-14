@@ -7,16 +7,21 @@ use App\Models\Admin;
 class LoginController
 {
     /**
-     * Show the login form.
+     * Show the admin login form.
      */
     public function index()
     {
-        // Use a different layout for the login page, without the sidebar.
-        return view('login_layout', 'auth/login', ['title' => 'ورود به پنل']);
+        // If the user is already logged in, redirect to the dashboard
+        if (isset($_SESSION['admin_id'])) {
+            header('Location: /admin/dashboard');
+            exit();
+        }
+
+        return view('auth', 'auth/login', ['title' => 'ورود به پنل مدیریت']);
     }
 
     /**
-     * Handle the login request.
+     * Handle the admin login attempt.
      */
     public function login()
     {
@@ -25,27 +30,26 @@ class LoginController
 
         $admin = Admin::findByUsername($username);
 
-        if ($admin && password_verify($password, $admin['password_hash'])) {
-            // Store admin info in session
+        if ($admin && password_verify($password, $admin['password'])) {
+            // Password is correct, start the session
             $_SESSION['admin_id'] = $admin['id'];
             $_SESSION['admin_name'] = $admin['name'];
-            header('Location: ' . url('/'));
+            header('Location: /admin/dashboard');
             exit();
         } else {
-            // Redirect back to login with an error
-            // In a real app, use flash messages for errors.
-            header('Location: ' . url('/login?error=1'));
+            // Invalid credentials
+            header('Location: /admin/login?error=1');
             exit();
         }
     }
 
     /**
-     * Handle the logout request.
+     * Log the admin out.
      */
     public function logout()
     {
         session_destroy();
-        header('Location: ' . url('/login'));
+        header('Location: /admin/login');
         exit();
     }
 }

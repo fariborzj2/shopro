@@ -31,7 +31,7 @@ class Database
     {
         if (self::$pdo === null) {
             if (self::$config === null) {
-                $config = require __DIR__ . '/../../config.php';
+                $config = require __DIR__ . '/../config.php';
                 $dbConfig = $config['database'];
             } else {
                 $dbConfig = self::$config;
