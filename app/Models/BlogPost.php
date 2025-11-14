@@ -118,8 +118,8 @@ class BlogPost
             $published_at = date('Y-m-d H:i:s');
         }
 
-        $sql = "INSERT INTO blog_posts (category_id, author_id, title, slug, content, excerpt, status, published_at)
-                VALUES (:category_id, :author_id, :title, :slug, :content, :excerpt, :status, :published_at)";
+        $sql = "INSERT INTO blog_posts (category_id, author_id, title, slug, content, excerpt, status, published_at, is_editors_pick)
+                VALUES (:category_id, :author_id, :title, :slug, :content, :excerpt, :status, :published_at, :is_editors_pick)";
 
         $pdo = Database::getConnection();
         $stmt = $pdo->prepare($sql);
@@ -132,7 +132,8 @@ class BlogPost
             'content' => htmlspecialchars($data['content'], ENT_QUOTES, 'UTF-8'),
             'excerpt' => htmlspecialchars($data['excerpt'], ENT_QUOTES, 'UTF-8'),
             'status' => $status,
-            'published_at' => $published_at
+            'published_at' => $published_at,
+            'is_editors_pick' => isset($data['is_editors_pick']) ? 1 : 0
         ]);
 
         $post_id = $pdo->lastInsertId();
@@ -177,7 +178,7 @@ class BlogPost
         }
 
         $sql = "UPDATE blog_posts
-                SET category_id = :category_id, author_id = :author_id, title = :title, slug = :slug, content = :content, excerpt = :excerpt, status = :status, published_at = :published_at
+                SET category_id = :category_id, author_id = :author_id, title = :title, slug = :slug, content = :content, excerpt = :excerpt, status = :status, published_at = :published_at, is_editors_pick = :is_editors_pick
                 WHERE id = :id";
         Database::query($sql, [
             'id' => $id,
@@ -188,7 +189,8 @@ class BlogPost
             'content' => htmlspecialchars($data['content'], ENT_QUOTES, 'UTF-8'),
             'excerpt' => htmlspecialchars($data['excerpt'], ENT_QUOTES, 'UTF-8'),
             'status' => $status,
-            'published_at' => $published_at
+            'published_at' => $published_at,
+            'is_editors_pick' => isset($data['is_editors_pick']) ? 1 : 0
         ]);
 
         // Regenerate sitemap if the post's status has changed to published or was already published

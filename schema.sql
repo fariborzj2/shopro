@@ -120,6 +120,7 @@ CREATE TABLE `blog_posts` (
   `meta_description` TEXT,
   `featured_image` VARCHAR(255),
   `views_count` INT DEFAULT 0,
+  `is_editors_pick` BOOLEAN NOT NULL DEFAULT FALSE,
   `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `published_at` TIMESTAMP NULL,

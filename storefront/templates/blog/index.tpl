@@ -1,59 +1,95 @@
-<?php include 'header.tpl'; ?>
+<?php partial('storefront/header', ['title' => $pageTitle]) ?>
 
-<div class="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
-    <h1 class="text-3xl font-bold text-gray-900 mb-8">بلاگ</h1>
-
-    <!-- Search and Filter Form -->
-    <form method="GET" action="/blog" class="mb-8 bg-gray-50 p-4 rounded-lg">
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div>
-                <label for="search" class="sr-only">جستجو</label>
-                <input type="text" name="search" id="search" value="<?= htmlspecialchars($search ?? '') ?>" placeholder="جستجو در مطالب..." class="w-full border-gray-300 rounded-md">
+<div class="container">
+    <!-- Slider Section -->
+    <?php if (!empty($slider_posts)): ?>
+        <div id="blog-slider" class="swiper-container mb-5">
+            <div class="swiper-wrapper">
+                <?php foreach ($slider_posts as $post): ?>
+                    <div class="swiper-slide">
+                        <a href="/blog/<?= $post->slug ?>">
+                            <img src="<?= $post->featured_image ?? 'https://placehold.co/800x400' ?>" alt="<?= htmlspecialchars($post->title) ?>">
+                            <div class="slider-caption"><?= htmlspecialchars($post->title) ?></div>
+                        </a>
+                    </div>
+                <?php endforeach; ?>
             </div>
-            <div>
-                <label for="category" class="sr-only">دسته‌بندی</label>
-                <select name="category" id="category" class="w-full border-gray-300 rounded-md">
-                    <option value="">همه دسته‌بندی‌ها</option>
-                    <?php foreach ($categories as $category): ?>
-                        <option value="<?= $category->id ?>" <?= ($selected_category ?? '') == $category->id ? 'selected' : '' ?>>
-                            <?= htmlspecialchars($category->name_fa) ?>
-                        </option>
-                    <?php endforeach; ?>
-                </select>
-            </div>
-            <div>
-                <button type="submit" class="w-full bg-blue-600 text-white py-2 px-4 rounded-md">فیلتر</button>
-            </div>
+            <div class="swiper-pagination"></div>
         </div>
-    </form>
+    <?php endif; ?>
 
-    <!-- Blog Posts Grid -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        <?php foreach ($posts as $post): ?>
-            <div class="bg-white shadow-md rounded-lg overflow-hidden">
-                <a href="/blog/<?= $post->slug ?>">
-                    <img src="<?= htmlspecialchars($post->featured_image ?? 'https://placehold.co/600x400/EEE/31343C?text=No+Image') ?>" alt="<?= htmlspecialchars($post->title) ?>" class="w-full h-48 object-cover">
-                </a>
-                <div class="p-6">
-                    <p class="text-sm text-gray-500 mb-2"><?= htmlspecialchars($post->category_name) ?></p>
-                    <h2 class="text-xl font-bold mb-2">
-                        <a href="/blog/<?= $post->slug ?>" class="hover:text-blue-600"><?= htmlspecialchars($post->title) ?></a>
-                    </h2>
-                    <p class="text-gray-700 mb-4"><?= htmlspecialchars($post->excerpt) ?></p>
-                    <div class="text-sm text-gray-500">
-                        <span><?= htmlspecialchars($post->author_name) ?></span>
-                        <span class="mx-2">&bull;</span>
-                        <span><?= date('Y/m/d', strtotime($post->published_at)) ?></span>
+    <div class="row">
+        <div class="col-lg-8">
+            <h1 class="mb-4"><?= $pageTitle ?></h1>
+            <?php foreach ($posts as $post) : ?>
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h2 class="card-title"><a href="/blog/<?= $post->slug ?>"><?= htmlspecialchars($post->title) ?></a></h2>
+                        <p class="card-text"><?= htmlspecialchars($post->excerpt) ?></p>
+                        <a href="/blog/<?= $post->slug ?>" class="btn btn-primary">ادامه مطلب &rarr;</a>
                     </div>
                 </div>
-            </div>
-        <?php endforeach; ?>
+            <?php endforeach; ?>
+
+            <!-- Pagination -->
+            <?php if ($paginator->total_pages > 1) : ?>
+                <nav>
+                    <ul class="pagination">
+                        <?php if ($paginator->hasPrev()) : ?>
+                            <li class="page-item"><a class="page-link" href="<?= $paginator->getPrevUrl() ?>">قبلی</a></li>
+                        <?php endif; ?>
+                        <?php for ($i = 1; $i <= $paginator->total_pages; $i++) : ?>
+                            <li class="page-item <?= ($i == $paginator->current_page) ? 'active' : '' ?>"><a class="page-link" href="<?= $paginator->buildUrl($i) ?>"><?= $i ?></a></li>
+                        <?php endfor; ?>
+                        <?php if ($paginator->hasNext()) : ?>
+                            <li class="page-item"><a class="page-link" href="<?= $paginator->getNextUrl() ?>">بعدی</a></li>
+                        <?php endif; ?>
+                    </ul>
+                </nav>
+            <?php endif; ?>
+
+        </div>
+        <div class="col-lg-4">
+            <?php partial('blog/_sidebar', ['sidebar' => $sidebar]); ?>
+        </div>
     </div>
 
-    <!-- Pagination -->
-    <div class="mt-12">
-        <?= $paginator->render() ?>
-    </div>
+    <!-- Featured Categories Section -->
+    <?php if (!empty($featured_categories)): ?>
+        <hr class="my-5">
+        <div class="featured-categories">
+            <h2>دسته‌بندی‌های منتخب</h2>
+            <?php foreach ($featured_categories as $category): ?>
+                <div class="mb-4">
+                    <h3><a href="/blog/category/<?= $category['slug'] ?>"><?= htmlspecialchars($category['name_fa']) ?></a></h3>
+                    <ul class="list-unstyled">
+                        <?php foreach ($category['posts'] as $post): ?>
+                            <li><a href="/blog/<?= $post->slug ?>"><?= htmlspecialchars($post->title) ?></a></li>
+                        <?php endforeach; ?>
+                    </ul>
+                </div>
+            <?php endforeach; ?>
+        </div>
+    <?php endif; ?>
 </div>
 
-<?php include 'footer.tpl'; ?>
+<link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css" />
+<script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        if (document.getElementById('blog-slider')) {
+            new Swiper('.swiper-container', {
+                loop: true,
+                pagination: {
+                    el: '.swiper-pagination',
+                    clickable: true,
+                },
+                autoplay: {
+                    delay: 5000,
+                },
+            });
+        }
+    });
+</script>
+
+<?php partial('storefront/footer') ?>

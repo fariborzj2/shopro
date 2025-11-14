@@ -30,13 +30,34 @@ class BlogController
         $posts = BlogPost::findAllPublished(self::POSTS_PER_PAGE, $paginator->getOffset(), $search, $category_id);
         $categories = BlogCategory::findAllBy('status', 'active');
 
+        $sidebar_data = $this->_getSidebarData();
+
+        // Slider and featured categories
+        $settings = \App\Models\Setting::getAll();
+        $slider_posts = BlogPost::findMostViewed($settings['slider_posts_limit'] ?? 5, $settings['slider_time_range'] ?? 40);
+        $featured_category_ids = json_decode($settings['featured_categories'] ?? '[]', true);
+        $featured_categories = [];
+        if (!empty($featured_category_ids)) {
+            $posts_limit = $settings['featured_category_posts_limit'] ?? 3;
+            $all_categories = \App\Models\BlogCategory::all();
+            foreach ($all_categories as $category) {
+                if (in_array($category['id'], $featured_category_ids)) {
+                    $category['posts'] = BlogPost::findAllPublished($posts_limit, 0, null, $category['id']);
+                    $featured_categories[] = $category;
+                }
+            }
+        }
+
         echo $this->template->render('blog/index', [
             'pageTitle' => 'بلاگ',
             'posts' => $posts,
             'categories' => $categories,
             'paginator' => $paginator,
             'search' => $search,
-            'selected_category' => $category_id
+            'selected_category' => $category_id,
+            'sidebar' => $sidebar_data,
+            'slider_posts' => $slider_posts,
+            'featured_categories' => $featured_categories
         ]);
     }
 
@@ -54,11 +75,14 @@ class BlogController
         $paginator = new Paginator($total_posts, self::POSTS_PER_PAGE, $page, '/blog/category/' . $slug);
         $posts = BlogPost::findAllPublished(self::POSTS_PER_PAGE, $paginator->getOffset(), null, $category->id);
 
+        $sidebar_data = $this->_getSidebarData();
+
         echo $this->template->render('blog/category', [
             'pageTitle' => 'دسته‌بندی: ' . $category->name_fa,
             'category' => $category,
             'posts' => $posts,
-            'paginator' => $paginator
+            'paginator' => $paginator,
+            'sidebar' => $sidebar_data
         ]);
     }
 
