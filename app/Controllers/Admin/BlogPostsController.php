@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controllers;
+namespace App\Controllers\Admin;
 
 use App\Models\BlogPost;
 use App\Models\BlogCategory;
@@ -19,11 +19,13 @@ class BlogPostsController
     public function index()
     {
         $current_page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
-        $total_posts = BlogPost::count();
+        $offset = ($current_page - 1) * self::ITEMS_PER_PAGE;
 
-        $paginator = new Paginator($total_posts, self::ITEMS_PER_PAGE, $current_page, '/blog/posts');
+        $result = BlogPost::paginatedWithCount(self::ITEMS_PER_PAGE, $offset);
+        $posts = $result['posts'];
+        $total_posts = $result['total_count'];
 
-        $posts = BlogPost::paginated(self::ITEMS_PER_PAGE, $paginator->getOffset());
+        $paginator = new Paginator($total_posts, self::ITEMS_PER_PAGE, $current_page, '/admin/blog/posts');
 
         return view('main', 'blog/posts/index', [
             'title' => 'مدیریت نوشته‌ها',
@@ -54,19 +56,37 @@ class BlogPostsController
      */
     public function store()
     {
-        // Basic validation
-        if (empty($_POST['title']) || empty($_POST['slug']) || empty($_POST['category_id']) || empty($_POST['author_id'])) {
-            redirect_back_with_error('Title, slug, category, and author are required.');
+        // Server-side validation
+        $errors = [];
+        if (empty($_POST['title'])) {
+            $errors[] = 'عنوان نوشته الزامی است.';
+        }
+        if (empty($_POST['slug'])) {
+            $errors[] = 'اسلاگ نوشته الزامی است.';
+        } elseif (!preg_match('/^[a-z0-9-]+$/', $_POST['slug'])) {
+            $errors[] = 'اسلاگ فقط می‌تواند شامل حروف کوچک انگلیسی، اعداد و خط تیره باشد.';
+        }
+        if (empty($_POST['category_id']) || !BlogCategory::find($_POST['category_id'])) {
+            $errors[] = 'دسته بندی انتخاب شده معتبر نیست.';
         }
 
+        if (!empty($errors)) {
+            return redirect_back_with_errors($errors);
+        }
+
+        // Use the logged-in admin's ID as the author
+        $author_id = $_SESSION['admin_id'];
+
         $post_id = BlogPost::create([
-            'category_id' => $_POST['category_id'],
-            'author_id' => $_POST['author_id'],
+            'category_id' => (int)$_POST['category_id'],
+            'author_id' => $author_id,
             'title' => $_POST['title'],
             'slug' => $_POST['slug'],
-            'content' => $_POST['content'],
-            'excerpt' => $_POST['excerpt'],
-            'status' => $_POST['status']
+            'content' => $_POST['content'] ?? '',
+            'excerpt' => $_POST['excerpt'] ?? '',
+            'status' => $_POST['status'] ?? 'draft',
+            'published_at' => $_POST['published_at'] ?? null,
+            'is_editors_pick' => isset($_POST['is_editors_pick']) ? 1 : 0,
         ]);
 
         // Sync tags
@@ -127,24 +147,46 @@ class BlogPostsController
      */
     public function update($id)
     {
-        // Basic validation
         $post = BlogPost::find($id);
         if (!$post) {
-            redirect_back_with_error('Blog post not found.');
+            return redirect_back_with_error('نوشته پیدا نشد.');
         }
 
-        if (empty($_POST['title']) || empty($_POST['slug']) || empty($_POST['category_id']) || empty($_POST['author_id'])) {
-            redirect_back_with_error('Title, slug, category, and author are required.');
+        // Authorization check (simple version: only author can edit)
+        // In a real app, you might have roles like 'editor' or 'admin'
+        // who can edit any post.
+        // if ($post['author_id'] !== $_SESSION['admin_id']) {
+        //     return redirect_back_with_error('شما اجازه ویرایش این نوشته را ندارید.');
+        // }
+
+        // Server-side validation
+        $errors = [];
+        if (empty($_POST['title'])) {
+            $errors[] = 'عنوان نوشته الزامی است.';
+        }
+        if (empty($_POST['slug'])) {
+            $errors[] = 'اسلاگ نوشته الزامی است.';
+        } elseif (!preg_match('/^[a-z0-9-]+$/', $_POST['slug'])) {
+            $errors[] = 'اسلاگ فقط می‌تواند شامل حروف کوچک انگلیسی، اعداد و خط تیره باشد.';
+        }
+        if (empty($_POST['category_id']) || !BlogCategory::find($_POST['category_id'])) {
+            $errors[] = 'دسته بندی انتخاب شده معتبر نیست.';
+        }
+
+        if (!empty($errors)) {
+            return redirect_back_with_errors($errors);
         }
 
         BlogPost::update($id, [
-            'category_id' => $_POST['category_id'],
-            'author_id' => $_POST['author_id'],
+            'category_id' => (int)$_POST['category_id'],
+            'author_id' => (int)$_POST['author_id'], // Keep author, but it shouldn't be changeable from the form
             'title' => $_POST['title'],
             'slug' => $_POST['slug'],
-            'content' => $_POST['content'],
-            'excerpt' => $_POST['excerpt'],
-            'status' => $_POST['status']
+            'content' => $_POST['content'] ?? '',
+            'excerpt' => $_POST['excerpt'] ?? '',
+            'status' => $_POST['status'] ?? 'draft',
+            'published_at' => $_POST['published_at'] ?? null,
+            'is_editors_pick' => isset($_POST['is_editors_pick']) ? 1 : 0,
         ]);
 
         // Sync tags
