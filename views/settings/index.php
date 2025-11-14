@@ -128,6 +128,20 @@
                     <option value="rial" <?= ($settings['currency'] ?? '') === 'rial' ? 'selected' : '' ?>>ریال</option>
                 </select>
             </div>
+            <hr class="my-6">
+            <h3 class="text-lg font-semibold mb-4">قیمت‌گذاری دلاری</h3>
+            <div class="mb-4">
+                <label for="dollar_exchange_rate" class="block text-gray-700 text-sm font-bold mb-2">نرخ دلار به تومان:</label>
+                <input type="number" step="1" id="dollar_exchange_rate" name="dollar_exchange_rate" value="<?= htmlspecialchars($settings['dollar_exchange_rate'] ?? '50000') ?>" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700">
+                <p class="text-xs text-gray-500 mt-1">آخرین نرخ دلار را برای محاسبه قیمت محصولات وارد کنید.</p>
+            </div>
+            <div class="mb-4">
+                <label for="auto_update_prices" class="flex items-center">
+                    <input type="checkbox" id="auto_update_prices" name="auto_update_prices" value="1" <?= (isset($settings['auto_update_prices']) && $settings['auto_update_prices']) ? 'checked' : '' ?> class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded">
+                    <span class="ml-2 text-gray-700">به‌روزرسانی خودکار قیمت‌های تومانی</span>
+                </label>
+                <p class="text-xs text-gray-500 mt-1">در صورت فعال بودن، با تغییر نرخ دلار، قیمت تومانی تمام محصولات دلاری به صورت خودکار آپدیت می‌شود.</p>
+            </div>
         </div>
 
         <!-- SMS Settings -->

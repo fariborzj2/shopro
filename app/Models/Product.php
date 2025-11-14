@@ -62,13 +62,14 @@ class Product
      */
     public static function create($data)
     {
-        $sql = "INSERT INTO products (category_id, name_fa, name_en, price, old_price, status, position)
-                VALUES (:category_id, :name_fa, :name_en, :price, :old_price, :status, :position)";
+        $sql = "INSERT INTO products (category_id, name_fa, name_en, price, dollar_price, old_price, status, position)
+                VALUES (:category_id, :name_fa, :name_en, :price, :dollar_price, :old_price, :status, :position)";
         Database::query($sql, [
             'category_id' => $data['category_id'],
             'name_fa' => $data['name_fa'],
-            'name_en' => $data['name_en'],
+            'name_en' => $data['name_en'] ?? null,
             'price' => $data['price'],
+            'dollar_price' => $data['dollar_price'] ?? null,
             'old_price' => $data['old_price'] ?: null,
             'status' => $data['status'],
             'position' => $data['position'] ?? 0
@@ -86,14 +87,15 @@ class Product
     public static function update($id, $data)
     {
         $sql = "UPDATE products
-                SET category_id = :category_id, name_fa = :name_fa, name_en = :name_en, price = :price, old_price = :old_price, status = :status, position = :position
+                SET category_id = :category_id, name_fa = :name_fa, name_en = :name_en, price = :price, dollar_price = :dollar_price, old_price = :old_price, status = :status, position = :position
                 WHERE id = :id";
         Database::query($sql, [
             'id' => $id,
             'category_id' => $data['category_id'],
             'name_fa' => $data['name_fa'],
-            'name_en' => $data['name_en'],
+            'name_en' => $data['name_en'] ?? null,
             'price' => $data['price'],
+            'dollar_price' => $data['dollar_price'] ?? null,
             'old_price' => $data['old_price'] ?: null,
             'status' => $data['status'],
             'position' => $data['position'] ?? 0
@@ -145,5 +147,24 @@ class Product
 
         Database::query($sql, $params);
         return true;
+    }
+
+    /**
+     * Update the Toman price of all products based on their dollar price and a new exchange rate.
+     *
+     * @param float $new_rate
+     * @return bool
+     */
+    public static function updateAllTomanPrices($new_rate)
+    {
+        $sql = "UPDATE products SET price = dollar_price * :rate WHERE dollar_price IS NOT NULL";
+
+        try {
+            Database::query($sql, ['rate' => $new_rate]);
+            return true;
+        } catch (\Exception $e) {
+            // Log the error in a real application
+            return false;
+        }
     }
 }

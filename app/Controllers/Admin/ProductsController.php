@@ -35,9 +35,13 @@ class ProductsController
     public function create()
     {
         $categories = Category::all();
+        $settings = Setting::getAll();
+
         return view('main', 'products/create', [
             'title' => 'افزودن محصول جدید',
-            'categories' => $categories
+            'categories' => $categories,
+            'auto_update_prices' => (bool)($settings['auto_update_prices'] ?? false),
+            'dollar_exchange_rate' => (float)($settings['dollar_exchange_rate'] ?? 50000)
         ]);
     }
 
@@ -46,22 +50,43 @@ class ProductsController
      */
     public function store()
     {
-        // Basic validation
-        if (empty($_POST['name_fa']) || empty($_POST['price']) || empty($_POST['category_id'])) {
-            redirect_back_with_error('Name, price, and category are required.');
+        $settings = Setting::getAll();
+        $auto_update_prices = (bool)($settings['auto_update_prices'] ?? false);
+        $dollar_exchange_rate = (float)($settings['dollar_exchange_rate'] ?? 50000);
+
+        $data = $_POST;
+
+        // --- Validation ---
+        $errors = [];
+        if (empty($data['name_fa'])) $errors[] = 'نام فارسی محصول الزامی است.';
+        if (empty($data['category_id'])) $errors[] = 'انتخاب دسته بندی الزامی است.';
+
+        $dollar_price = !empty($data['dollar_price']) ? (float)$data['dollar_price'] : null;
+        if ($dollar_price !== null && $dollar_price < 0) {
+             $errors[] = 'قیمت دلاری نمی‌تواند منفی باشد.';
         }
 
-        Product::create([
-            'category_id' => $_POST['category_id'],
-            'name_fa' => $_POST['name_fa'],
-            'name_en' => $_POST['name_en'],
-            'price' => $_POST['price'],
-            'old_price' => $_POST['old_price'],
-            'status' => $_POST['status'],
-            'position' => $_POST['position']
-        ]);
+        if (empty($data['price']) && $dollar_price === null) {
+            $errors[] = 'قیمت تومانی یا قیمت دلاری باید وارد شود.';
+        }
+        if (!empty($data['price']) && !is_numeric($data['price'])) {
+            $errors[] = 'قیمت تومانی باید عدد باشد.';
+        }
 
-        header('Location: /products');
+        if (!empty($errors)) {
+            return redirect_back_with_errors($errors);
+        }
+
+        // --- Price Calculation ---
+        if ($auto_update_prices && $dollar_price !== null) {
+            $data['price'] = round($dollar_price * $dollar_exchange_rate);
+        }
+        $data['dollar_price'] = $dollar_price;
+
+
+        Product::create($data);
+
+        header('Location: /admin/products');
         exit();
     }
 
@@ -78,11 +103,14 @@ class ProductsController
         }
 
         $categories = Category::all();
+        $settings = Setting::getAll();
 
         return view('main', 'products/edit', [
             'title' => 'ویرایش محصول',
             'product' => $product,
-            'categories' => $categories
+            'categories' => $categories,
+            'auto_update_prices' => (bool)($settings['auto_update_prices'] ?? false),
+            'dollar_exchange_rate' => (float)($settings['dollar_exchange_rate'] ?? 50000)
         ]);
     }
 
@@ -93,26 +121,47 @@ class ProductsController
      */
     public function update($id)
     {
-        // Basic validation
         $product = Product::find($id);
         if (!$product) {
             redirect_back_with_error('Product not found.');
         }
-        if (empty($_POST['name_fa']) || empty($_POST['price']) || empty($_POST['category_id'])) {
-            redirect_back_with_error('Name, price, and category are required.');
+
+        $settings = Setting::getAll();
+        $auto_update_prices = (bool)($settings['auto_update_prices'] ?? false);
+        $dollar_exchange_rate = (float)($settings['dollar_exchange_rate'] ?? 50000);
+
+        $data = $_POST;
+
+        // --- Validation ---
+        $errors = [];
+        if (empty($data['name_fa'])) $errors[] = 'نام فارسی محصول الزامی است.';
+        if (empty($data['category_id'])) $errors[] = 'انتخاب دسته بندی الزامی است.';
+
+        $dollar_price = !empty($data['dollar_price']) ? (float)$data['dollar_price'] : null;
+        if ($dollar_price !== null && $dollar_price < 0) {
+             $errors[] = 'قیمت دلاری نمی‌تواند منفی باشد.';
         }
 
-        Product::update($id, [
-            'category_id' => $_POST['category_id'],
-            'name_fa' => $_POST['name_fa'],
-            'name_en' => $_POST['name_en'],
-            'price' => $_POST['price'],
-            'old_price' => $_POST['old_price'],
-            'status' => $_POST['status'],
-            'position' => $_POST['position']
-        ]);
+        if (empty($data['price']) && $dollar_price === null) {
+            $errors[] = 'قیمت تومانی یا قیمت دلاری باید وارد شود.';
+        }
+        if (!empty($data['price']) && !is_numeric($data['price'])) {
+            $errors[] = 'قیمت تومانی باید عدد باشد.';
+        }
 
-        header('Location: /products');
+        if (!empty($errors)) {
+            return redirect_back_with_errors($errors);
+        }
+
+        // --- Price Calculation ---
+        if ($auto_update_prices && $dollar_price !== null) {
+            $data['price'] = round($dollar_price * $dollar_exchange_rate);
+        }
+        $data['dollar_price'] = $dollar_price;
+
+        Product::update($id, $data);
+
+        header('Location: /admin/products');
         exit();
     }
 
