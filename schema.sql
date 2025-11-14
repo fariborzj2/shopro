@@ -178,20 +178,6 @@ CREATE TABLE `custom_order_fields` (
   `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Blog Post Comments Table
-CREATE TABLE `blog_post_comments` (
-  `id` INT PRIMARY KEY AUTO_INCREMENT,
-  `post_id` INT NOT NULL,
-  `parent_id` INT DEFAULT NULL,
-  `name` VARCHAR(50) NOT NULL,
-  `email` VARCHAR(255),
-  `comment` TEXT NOT NULL,
-  `status` ENUM('pending', 'approved', 'rejected') NOT NULL DEFAULT 'pending',
-  `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  FOREIGN KEY (`post_id`) REFERENCES `blog_posts`(`id`) ON DELETE CASCADE,
-  FOREIGN KEY (`parent_id`) REFERENCES `blog_post_comments`(`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
 -- Reviews Table
 CREATE TABLE `reviews` (
   `id` INT PRIMARY KEY AUTO_INCREMENT,
