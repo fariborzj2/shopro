@@ -35,6 +35,34 @@ class Category
     }
 
     /**
+     * Find all records by a specific column and value.
+     *
+     * @param string $column
+     * @param mixed $value
+     * @param string|null $orderBy
+     * @return array
+     */
+    public static function findAllBy($column, $value, $orderBy = null)
+    {
+        // Whitelist columns to prevent SQL injection on column names
+        $allowedColumns = ['status', 'parent_id', 'slug'];
+        if (!in_array($column, $allowedColumns)) {
+            throw new \Exception("Invalid column name provided to findAllBy.");
+        }
+
+        $sql = "SELECT * FROM categories WHERE {$column} = :value";
+        if ($orderBy) {
+            // Basic validation for order by to prevent injection
+            if (preg_match('/^[a-zA-Z0-9_]+ (ASC|DESC)$/i', $orderBy)) {
+                $sql .= " ORDER BY " . $orderBy;
+            }
+        }
+
+        $stmt = Database::query($sql, ['value' => $value]);
+        return $stmt->fetchAll(PDO::FETCH_OBJ);
+    }
+
+    /**
      * Create a new category.
      *
      * @param array $data
@@ -43,15 +71,16 @@ class Category
     public static function create($data)
     {
         $db = Database::getConnection();
-        $sql = "INSERT INTO categories (parent_id, name_fa, name_en, status, position)
-                VALUES (:parent_id, :name_fa, :name_en, :status, :position)";
+        $sql = "INSERT INTO categories (parent_id, name_fa, name_en, status, position, slug)
+                VALUES (:parent_id, :name_fa, :name_en, :status, :position, :slug)";
         $stmt = $db->prepare($sql);
         $stmt->execute([
             'parent_id' => $data['parent_id'] ?: null,
             'name_fa' => $data['name_fa'],
             'name_en' => $data['name_en'],
             'status' => $data['status'],
-            'position' => $data['position'] ?? 0
+            'position' => $data['position'] ?? 0,
+            'slug' => $data['slug']
         ]);
         return $db->lastInsertId();
     }
@@ -66,7 +95,7 @@ class Category
     public static function update($id, $data)
     {
         $sql = "UPDATE categories
-                SET parent_id = :parent_id, name_fa = :name_fa, name_en = :name_en, status = :status, position = :position
+                SET parent_id = :parent_id, name_fa = :name_fa, name_en = :name_en, status = :status, position = :position, slug = :slug
                 WHERE id = :id";
         Database::query($sql, [
             'id' => $id,
@@ -74,7 +103,8 @@ class Category
             'name_fa' => $data['name_fa'],
             'name_en' => $data['name_en'],
             'status' => $data['status'],
-            'position' => $data['position'] ?? 0
+            'position' => $data['position'] ?? 0,
+            'slug' => $data['slug']
         ]);
         return true;
     }
@@ -124,7 +154,6 @@ class Category
         Database::query($sql, $params);
         return true;
     }
-}
 
     /**
      * Get the IDs of custom fields attached to a category.
@@ -181,3 +210,4 @@ class Category
             return false;
         }
     }
+}
