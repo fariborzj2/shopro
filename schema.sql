@@ -1,18 +1,25 @@
 -- Admin Panel Schema
 
--- Drop tables if they exist to start fresh
+-- Drop tables if they exist to start fresh, in an order that respects foreign key constraints.
+DROP TABLE IF EXISTS `transactions`;
+DROP TABLE IF EXISTS `reviews`;
+DROP TABLE IF EXISTS `orders`;
 DROP TABLE IF EXISTS `blog_post_tags`;
-DROP TABLE IF EXISTS `blog_tags`;
+DROP TABLE IF EXISTS `blog_post_faq_items`;
+DROP TABLE IF EXISTS `category_custom_field`;
+DROP TABLE IF EXISTS `products`;
 DROP TABLE IF EXISTS `blog_posts`;
+DROP TABLE IF EXISTS `users`;
+DROP TABLE IF EXISTS `categories`;
 DROP TABLE IF EXISTS `blog_categories`;
 DROP TABLE IF EXISTS `admins`;
-DROP TABLE IF EXISTS `orders`;
-DROP TABLE IF EXISTS `products`;
-DROP TABLE IF EXISTS `categories`;
-DROP TABLE IF EXISTS `users`;
+DROP TABLE IF EXISTS `blog_tags`;
+DROP TABLE IF EXISTS `faq_items`;
+DROP TABLE IF EXISTS `custom_order_fields`;
 DROP TABLE IF EXISTS `otp_codes`;
-DROP TABLE IF EXISTS `transactions`;
-DROP TABLE IF EXISTS `blog_post_faq_items`;
+DROP TABLE IF EXISTS `settings`;
+DROP TABLE IF EXISTS `pages`;
+
 
 -- Users Table
 CREATE TABLE `users` (
@@ -49,6 +56,7 @@ CREATE TABLE `products` (
   `name_fa` VARCHAR(255) NOT NULL,
   `name_en` VARCHAR(255),
   `price` DECIMAL(10, 2) NOT NULL,
+  `dollar_price` DECIMAL(10, 2) DEFAULT NULL,
   `old_price` DECIMAL(10, 2),
   `status` ENUM('available', 'unavailable', 'draft') NOT NULL DEFAULT 'available',
   `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -145,21 +153,12 @@ CREATE TABLE `blog_post_tags` (
   FOREIGN KEY (`tag_id`) REFERENCES `blog_tags`(`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- ----------------------------
--- Table structure for settings
--- ----------------------------
-DROP TABLE IF EXISTS `settings`;
+-- Settings Table
 CREATE TABLE `settings` (
   `setting_key` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `setting_value` text COLLATE utf8mb4_unicode_ci,
   PRIMARY KEY (`setting_key`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- Insert some sample data for users
-INSERT INTO `users` (`name`, `mobile`, `status`) VALUES
-('علی رضایی', '09123456789', 'active'),
-('مریم احمدی', '09129876543', 'inactive'),
-('رضا حسینی', '09121112233', 'banned');
 
 -- Custom Order Fields Table
 CREATE TABLE `custom_order_fields` (
@@ -193,6 +192,16 @@ CREATE TABLE `reviews` (
   `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (`product_id`) REFERENCES `products`(`id`) ON DELETE CASCADE,
   FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- FAQ Items Table
+CREATE TABLE `faq_items` (
+  `id` INT PRIMARY KEY AUTO_INCREMENT,
+  `question` VARCHAR(255) NOT NULL,
+  `answer` TEXT NOT NULL,
+  `position` INT DEFAULT 0,
+  `status` ENUM('active', 'inactive') NOT NULL DEFAULT 'active',
+  `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Blog Post FAQ Items (Pivot Table)
@@ -231,16 +240,6 @@ CREATE TABLE `otp_codes` (
   INDEX `idx_mobile` (`mobile`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- FAQ Items Table
-CREATE TABLE `faq_items` (
-  `id` INT PRIMARY KEY AUTO_INCREMENT,
-  `question` VARCHAR(255) NOT NULL,
-  `answer` TEXT NOT NULL,
-  `position` INT DEFAULT 0,
-  `status` ENUM('active', 'inactive') NOT NULL DEFAULT 'active',
-  `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
 -- Category Custom Fields (Pivot Table)
 CREATE TABLE `category_custom_field` (
   `category_id` INT NOT NULL,
@@ -260,3 +259,10 @@ CREATE TABLE `pages` (
   `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+
+-- Insert some sample data for users
+INSERT INTO `users` (`name`, `mobile`, `status`) VALUES
+('علی رضایی', '09123456789', 'active'),
+('مریم احمدی', '09129876543', 'inactive'),
+('رضا حسینی', '09121112233', 'banned');

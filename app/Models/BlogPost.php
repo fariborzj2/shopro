@@ -9,15 +9,15 @@ use PDO;
 class BlogPost
 {
     /**
-     * Get a paginated list of blog posts.
+     * Get a paginated list of blog posts with total count in one query.
      *
      * @param int $limit
      * @param int $offset
      * @return array
      */
-    public static function paginated($limit, $offset)
+    public static function paginatedWithCount($limit, $offset)
     {
-        $sql = "SELECT bp.*, bc.name_fa as category_name, a.name as author_name
+        $sql = "SELECT SQL_CALC_FOUND_ROWS bp.*, bc.name_fa as category_name, a.name as author_name
                 FROM blog_posts bp
                 LEFT JOIN blog_categories bc ON bp.category_id = bc.id
                 LEFT JOIN admins a ON bp.author_id = a.id
@@ -30,18 +30,12 @@ class BlogPost
         $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
         $stmt->execute();
 
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    }
+        $posts = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-    /**
-     * Get the total count of blog posts.
-     *
-     * @return int
-     */
-    public static function count()
-    {
-        $stmt = Database::query("SELECT COUNT(id) FROM blog_posts");
-        return (int) $stmt->fetchColumn();
+        // Fetch the total count using FOUND_ROWS()
+        $total_count = (int) $pdo->query("SELECT FOUND_ROWS()")->fetchColumn();
+
+        return ['posts' => $posts, 'total_count' => $total_count];
     }
 
     /**
