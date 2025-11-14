@@ -11,4 +11,10 @@ class PaginatorTest extends TestCase
         $paginator = new App\Core\Paginator(100, 10, 1, '/search?q=foo');
         $this->assertEquals('/search?q=foo&page=2', $paginator->buildUrl(2));
     }
+
+    public function testBuildUrlWithRootUrl()
+    {
+        $paginator = new App\Core\Paginator(100, 10, 1, '/');
+        $this->assertEquals('/?page=2', $paginator->buildUrl(2));
+    }
 }

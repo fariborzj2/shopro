@@ -92,7 +92,10 @@ class Paginator
      */
     public function buildUrl($page)
     {
-        $url = rtrim($this->base_url, '/');
+        $url = $this->base_url;
+        if ($url !== '/') {
+            $url = rtrim($url, '/');
+        }
         $separator = strpos($url, '?') === false ? '?' : '&';
         return $url . $separator . 'page=' . $page;
     }
