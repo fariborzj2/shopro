@@ -29,13 +29,12 @@ function render($view, $data = [])
  */
 function view($layout, $view, $data = [])
 {
-    $content = render($view, $data);
+    // Render the main content view first
+    $data['content'] = render($view, $data);
 
-    echo str_replace(
-        ['{{ content }}', '{{ title }}'],
-        [$content, $data['title'] ?? 'داشبورد'],
-        file_get_contents(__DIR__ . "/../../views/layouts/{$layout}.php")
-    );
+    // Now, render the main layout, which will have access to all data, including 'content'
+    // This executes the layout file as PHP, allowing template logic.
+    echo render("layouts/{$layout}", $data);
 }
 
 /**

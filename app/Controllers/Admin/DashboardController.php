@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controllers;
+namespace App\Controllers\Admin;
 
 use App\Models\Dashboard;
 use App\Models\Order; // For recent orders
@@ -18,11 +18,11 @@ class DashboardController
         $recentOrders = Dashboard::getRecentOrders(); // Fetch recent orders
 
         // Prepare data for Chart.js
-        $sales_labels = array_map(fn($item) => $item['date'], $salesChartData);
-        $sales_values = array_map(fn($item) => $item['total'], $salesChartData);
+        $sales_labels = array_map(fn($item) => $item['date'] ?? 'N/A', $salesChartData);
+        $sales_values = array_map(fn($item) => $item['total'] ?? 0, $salesChartData);
 
-        $users_labels = array_map(fn($item) => "Day " . $item['day'], $usersChartData);
-        $users_values = array_map(fn($item) => $item['count'], $usersChartData);
+        $users_labels = array_map(fn($item) => "Day " . ($item['day'] ?? 'N/A'), $usersChartData);
+        $users_values = array_map(fn($item) => $item['count'] ?? 0, $usersChartData);
 
         return view('main', 'dashboard', [
             'title' => 'داشبورد',
