@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controllers;
+namespace App\Controllers\Admin;
 
 use App\Models\Admin;
 
@@ -29,12 +29,12 @@ class LoginController
             // Store admin info in session
             $_SESSION['admin_id'] = $admin['id'];
             $_SESSION['admin_name'] = $admin['name'];
-            header('Location: /');
+            header('Location: ' . url('/'));
             exit();
         } else {
             // Redirect back to login with an error
             // In a real app, use flash messages for errors.
-            header('Location: /login?error=1');
+            header('Location: ' . url('/login?error=1'));
             exit();
         }
     }
@@ -45,7 +45,7 @@ class LoginController
     public function logout()
     {
         session_destroy();
-        header('Location: /login');
+        header('Location: ' . url('/login'));
         exit();
     }
 }

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controllers;
+namespace App\Controllers\Admin;
 
 use App\Models\Category;
 use App\Models\CustomOrderField;
@@ -36,17 +36,31 @@ class CategoriesController
      */
     public function store()
     {
-        // Basic validation
+        // Server-side validation
+        $errors = [];
         if (empty($_POST['name_fa'])) {
-            redirect_back_with_error('Persian name is required.');
+            $errors[] = 'نام فارسی دسته بندی الزامی است.';
+        }
+        if (empty($_POST['slug'])) {
+            $errors[] = 'اسلاگ دسته بندی الزامی است.';
+        } elseif (!preg_match('/^[a-z0-9-]+$/', $_POST['slug'])) {
+            $errors[] = 'اسلاگ فقط می‌تواند شامل حروف کوچک انگلیسی، اعداد و خط تیره باشد.';
+        }
+        if (!empty($_POST['parent_id']) && !Category::find($_POST['parent_id'])) {
+            $errors[] = 'دسته بندی والد انتخاب شده معتبر نیست.';
+        }
+
+        if (!empty($errors)) {
+            return redirect_back_with_errors($errors);
         }
 
         $id = Category::create([
-            'parent_id' => $_POST['parent_id'],
-            'name_fa' => $_POST['name_fa'],
-            'name_en' => $_POST['name_en'],
-            'status' => $_POST['status'],
-            'position' => $_POST['position']
+            'parent_id' => (int)$_POST['parent_id'] ?: null,
+            'name_fa' => htmlspecialchars($_POST['name_fa']),
+            'name_en' => htmlspecialchars($_POST['name_en'] ?? ''),
+            'slug' => htmlspecialchars($_POST['slug']),
+            'status' => $_POST['status'] ?? 'draft',
+            'position' => (int)($_POST['position'] ?? 0)
         ]);
 
         // Sync custom fields
@@ -89,21 +103,40 @@ class CategoriesController
      */
     public function update($id)
     {
-        // Basic validation
         $category = Category::find($id);
         if (!$category) {
-            redirect_back_with_error('Category not found.');
+            return redirect_back_with_error('دسته بندی پیدا نشد.');
         }
+
+        // Server-side validation
+        $errors = [];
         if (empty($_POST['name_fa'])) {
-            redirect_back_with_error('Persian name is required.');
+            $errors[] = 'نام فارسی دسته بندی الزامی است.';
+        }
+        if (empty($_POST['slug'])) {
+            $errors[] = 'اسلاگ دسته بندی الزامی است.';
+        } elseif (!preg_match('/^[a-z0-9-]+$/', $_POST['slug'])) {
+            $errors[] = 'اسلاگ فقط می‌تواند شامل حروف کوچک انگلیسی، اعداد و خط تیره باشد.';
+        }
+        if (!empty($_POST['parent_id']) && !Category::find($_POST['parent_id'])) {
+            $errors[] = 'دسته بندی والد انتخاب شده معتبر نیست.';
+        }
+        // Prevent setting a category as its own parent
+        if ((int)$_POST['parent_id'] === (int)$id) {
+            $errors[] = 'یک دسته بندی نمی‌تواند والد خودش باشد.';
+        }
+
+        if (!empty($errors)) {
+            return redirect_back_with_errors($errors);
         }
 
         Category::update($id, [
-            'parent_id' => $_POST['parent_id'],
-            'name_fa' => $_POST['name_fa'],
-            'name_en' => $_POST['name_en'],
-            'status' => $_POST['status'],
-            'position' => $_POST['position']
+            'parent_id' => (int)$_POST['parent_id'] ?: null,
+            'name_fa' => htmlspecialchars($_POST['name_fa']),
+            'name_en' => htmlspecialchars($_POST['name_en'] ?? ''),
+            'slug' => htmlspecialchars($_POST['slug']),
+            'status' => $_POST['status'] ?? 'draft',
+            'position' => (int)($_POST['position'] ?? 0)
         ]);
 
         // Sync custom fields

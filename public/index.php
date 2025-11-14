@@ -2,6 +2,7 @@
 
 // public/index.php
 
+use App\Core\Exceptions\RouteNotFoundException;
 use App\Core\Request;
 use App\Core\Router;
 
@@ -32,7 +33,7 @@ spl_autoload_register(function ($class) {
 
 // Middleware-like check for admin authentication
 $uri = Request::uri();
-if (strpos($uri, '/admin') === 0 && !strpos($uri, '/admin/login')) {
+if (strpos($uri, '/admin') === 0 && strpos($uri, '/admin/login') === false) {
     if (!isset($_SESSION['admin_id'])) {
         header('Location: /admin/login');
         exit();
@@ -61,6 +62,12 @@ try {
     Router::load(__DIR__ . '/../app/routes.php')
         ->dispatch($uri, $method);
 
+} catch (RouteNotFoundException $e) {
+    http_response_code(404);
+    return view('main', 'errors/404', [
+        'title' => 'صفحه یافت نشد',
+        'message' => $e->getMessage()
+    ]);
 } catch (Exception $e) {
     // In a real app, you would log the error.
     http_response_code(500);
