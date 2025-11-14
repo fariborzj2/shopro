@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Core\Database;
 use PDO;
 
+// Model for the product categories.
 class Category
 {
     /**
