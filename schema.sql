@@ -1,23 +1,23 @@
 -- Admin Panel Schema
 
--- Drop tables if they exist to start fresh
+-- Drop tables if they exist to start fresh, in an order that respects foreign key constraints.
+DROP TABLE IF EXISTS `transactions`;
+DROP TABLE IF EXISTS `reviews`;
+DROP TABLE IF EXISTS `orders`;
 DROP TABLE IF EXISTS `blog_post_tags`;
-DROP TABLE IF EXISTS `blog_tags`;
+DROP TABLE IF EXISTS `blog_post_faq_items`;
+DROP TABLE IF EXISTS `category_custom_field`;
+DROP TABLE IF EXISTS `products`;
 DROP TABLE IF EXISTS `blog_posts`;
+DROP TABLE IF EXISTS `users`;
+DROP TABLE IF EXISTS `categories`;
 DROP TABLE IF EXISTS `blog_categories`;
 DROP TABLE IF EXISTS `admins`;
-DROP TABLE IF EXISTS `orders`;
-DROP TABLE IF EXISTS `products`;
-DROP TABLE IF EXISTS `categories`;
-DROP TABLE IF EXISTS `users`;
-DROP TABLE IF EXISTS `otp_codes`;
-DROP TABLE IF EXISTS `transactions`;
-DROP TABLE IF EXISTS `blog_post_faq_items`;
+DROP TABLE IF EXISTS `blog_tags`;
 DROP TABLE IF EXISTS `faq_items`;
-DROP TABLE IF EXISTS `settings`;
-DROP TABLE IF EXISTS `reviews`;
 DROP TABLE IF EXISTS `custom_order_fields`;
-DROP TABLE IF EXISTS `category_custom_field`;
+DROP TABLE IF EXISTS `otp_codes`;
+DROP TABLE IF EXISTS `settings`;
 DROP TABLE IF EXISTS `pages`;
 
 
