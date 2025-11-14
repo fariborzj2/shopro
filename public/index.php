@@ -32,7 +32,7 @@ spl_autoload_register(function ($class) {
 
 // Middleware-like check for admin authentication
 $uri = Request::uri();
-if (strpos($uri, '/admin') === 0 && !strpos($uri, '/admin/login')) {
+if (strpos($uri, '/admin') === 0 && strpos($uri, '/admin/login') === false) {
     if (!isset($_SESSION['admin_id'])) {
         header('Location: /admin/login');
         exit();
