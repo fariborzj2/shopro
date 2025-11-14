@@ -104,8 +104,6 @@ class BlogController
         $related_posts_limit = $settings['related_posts_limit'] ?? 5;
         $related_posts = BlogPost::findRelatedPosts($post->id, $related_posts_limit);
 
-        $comments = \App\Models\Comment::findByPostId($post->id);
-
         // Prepare data for SEO and Schema
         $base_url = (isset($_SERVER['HTTPS']) ? "https" : "http") . "://$_SERVER[HTTP_HOST]";
         $canonical_url = $base_url . '/blog/' . $post->slug;
@@ -146,8 +144,6 @@ class BlogController
             'faq_items' => $faq_items,
             'tags' => $tags,
             'related_posts' => $related_posts,
-            'comments' => $comments,
-            'sidebar' => $this->_getSidebarData(),
             'schema_data' => $schema_data,
         ]);
     }
@@ -175,23 +171,11 @@ class BlogController
         $paginator = new Paginator($total_posts, self::POSTS_PER_PAGE, $page, '/blog/tags/' . $slug);
         $posts = BlogPost::findAllPublished(self::POSTS_PER_PAGE, $paginator->getOffset(), null, null, $tag->id);
 
-        $sidebar_data = $this->_getSidebarData();
-
         echo $this->template->render('blog/tag_posts', [
             'pageTitle' => 'Posts tagged with: ' . $tag->name,
             'tag' => $tag,
             'posts' => $posts,
-            'paginator' => $paginator,
-            'sidebar' => $sidebar_data
+            'paginator' => $paginator
         ]);
-    }
-
-    private function _getSidebarData()
-    {
-        return [
-            'most_commented' => BlogPost::findMostCommented(5),
-            'most_viewed' => BlogPost::findMostViewed(5, 365), // For all time
-            'editors_picks' => BlogPost::findEditorsPicks(5)
-        ];
     }
 }

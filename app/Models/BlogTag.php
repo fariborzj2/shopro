@@ -21,13 +21,7 @@ class BlogTag
 
     public static function findBy($column, $value)
     {
-        // Whitelist columns to prevent SQL injection
-        $allowed_columns = ['id', 'slug', 'name'];
-        if (!in_array($column, $allowed_columns)) {
-            throw new \Exception("Invalid column name: $column");
-        }
-
-        $stmt = Database::query("SELECT * FROM blog_tags WHERE `$column` = :value", ['value' => $value]);
+        $stmt = Database::query("SELECT * FROM blog_tags WHERE $column = :value", ['value' => $value]);
         return $stmt->fetch(PDO::FETCH_OBJ);
     }
 

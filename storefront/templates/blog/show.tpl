@@ -3,8 +3,8 @@
 <div class="container">
     <div class="row">
         <div class="col-lg-8">
-            <h1 class="mt-4"><?= htmlspecialchars($post->title) ?></h1>
-            <p class="lead">توسط <a href="#"><?= htmlspecialchars($post->author_name) ?></a></p>
+            <h1 class="mt-4"><?= $post->title ?></h1>
+            <p class="lead">by <a href="#"><?= $post->author_name ?></a></p>
             <hr>
             <p>Posted on <?= date('F j, Y, g:i a', strtotime($post->created_at)) ?></p>
             <hr>
@@ -111,9 +111,6 @@
                     <?php display_comments($comments); ?>
                 </div>
             </div>
-        </div>
-        <div class="col-lg-4">
-            <?php partial('blog/_sidebar', ['sidebar' => $sidebar]); ?>
         </div>
     </div>
 </div>

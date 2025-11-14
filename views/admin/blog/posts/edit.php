@@ -58,10 +58,6 @@
                         <?php endforeach; ?>
                     </select>
                 </div>
-                <div class="form-group form-check">
-                    <input type="checkbox" class="form-check-input" id="is_editors_pick" name="is_editors_pick" value="1" <?= ($post['is_editors_pick'] ?? 0) ? 'checked' : '' ?>>
-                    <label class="form-check-label" for="is_editors_pick">پیشنهاد سردبیر</label>
-                </div>
                 <button type="submit" class="btn btn-primary">Update</button>
             </form>
         </div>
