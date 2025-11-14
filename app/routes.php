@@ -25,7 +25,6 @@ $router->post('/api/auth/send-otp', 'AuthController@sendOtp');
 $router->post('/api/auth/verify-otp', 'AuthController@verifyOtp');
 $router->post('/api/payment/start', 'PaymentController@startPayment');
 $router->post('/reviews/store', 'ReviewsController@store');
-$router->post('/comments/store', 'CommentController@store');
 
 
 // Payment Gateway Callback
@@ -114,6 +113,14 @@ $router->get('/admin/blog/tags/edit/{id}', 'BlogTagsController@edit');
 $router->post('/admin/blog/tags/update/{id}', 'BlogTagsController@update');
 $router->post('/admin/blog/tags/delete/{id}', 'BlogTagsController@destroy');
 
+// Blog Tags
+$router->get('/admin/blog/tags', 'BlogTagsController@index');
+$router->get('/admin/blog/tags/create', 'BlogTagsController@create');
+$router->post('/admin/blog/tags/store', 'BlogTagsController@store');
+$router->get('/admin/blog/tags/edit/{id}', 'BlogTagsController@edit');
+$router->post('/admin/blog/tags/update/{id}', 'BlogTagsController@update');
+$router->post('/admin/blog/tags/delete/{id}', 'BlogTagsController@destroy');
+
 // Blog Posts
 $router->get('/admin/blog', 'BlogPostsController@index');
 $router->get('/admin/blog/posts', 'BlogPostsController@index');
@@ -152,9 +159,3 @@ $router->get('/admin/reviews', 'Admin\ReviewsController@index');
 $router->get('/admin/reviews/edit/{id}', 'Admin\ReviewsController@edit');
 $router->post('/admin/reviews/update/{id}', 'Admin\ReviewsController@update');
 $router->post('/admin/reviews/delete/{id}', 'Admin\ReviewsController@destroy');
-
-// Comments Management
-$router->get('/admin/comments', 'Admin\CommentsController@index');
-$router->get('/admin/comments/edit/{id}', 'Admin\CommentsController@edit');
-$router->post('/admin/comments/update/{id}', 'Admin\CommentsController@update');
-$router->post('/admin/comments/delete/{id}', 'Admin\CommentsController@destroy');

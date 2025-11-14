@@ -80,8 +80,6 @@ class BlogController
         $related_posts_limit = $settings['related_posts_limit'] ?? 5;
         $related_posts = BlogPost::findRelatedPosts($post->id, $related_posts_limit);
 
-        $comments = \App\Models\Comment::findByPostId($post->id);
-
         // Prepare data for SEO and Schema
         $base_url = (isset($_SERVER['HTTPS']) ? "https" : "http") . "://$_SERVER[HTTP_HOST]";
         $canonical_url = $base_url . '/blog/' . $post->slug;
@@ -122,7 +120,6 @@ class BlogController
             'faq_items' => $faq_items,
             'tags' => $tags,
             'related_posts' => $related_posts,
-            'comments' => $comments,
             'schema_data' => $schema_data,
         ]);
     }
