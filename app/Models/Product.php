@@ -55,6 +55,34 @@ class Product
     }
 
     /**
+     * Find all records by a specific column and value.
+     *
+     * @param string $column
+     * @param mixed $value
+     * @param string|null $orderBy
+     * @return array
+     */
+    public static function findAllBy($column, $value, $orderBy = null)
+    {
+        // Whitelist columns to prevent SQL injection on column names
+        $allowedColumns = ['status', 'category_id'];
+        if (!in_array($column, $allowedColumns)) {
+            throw new \Exception("Invalid column name provided to findAllBy.");
+        }
+
+        $sql = "SELECT * FROM products WHERE {$column} = :value";
+        if ($orderBy) {
+            // Basic validation for order by to prevent injection
+            if (preg_match('/^[a-zA-Z0-9_]+ (ASC|DESC)$/i', $orderBy)) {
+                $sql .= " ORDER BY " . $orderBy;
+            }
+        }
+
+        $stmt = Database::query($sql, ['value' => $value]);
+        return $stmt->fetchAll(PDO::FETCH_OBJ);
+    }
+
+    /**
      * Create a new product.
      *
      * @param array $data
@@ -62,13 +90,14 @@ class Product
      */
     public static function create($data)
     {
-        $sql = "INSERT INTO products (category_id, name_fa, name_en, price, old_price, status, position)
-                VALUES (:category_id, :name_fa, :name_en, :price, :old_price, :status, :position)";
+        $sql = "INSERT INTO products (category_id, name_fa, name_en, price, dollar_price, old_price, status, position)
+                VALUES (:category_id, :name_fa, :name_en, :price, :dollar_price, :old_price, :status, :position)";
         Database::query($sql, [
             'category_id' => $data['category_id'],
             'name_fa' => $data['name_fa'],
-            'name_en' => $data['name_en'],
+            'name_en' => $data['name_en'] ?? null,
             'price' => $data['price'],
+            'dollar_price' => $data['dollar_price'] ?? null,
             'old_price' => $data['old_price'] ?: null,
             'status' => $data['status'],
             'position' => $data['position'] ?? 0
@@ -86,14 +115,15 @@ class Product
     public static function update($id, $data)
     {
         $sql = "UPDATE products
-                SET category_id = :category_id, name_fa = :name_fa, name_en = :name_en, price = :price, old_price = :old_price, status = :status, position = :position
+                SET category_id = :category_id, name_fa = :name_fa, name_en = :name_en, price = :price, dollar_price = :dollar_price, old_price = :old_price, status = :status, position = :position
                 WHERE id = :id";
         Database::query($sql, [
             'id' => $id,
             'category_id' => $data['category_id'],
             'name_fa' => $data['name_fa'],
-            'name_en' => $data['name_en'],
+            'name_en' => $data['name_en'] ?? null,
             'price' => $data['price'],
+            'dollar_price' => $data['dollar_price'] ?? null,
             'old_price' => $data['old_price'] ?: null,
             'status' => $data['status'],
             'position' => $data['position'] ?? 0
@@ -145,5 +175,24 @@ class Product
 
         Database::query($sql, $params);
         return true;
+    }
+
+    /**
+     * Update the Toman price of all products based on their dollar price and a new exchange rate.
+     *
+     * @param float $new_rate
+     * @return bool
+     */
+    public static function updateAllTomanPrices($new_rate)
+    {
+        $sql = "UPDATE products SET price = dollar_price * :rate WHERE dollar_price IS NOT NULL";
+
+        try {
+            Database::query($sql, ['rate' => $new_rate]);
+            return true;
+        } catch (\Exception $e) {
+            // Log the error in a real application
+            return false;
+        }
     }
 }
