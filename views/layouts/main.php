@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="csrf-token" content="<?= csrf_token() ?>">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ title }} - پنل مدیریت</title>
+    <title><?= $title ?> - پنل مدیریت</title>
     <link href="https://cdn.jsdelivr.net/npm/kamadatepicker/dist/kamadatepicker.min.css" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
@@ -74,7 +74,7 @@
         <!-- Main Content -->
         <div class="flex-1 flex flex-col">
             <header class="bg-white shadow-md p-4 flex justify-between items-center">
-                <h1 class="text-2xl font-semibold">{{ title }}</h1>
+                <h1 class="text-2xl font-semibold"><?= $title ?></h1>
                 <div class="flex items-center">
                     <span class="text-gray-600 mr-4">خوش آمدید، <?= htmlspecialchars($_SESSION['admin_name'] ?? 'کاربر') ?></span>
                     <a href="<?= url('/logout') ?>" class="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600">
@@ -84,7 +84,7 @@
             </header>
             <main class="flex-1 p-8 overflow-y-auto">
                 <?php partial('error_message'); ?>
-                {{ content }}
+                <?= $content ?>
             </main>
         </div>
     </div>

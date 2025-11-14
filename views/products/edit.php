@@ -23,6 +23,10 @@
                 </select>
             </div>
             <div class="mb-4">
+                <label for="dollar_price" class="block text-gray-700 text-sm font-bold mb-2">قیمت دلاری ($)</label>
+                <input type="number" step="0.01" id="dollar_price" name="dollar_price" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" value="<?= htmlspecialchars($product['dollar_price'] ?? '') ?>">
+            </div>
+            <div class="mb-4">
                 <label for="price" class="block text-gray-700 text-sm font-bold mb-2">قیمت (تومان)</label>
                 <input type="number" id="price" name="price" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" value="<?= htmlspecialchars($product['price']) ?>" required>
             </div>
@@ -54,3 +58,32 @@
         </div>
     </form>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const dollarPriceInput = document.getElementById('dollar_price');
+    const tomanPriceInput = document.getElementById('price');
+    const autoUpdateEnabled = <?= json_encode($auto_update_prices ?? false) ?>;
+    const exchangeRate = <?= json_encode($dollar_exchange_rate ?? 50000) ?>;
+
+    function calculatePrice() {
+        if (autoUpdateEnabled && dollarPriceInput.value) {
+            const dollarPrice = parseFloat(dollarPriceInput.value);
+            if (!isNaN(dollarPrice)) {
+                tomanPriceInput.value = Math.round(dollarPrice * exchangeRate);
+            }
+        }
+    }
+
+    if (autoUpdateEnabled) {
+        // Make Toman price readonly if there's a dollar price, otherwise it should be editable
+        if (dollarPriceInput.value) {
+            tomanPriceInput.readOnly = true;
+        }
+        dollarPriceInput.addEventListener('input', function() {
+             tomanPriceInput.readOnly = !!this.value;
+             calculatePrice();
+        });
+    }
+});
+</script>
