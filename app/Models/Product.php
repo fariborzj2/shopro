@@ -55,6 +55,34 @@ class Product
     }
 
     /**
+     * Find all records by a specific column and value.
+     *
+     * @param string $column
+     * @param mixed $value
+     * @param string|null $orderBy
+     * @return array
+     */
+    public static function findAllBy($column, $value, $orderBy = null)
+    {
+        // Whitelist columns to prevent SQL injection on column names
+        $allowedColumns = ['status', 'category_id'];
+        if (!in_array($column, $allowedColumns)) {
+            throw new \Exception("Invalid column name provided to findAllBy.");
+        }
+
+        $sql = "SELECT * FROM products WHERE {$column} = :value";
+        if ($orderBy) {
+            // Basic validation for order by to prevent injection
+            if (preg_match('/^[a-zA-Z0-9_]+ (ASC|DESC)$/i', $orderBy)) {
+                $sql .= " ORDER BY " . $orderBy;
+            }
+        }
+
+        $stmt = Database::query($sql, ['value' => $value]);
+        return $stmt->fetchAll(PDO::FETCH_OBJ);
+    }
+
+    /**
      * Create a new product.
      *
      * @param array $data
