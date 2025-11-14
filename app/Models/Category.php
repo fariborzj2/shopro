@@ -43,15 +43,16 @@ class Category
     public static function create($data)
     {
         $db = Database::getConnection();
-        $sql = "INSERT INTO categories (parent_id, name_fa, name_en, status, position)
-                VALUES (:parent_id, :name_fa, :name_en, :status, :position)";
+        $sql = "INSERT INTO categories (parent_id, name_fa, name_en, status, position, slug)
+                VALUES (:parent_id, :name_fa, :name_en, :status, :position, :slug)";
         $stmt = $db->prepare($sql);
         $stmt->execute([
             'parent_id' => $data['parent_id'] ?: null,
             'name_fa' => $data['name_fa'],
             'name_en' => $data['name_en'],
             'status' => $data['status'],
-            'position' => $data['position'] ?? 0
+            'position' => $data['position'] ?? 0,
+            'slug' => $data['slug']
         ]);
         return $db->lastInsertId();
     }
@@ -66,7 +67,7 @@ class Category
     public static function update($id, $data)
     {
         $sql = "UPDATE categories
-                SET parent_id = :parent_id, name_fa = :name_fa, name_en = :name_en, status = :status, position = :position
+                SET parent_id = :parent_id, name_fa = :name_fa, name_en = :name_en, status = :status, position = :position, slug = :slug
                 WHERE id = :id";
         Database::query($sql, [
             'id' => $id,
@@ -74,7 +75,8 @@ class Category
             'name_fa' => $data['name_fa'],
             'name_en' => $data['name_en'],
             'status' => $data['status'],
-            'position' => $data['position'] ?? 0
+            'position' => $data['position'] ?? 0,
+            'slug' => $data['slug']
         ]);
         return true;
     }
@@ -124,7 +126,6 @@ class Category
         Database::query($sql, $params);
         return true;
     }
-}
 
     /**
      * Get the IDs of custom fields attached to a category.
@@ -181,3 +182,4 @@ class Category
             return false;
         }
     }
+}
