@@ -4,6 +4,7 @@ namespace App\Controllers\Admin;
 
 use App\Models\Product;
 use App\Models\Category;
+use App\Models\Setting;
 use App\Core\Paginator;
 
 class ProductsController
