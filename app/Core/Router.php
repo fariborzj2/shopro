@@ -2,6 +2,7 @@
 
 namespace App\Core;
 
+use App\Core\Exceptions\RouteNotFoundException;
 use Exception;
 
 class Router
@@ -58,7 +59,7 @@ class Router
             }
         }
 
-        throw new Exception('No route defined for this URI: ' . htmlspecialchars($uri));
+        throw new RouteNotFoundException('No route defined for this URI: ' . htmlspecialchars($uri));
     }
 
     protected function callAction($controller, $method, $params = [])
