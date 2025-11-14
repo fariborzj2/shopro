@@ -64,15 +64,17 @@ try {
 
 } catch (RouteNotFoundException $e) {
     http_response_code(404);
-    return view('main', 'errors/404', [
-        'title' => 'صفحه یافت نشد',
+    // Use the dedicated error layout
+    return view('error', 'errors/404', [
+        'title' => '404 - صفحه یافت نشد',
         'message' => $e->getMessage()
     ]);
 } catch (Exception $e) {
     // In a real app, you would log the error.
     http_response_code(500);
-    return view('main', 'errors/500', [
-        'title' => 'خطای سرور',
+    // Use the dedicated error layout
+    return view('error', 'errors/500', [
+        'title' => '500 - خطای سرور',
         'message' => $e->getMessage()
     ]);
 }
