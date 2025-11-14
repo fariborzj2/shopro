@@ -29,11 +29,13 @@ function render($view, $data = [])
  */
 function view($layout, $view, $data = [])
 {
-    // Pass the main content to the layout
-    $data['content'] = render($view, $data);
+    $content = render($view, $data);
 
-    // Now, render the main layout, which will execute PHP and include the content
-    echo render("layouts/{$layout}", $data);
+    echo str_replace(
+        ['{{ content }}', '{{ title }}'],
+        [$content, $data['title'] ?? 'داشبورد'],
+        file_get_contents(__DIR__ . "/../../views/layouts/{$layout}.php")
+    );
 }
 
 /**
