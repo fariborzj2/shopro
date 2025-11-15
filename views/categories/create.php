@@ -1,7 +1,7 @@
 <h1 class="text-3xl font-bold mb-6">افزودن دسته‌بندی جدید</h1>
 
 <div class="bg-white shadow-md rounded-lg p-8">
-    <form action="/categories/store" method="POST">
+    <form action="<?= url('categories/store') ?>" method="POST">
         <?php partial('csrf_field'); ?>
         <div class="mb-4">
             <label for="name_fa" class="block text-gray-700 text-sm font-bold mb-2">نام فارسی</label>
@@ -45,7 +45,7 @@
             <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
                 ذخیره
             </button>
-            <a href="/categories" class="inline-block align-baseline font-bold text-sm text-blue-500 hover:text-blue-800">
+            <a href="<?= url('categories') ?>" class="inline-block align-baseline font-bold text-sm text-blue-500 hover:text-blue-800">
                 انصراف
             </a>
         </div>
