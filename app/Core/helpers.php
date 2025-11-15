@@ -44,7 +44,7 @@ function view($layout, $view, $data = [])
     // Replace placeholders like {{ title }} after the PHP has been processed.
     // Note: The main content is now part of the layout via the $content variable,
     // so we only need to replace other placeholders like {{ title }}.
-    // A better approach would be to use variables directly in the layout, e.g., <?= $title ?>
+    // A better approach would be to use variables directly in the layout, e.g.
     echo str_replace(
         '{{ title }}',
         $data['title'] ?? 'داشبورد',

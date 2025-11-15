@@ -8,7 +8,7 @@
         </div>
     <?php endif; ?>
 
-    <form action="<?= url('/login') ?>" method="POST">
+    <form action="<?php echo url('/login') ?>" method="POST">
         <?php partial('csrf_field'); ?>
         <div class="mb-4">
             <label for="username" class="block text-gray-700 text-sm font-bold mb-2">نام کاربری:</label>
