@@ -9,15 +9,15 @@ use PDO;
 class BlogPost
 {
     /**
-     * Get a paginated list of blog posts.
+     * Get a paginated list of blog posts with total count in one query.
      *
      * @param int $limit
      * @param int $offset
      * @return array
      */
-    public static function paginated($limit, $offset)
+    public static function paginatedWithCount($limit, $offset)
     {
-        $sql = "SELECT bp.*, bc.name_fa as category_name, a.name as author_name
+        $sql = "SELECT SQL_CALC_FOUND_ROWS bp.*, bc.name_fa as category_name, a.name as author_name
                 FROM blog_posts bp
                 LEFT JOIN blog_categories bc ON bp.category_id = bc.id
                 LEFT JOIN admins a ON bp.author_id = a.id
@@ -30,18 +30,12 @@ class BlogPost
         $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
         $stmt->execute();
 
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    }
+        $posts = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-    /**
-     * Get the total count of blog posts.
-     *
-     * @return int
-     */
-    public static function count()
-    {
-        $stmt = Database::query("SELECT COUNT(id) FROM blog_posts");
-        return (int) $stmt->fetchColumn();
+        // Fetch the total count using FOUND_ROWS()
+        $total_count = (int) $pdo->query("SELECT FOUND_ROWS()")->fetchColumn();
+
+        return ['posts' => $posts, 'total_count' => $total_count];
     }
 
     /**
@@ -127,10 +121,10 @@ class BlogPost
         $stmt->execute([
             'category_id' => $data['category_id'],
             'author_id' => $data['author_id'],
-            'title' => htmlspecialchars($data['title'], ENT_QUOTES, 'UTF-8'),
+            'title' => $data['title'],
             'slug' => $data['slug'],
-            'content' => htmlspecialchars($data['content'], ENT_QUOTES, 'UTF-8'),
-            'excerpt' => htmlspecialchars($data['excerpt'], ENT_QUOTES, 'UTF-8'),
+            'content' => $data['content'],
+            'excerpt' => $data['excerpt'],
             'status' => $status,
             'published_at' => $published_at,
             'is_editors_pick' => isset($data['is_editors_pick']) ? 1 : 0
@@ -184,10 +178,10 @@ class BlogPost
             'id' => $id,
             'category_id' => $data['category_id'],
             'author_id' => $data['author_id'],
-            'title' => htmlspecialchars($data['title'], ENT_QUOTES, 'UTF-8'),
+            'title' => $data['title'],
             'slug' => $data['slug'],
-            'content' => htmlspecialchars($data['content'], ENT_QUOTES, 'UTF-8'),
-            'excerpt' => htmlspecialchars($data['excerpt'], ENT_QUOTES, 'UTF-8'),
+            'content' => $data['content'],
+            'excerpt' => $data['excerpt'],
             'status' => $status,
             'published_at' => $published_at,
             'is_editors_pick' => isset($data['is_editors_pick']) ? 1 : 0
@@ -270,10 +264,10 @@ class BlogPost
         return $stmt->fetch(PDO::FETCH_OBJ);
     }
 
-    public static function findAllPublished($limit, $offset, $search = null, $category_id = null, $tag_id = null)
+    public static function findAllPublishedWithCount($limit, $offset, $search = null, $category_id = null, $tag_id = null)
     {
         $params = [];
-        $sql = "SELECT bp.*, bc.name_fa as category_name, bc.slug as category_slug, a.name as author_name
+        $sql = "SELECT SQL_CALC_FOUND_ROWS bp.*, bc.name_fa as category_name, bc.slug as category_slug, a.name as author_name
                 FROM blog_posts bp
                 LEFT JOIN blog_categories bc ON bp.category_id = bc.id
                 LEFT JOIN admins a ON bp.author_id = a.id";
@@ -305,33 +299,11 @@ class BlogPost
             $stmt->bindValue(':' . $key, $value);
         }
         $stmt->execute();
-        return $stmt->fetchAll(PDO::FETCH_OBJ);
-    }
 
-    public static function countAllPublished($search = null, $category_id = null, $tag_id = null)
-    {
-        $params = [];
-        $sql = "SELECT COUNT(bp.id) FROM blog_posts bp";
-        if ($tag_id) {
-            $sql .= " JOIN blog_post_tags bpt ON bp.id = bpt.post_id";
-        }
-        $sql .= " WHERE bp.status = 'published' AND (bp.published_at IS NULL OR bp.published_at <= NOW())";
+        $posts = $stmt->fetchAll(PDO::FETCH_OBJ);
+        $total_count = (int) $pdo->query("SELECT FOUND_ROWS()")->fetchColumn();
 
-        if ($search) {
-            $sql .= " AND (bp.title LIKE :search OR bp.content LIKE :search)";
-            $params['search'] = '%' . $search . '%';
-        }
-        if ($category_id) {
-            $sql .= " AND bp.category_id = :category_id";
-            $params['category_id'] = $category_id;
-        }
-        if ($tag_id) {
-            $sql .= " AND bpt.tag_id = :tag_id";
-            $params['tag_id'] = $tag_id;
-        }
-
-        $stmt = Database::query($sql, $params);
-        return (int) $stmt->fetchColumn();
+        return ['posts' => $posts, 'total_count' => $total_count];
     }
 
     public static function findRelatedPosts($post_id, $limit = 5)

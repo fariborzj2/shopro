@@ -19,9 +19,12 @@ class Template
         $this->vars[$key] = $value;
     }
 
-    public function render($templateFile)
+    public function render($templateFile, $data = [])
     {
-        $templatePath = $this->templateDir . $templateFile;
+        // Merge assigned variables with data passed to render
+        $this->vars = array_merge($this->vars, $data);
+
+        $templatePath = rtrim($this->templateDir, '/') . '/' . $templateFile . '.tpl';
 
         if (!file_exists($templatePath)) {
             throw new \Exception("Template file not found: " . $templatePath);
