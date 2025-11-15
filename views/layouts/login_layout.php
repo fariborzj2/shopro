@@ -9,7 +9,7 @@
 </head>
 <body class="bg-gray-100 font-sans">
     <div class="min-h-screen flex items-center justify-center">
-        {{ content }}
+        <?php echo $content; ?>
     </div>
 </body>
 </html>

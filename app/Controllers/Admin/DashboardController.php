@@ -18,11 +18,11 @@ class DashboardController
         $recentOrders = Dashboard::getRecentOrders(); // Fetch recent orders
 
         // Prepare data for Chart.js
-        $sales_labels = array_map(fn($item) => $item['date'], $salesChartData);
-        $sales_values = array_map(fn($item) => $item['total'], $salesChartData);
+        $sales_labels = $salesChartData['labels'];
+        $sales_values = $salesChartData['data'];
 
-        $users_labels = array_map(fn($item) => "Day " . $item['day'], $usersChartData);
-        $users_values = array_map(fn($item) => $item['count'], $usersChartData);
+        $users_labels = $usersChartData['labels'];
+        $users_values = $usersChartData['data'];
 
         return view('main', 'dashboard', [
             'title' => 'داشبورد',
