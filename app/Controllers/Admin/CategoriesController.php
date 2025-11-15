@@ -67,7 +67,7 @@ class CategoriesController
         $customFieldIds = $_POST['custom_fields'] ?? [];
         Category::syncCustomFields($id, $customFieldIds);
 
-        header('Location: /categories');
+        header('Location: ' . url('categories'));
         exit();
     }
 
@@ -143,7 +143,7 @@ class CategoriesController
         $customFieldIds = $_POST['custom_fields'] ?? [];
         Category::syncCustomFields($id, $customFieldIds);
 
-        header('Location: /categories');
+        header('Location: ' . url('categories'));
         exit();
     }
 
@@ -157,7 +157,7 @@ class CategoriesController
         // Add logic here to handle products in this category before deleting.
         // For now, we'll just delete the category.
         Category::delete($id);
-        header('Location: /categories');
+        header('Location: ' . url('categories'));
         exit();
     }
 
