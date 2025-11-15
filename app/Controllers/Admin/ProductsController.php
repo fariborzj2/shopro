@@ -174,7 +174,7 @@ class ProductsController
     public function delete($id)
     {
         Product::delete($id);
-        header('Location: /products');
+        header('Location: ' . url('products'));
         exit();
     }
 

@@ -72,13 +72,14 @@ class Category
     public static function create($data)
     {
         $db = Database::getConnection();
-        $sql = "INSERT INTO categories (parent_id, name_fa, name_en, status, position, slug)
-                VALUES (:parent_id, :name_fa, :name_en, :status, :position, :slug)";
+        $sql = "INSERT INTO categories (title, parent_id, name_fa, name_en, status, position, slug)
+                VALUES (:title, :parent_id, :name_fa, :name_en, :status, :position, :slug)";
         $stmt = $db->prepare($sql);
         $stmt->execute([
+            'title' => $data['title'],
             'parent_id' => $data['parent_id'] ?: null,
             'name_fa' => $data['name_fa'],
-            'name_en' => $data['name_en'],
+            'name_en' => $data['name_en'] ?? null,
             'status' => $data['status'],
             'position' => $data['position'] ?? 0,
             'slug' => $data['slug']
