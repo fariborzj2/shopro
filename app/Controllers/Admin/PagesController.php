@@ -10,12 +10,17 @@ class PagesController
     public function index()
     {
         $pages = Page::all();
-        view('pages/index', ['pages' => $pages]);
+        view('main', 'pages/index', [
+            'title' => 'مدیریت صفحات',
+            'pages' => $pages
+        ]);
     }
 
     public function create()
     {
-        view('pages/create');
+        view('main', 'pages/create', [
+            'title' => 'ایجاد صفحه جدید'
+        ]);
     }
 
     public function store()
@@ -42,7 +47,10 @@ class PagesController
             redirect('/pages');
             return;
         }
-        view('pages/edit', ['page' => $page]);
+        view('main', 'pages/edit', [
+            'title' => 'ویرایش صفحه',
+            'page' => $page
+        ]);
     }
 
     public function update($id)
