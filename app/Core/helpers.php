@@ -140,5 +140,5 @@ function url($path)
 {
     // Ensure the path starts with a slash and is prefixed with /admin for admin panel links.
     $path = ltrim($path, '/');
-    return "/DEBUG_ADMIN/{$path}";
+    return "/admin/{$path}";
 }

@@ -31,14 +31,14 @@ class Setting
 
         // Using INSERT ... ON DUPLICATE KEY UPDATE for efficiency
         $sql = "INSERT INTO settings (setting_key, setting_value) VALUES (:key, :value)
-                ON DUPLICATE KEY UPDATE setting_value = :value";
+                ON DUPLICATE KEY UPDATE setting_value = :update_value";
 
         try {
             $pdo->beginTransaction();
             $stmt = $pdo->prepare($sql);
 
             foreach ($data as $key => $value) {
-                $stmt->execute(['key' => $key, 'value' => $value]);
+                $stmt->execute(['key' => $key, 'value' => $value, 'update_value' => $value]);
             }
 
             $pdo->commit();

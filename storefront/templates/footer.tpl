@@ -108,7 +108,10 @@ function authModal() {
             this.errorMessage = '';
             fetch('/api/auth/send-otp', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                },
                 body: JSON.stringify({ mobile: this.mobile })
             })
             .then(res => res.json().then(data => ({ status: res.status, body: data })))
@@ -127,7 +130,10 @@ function authModal() {
             this.errorMessage = '';
             fetch('/api/auth/verify-otp', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                },
                 body: JSON.stringify({ mobile: this.mobile, otp: this.otp })
             })
             .then(res => res.json().then(data => ({ status: res.status, body: data })))
