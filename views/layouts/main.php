@@ -84,7 +84,7 @@
             </header>
             <main class="flex-1 p-8 overflow-y-auto">
                 <?php partial('error_message'); ?>
-                {{ content }}
+                <?php echo $content; ?>
             </main>
         </div>
     </div>

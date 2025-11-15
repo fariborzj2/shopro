@@ -29,12 +29,26 @@ function render($view, $data = [])
  */
 function view($layout, $view, $data = [])
 {
+    // First, render the main content view to a variable
     $content = render($view, $data);
 
+    // Now, render the main layout, making the content and other data available to it.
+    // By using require within an output buffer, we ensure all PHP in the layout file is executed.
+    $data['content'] = $content;
+    extract($data);
+
+    ob_start();
+    require __DIR__ . "/../../views/layouts/{$layout}.php";
+    $layoutContent = ob_get_clean();
+
+    // Replace placeholders like {{ title }} after the PHP has been processed.
+    // Note: The main content is now part of the layout via the $content variable,
+    // so we only need to replace other placeholders like {{ title }}.
+    // A better approach would be to use variables directly in the layout, e.g., <?= $title ?>
     echo str_replace(
-        ['{{ content }}', '{{ title }}'],
-        [$content, $data['title'] ?? 'داشبورد'],
-        file_get_contents(__DIR__ . "/../../views/layouts/{$layout}.php")
+        '{{ title }}',
+        $data['title'] ?? 'داشبورد',
+        $layoutContent
     );
 }
 
@@ -124,7 +138,7 @@ function redirect_back_with_error($message)
  */
 function url($path)
 {
-    // DEBUG: Check if this function is being called for admin links
+    // Ensure the path starts with a slash and is prefixed with /admin for admin panel links.
     $path = ltrim($path, '/');
     return "/DEBUG_ADMIN/{$path}";
 }
