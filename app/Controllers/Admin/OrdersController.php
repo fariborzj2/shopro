@@ -3,67 +3,79 @@
 namespace App\Controllers\Admin;
 
 use App\Models\Order;
-use App\Models\CustomOrderField;
+use App\Core\Paginator;
 
 class OrdersController
 {
     /**
-     * Show a list of all orders.
+     * Display a listing of the orders.
      */
     public function index()
     {
-        $orders = Order::all();
+        // Get the current page from the query string, default to 1 if not set
+        $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+        $perPage = 15; // Number of items per page
 
+        // Fetch paginated orders from the model
+        $data = Order::findAll($page, $perPage);
+
+        // Create a Paginator instance to generate pagination links
+        $paginator = new Paginator($data['total'], $perPage, $page, '/admin/orders?page=(:num)');
+
+        // Pass the orders and pagination HTML to the view
         return view('main', 'orders/index', [
             'title' => 'مدیریت سفارشات',
-            'orders' => $orders
+            'orders' => $data['orders'],
+            'pagination' => $paginator->toHtml()
         ]);
     }
 
     /**
-     * Show the details of a specific order.
-     *
-     * @param int $id
+     * Show the form for creating a new resource.
+     * Note: Admin might not need to create orders manually, but stub is here.
+     */
+    public function create()
+    {
+        // Implementation for creating an order
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     */
+    public function store()
+    {
+        // Implementation for storing a new order
+    }
+
+    /**
+     * Display the specified resource.
      */
     public function show($id)
     {
-        $order = Order::find($id);
-        if (!$order) {
-            redirect_back_with_error('Order not found.');
-        }
-
-        $allCustomFields = CustomOrderField::getAllFieldsById();
-        $customFieldsData = json_decode($order['custom_fields_data'] ?? '[]', true);
-
-        return view('main', 'orders/show', [
-            'title' => "جزئیات سفارش {$order['order_code']}",
-            'order' => $order,
-            'allCustomFields' => $allCustomFields,
-            'customFieldsData' => $customFieldsData
-        ]);
+        // Implementation for showing a single order
     }
 
     /**
-     * Update the status of an order.
-     *
-     * @param int $id
+     * Show the form for editing the specified resource.
      */
-    public function updateStatus($id)
+    public function edit($id)
     {
-        $order = Order::find($id);
-        if (!$order) {
-            redirect_back_with_error('Order not found.');
-        }
+        // Implementation for editing an order
+    }
 
-        // Basic validation
-        if (empty($_POST['status'])) {
-            redirect_back_with_error('Status is required.');
-        }
+    /**
+     * Update the specified resource in storage.
+     */
+    public function update($id)
+    {
+        // Implementation for updating an order
+    }
 
-        Order::updateStatus($id, $_POST['status']);
-
-        // Redirect back to the order details page
-        header("Location: /orders/show/{$id}");
-        exit();
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function delete($id)
+    {
+        // Implementation for deleting an order
     }
 }

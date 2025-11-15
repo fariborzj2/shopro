@@ -3,46 +3,59 @@
 namespace App\Models;
 
 use App\Core\Database;
+use PDO;
 
 class Order
 {
-    protected static $table = 'orders';
-
-    public static function create(array $data)
+    /**
+     * Fetches all orders with user information, ordered by the most recent.
+     * Includes pagination support.
+     *
+     * @param int $page The current page number for pagination.
+     * @param int $perPage The number of records to show per page.
+     * @return array An array containing the list of orders and total count.
+     */
+    public static function findAll(int $page = 1, int $perPage = 15): array
     {
-        $db = Database::getConnection();
-        $columns = implode(', ', array_keys($data));
-        $placeholders = implode(', ', array_fill(0, count($data), '?'));
-        $sql = "INSERT INTO " . self::$table . " ($columns) VALUES ($placeholders)";
-        $stmt = $db->prepare($sql);
-        $stmt->execute(array_values($data));
-        return $db->lastInsertId();
-    }
+        $offset = ($page - 1) * $perPage;
+        $pdo = Database::getConnection();
 
-    public static function update($id, array $data)
-    {
-        $db = Database::getConnection();
-        $set_clause = implode(', ', array_map(fn($key) => "$key = ?", array_keys($data)));
-        $sql = "UPDATE " . self::$table . " SET $set_clause WHERE id = ?";
-        $stmt = $db->prepare($sql);
-        $values = array_values($data);
-        $values[] = $id;
-        return $stmt->execute($values);
-    }
+        // Query to get the total count of orders for pagination
+        $totalSql = "SELECT COUNT(id) FROM orders";
+        $totalStmt = $pdo->query($totalSql);
+        $totalOrders = $totalStmt->fetchColumn();
 
-    public static function find($id)
-    {
-        $db = Database::getConnection();
-        $stmt = $db->prepare("SELECT * FROM " . self::$table . " WHERE id = ?");
-        $stmt->execute([$id]);
-        return $stmt->fetch(\PDO::FETCH_OBJ);
-    }
+        // Query to get the paginated list of orders with user names
+        $sql = "
+            SELECT
+                o.id,
+                o.order_code,
+                o.amount,
+                o.status,
+                o.order_time,
+                u.name as user_name
+            FROM
+                orders o
+            LEFT JOIN
+                users u ON o.user_id = u.id
+            ORDER BY
+                o.order_time DESC
+            LIMIT :limit OFFSET :offset
+        ";
 
-    public static function findAllBy($column, $value)
-    {
-        $db = Database::getConnection();
-        $stmt = $db->prepare("SELECT * FROM " . self::$table . " WHERE $column = ? ORDER BY order_time DESC");
-        $stmt->execute([$value]);
-        return $stmt->fetchAll(\PDO::FETCH_OBJ);
+        $stmt = $pdo->prepare($sql);
+
+        // Bind parameters securely to prevent SQL injection
+        $stmt->bindParam(':limit', $perPage, PDO::PARAM_INT);
+        $stmt->bindParam(':offset', $offset, PDO::PARAM_INT);
+        $stmt->execute();
+        $orders = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        return [
+            'orders' => $orders,
+            'total' => $totalOrders,
+            'page' => $page,
+            'perPage' => $perPage
+        ];
     }
 }
