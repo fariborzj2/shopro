@@ -22,11 +22,11 @@ class OrdersController
         // Create a Paginator instance to generate pagination links
         $paginator = new Paginator($data['total'], $perPage, $page, '/admin/orders?page=(:num)');
 
-        // Pass the orders and pagination HTML to the view
+        // Pass the orders and paginator object to the view
         return view('main', 'orders/index', [
             'title' => 'مدیریت سفارشات',
             'orders' => $data['orders'],
-            'pagination' => $paginator->toHtml()
+            'paginator' => $paginator
         ]);
     }
 
