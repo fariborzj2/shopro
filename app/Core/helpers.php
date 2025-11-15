@@ -124,7 +124,7 @@ function redirect_back_with_error($message)
  */
 function url($path)
 {
-    // Ensure the path starts with a slash and is prefixed with /admin
+    // DEBUG: Check if this function is being called for admin links
     $path = ltrim($path, '/');
-    return "/admin/{$path}";
+    return "/DEBUG_ADMIN/{$path}";
 }
