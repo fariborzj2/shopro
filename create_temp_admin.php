@@ -24,12 +24,12 @@ try {
         copy('config.example.php', 'config.php');
     }
     $config = require 'config.php';
-    Database::connect($config['database']);
+    Database::setConfig($config['database']);
 
-    $username = 'testadmin';
+    $username = 'admin';
     $password = 'password';
-    $name = 'Test Admin';
-    $email = 'testadmin@example.com';
+    $name = 'Admin';
+    $email = 'admin@example.com';
 
     $password_hash = password_hash($password, PASSWORD_DEFAULT);
 
