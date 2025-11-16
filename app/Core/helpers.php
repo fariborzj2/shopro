@@ -37,19 +37,17 @@ function view($layout, $view, $data = [])
     $data['content'] = $content;
     extract($data);
 
-    ob_start();
-    require __DIR__ . "/../../views/layouts/{$layout}.php";
-    $layoutContent = ob_get_clean();
+    $layout_path = __DIR__ . "/../../views/layouts/{$layout}.php";
 
-    // Replace placeholders like {{ title }} after the PHP has been processed.
-    // Note: The main content is now part of the layout via the $content variable,
-    // so we only need to replace other placeholders like {{ title }}.
-    // A better approach would be to use variables directly in the layout, e.g.
-    echo str_replace(
-        '{{ title }}',
-        $data['title'] ?? 'داشبورد',
-        $layoutContent
-    );
+    if (file_exists($layout_path)) {
+        ob_start();
+        require $layout_path;
+        echo ob_get_clean();
+    } else {
+        // If layout is not found, just echo the content.
+        // This is a fallback to prevent total page breakage.
+        echo $content;
+    }
 }
 
 /**
