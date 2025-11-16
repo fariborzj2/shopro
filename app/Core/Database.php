@@ -31,7 +31,8 @@ class Database
     {
         if (self::$pdo === null) {
             if (self::$config === null) {
-                $config = require __DIR__ . '/../../config.php';
+                // Use the globally defined PROJECT_ROOT for a reliable path
+                $config = require PROJECT_ROOT . '/config.php';
                 $dbConfig = $config['database'];
             } else {
                 $dbConfig = self::$config;

@@ -37,14 +37,18 @@ CREATE TABLE `categories` (
   `id` INT PRIMARY KEY AUTO_INCREMENT,
   `parent_id` INT DEFAULT NULL,
   `position` INT DEFAULT 0,
-  `title` VARCHAR(255) NOT NULL,
-  `slug` VARCHAR(255) NOT NULL UNIQUE,
-  `name_fa` VARCHAR(255),
+  `name_fa` VARCHAR(255) NOT NULL,
   `name_en` VARCHAR(255),
+  `slug` VARCHAR(255) NOT NULL UNIQUE,
   `image_url` VARCHAR(255),
   `status` ENUM('active', 'inactive') NOT NULL DEFAULT 'active',
-  `notes` TEXT,
-  `description` TEXT,
+  `short_description` TEXT,
+  `description` LONGTEXT,
+  `meta_title` VARCHAR(255),
+  `meta_description` TEXT,
+  `meta_keywords` VARCHAR(255),
+  `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   FOREIGN KEY (`parent_id`) REFERENCES `categories`(`id`) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 

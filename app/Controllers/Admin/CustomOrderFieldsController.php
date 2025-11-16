@@ -28,7 +28,7 @@ class CustomOrderFieldsController
     {
         $data = $this->prepareDataFromRequest();
         CustomOrderField::create($data);
-        header('Location: /custom-fields');
+        header('Location: /admin/custom-fields');
         exit();
     }
 
@@ -54,7 +54,7 @@ class CustomOrderFieldsController
         $data = $this->prepareDataFromRequest();
         CustomOrderField::update($id, $data);
 
-        header('Location: /custom-fields');
+        header('Location: /admin/custom-fields');
         exit();
     }
 
@@ -66,7 +66,7 @@ class CustomOrderFieldsController
         }
 
         CustomOrderField::delete($id);
-        header('Location: /custom-fields');
+        header('Location: /admin/custom-fields');
         exit();
     }
 
