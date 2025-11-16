@@ -72,8 +72,8 @@ class Category
     public static function create($data)
     {
         $db = Database::getConnection();
-        $sql = "INSERT INTO categories (parent_id, name_fa, name_en, status, position, slug)
-                VALUES (:parent_id, :name_fa, :name_en, :status, :position, :slug)";
+        $sql = "INSERT INTO categories (parent_id, name_fa, name_en, status, position, slug, short_description, meta_title, meta_description, meta_keywords)
+                VALUES (:parent_id, :name_fa, :name_en, :status, :position, :slug, :short_description, :meta_title, :meta_description, :meta_keywords)";
         $stmt = $db->prepare($sql);
         $stmt->execute([
             'parent_id' => $data['parent_id'] ?: null,
@@ -81,7 +81,11 @@ class Category
             'name_en' => $data['name_en'] ?? null,
             'status' => $data['status'],
             'position' => $data['position'] ?? 0,
-            'slug' => $data['slug']
+            'slug' => $data['slug'],
+            'short_description' => $data['short_description'] ?? null,
+            'meta_title' => $data['meta_title'] ?? null,
+            'meta_description' => $data['meta_description'] ?? null,
+            'meta_keywords' => $data['meta_keywords'] ?? null
         ]);
         return $db->lastInsertId();
     }
@@ -96,7 +100,8 @@ class Category
     public static function update($id, $data)
     {
         $sql = "UPDATE categories
-                SET parent_id = :parent_id, name_fa = :name_fa, name_en = :name_en, status = :status, position = :position, slug = :slug
+                SET parent_id = :parent_id, name_fa = :name_fa, name_en = :name_en, status = :status, position = :position, slug = :slug,
+                    short_description = :short_description, meta_title = :meta_title, meta_description = :meta_description, meta_keywords = :meta_keywords
                 WHERE id = :id";
         Database::query($sql, [
             'id' => $id,
@@ -105,7 +110,11 @@ class Category
             'name_en' => $data['name_en'],
             'status' => $data['status'],
             'position' => $data['position'] ?? 0,
-            'slug' => $data['slug']
+            'slug' => $data['slug'],
+            'short_description' => $data['short_description'] ?? null,
+            'meta_title' => $data['meta_title'] ?? null,
+            'meta_description' => $data['meta_description'] ?? null,
+            'meta_keywords' => $data['meta_keywords'] ?? null
         ]);
         return true;
     }

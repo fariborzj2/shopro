@@ -39,21 +39,24 @@
                                 <p class="text-gray-900 whitespace-no-wrap"><?php echo htmlspecialchars($category->slug); ?></p>
                             </td>
                             <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                                <?php if ($category->status === 'published'): ?>
+                                <?php if ($category->status === 'active'): ?>
                                     <span class="relative inline-block px-3 py-1 font-semibold text-green-900 leading-tight">
                                         <span aria-hidden class="absolute inset-0 bg-green-200 opacity-50 rounded-full"></span>
-                                        <span class="relative">منتشر شده</span>
+                                        <span class="relative">فعال</span>
                                     </span>
                                 <?php else: ?>
                                     <span class="relative inline-block px-3 py-1 font-semibold text-red-900 leading-tight">
                                         <span aria-hidden class="absolute inset-0 bg-red-200 opacity-50 rounded-full"></span>
-                                        <span class="relative">پیش‌نویس</span>
+                                        <span class="relative">غیرفعال</span>
                                     </span>
                                 <?php endif; ?>
                             </td>
                             <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm text-center">
-                                <a href="<?php echo url('categories/edit/' . $category->id); ?>" class="text-indigo-600 hover:text-indigo-900">ویرایش</a>
-                                <!-- Add delete form/button here -->
+                                <a href="<?php echo url('categories/edit/' . $category->id); ?>" class="text-indigo-600 hover:text-indigo-900 ml-4">ویرایش</a>
+                                <form action="<?php echo url('categories/delete/' . $category->id); ?>" method="POST" class="inline-block" onsubmit="return confirm('آیا از حذف این دسته‌بندی مطمئن هستید؟');">
+                                    <input type="hidden" name="csrf_token" value="<?php echo csrf_token(); ?>">
+                                    <button type="submit" class="text-red-600 hover:text-red-900">حذف</button>
+                                </form>
                             </td>
                         </tr>
                     <?php endforeach; ?>

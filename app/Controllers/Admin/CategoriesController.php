@@ -62,8 +62,12 @@ class CategoriesController
             'name_fa' => htmlspecialchars($_POST['name_fa']),
             'name_en' => htmlspecialchars($_POST['name_en'] ?? ''),
             'slug' => htmlspecialchars($_POST['slug']),
-            'status' => $_POST['status'] ?? 'draft',
-            'position' => (int)($_POST['position'] ?? 0)
+            'status' => $_POST['status'] ?? 'active',
+            'position' => (int)($_POST['position'] ?? 0),
+            'short_description' => htmlspecialchars($_POST['short_description'] ?? ''),
+            'meta_title' => htmlspecialchars($_POST['meta_title'] ?? ''),
+            'meta_description' => htmlspecialchars($_POST['meta_description'] ?? ''),
+            'meta_keywords' => htmlspecialchars($_POST['meta_keywords'] ?? '')
         ]);
 
         // Sync custom fields
@@ -138,8 +142,12 @@ class CategoriesController
             'name_fa' => htmlspecialchars($_POST['name_fa']),
             'name_en' => htmlspecialchars($_POST['name_en'] ?? ''),
             'slug' => htmlspecialchars($_POST['slug']),
-            'status' => $_POST['status'] ?? 'draft',
-            'position' => (int)($_POST['position'] ?? 0)
+            'status' => $_POST['status'] ?? 'active',
+            'position' => (int)($_POST['position'] ?? 0),
+            'short_description' => htmlspecialchars($_POST['short_description'] ?? ''),
+            'meta_title' => htmlspecialchars($_POST['meta_title'] ?? ''),
+            'meta_description' => htmlspecialchars($_POST['meta_description'] ?? ''),
+            'meta_keywords' => htmlspecialchars($_POST['meta_keywords'] ?? '')
         ]);
 
         // Sync custom fields

@@ -140,3 +140,40 @@ function url($path)
     $path = ltrim($path, '/');
     return "/admin/{$path}";
 }
+
+/**
+ * Build hierarchical category options for a select dropdown.
+ *
+ * @param array $categories Array of category objects/arrays.
+ * @param int|null $parentId The ID of the parent to start from.
+ * @param int $level The current depth level for indentation.
+ * @param int|null $selectedId The ID of the currently selected category.
+ * @param int|null $currentCategoryId The ID of the category being edited (to exclude it and its children).
+ */
+function build_category_tree_options(array $categories, $parentId = null, $level = 0, $selectedId = null, $currentCategoryId = null)
+{
+    $html = '';
+    foreach ($categories as $category) {
+        // Ensure category is an object for consistent access
+        $category = (object)$category;
+
+        if ($category->parent_id == $parentId) {
+            // Exclude the category being edited and its descendants
+            if ($currentCategoryId !== null && $category->id == $currentCategoryId) {
+                continue;
+            }
+
+            $isSelected = ($selectedId !== null && $selectedId == $category->id) ? 'selected' : '';
+            $indent = str_repeat('&nbsp;&nbsp;&nbsp;', $level);
+
+            $html .= "<option value=\"{$category->id}\" {$isSelected}>";
+            $html .= $indent . htmlspecialchars($category->name_fa);
+            $html .= "</option>";
+
+            // Recursively find children, excluding descendants of the current category
+            $childHtml = build_category_tree_options($categories, $category->id, $level + 1, $selectedId, $currentCategoryId);
+            $html .= $childHtml;
+        }
+    }
+    return $html;
+}
