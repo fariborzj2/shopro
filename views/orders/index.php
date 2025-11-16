@@ -71,3 +71,8 @@
         </tbody>
     </table>
 </div>
+
+<!-- Pagination -->
+<div class="p-4">
+    <?php partial('pagination', ['paginator' => $paginator]); ?>
+</div>
