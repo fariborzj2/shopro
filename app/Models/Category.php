@@ -20,7 +20,7 @@ class Category
                 LEFT JOIN categories c2 ON c1.parent_id = c2.id
                 ORDER BY c1.position ASC, c1.id DESC";
         $stmt = Database::query($sql);
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        return $stmt->fetchAll(PDO::FETCH_OBJ);
     }
 
     /**
@@ -32,7 +32,7 @@ class Category
     public static function find($id)
     {
         $stmt = Database::query("SELECT * FROM categories WHERE id = :id", ['id' => $id]);
-        return $stmt->fetch(PDO::FETCH_ASSOC);
+        return $stmt->fetch(PDO::FETCH_OBJ);
     }
 
     /**
@@ -72,11 +72,10 @@ class Category
     public static function create($data)
     {
         $db = Database::getConnection();
-        $sql = "INSERT INTO categories (title, parent_id, name_fa, name_en, status, position, slug)
-                VALUES (:title, :parent_id, :name_fa, :name_en, :status, :position, :slug)";
+        $sql = "INSERT INTO categories (parent_id, name_fa, name_en, status, position, slug)
+                VALUES (:parent_id, :name_fa, :name_en, :status, :position, :slug)";
         $stmt = $db->prepare($sql);
         $stmt->execute([
-            'title' => $data['title'],
             'parent_id' => $data['parent_id'] ?: null,
             'name_fa' => $data['name_fa'],
             'name_en' => $data['name_en'] ?? null,

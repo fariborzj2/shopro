@@ -25,9 +25,12 @@ class CategoriesController
     public function create()
     {
         $categories = Category::all();
+        $customFields = CustomOrderField::all();
         return view('main', 'categories/create', [
             'title' => 'افزودن دسته‌بندی جدید',
-            'categories' => $categories
+            'categories' => $categories,
+            'customFields' => $customFields,
+            'attachedFieldIds' => [] // Empty array for create form
         ]);
     }
 
