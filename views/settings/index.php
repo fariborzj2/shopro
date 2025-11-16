@@ -37,7 +37,7 @@
         </nav>
     </div>
 
-    <form action="/settings" method="POST">
+    <form action="<?= url('settings') ?>" method="POST">
         <?php partial('csrf_field'); ?>
         <!-- General Settings -->
         <div x-show="tab === 'general'" class="bg-white p-6 rounded-lg shadow-md">

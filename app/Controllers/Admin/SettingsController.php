@@ -49,8 +49,9 @@ class SettingsController
         }
 
         // --- Auto-update product prices if enabled ---
+        $settings = Setting::getAll();
         $should_update_prices = isset($data['auto_update_prices']) && $data['auto_update_prices'] === '1';
-        $old_rate = Setting::get('dollar_exchange_rate');
+        $old_rate = $settings['dollar_exchange_rate'] ?? null;
         $new_rate = $data['dollar_exchange_rate'];
 
         // Only update if the rate has changed and the feature is enabled
