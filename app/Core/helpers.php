@@ -37,15 +37,15 @@ function view($layout, $view, $data = [])
     $data['content'] = $content;
     extract($data);
 
-    $layout_path = __DIR__ . "/../../views/layouts/{$layout}.php";
+    // Use the PROJECT_ROOT constant for a reliable path
+    $layout_path = PROJECT_ROOT . "/views/layouts/{$layout}.php";
 
     if (file_exists($layout_path)) {
         ob_start();
         require $layout_path;
         echo ob_get_clean();
     } else {
-        // If layout is not found, just echo the content.
-        // This is a fallback to prevent total page breakage.
+        // Fallback if layout is not found
         echo $content;
     }
 }

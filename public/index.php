@@ -9,6 +9,9 @@ use App\Core\Router;
 // Start the session
 session_start();
 
+// Define a constant for the project root directory
+define('PROJECT_ROOT', dirname(__DIR__));
+
 // Set the default timezone to Tehran
 date_default_timezone_set('Asia/Tehran');
 
