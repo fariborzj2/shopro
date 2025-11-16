@@ -43,6 +43,7 @@ CREATE TABLE `categories` (
   `image_url` VARCHAR(255),
   `status` ENUM('active', 'inactive') NOT NULL DEFAULT 'active',
   `short_description` TEXT,
+  `description` LONGTEXT,
   `meta_title` VARCHAR(255),
   `meta_description` TEXT,
   `meta_keywords` VARCHAR(255),

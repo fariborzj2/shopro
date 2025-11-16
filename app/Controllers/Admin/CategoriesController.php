@@ -65,6 +65,7 @@ class CategoriesController
             'status' => $_POST['status'] ?? 'active',
             'position' => (int)($_POST['position'] ?? 0),
             'short_description' => htmlspecialchars($_POST['short_description'] ?? ''),
+            'description' => $_POST['description'] ?? '', // No htmlspecialchars for TinyMCE content
             'meta_title' => htmlspecialchars($_POST['meta_title'] ?? ''),
             'meta_description' => htmlspecialchars($_POST['meta_description'] ?? ''),
             'meta_keywords' => htmlspecialchars($_POST['meta_keywords'] ?? '')
@@ -145,6 +146,7 @@ class CategoriesController
             'status' => $_POST['status'] ?? 'active',
             'position' => (int)($_POST['position'] ?? 0),
             'short_description' => htmlspecialchars($_POST['short_description'] ?? ''),
+            'description' => $_POST['description'] ?? '', // No htmlspecialchars for TinyMCE content
             'meta_title' => htmlspecialchars($_POST['meta_title'] ?? ''),
             'meta_description' => htmlspecialchars($_POST['meta_description'] ?? ''),
             'meta_keywords' => htmlspecialchars($_POST['meta_keywords'] ?? '')
