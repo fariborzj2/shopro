@@ -55,6 +55,7 @@ CREATE TABLE `products` (
   `position` INT DEFAULT 0,
   `name_fa` VARCHAR(255) NOT NULL,
   `name_en` VARCHAR(255),
+  `slug` VARCHAR(255) NOT NULL UNIQUE,
   `price` DECIMAL(10, 2) NOT NULL,
   `dollar_price` DECIMAL(10, 2) DEFAULT NULL,
   `old_price` DECIMAL(10, 2),

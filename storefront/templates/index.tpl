@@ -53,35 +53,39 @@
             @click.outside="isModalOpen = false"
             class="bg-white w-full max-w-lg rounded-t-2xl md:rounded-2xl shadow-xl transform"
         >
-             <div class="p-8" x-if="selectedProduct">
-                <img :src="selectedProduct.imageUrl" :alt="selectedProduct.name" class="w-full h-48 object-cover rounded-lg mb-4">
-                <h3 class="text-2xl font-bold text-center" x-text="selectedProduct.name"></h3>
-                <form @submit.prevent="submitOrder" id="purchaseForm" class="mt-6">
-                    <div class="space-y-4 text-right">
-                        <template x-for="field in customFields" :key="field.id">
-                            <div>
-                                <label :for="'field_' + field.id" class="block text-sm font-medium text-gray-700 mb-1" x-text="field.label"></label>
+             <div class="p-8">
+                <template x-if="selectedProduct">
+                    <div>
+                        <img :src="selectedProduct.imageUrl" :alt="selectedProduct.name" class="w-full h-48 object-cover rounded-lg mb-4">
+                        <h3 class="text-2xl font-bold text-center" x-text="selectedProduct.name"></h3>
+                        <form @submit.prevent="submitOrder" id="purchaseForm" class="mt-6">
+                            <div class="space-y-4 text-right">
+                                <template x-for="field in customFields" :key="field.id">
+                                    <div>
+                                        <label :for="'field_' + field.id" class="block text-sm font-medium text-gray-700 mb-1" x-text="field.label"></label>
 
-                                <input x-if="['text', 'number', 'date', 'color'].includes(field.type)" :type="field.type" :name="field.name" :id="'field_' + field.id" :placeholder="field.placeholder" :required="field.is_required" class="w-full border-gray-300 rounded-md">
+                                        <input x-if="['text', 'number', 'date', 'color'].includes(field.type)" :type="field.type" :name="field.name" :id="'field_' + field.id" :placeholder="field.placeholder" :required="field.is_required" class="w-full border-gray-300 rounded-md">
 
-                                <textarea x-if="field.type === 'textarea'" :name="field.name" :id="'field_' + field.id" :placeholder="field.placeholder" :required="field.is_required" class="w-full border-gray-300 rounded-md"></textarea>
+                                        <textarea x-if="field.type === 'textarea'" :name="field.name" :id="'field_' + field.id" :placeholder="field.placeholder" :required="field.is_required" class="w-full border-gray-300 rounded-md"></textarea>
 
-                                <select x-if="field.type === 'select'" :name="field.name" :id="'field_' + field.id" :required="field.is_required" class="w-full border-gray-300 rounded-md">
-                                    <template x-for="option in field.options" :key="option.value">
-                                        <option :value="option.value" x-text="option.label"></option>
-                                    </template>
-                                </select>
+                                        <select x-if="field.type === 'select'" :name="field.name" :id="'field_' + field.id" :required="field.is_required" class="w-full border-gray-300 rounded-md">
+                                            <template x-for="option in field.options" :key="option.value">
+                                                <option :value="option.value" x-text="option.label"></option>
+                                            </template>
+                                        </select>
 
-                                <!-- Add more field types like radio/checkbox if needed -->
+                                        <!-- Add more field types like radio/checkbox if needed -->
 
+                                    </div>
+                                </template>
                             </div>
-                        </template>
+                            <div class="mt-8 space-y-3">
+                                <button type="submit" class="w-full bg-blue-600 text-white py-3">پرداخت</button>
+                                <button @click="isModalOpen = false" type="button" class="w-full bg-gray-200 py-3">انصراف</button>
+                            </div>
+                        </form>
                     </div>
-                    <div class="mt-8 space-y-3">
-                        <button type="submit" class="w-full bg-blue-600 text-white py-3">پرداخت</button>
-                        <button @click="isModalOpen = false" type="button" class="w-full bg-gray-200 py-3">انصراف</button>
-                    </div>
-                </form>
+                </template>
              </div>
         </div>
     </div>
