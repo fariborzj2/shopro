@@ -2,8 +2,8 @@
 
 <div x-data="{
     activeTab: 'main',
-    imageUrl: '<?php echo isset($category->image_url) ? asset($category->image_url) : ''; ?>',
-    thumbnailUrl: '<?php echo isset($category->thumbnail_url) ? asset($category->thumbnail_url) : ''; ?>',
+    imageUrl: '<?php echo isset($category->image_url) ? url($category->image_url) : ''; ?>',
+    thumbnailUrl: '<?php echo isset($category->thumbnail_url) ? url($category->thumbnail_url) : ''; ?>',
 
     previewImage(event) {
         const reader = new FileReader();
@@ -208,7 +208,7 @@
             image_title: true,
             automatic_uploads: true,
             file_picker_types: 'image',
-            images_upload_url: '<?php echo asset('api/upload_image.php'); ?>',
+            images_upload_url: '<?php echo url('api/upload_image.php'); ?>',
 
             // Simple file picker for local images
             file_picker_callback: function (cb, value, meta) {

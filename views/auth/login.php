@@ -9,7 +9,7 @@
     <?php endif; ?>
 
     <form action="<?php echo url('/login') ?>" method="POST">
-        <?php partial('csrf_field'); ?>
+        <?php echo csrf_field(); ?>
         <div class="mb-4">
             <label for="username" class="block text-gray-700 text-sm font-bold mb-2">نام کاربری:</label>
             <input type="text" id="username" name="username" required
