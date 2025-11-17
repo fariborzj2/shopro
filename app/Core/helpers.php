@@ -98,6 +98,15 @@ function csrf_token()
 }
 
 /**
+ * Generate a hidden input field with the CSRF token.
+ *
+ */
+function csrf_field()
+{
+    echo '<input type="hidden" name="csrf_token" value="' . csrf_token() . '">';
+}
+
+/**
  * Verify the CSRF token.
  *
  * @return bool
