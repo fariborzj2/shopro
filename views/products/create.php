@@ -2,10 +2,7 @@
 
 <div class="bg-white shadow-md rounded-lg p-8">
     <form action="<?php echo url('products/store'); ?>" method="POST">
-        <?php partial('csrf_field'); ?>
-
         <?php require '_form.php'; ?>
-
         <div class="flex items-center justify-between mt-6">
             <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
                 ذخیره

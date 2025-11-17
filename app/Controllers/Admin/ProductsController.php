@@ -75,7 +75,7 @@ class ProductsController
         }
 
         if (!empty($errors)) {
-            return redirect_back_with_error(implode(', ', $errors));
+            return redirect_back_with_error($errors);
         }
 
         // --- Price Calculation ---
@@ -151,7 +151,7 @@ class ProductsController
         }
 
         if (!empty($errors)) {
-            return redirect_back_with_error(implode(', ', $errors));
+            return redirect_back_with_error($errors);
         }
 
         // --- Price Calculation ---
