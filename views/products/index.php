@@ -39,8 +39,8 @@
                             </span>
                         </td>
                         <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm text-center">
-                            <a href="/products/edit/<?= $product['id'] ?>" class="text-indigo-600 hover:text-indigo-900 mr-4">ویرایش</a>
-                            <form action="/products/delete/<?= $product['id'] ?>" method="POST" class="inline-block" onsubmit="return confirm('آیا از حذف این محصول مطمئن هستید؟');">
+                            <a href="<?php echo url('products/edit/' . $product['id']); ?>" class="text-indigo-600 hover:text-indigo-900 mr-4">ویرایش</a>
+                            <form action="<?php echo url('products/delete/' . $product['id']); ?>" method="POST" class="inline-block" onsubmit="return confirm('آیا از حذف این محصول مطمئن هستید؟');">
                                 <?php partial('csrf_field'); ?>
                                 <button type="submit" class="text-red-600 hover:text-red-900">حذف</button>
                             </form>
