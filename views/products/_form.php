@@ -60,8 +60,8 @@ $product_status = $product['status'] ?? 'available';
 document.addEventListener('DOMContentLoaded', function() {
     const dollarPriceInput = document.getElementById('dollar_price');
     const tomanPriceInput = document.getElementById('price');
-    const autoUpdateEnabled = <?php echo json_encode($auto_update_prices ?? false) ?>;
-    const exchangeRate = <?php echo json_encode($dollar_exchange_rate ?? 50000) ?>;
+    const autoUpdateEnabled = <?php echo json_encode($auto_update_prices ?? false); ?>;
+    const exchangeRate = <?php echo json_encode($dollar_exchange_rate ?? 50000); ?>;
 
     function calculatePrice() {
         if (autoUpdateEnabled && dollarPriceInput.value) {
