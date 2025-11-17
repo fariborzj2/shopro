@@ -41,6 +41,7 @@ class ProductsController
         return view('main', 'products/create', [
             'title' => 'افزودن محصول جدید',
             'categories' => $categories,
+            'product' => null,
             'auto_update_prices' => (bool)($settings['auto_update_prices'] ?? false),
             'dollar_exchange_rate' => (float)($settings['dollar_exchange_rate'] ?? 50000)
         ]);
