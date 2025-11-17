@@ -4,6 +4,7 @@ namespace App\Controllers\Admin;
 
 use App\Models\Category;
 use App\Models\CustomOrderField;
+use App\Core\ImageUploader;
 
 class CategoriesController
 {
@@ -24,10 +25,13 @@ class CategoriesController
      */
     public function create()
     {
-        $categories = Category::all();
+        $allCategories = Category::all(); // Renamed to avoid confusion in view
+        $customFields = CustomOrderField::all();
         return view('main', 'categories/create', [
             'title' => 'افزودن دسته‌بندی جدید',
-            'categories' => $categories
+            'allCategories' => $allCategories,
+            'customFields' => $customFields,
+            'attachedFieldIds' => []
         ]);
     }
 
@@ -36,32 +40,40 @@ class CategoriesController
      */
     public function store()
     {
-        // Server-side validation
-        $errors = [];
-        if (empty($_POST['name_fa'])) {
-            $errors[] = 'نام فارسی دسته بندی الزامی است.';
-        }
-        if (empty($_POST['slug'])) {
-            $errors[] = 'اسلاگ دسته بندی الزامی است.';
-        } elseif (!preg_match('/^[a-z0-9-]+$/', $_POST['slug'])) {
-            $errors[] = 'اسلاگ فقط می‌تواند شامل حروف کوچک انگلیسی، اعداد و خط تیره باشد.';
-        }
-        if (!empty($_POST['parent_id']) && !Category::find($_POST['parent_id'])) {
-            $errors[] = 'دسته بندی والد انتخاب شده معتبر نیست.';
+        if (!verify_csrf_token()) {
+            redirect_back_with_error('Invalid CSRF token.');
         }
 
-        if (!empty($errors)) {
-            return redirect_back_with_errors($errors);
+        // Server-side validation (can be enhanced)
+        if (empty($_POST['name_fa']) || empty($_POST['slug'])) {
+            // Handle error
+            redirect_back_with_error('نام فارسی و اسلاگ الزامی است.');
         }
 
-        $id = Category::create([
+        $data = [
             'parent_id' => (int)$_POST['parent_id'] ?: null,
             'name_fa' => htmlspecialchars($_POST['name_fa']),
             'name_en' => htmlspecialchars($_POST['name_en'] ?? ''),
             'slug' => htmlspecialchars($_POST['slug']),
-            'status' => $_POST['status'] ?? 'draft',
-            'position' => (int)($_POST['position'] ?? 0)
-        ]);
+            'status' => $_POST['status'] ?? 'active',
+            'position' => (int)($_POST['position'] ?? 0),
+            'short_description' => htmlspecialchars($_POST['short_description'] ?? ''),
+            'description' => $_POST['description'] ?? '',
+            'meta_title' => htmlspecialchars($_POST['meta_title'] ?? ''),
+            'meta_description' => htmlspecialchars($_POST['meta_description'] ?? ''),
+            'meta_keywords' => htmlspecialchars($_POST['meta_keywords'] ?? '')
+        ];
+
+        $uploader = new ImageUploader();
+
+        if (isset($_FILES['image_url']) && $_FILES['image_url']['error'] === UPLOAD_ERR_OK) {
+            $data['image_url'] = $uploader->upload($_FILES['image_url'], 'categories/featured');
+        }
+        if (isset($_FILES['thumbnail_url']) && $_FILES['thumbnail_url']['error'] === UPLOAD_ERR_OK) {
+            $data['thumbnail_url'] = $uploader->upload($_FILES['thumbnail_url'], 'categories/thumbnails');
+        }
+
+        $id = Category::create($data);
 
         // Sync custom fields
         $customFieldIds = $_POST['custom_fields'] ?? [];
@@ -73,8 +85,6 @@ class CategoriesController
 
     /**
      * Show the form for editing a specific category.
-     *
-     * @param int $id
      */
     public function edit($id)
     {
@@ -98,46 +108,50 @@ class CategoriesController
 
     /**
      * Update an existing category in the database.
-     *
-     * @param int $id
      */
     public function update($id)
     {
+        if (!verify_csrf_token()) {
+            redirect_back_with_error('Invalid CSRF token.');
+        }
+
         $category = Category::find($id);
         if (!$category) {
-            return redirect_back_with_error('دسته بندی پیدا نشد.');
+            redirect_back_with_error('دسته بندی پیدا نشد.');
         }
 
-        // Server-side validation
-        $errors = [];
-        if (empty($_POST['name_fa'])) {
-            $errors[] = 'نام فارسی دسته بندی الزامی است.';
-        }
-        if (empty($_POST['slug'])) {
-            $errors[] = 'اسلاگ دسته بندی الزامی است.';
-        } elseif (!preg_match('/^[a-z0-9-]+$/', $_POST['slug'])) {
-            $errors[] = 'اسلاگ فقط می‌تواند شامل حروف کوچک انگلیسی، اعداد و خط تیره باشد.';
-        }
-        if (!empty($_POST['parent_id']) && !Category::find($_POST['parent_id'])) {
-            $errors[] = 'دسته بندی والد انتخاب شده معتبر نیست.';
-        }
-        // Prevent setting a category as its own parent
-        if ((int)$_POST['parent_id'] === (int)$id) {
-            $errors[] = 'یک دسته بندی نمی‌تواند والد خودش باشد.';
-        }
-
-        if (!empty($errors)) {
-            return redirect_back_with_errors($errors);
-        }
-
-        Category::update($id, [
+        $data = [
             'parent_id' => (int)$_POST['parent_id'] ?: null,
             'name_fa' => htmlspecialchars($_POST['name_fa']),
             'name_en' => htmlspecialchars($_POST['name_en'] ?? ''),
             'slug' => htmlspecialchars($_POST['slug']),
-            'status' => $_POST['status'] ?? 'draft',
-            'position' => (int)($_POST['position'] ?? 0)
-        ]);
+            'status' => $_POST['status'] ?? 'active',
+            'position' => (int)($_POST['position'] ?? 0),
+            'short_description' => htmlspecialchars($_POST['short_description'] ?? ''),
+            'description' => $_POST['description'] ?? '',
+            'meta_title' => htmlspecialchars($_POST['meta_title'] ?? ''),
+            'meta_description' => htmlspecialchars($_POST['meta_description'] ?? ''),
+            'meta_keywords' => htmlspecialchars($_POST['meta_keywords'] ?? '')
+        ];
+
+        $uploader = new ImageUploader();
+
+        if (isset($_FILES['image_url']) && $_FILES['image_url']['error'] === UPLOAD_ERR_OK) {
+            // Optionally delete old image
+            if (!empty($category->image_url)) {
+                @unlink(PROJECT_ROOT . '/public' . $category->image_url);
+            }
+            $data['image_url'] = $uploader->upload($_FILES['image_url'], 'categories/featured');
+        }
+        if (isset($_FILES['thumbnail_url']) && $_FILES['thumbnail_url']['error'] === UPLOAD_ERR_OK) {
+             // Optionally delete old image
+            if (!empty($category->thumbnail_url)) {
+                @unlink(PROJECT_ROOT . '/public' . $category->thumbnail_url);
+            }
+            $data['thumbnail_url'] = $uploader->upload($_FILES['thumbnail_url'], 'categories/thumbnails');
+        }
+
+        Category::update($id, $data);
 
         // Sync custom fields
         $customFieldIds = $_POST['custom_fields'] ?? [];
@@ -148,40 +162,76 @@ class CategoriesController
     }
 
     /**
+     * Delete an image for a category.
+     */
+    public function deleteImage($id, $type)
+    {
+        header('Content-Type: application/json');
+
+        $category = Category::find($id);
+        if (!$category) {
+            echo json_encode(['success' => false, 'message' => 'دسته بندی یافت نشد.']);
+            return;
+        }
+
+        $field = ($type === 'thumbnail') ? 'thumbnail_url' : 'image_url';
+
+        if (!empty($category->$field)) {
+            // Delete the physical file
+            @unlink(PROJECT_ROOT . '/public' . $category->$field);
+
+            // Update the database record
+            Category::update($id, [$field => null]);
+
+            echo json_encode(['success' => true, 'message' => 'تصویر با موفقیت حذف شد.']);
+        } else {
+            echo json_encode(['success' => false, 'message' => 'تصویری برای حذف وجود ندارد.']);
+        }
+    }
+
+    /**
      * Delete a category.
-     *
-     * @param int $id
      */
     public function delete($id)
     {
-        // Add logic here to handle products in this category before deleting.
-        // For now, we'll just delete the category.
-        Category::delete($id);
+        $category = Category::find($id);
+        if($category){
+            if (!empty($category->image_url)) {
+                @unlink(PROJECT_ROOT . '/public' . $category->image_url);
+            }
+            if (!empty($category->thumbnail_url)) {
+                @unlink(PROJECT_ROOT . '/public' . $category->thumbnail_url);
+            }
+            Category::delete($id);
+        }
         header('Location: ' . url('categories'));
         exit();
     }
 
     /**
-     * Handle the reordering of categories.
+     * Reorder categories based on a nested structure.
+     * Expects a JSON payload from a Nestable.js-like interface.
      */
     public function reorder()
     {
         header('Content-Type: application/json');
 
-        $input = json_decode(file_get_contents('php://input'), true);
-        $ids = $input['ids'] ?? [];
+        $input = file_get_contents('php://input');
+        $orderData = json_decode($input, true);
 
-        if (empty($ids) || !is_array($ids)) {
-            echo json_encode(['success' => false, 'message' => 'Invalid data.']);
+        if (json_last_error() !== JSON_ERROR_NONE || !is_array($orderData)) {
             http_response_code(400);
+            echo json_encode(['success' => false, 'message' => 'Invalid JSON data.']);
             return;
         }
 
-        if (Category::updateOrder($ids)) {
-            echo json_encode(['success' => true, 'message' => 'Order updated successfully.']);
-        } else {
-            echo json_encode(['success' => false, 'message' => 'Failed to update order.']);
+        try {
+            Category::updateOrder($orderData);
+            echo json_encode(['success' => true, 'message' => 'ترتیب دسته‌بندی‌ها با موفقیت به‌روزرسانی شد.']);
+        } catch (\Exception $e) {
+            // In a real app, you would log this error.
             http_response_code(500);
+            echo json_encode(['success' => false, 'message' => 'خطا در به‌روزرسانی ترتیب: ' . $e->getMessage()]);
         }
     }
 }

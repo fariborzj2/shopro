@@ -20,7 +20,7 @@ class Category
                 LEFT JOIN categories c2 ON c1.parent_id = c2.id
                 ORDER BY c1.position ASC, c1.id DESC";
         $stmt = Database::query($sql);
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        return $stmt->fetchAll(PDO::FETCH_OBJ);
     }
 
     /**
@@ -32,7 +32,7 @@ class Category
     public static function find($id)
     {
         $stmt = Database::query("SELECT * FROM categories WHERE id = :id", ['id' => $id]);
-        return $stmt->fetch(PDO::FETCH_ASSOC);
+        return $stmt->fetch(PDO::FETCH_OBJ);
     }
 
     /**
@@ -72,17 +72,23 @@ class Category
     public static function create($data)
     {
         $db = Database::getConnection();
-        $sql = "INSERT INTO categories (title, parent_id, name_fa, name_en, status, position, slug)
-                VALUES (:title, :parent_id, :name_fa, :name_en, :status, :position, :slug)";
+        $sql = "INSERT INTO categories (parent_id, name_fa, name_en, status, position, slug, short_description, description, meta_title, meta_description, meta_keywords, image_url, thumbnail_url)
+                VALUES (:parent_id, :name_fa, :name_en, :status, :position, :slug, :short_description, :description, :meta_title, :meta_description, :meta_keywords, :image_url, :thumbnail_url)";
         $stmt = $db->prepare($sql);
         $stmt->execute([
-            'title' => $data['title'],
             'parent_id' => $data['parent_id'] ?: null,
             'name_fa' => $data['name_fa'],
             'name_en' => $data['name_en'] ?? null,
             'status' => $data['status'],
             'position' => $data['position'] ?? 0,
-            'slug' => $data['slug']
+            'slug' => $data['slug'],
+            'short_description' => $data['short_description'] ?? null,
+            'description' => $data['description'] ?? null,
+            'meta_title' => $data['meta_title'] ?? null,
+            'meta_description' => $data['meta_description'] ?? null,
+            'meta_keywords' => $data['meta_keywords'] ?? null,
+            'image_url' => $data['image_url'] ?? null,
+            'thumbnail_url' => $data['thumbnail_url'] ?? null
         ]);
         return $db->lastInsertId();
     }
@@ -96,18 +102,38 @@ class Category
      */
     public static function update($id, $data)
     {
-        $sql = "UPDATE categories
-                SET parent_id = :parent_id, name_fa = :name_fa, name_en = :name_en, status = :status, position = :position, slug = :slug
-                WHERE id = :id";
-        Database::query($sql, [
-            'id' => $id,
+        // Build the query dynamically to avoid overwriting existing images if not provided
+        $fields = [
             'parent_id' => $data['parent_id'] ?: null,
             'name_fa' => $data['name_fa'],
             'name_en' => $data['name_en'],
             'status' => $data['status'],
             'position' => $data['position'] ?? 0,
-            'slug' => $data['slug']
-        ]);
+            'slug' => $data['slug'],
+            'short_description' => $data['short_description'] ?? null,
+            'description' => $data['description'] ?? null,
+            'meta_title' => $data['meta_title'] ?? null,
+            'meta_description' => $data['meta_description'] ?? null,
+            'meta_keywords' => $data['meta_keywords'] ?? null
+        ];
+
+        // Only add image fields to the update query if they are present in the data
+        if (array_key_exists('image_url', $data)) {
+            $fields['image_url'] = $data['image_url'];
+        }
+        if (array_key_exists('thumbnail_url', $data)) {
+            $fields['thumbnail_url'] = $data['thumbnail_url'];
+        }
+
+        $setClauses = [];
+        foreach (array_keys($fields) as $field) {
+            $setClauses[] = "{$field} = :{$field}";
+        }
+        $sql = "UPDATE categories SET " . implode(', ', $setClauses) . " WHERE id = :id";
+
+        $fields['id'] = $id;
+
+        Database::query($sql, $fields);
         return true;
     }
 
@@ -126,35 +152,49 @@ class Category
     }
 
     /**
-     * Update the display order of categories.
+     * Recursively updates the order of categories.
      *
-     * @param array $ids
-     * @return bool
+     * @param array $orderData The nested array of category data from the request.
+     * @param int|null $parentId The ID of the parent category for the current level.
      */
-    public static function updateOrder(array $ids)
+    private static function processOrder(array $orderData, $parentId = null)
     {
-        if (empty($ids)) {
-            return false;
+        $db = Database::getConnection();
+        $stmt = $db->prepare('UPDATE categories SET parent_id = :parent_id, position = :position WHERE id = :id');
+
+        foreach ($orderData as $position => $item) {
+            $stmt->execute([
+                ':parent_id' => $parentId,
+                ':position' => $position,
+                ':id' => $item['id']
+            ]);
+
+            // If the item has children, process them recursively
+            if (isset($item['children']) && is_array($item['children'])) {
+                self::processOrder($item['children'], $item['id']);
+            }
         }
+    }
 
-        $case_sql = "";
-        $params = [];
-        foreach ($ids as $position => $id) {
-            $case_sql .= "WHEN ? THEN ? ";
-            $params[] = (int) $id;
-            $params[] = $position;
+    /**
+     * Update the category hierarchy from a nested set of data.
+     * This function is transactional.
+     *
+     * @param array $orderData
+     * @return void
+     */
+    public static function updateOrder(array $orderData)
+    {
+        $db = Database::getConnection();
+        try {
+            $db->beginTransaction();
+            self::processOrder($orderData);
+            $db->commit();
+        } catch (\Exception $e) {
+            $db->rollBack();
+            // Re-throw the exception to be caught by the controller
+            throw $e;
         }
-
-        $id_list = implode(',', array_fill(0, count($ids), '?'));
-
-        $sql = "UPDATE categories SET position = CASE id {$case_sql} END WHERE id IN ({$id_list})";
-
-        foreach ($ids as $id) {
-            $params[] = (int) $id;
-        }
-
-        Database::query($sql, $params);
-        return true;
     }
 
     /**

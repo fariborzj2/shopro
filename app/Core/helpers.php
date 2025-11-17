@@ -37,19 +37,17 @@ function view($layout, $view, $data = [])
     $data['content'] = $content;
     extract($data);
 
-    ob_start();
-    require __DIR__ . "/../../views/layouts/{$layout}.php";
-    $layoutContent = ob_get_clean();
+    // Use the PROJECT_ROOT constant for a reliable path
+    $layout_path = PROJECT_ROOT . "/views/layouts/{$layout}.php";
 
-    // Replace placeholders like {{ title }} after the PHP has been processed.
-    // Note: The main content is now part of the layout via the $content variable,
-    // so we only need to replace other placeholders like {{ title }}.
-    // A better approach would be to use variables directly in the layout, e.g.
-    echo str_replace(
-        '{{ title }}',
-        $data['title'] ?? 'داشبورد',
-        $layoutContent
-    );
+    if (file_exists($layout_path)) {
+        ob_start();
+        require $layout_path;
+        echo ob_get_clean();
+    } else {
+        // Fallback if layout is not found
+        echo $content;
+    }
 }
 
 /**
@@ -77,7 +75,13 @@ function is_active($path)
 function partial($partial, $data = [])
 {
     extract($data);
-    require __DIR__ . "/../../views/partials/{$partial}.php";
+    $partial_path = PROJECT_ROOT . "/views/partials/{$partial}.php";
+    if (file_exists($partial_path)) {
+        require $partial_path;
+    } else {
+        // You could log an error here or show a placeholder
+        echo "<!-- Partial view not found: {$partial} -->";
+    }
 }
 
 /**
@@ -141,4 +145,41 @@ function url($path)
     // Ensure the path starts with a slash and is prefixed with /admin for admin panel links.
     $path = ltrim($path, '/');
     return "/admin/{$path}";
+}
+
+/**
+ * Build hierarchical category options for a select dropdown.
+ *
+ * @param array $categories Array of category objects/arrays.
+ * @param int|null $parentId The ID of the parent to start from.
+ * @param int $level The current depth level for indentation.
+ * @param int|null $selectedId The ID of the currently selected category.
+ * @param int|null $currentCategoryId The ID of the category being edited (to exclude it and its children).
+ */
+function build_category_tree_options(array $categories, $parentId = null, $level = 0, $selectedId = null, $currentCategoryId = null)
+{
+    $html = '';
+    foreach ($categories as $category) {
+        // Ensure category is an object for consistent access
+        $category = (object)$category;
+
+        if ($category->parent_id == $parentId) {
+            // Exclude the category being edited and its descendants
+            if ($currentCategoryId !== null && $category->id == $currentCategoryId) {
+                continue;
+            }
+
+            $isSelected = ($selectedId !== null && $selectedId == $category->id) ? 'selected' : '';
+            $indent = str_repeat('&nbsp;&nbsp;&nbsp;', $level);
+
+            $html .= "<option value=\"{$category->id}\" {$isSelected}>";
+            $html .= $indent . htmlspecialchars($category->name_fa);
+            $html .= "</option>";
+
+            // Recursively find children, excluding descendants of the current category
+            $childHtml = build_category_tree_options($categories, $category->id, $level + 1, $selectedId, $currentCategoryId);
+            $html .= $childHtml;
+        }
+    }
+    return $html;
 }
