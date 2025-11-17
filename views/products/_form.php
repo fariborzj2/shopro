@@ -12,9 +12,12 @@
         <label for="category_id" class="block text-gray-700 text-sm font-bold mb-2">دسته‌بندی</label>
         <select id="category_id" name="category_id" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
             <option value="">— انتخاب دسته‌بندی —</option>
+            <?php $currentCategoryId = $product->category_id ?? null; ?>
+    
             <?php foreach ($categories as $category): ?>
-                <option value="<?php echo $category['id']; ?>" <?php echo (isset($product) && $category['id'] == $product['category_id']) ? 'selected' : ''; ?>>
-                    <?php echo htmlspecialchars($category['name_fa']); ?>
+                <option value="<?php echo $category->id; ?>"
+                    <?php echo ($category->id == $currentCategoryId) ? 'selected' : ''; ?>>
+                    <?php echo htmlspecialchars($category->name_fa); ?>
                 </option>
             <?php endforeach; ?>
         </select>
@@ -38,9 +41,9 @@
     <div class="mb-6">
         <label for="status" class="block text-gray-700 text-sm font-bold mb-2">وضعیت</label>
         <select id="status" name="status" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
-            <option value="available" <?php echo (isset($product) && $product['status'] === 'available') ? 'selected' : ''; ?>>موجود</option>
-            <option value="unavailable" <?php echo (isset($product) && $product['status'] === 'unavailable') ? 'selected' : ''; ?>>ناموجود</option>
-            <option value="draft" <?php echo (isset($product) && $product['status'] === 'draft') ? 'selected' : ''; ?>>پیش‌نویس</option>
+            <option value="available"   <?php echo (isset($product) && $product->status === 'available') ? 'selected' : ''; ?>>موجود</option>
+            <option value="unavailable" <?php echo (isset($product) && $product->status === 'unavailable') ? 'selected' : ''; ?>>ناموجود</option>
+            <option value="draft"       <?php echo (isset($product) && $product->status === 'draft') ? 'selected' : ''; ?>>پیش‌نویس</option>
         </select>
     </div>
 </div>
