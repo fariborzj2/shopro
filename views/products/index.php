@@ -1,7 +1,7 @@
 <div class="bg-white p-6 rounded-lg shadow-md">
     <div class="flex justify-between items-center mb-4">
         <h1 class="text-2xl font-semibold">مدیریت محصولات</h1>
-        <a href="/products/create" class="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700">
+        <a href="<?php echo url('<?php echo url('products/create'); ?>'); ?>" class="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700">
             افزودن محصول جدید
         </a>
     </div>
