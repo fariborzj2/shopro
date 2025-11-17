@@ -148,6 +148,19 @@ function url($path)
 }
 
 /**
+ * Generate a URL for an asset.
+ *
+ * @param string $path
+ * @return string
+ */
+function asset($path)
+{
+    // A simple asset helper that just ensures the path is absolute from the root.
+    // In a more complex setup, this might point to a CDN or add versioning.
+    return '/' . ltrim($path, '/');
+}
+
+/**
  * Build hierarchical category options for a select dropdown.
  *
  * @param array $categories Array of category objects/arrays.
