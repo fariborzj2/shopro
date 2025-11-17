@@ -26,6 +26,9 @@ class CustomOrderFieldsController
 
     public function store()
     {
+        if (!verify_csrf_token()) {
+            redirect_back_with_error('Invalid CSRF token.');
+        }
         $data = $this->prepareDataFromRequest();
         CustomOrderField::create($data);
         header('Location: /admin/custom-fields');
@@ -46,6 +49,9 @@ class CustomOrderFieldsController
 
     public function update($id)
     {
+        if (!verify_csrf_token()) {
+            redirect_back_with_error('Invalid CSRF token.');
+        }
         $field = CustomOrderField::find($id);
         if (!$field) {
             redirect_back_with_error('فیلد مورد نظر یافت نشد.');

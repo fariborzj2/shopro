@@ -2,7 +2,7 @@
     <div class="p-6 bg-white rounded-md shadow-md">
         <h2 class="text-lg text-gray-700 font-semibold capitalize">افزودن دسته‌بندی جدید</h2>
 
-        <form action="<?php echo url('categories/store'); ?>" method="POST">
+        <form action="<?php echo url('categories/store'); ?>" method="POST" enctype="multipart/form-data">
             <?php require '_form.php'; ?>
 
             <div class="flex justify-end mt-6">

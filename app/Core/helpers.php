@@ -75,7 +75,13 @@ function is_active($path)
 function partial($partial, $data = [])
 {
     extract($data);
-    require __DIR__ . "/../../views/partials/{$partial}.php";
+    $partial_path = PROJECT_ROOT . "/views/partials/{$partial}.php";
+    if (file_exists($partial_path)) {
+        require $partial_path;
+    } else {
+        // You could log an error here or show a placeholder
+        echo "<!-- Partial view not found: {$partial} -->";
+    }
 }
 
 /**

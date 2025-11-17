@@ -41,6 +41,7 @@ CREATE TABLE `categories` (
   `name_en` VARCHAR(255),
   `slug` VARCHAR(255) NOT NULL UNIQUE,
   `image_url` VARCHAR(255),
+  `thumbnail_url` VARCHAR(255),
   `status` ENUM('active', 'inactive') NOT NULL DEFAULT 'active',
   `short_description` TEXT,
   `description` LONGTEXT,

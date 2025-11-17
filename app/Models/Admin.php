@@ -29,4 +29,27 @@ class Admin
         $stmt = Database::query("SELECT * FROM admins WHERE username = :username", ['username' => $username]);
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
+
+    /**
+     * Create a new admin user.
+     *
+     * @param array $data
+     * @return string|false The ID of the newly created admin, or false on failure.
+     */
+    public static function create(array $data)
+    {
+        $db = Database::getConnection();
+        $sql = "INSERT INTO admins (username, password_hash, email, name, role, status)
+                VALUES (:username, :password_hash, :email, :name, :role, :status)";
+        $stmt = $db->prepare($sql);
+        $stmt->execute([
+            ':username' => $data['username'],
+            ':password_hash' => $data['password'],
+            ':email' => $data['email'],
+            ':name' => $data['name'] ?? $data['username'],
+            ':role' => $data['role'] ?? 'admin',
+            ':status' => $data['status'] ?? 'active'
+        ]);
+        return $db->lastInsertId();
+    }
 }
