@@ -1,7 +1,7 @@
 <h1 class="text-3xl font-bold mb-6">افزودن محصول جدید</h1>
 
 <div class="bg-white shadow-md rounded-lg p-8">
-    <form action="<?= url('products/store') ?>" method="POST">
+    <form action="<?php echo url('products/store') ?>" method="POST">
         <?php partial('csrf_field'); ?>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div class="mb-4">
@@ -17,7 +17,7 @@
                 <select id="category_id" name="category_id" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
                     <option value="">— انتخاب دسته‌بندی —</option>
                     <?php foreach ($categories as $category): ?>
-                        <option value="<?= $category['id'] ?>"><?= htmlspecialchars($category['name_fa']) ?></option>
+                        <option value="<?php echo $category['id'] ?>"><?php echo htmlspecialchars($category['name_fa']) ?></option>
                     <?php endforeach; ?>
                 </select>
             </div>
@@ -51,7 +51,7 @@
             <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
                 ذخیره
             </button>
-            <a href="<?= url('products') ?>" class="inline-block align-baseline font-bold text-sm text-blue-500 hover:text-blue-800">
+            <a href="<?php echo url('products') ?>" class="inline-block align-baseline font-bold text-sm text-blue-500 hover:text-blue-800">
                 انصراف
             </a>
         </div>
@@ -62,8 +62,8 @@
 document.addEventListener('DOMContentLoaded', function() {
     const dollarPriceInput = document.getElementById('dollar_price');
     const tomanPriceInput = document.getElementById('price');
-    const autoUpdateEnabled = <?= json_encode($auto_update_prices ?? false) ?>;
-    const exchangeRate = <?= json_encode($dollar_exchange_rate ?? 50000) ?>;
+    const autoUpdateEnabled = <?php echo json_encode($auto_update_prices ?? false) ?>;
+    const exchangeRate = <?php echo json_encode($dollar_exchange_rate ?? 50000) ?>;
 
     function calculatePrice() {
         if (autoUpdateEnabled && dollarPriceInput.value) {
