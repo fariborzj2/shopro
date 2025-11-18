@@ -2,8 +2,8 @@
 
 <div x-data="{
     activeTab: 'main',
-    imageUrl: '<?php echo isset($category->image_url) ? url($category->image_url) : ''; ?>',
-    thumbnailUrl: '<?php echo isset($category->thumbnail_url) ? url($category->thumbnail_url) : ''; ?>',
+    imageUrl: '<?php echo isset($category->image_url) ? asset($category->image_url) : ''; ?>',
+    thumbnailUrl: '<?php echo isset($category->thumbnail_url) ? asset($category->thumbnail_url) : ''; ?>',
 
     previewImage(event) {
         const reader = new FileReader();
@@ -208,7 +208,60 @@
             image_title: true,
             automatic_uploads: true,
             file_picker_types: 'image',
-            images_upload_url: '<?php echo url('api/upload_image.php'); ?>',
+            images_upload_handler: (blobInfo, progress) => new Promise((resolve, reject) => {
+                const xhr = new XMLHttpRequest();
+                xhr.withCredentials = false;
+                xhr.open('POST', '<?php echo url('api/upload-image'); ?>');
+
+                // Set the CSRF token header
+                const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+                xhr.setRequestHeader('X-CSRF-TOKEN', csrfToken);
+
+                xhr.upload.onprogress = (e) => {
+                    progress(e.loaded / e.total * 100);
+                };
+
+                xhr.onload = () => {
+                    if (xhr.status < 200 || xhr.status >= 300) {
+                        try {
+                            const json = JSON.parse(xhr.responseText);
+                            return reject(json.error || 'HTTP Error: ' + xhr.status);
+                        } catch (e) {
+                            return reject('HTTP Error: ' + xhr.status);
+                        }
+                    }
+
+                    const json = JSON.parse(xhr.responseText);
+
+                    if (!json || typeof json.location != 'string') {
+                        return reject('Invalid JSON: ' + xhr.responseText);
+                    }
+
+                    // After a successful upload, update all CSRF tokens on the page (meta tag and hidden input)
+                    // with the new one sent from the server. This is critical to ensure the main form
+                    // can be submitted after an image has been uploaded.
+                    if (json.csrf_token) {
+                        const newToken = json.csrf_token;
+                        document.querySelector('meta[name="csrf-token"]').setAttribute('content', newToken);
+
+                        const inputToken = document.querySelector('input[name="csrf_token"]');
+                        if (inputToken) {
+                            inputToken.value = newToken;
+                        }
+                    }
+
+                    resolve(json.location);
+                };
+
+                xhr.onerror = () => {
+                    reject('Image upload failed due to a network error.');
+                };
+
+                const formData = new FormData();
+                formData.append('file', blobInfo.blob(), blobInfo.filename());
+
+                xhr.send(formData);
+            }),
 
             // Simple file picker for local images
             file_picker_callback: function (cb, value, meta) {
