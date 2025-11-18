@@ -44,7 +44,7 @@ class UsersController
             'status' => $_POST['status'] ?? 'active'
         ]);
 
-        header('Location: /users');
+        header('Location: /admin/users');
         exit();
     }
 
@@ -61,7 +61,7 @@ class UsersController
             redirect_back_with_error('User not found.');
         }
 
-        return view('main', 'users/edit', [
+        return view('main', 'admin/users/edit', [
             'title' => 'ویرایش کاربر',
             'user' => $user
         ]);
@@ -104,7 +104,7 @@ class UsersController
         // In a real app, you'd want to use POST for deletion and add CSRF protection.
         // For simplicity, we'll use GET for now as defined in routes.
         User::delete($id);
-        header('Location: /users');
+        header('Location: /admin/users');
         exit();
     }
 }
