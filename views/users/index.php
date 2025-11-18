@@ -1,6 +1,6 @@
 <div class="flex justify-between items-center mb-6">
     <h1 class="text-3xl font-bold">مدیریت کاربران</h1>
-    <a href="/users/create" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+    <a href="<?php echo url('/users/create') ?>" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
         افزودن کاربر جدید
     </a>
 </div>
@@ -57,8 +57,8 @@
                         </span>
                     </td>
                     <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm text-center">
-                            <a href="/users/edit/<?= $user['id'] ?>" class="text-indigo-600 hover:text-indigo-900 mr-4">ویرایش</a>
-                            <form action="/users/delete/<?= $user['id'] ?>" method="POST" class="inline-block" onsubmit="return confirm('آیا از حذف این کاربر مطمئن هستید؟');">
+                            <a href="<?php echo url('/users/edit/') . $user['id'] ?>" class="text-indigo-600 hover:text-indigo-900 mr-4">ویرایش</a>
+                            <form action="<?php echo url('/users/delete/') . $user['id'] ?>" method="POST" class="inline-block" onsubmit="return confirm('آیا از حذف این کاربر مطمئن هستید؟');">
                                 <?php partial('csrf_field'); ?>
                                 <button type="submit" class="text-red-600 hover:text-red-900">حذف</button>
                             </form>
