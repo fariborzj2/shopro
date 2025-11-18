@@ -40,10 +40,6 @@ class CategoriesController
      */
     public function store()
     {
-        if (!verify_csrf_token()) {
-            redirect_back_with_error('Invalid CSRF token.');
-        }
-
         // Server-side validation (can be enhanced)
         if (empty($_POST['name_fa']) || empty($_POST['slug'])) {
             // Handle error
@@ -111,10 +107,6 @@ class CategoriesController
      */
     public function update($id)
     {
-        if (!verify_csrf_token()) {
-            redirect_back_with_error('Invalid CSRF token.');
-        }
-
         $category = Category::find($id);
         if (!$category) {
             redirect_back_with_error('دسته بندی پیدا نشد.');
