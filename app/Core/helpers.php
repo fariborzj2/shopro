@@ -121,12 +121,19 @@ function verify_csrf_token()
     }
 
     if ($token && isset($_SESSION['csrf_token']) && hash_equals($_SESSION['csrf_token'], $token)) {
-        // Invalidate the token after use for AJAX requests as well for better security
-        unset($_SESSION['csrf_token']);
         return true;
     }
 
     return false;
+}
+
+/**
+ * Regenerate the CSRF token.
+ * This should be called after a successful action that modifies state.
+ */
+function regenerate_csrf_token()
+{
+    $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
 }
 
 /**

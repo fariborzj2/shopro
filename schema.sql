@@ -265,6 +265,16 @@ CREATE TABLE `pages` (
   `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+-- Media Uploads Table
+CREATE TABLE `media_uploads` (
+  `id` INT PRIMARY KEY AUTO_INCREMENT,
+  `file_path` VARCHAR(255) NOT NULL UNIQUE,
+  `context` VARCHAR(100) NOT NULL,
+  `uploaded_by_admin_id` INT,
+  `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (`uploaded_by_admin_id`) REFERENCES `admins`(`id`) ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 
 -- Insert some sample data for users
 INSERT INTO `users` (`name`, `mobile`, `status`) VALUES
