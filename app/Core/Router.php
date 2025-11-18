@@ -31,31 +31,28 @@ class Router
 
     public function dispatch($uri, $requestMethod)
     {
-        // First, check for a direct match for static routes.
-        if (array_key_exists($uri, $this->routes[$requestMethod])) {
-            list($controller, $method) = explode('@', $this->routes[$requestMethod][$uri]);
-            return $this->callAction($controller, $method);
-        }
-
-        // If not found, check for dynamic routes with parameters.
         foreach ($this->routes[$requestMethod] as $route => $action) {
-            // Skip routes that don't have placeholders to avoid unnecessary regex.
-            if (strpos($route, '{') === false) {
-                continue;
+            // First, check for a direct static match.
+            if ($route === $uri) {
+                list($controller, $method) = explode('@', $action);
+                return $this->callAction($controller, $method);
             }
 
-            // Convert the route pattern to a regex.
-            // Example: /users/{id}/edit -> #^/users/([^/]+)/edit$#
-            $pattern = preg_replace('/\{([a-zA-Z0-9_]+)\}/', '(?P<$1>[^/]+)', $route);
-            $pattern = '#^' . str_replace('/', '\/', $pattern) . '$#';
+            // If it's not a static match, check for dynamic routes with parameters.
+            if (strpos($route, '{') !== false) {
+                // Convert the route pattern to a regex.
+                // Example: /users/{id}/edit -> #^/users/([^/]+)/edit$#
+                $pattern = preg_replace('/\{([a-zA-Z0-9_]+)\}/', '(?P<$1>[^/]+)', $route);
+                $pattern = '#^' . str_replace('/', '\/', $pattern) . '$#';
 
-            if (preg_match($pattern, $uri, $matches)) {
-                list($controller, $method) = explode('@', $action);
+                if (preg_match($pattern, $uri, $matches)) {
+                    list($controller, $method) = explode('@', $action);
 
-                // Get named parameters from the matches.
-                $params = array_filter($matches, 'is_string', ARRAY_FILTER_USE_KEY);
+                    // Get named parameters from the matches.
+                    $params = array_filter($matches, 'is_string', ARRAY_FILTER_USE_KEY);
 
-                return $this->callAction($controller, $method, $params);
+                    return $this->callAction($controller, $method, $params);
+                }
             }
         }
 
