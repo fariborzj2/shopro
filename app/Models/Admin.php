@@ -44,7 +44,7 @@ class Admin
         $stmt = $db->prepare($sql);
         $stmt->execute([
             ':username' => $data['username'],
-            ':password_hash' => $data['password'],
+            ':password_hash' => $data['password_hash'],
             ':email' => $data['email'],
             ':name' => $data['name'] ?? $data['username'],
             ':role' => $data['role'] ?? 'admin',
