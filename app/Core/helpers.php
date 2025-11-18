@@ -121,14 +121,19 @@ function verify_csrf_token()
     }
 
     if ($token && isset($_SESSION['csrf_token']) && hash_equals($_SESSION['csrf_token'], $token)) {
-        // Token is valid. For better security, regenerate the token immediately
-        // after successful validation. This prevents token reuse while ensuring
-        // the next request will have a valid token available.
-        $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
         return true;
     }
 
     return false;
+}
+
+/**
+ * Regenerate the CSRF token.
+ * This should be called after a successful action that modifies state.
+ */
+function regenerate_csrf_token()
+{
+    $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
 }
 
 /**

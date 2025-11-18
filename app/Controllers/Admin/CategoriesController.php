@@ -75,6 +75,7 @@ class CategoriesController
         $customFieldIds = $_POST['custom_fields'] ?? [];
         Category::syncCustomFields($id, $customFieldIds);
 
+        regenerate_csrf_token();
         header('Location: ' . url('categories'));
         exit();
     }
@@ -149,6 +150,7 @@ class CategoriesController
         $customFieldIds = $_POST['custom_fields'] ?? [];
         Category::syncCustomFields($id, $customFieldIds);
 
+        regenerate_csrf_token();
         header('Location: ' . url('categories'));
         exit();
     }
