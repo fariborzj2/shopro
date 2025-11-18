@@ -4,7 +4,7 @@
             ویرایش دسته‌بندی: <?php echo htmlspecialchars($category->name_fa); ?>
         </h2>
 
-        <form action="<?php echo url('categories/update/' . $category->id); ?>" method="POST" enctype="multipart/form-data">
+        <form action="<?php echo url('categories/update/' . $category->id); ?>" method="POST" enctype="multipart/form-data" accept-charset="UTF-8">
             <?php require '_form.php'; ?>
 
             <div class="flex justify-end mt-6">
