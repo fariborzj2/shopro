@@ -155,3 +155,7 @@ $router->post('/admin/reviews/delete/{id}', 'Admin\ReviewsController@destroy');
 
 // API routes for admin panel (e.g., TinyMCE image upload)
 $router->post('/admin/api/upload-image', 'Admin\ApiController@uploadImage');
+
+// Media Library
+$router->get('/admin/media', 'Admin\MediaController@index');
+$router->post('/admin/media/delete/{id}', 'Admin\MediaController@delete');

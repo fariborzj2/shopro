@@ -2,26 +2,33 @@
 
 namespace App\Controllers\Admin;
 
+use App\Models\Media;
+
+// Ensure the Jalali date functions are available
+require_once PROJECT_ROOT . '/app/Core/jdf.php';
+
 class ApiController
 {
     /**
      * Handle the image upload for TinyMCE.
+     * This is now context-aware and saves files to date-stamped folders.
      */
     public function uploadImage()
     {
         header('Content-Type: application/json');
 
-        // The main application already handles session_start() and CSRF verification.
-        // We just need to check for admin authentication.
         if (!isset($_SESSION['admin_id'])) {
             http_response_code(403);
             echo json_encode(['error' => 'Authentication required.']);
             exit;
         }
 
-        // --- Configuration ---
-        $uploadDir = PROJECT_ROOT . '/public/uploads/images/';
-        $uploadUrl = '/uploads/images/';
+        // --- Context and Path Configuration ---
+        $context = isset($_POST['context']) ? basename($_POST['context']) : 'general';
+        $dateFolder = jdate('Y-m-d'); // Use Persian date for folder name
+
+        $uploadDir = PROJECT_ROOT . "/public/uploads/images/{$context}/{$dateFolder}/";
+        $uploadUrl = "/uploads/images/{$context}/{$dateFolder}/";
 
         // --- Ensure the upload directory exists ---
         if (!is_dir($uploadDir)) {
@@ -35,7 +42,6 @@ class ApiController
         $allowedExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
         $maxFileSize = 5 * 1024 * 1024; // 5 MB
 
-        // --- File Handling ---
         if (!isset($_FILES['file'])) {
             http_response_code(400);
             echo json_encode(['error' => 'No file was uploaded.']);
@@ -48,7 +54,6 @@ class ApiController
         $fileSize = $file['size'];
         $fileError = $file['error'];
 
-        // Check for upload errors
         if ($fileError !== UPLOAD_ERR_OK) {
             http_response_code(500);
             echo json_encode(['error' => 'An error occurred during the upload.']);
@@ -89,22 +94,33 @@ class ApiController
         $newFileName = time() . '_' . bin2hex(random_bytes(8)) . '.' . $fileExtension;
         $destination = $uploadDir . $newFileName;
 
-        // --- Move the file ---
         if (move_uploaded_file($fileTmpName, $destination)) {
             $location = $uploadUrl . $newFileName;
-            // After a successful upload, the CSRF token has been regenerated.
-            // We must send the new token back to the client so it can be used
-            // for the next upload.
+
+            // Log the upload to the media_uploads table
+            Media::create([
+                'file_path' => $location,
+                'context' => $context,
+                'uploaded_by_admin_id' => $_SESSION['admin_id']
+            ]);
+
             echo json_encode([
                 'location' => $location,
-                'csrf_token' => csrf_token() // Send the new token
+                'csrf_token' => csrf_token()
             ]);
         } else {
             http_response_code(500);
             echo json_encode(['error' => 'Failed to move the uploaded file.']);
         }
 
-        // We exit here to prevent any further output
         exit();
     }
+
+    public function seedMedia()
+    {
+        Media::create([
+            'file_path' => '/logo.png',
+            'context' => 'seed',
+            'uploaded_by_admin_id' => $_SESSION['admin_id'] ?? null
+        ]);
 }

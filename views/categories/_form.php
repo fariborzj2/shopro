@@ -258,6 +258,7 @@
 
                 const formData = new FormData();
                 formData.append('file', blobInfo.blob(), blobInfo.filename());
+                formData.append('context', 'categories'); // Add context for the uploader
 
                 xhr.send(formData);
             }),
