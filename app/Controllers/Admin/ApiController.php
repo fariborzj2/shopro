@@ -92,8 +92,13 @@ class ApiController
         // --- Move the file ---
         if (move_uploaded_file($fileTmpName, $destination)) {
             $location = $uploadUrl . $newFileName;
-            // TinyMCE expects the location in a specific JSON format
-            echo json_encode(['location' => $location]);
+            // After a successful upload, the CSRF token has been regenerated.
+            // We must send the new token back to the client so it can be used
+            // for the next upload.
+            echo json_encode([
+                'location' => $location,
+                'csrf_token' => csrf_token() // Send the new token
+            ]);
         } else {
             http_response_code(500);
             echo json_encode(['error' => 'Failed to move the uploaded file.']);

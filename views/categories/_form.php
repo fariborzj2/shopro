@@ -2,8 +2,8 @@
 
 <div x-data="{
     activeTab: 'main',
-    imageUrl: '<?php echo isset($category->image_url) ? url($category->image_url) : ''; ?>',
-    thumbnailUrl: '<?php echo isset($category->thumbnail_url) ? url($category->thumbnail_url) : ''; ?>',
+    imageUrl: '<?php echo isset($category->image_url) ? asset($category->image_url) : ''; ?>',
+    thumbnailUrl: '<?php echo isset($category->thumbnail_url) ? asset($category->thumbnail_url) : ''; ?>',
 
     previewImage(event) {
         const reader = new FileReader();
@@ -234,6 +234,12 @@
 
                     if (!json || typeof json.location != 'string') {
                         return reject('Invalid JSON: ' + xhr.responseText);
+                    }
+
+                    // After a successful upload, update the CSRF token in the meta tag
+                    // with the new one sent from the server.
+                    if (json.csrf_token) {
+                        document.querySelector('meta[name="csrf-token"]').setAttribute('content', json.csrf_token);
                     }
 
                     resolve(json.location);
