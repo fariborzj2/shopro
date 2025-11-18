@@ -196,7 +196,6 @@
     document.addEventListener('DOMContentLoaded', function () {
         tinymce.init({
             selector: '.tinymce-editor',
-            api_key: 'YOUR_API_KEY', // Replace with your actual TinyMCE API key
             plugins: 'directionality link image lists table media code',
             toolbar: 'undo redo | formatselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image media | code ltr rtl',
             language: 'fa',

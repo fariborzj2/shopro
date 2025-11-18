@@ -40,10 +40,6 @@ class CategoriesController
      */
     public function store()
     {
-        if (!verify_csrf_token()) {
-            redirect_back_with_error('Invalid CSRF token.');
-        }
-
         // Server-side validation (can be enhanced)
         if (empty($_POST['name_fa']) || empty($_POST['slug'])) {
             // Handle error
@@ -111,10 +107,6 @@ class CategoriesController
      */
     public function update($id)
     {
-        if (!verify_csrf_token()) {
-            redirect_back_with_error('Invalid CSRF token.');
-        }
-
         $category = Category::find($id);
         if (!$category) {
             redirect_back_with_error('دسته بندی پیدا نشد.');
@@ -190,18 +182,21 @@ class CategoriesController
     }
 
     /**
-     * Delete a category.
+     * Delete a category and its associated images.
      */
     public function delete($id)
     {
         $category = Category::find($id);
-        if($category){
+        if ($category) {
+            // Delete the main image if it exists
             if (!empty($category->image_url)) {
                 @unlink(PROJECT_ROOT . '/public' . $category->image_url);
             }
+            // Delete the thumbnail image if it exists
             if (!empty($category->thumbnail_url)) {
                 @unlink(PROJECT_ROOT . '/public' . $category->thumbnail_url);
             }
+            // Finally, delete the category record from the database
             Category::delete($id);
         }
         header('Location: ' . url('categories'));
