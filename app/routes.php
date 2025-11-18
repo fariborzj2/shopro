@@ -152,3 +152,6 @@ $router->get('/admin/reviews', 'Admin\ReviewsController@index');
 $router->get('/admin/reviews/edit/{id}', 'Admin\ReviewsController@edit');
 $router->post('/admin/reviews/update/{id}', 'Admin\ReviewsController@update');
 $router->post('/admin/reviews/delete/{id}', 'Admin\ReviewsController@destroy');
+
+// API routes for admin panel (e.g., TinyMCE image upload)
+$router->post('/admin/api/upload-image', 'Admin\ApiController@uploadImage');
