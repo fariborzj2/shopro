@@ -1,7 +1,8 @@
 <h1 class="text-3xl font-bold mb-6">ویرایش کاربر: <?= htmlspecialchars($user['name']) ?></h1>
 
 <div class="bg-white shadow-md rounded-lg p-8">
-    <form action="/users/update/<?= $user['id'] ?>" method="POST">
+        <form action="<?php echo url('/users/update') . $user['id']?>" method="POST"  enctype="multipart/form-data" accept-charset="UTF-8">
+        <input type="hidden" name="csrf_token" value="<?php echo csrf_token(); ?>">
         <div class="mb-4">
             <label for="name" class="block text-gray-700 text-sm font-bold mb-2">نام</label>
             <input type="text" id="name" name="name" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" value="<?= htmlspecialchars($user['name']) ?>" required>
