@@ -4,6 +4,7 @@ namespace App\Controllers\Admin;
 
 use App\Models\Category;
 use App\Models\CustomOrderField;
+use App\Models\Media;
 use App\Core\ImageUploader;
 
 class CategoriesController
@@ -113,6 +114,33 @@ class CategoriesController
             redirect_back_with_error('دسته بندی پیدا نشد.');
         }
 
+        // --- Automatic Image Deletion Logic ---
+        $oldContent = $category->description ?? '';
+        $newContent = $_POST['description'] ?? '';
+
+        preg_match_all('/<img[^>]+src="([^">]+)"/', $oldContent, $oldImages);
+        preg_match_all('/<img[^>]+src="([^">]+)"/', $newContent, $newImages);
+
+        $oldImageUrls = $oldImages[1];
+        $newImageUrls = $newImages[1];
+
+        $imagesToDelete = array_diff($oldImageUrls, $newImageUrls);
+
+        foreach ($imagesToDelete as $imageUrl) {
+            // Sanitize and get the file path relative to the public root
+            $filePath = parse_url($imageUrl, PHP_URL_PATH);
+
+            // Delete from media_uploads table
+            Media::deleteByPath($filePath);
+
+            // Delete the physical file
+            $fullPath = PROJECT_ROOT . '/public' . $filePath;
+            if (file_exists($fullPath)) {
+                @unlink($fullPath);
+            }
+        }
+        // --- End of Automatic Image Deletion Logic ---
+
         $data = [
             'parent_id' => (int)$_POST['parent_id'] ?: null,
             'name_fa' => htmlspecialchars($_POST['name_fa']),
@@ -190,15 +218,36 @@ class CategoriesController
     {
         $category = Category::find($id);
         if ($category) {
-            // Delete the main image if it exists
+            // --- Delete images from the editor content ---
+            if (!empty($category->description)) {
+                preg_match_all('/<img[^>]+src="([^">]+)"/', $category->description, $matches);
+                $imagesToDelete = $matches[1] ?? [];
+
+                foreach ($imagesToDelete as $imageUrl) {
+                    $filePath = parse_url($imageUrl, PHP_URL_PATH);
+
+                    // Delete from media_uploads table
+                    Media::deleteByPath($filePath);
+
+                    // Delete the physical file
+                    $fullPath = PROJECT_ROOT . '/public' . $filePath;
+                    if (file_exists($fullPath)) {
+                        @unlink($fullPath);
+                    }
+                }
+            }
+
+            // --- Delete the main "featured" image ---
             if (!empty($category->image_url)) {
                 @unlink(PROJECT_ROOT . '/public' . $category->image_url);
             }
-            // Delete the thumbnail image if it exists
+
+            // --- Delete the "thumbnail" image ---
             if (!empty($category->thumbnail_url)) {
                 @unlink(PROJECT_ROOT . '/public' . $category->thumbnail_url);
             }
-            // Finally, delete the category record from the database
+
+            // --- Finally, delete the category record ---
             Category::delete($id);
         }
         header('Location: ' . url('categories'));

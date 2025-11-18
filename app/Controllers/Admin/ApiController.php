@@ -104,7 +104,10 @@ class ApiController
                 'uploaded_by_admin_id' => $_SESSION['admin_id']
             ]);
 
-            echo json_encode(['location' => $location]);
+            echo json_encode([
+                'location' => $location,
+                'csrf_token' => csrf_token() // Send the new token back
+            ]);
         } else {
             http_response_code(500);
             echo json_encode(['error' => 'Failed to move the uploaded file.']);

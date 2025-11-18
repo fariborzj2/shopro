@@ -236,6 +236,15 @@
                         return reject('Invalid JSON: ' + xhr.responseText);
                     }
 
+                    if (json.csrf_token) {
+                        const newToken = json.csrf_token;
+                        document.querySelector('meta[name="csrf-token"]').setAttribute('content', newToken);
+
+                        const inputToken = document.querySelector('input[name="csrf_token"]');
+                        if (inputToken) {
+                            inputToken.value = newToken;
+                        }
+                    }
                     resolve(json.location);
                 };
 
