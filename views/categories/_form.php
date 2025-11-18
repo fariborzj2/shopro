@@ -236,10 +236,17 @@
                         return reject('Invalid JSON: ' + xhr.responseText);
                     }
 
-                    // After a successful upload, update the CSRF token in the meta tag
-                    // with the new one sent from the server.
+                    // After a successful upload, update all CSRF tokens on the page (meta tag and hidden input)
+                    // with the new one sent from the server. This is critical to ensure the main form
+                    // can be submitted after an image has been uploaded.
                     if (json.csrf_token) {
-                        document.querySelector('meta[name="csrf-token"]').setAttribute('content', json.csrf_token);
+                        const newToken = json.csrf_token;
+                        document.querySelector('meta[name="csrf-token"]').setAttribute('content', newToken);
+
+                        const inputToken = document.querySelector('input[name="csrf_token"]');
+                        if (inputToken) {
+                            inputToken.value = newToken;
+                        }
                     }
 
                     resolve(json.location);
