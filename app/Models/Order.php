@@ -58,4 +58,48 @@ class Order
             'perPage' => $perPage
         ];
     }
+
+    /**
+     * Creates a new order in the database.
+     *
+     * @param array $data The data for the new order.
+     * @return int The ID of the newly created order.
+     */
+    public static function create(array $data): int
+    {
+        $pdo = Database::getConnection();
+        $sql = "
+            INSERT INTO orders (
+                user_id, product_id, category_id, amount, status,
+                custom_fields_data, order_code, quantity
+            ) VALUES (
+                :user_id, :product_id, :category_id, :amount, :status,
+                :custom_fields_data, :order_code, :quantity
+            )
+        ";
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute([
+            ':user_id' => $data['user_id'],
+            ':product_id' => $data['product_id'],
+            ':category_id' => $data['category_id'],
+            ':amount' => $data['amount'],
+            ':status' => $data['status'],
+            ':custom_fields_data' => $data['custom_fields_data'],
+            ':order_code' => $data['order_code'],
+            ':quantity' => $data['quantity'] ?? 1, // Default quantity to 1 if not provided
+        ]);
+        return (int)$pdo->lastInsertId();
+    }
+        public static function update(int $id, array $data): bool
+    {
+        $pdo = Database::getConnection();
+        $fields = [];
+        foreach ($data as $key => $value) {
+            $fields[] = "$key = :$key";
+        }
+        $sql = "UPDATE orders SET " . implode(', ', $fields) . " WHERE id = :id";
+        $stmt = $pdo->prepare($sql);
+        $data['id'] = $id;
+        return $stmt->execute($data);
+    }
 }
