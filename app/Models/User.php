@@ -59,13 +59,17 @@ class User
      */
     public static function create($data)
     {
+        $pdo = Database::getConnection();
         $sql = "INSERT INTO users (name, mobile, status) VALUES (:name, :mobile, :status)";
-        Database::query($sql, [
-            'name' => $data['name'],
+
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute([
+            'name' => $data['name'] ?? 'کاربر جدید',
             'mobile' => $data['mobile'],
-            'status' => $data['status']
+            'status' => $data['status'] ?? 'active'
         ]);
-        return true;
+
+        return $pdo->lastInsertId();
     }
 
     /**

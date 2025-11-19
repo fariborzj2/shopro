@@ -95,7 +95,11 @@ class AuthController
         // Find or create user
         $user = User::findBy('mobile', $mobile);
         if (!$user) {
-            $user_id = User::create(['mobile' => $mobile, 'name' => 'کاربر جدید']);
+            $user_id = User::create([
+                'mobile' => $mobile,
+                'name' => 'کاربر جدید',
+                'status' => 'active' // Explicitly set status
+            ]);
             $user = User::find($user_id);
         }
 
