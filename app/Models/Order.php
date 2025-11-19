@@ -102,4 +102,47 @@ class Order
         $data['id'] = $id;
         return $stmt->execute($data);
     }
+
+    /**
+     * Finds a single order by its ID, joining related product and user data.
+     *
+     * @param int $id The ID of the order to find.
+     * @return object|false The order object, or false if not found.
+     */
+    public static function find(int $id)
+    {
+        $pdo = Database::getConnection();
+        $sql = "
+            SELECT
+                o.*,
+                p.name_fa as product_name,
+                u.name as user_name,
+                u.mobile as user_mobile
+            FROM
+                orders o
+            JOIN
+                products p ON o.product_id = p.id
+            JOIN
+                users u ON o.user_id = u.id
+            WHERE
+                o.id = :id
+        ";
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute([':id' => $id]);
+        return $stmt->fetch(PDO::FETCH_OBJ);
+    }
+    public static function findAllBy(string $column, $value): array
+    {
+        $pdo = Database::getConnection();
+        // Basic whitelist to prevent arbitrary column selection
+        $allowed_columns = ['user_id', 'product_id', 'status'];
+        if (!in_array($column, $allowed_columns)) {
+            throw new \Exception("Invalid column for searching orders.");
+        }
+
+        $sql = "SELECT * FROM orders WHERE $column = :value ORDER BY order_time DESC";
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute([':value' => $value]);
+        return $stmt->fetchAll(PDO::FETCH_OBJ);
+    }
 }
