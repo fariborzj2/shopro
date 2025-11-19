@@ -58,4 +58,91 @@ class Order
             'perPage' => $perPage
         ];
     }
+
+    /**
+     * Creates a new order in the database.
+     *
+     * @param array $data The data for the new order.
+     * @return int The ID of the newly created order.
+     */
+    public static function create(array $data): int
+    {
+        $pdo = Database::getConnection();
+        $sql = "
+            INSERT INTO orders (
+                user_id, product_id, category_id, amount, status,
+                custom_fields_data, order_code, quantity
+            ) VALUES (
+                :user_id, :product_id, :category_id, :amount, :status,
+                :custom_fields_data, :order_code, :quantity
+            )
+        ";
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute([
+            ':user_id' => $data['user_id'],
+            ':product_id' => $data['product_id'],
+            ':category_id' => $data['category_id'],
+            ':amount' => $data['amount'],
+            ':status' => $data['status'],
+            ':custom_fields_data' => $data['custom_fields_data'],
+            ':order_code' => $data['order_code'],
+            ':quantity' => $data['quantity'] ?? 1, // Default quantity to 1 if not provided
+        ]);
+        return (int)$pdo->lastInsertId();
+    }
+        public static function update(int $id, array $data): bool
+    {
+        $pdo = Database::getConnection();
+        $fields = [];
+        foreach ($data as $key => $value) {
+            $fields[] = "$key = :$key";
+        }
+        $sql = "UPDATE orders SET " . implode(', ', $fields) . " WHERE id = :id";
+        $stmt = $pdo->prepare($sql);
+        $data['id'] = $id;
+        return $stmt->execute($data);
+    }
+
+    /**
+     * Finds a single order by its ID, joining related product and user data.
+     *
+     * @param int $id The ID of the order to find.
+     * @return object|false The order object, or false if not found.
+     */
+    public static function find(int $id)
+    {
+        $pdo = Database::getConnection();
+        $sql = "
+            SELECT
+                o.*,
+                p.name_fa as product_name,
+                u.name as user_name,
+                u.mobile as user_mobile
+            FROM
+                orders o
+            JOIN
+                products p ON o.product_id = p.id
+            JOIN
+                users u ON o.user_id = u.id
+            WHERE
+                o.id = :id
+        ";
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute([':id' => $id]);
+        return $stmt->fetch(PDO::FETCH_OBJ);
+    }
+    public static function findAllBy(string $column, $value): array
+    {
+        $pdo = Database::getConnection();
+        // Basic whitelist to prevent arbitrary column selection
+        $allowed_columns = ['user_id', 'product_id', 'status'];
+        if (!in_array($column, $allowed_columns)) {
+            throw new \Exception("Invalid column for searching orders.");
+        }
+
+        $sql = "SELECT * FROM orders WHERE $column = :value ORDER BY order_time DESC";
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute([':value' => $value]);
+        return $stmt->fetchAll(PDO::FETCH_OBJ);
+    }
 }
