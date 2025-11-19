@@ -31,8 +31,7 @@ class CustomOrderFieldsController
         }
         $data = $this->prepareDataFromRequest();
         CustomOrderField::create($data);
-        header('Location: /admin/custom-fields');
-        exit();
+        redirect_with_success('/admin/custom-fields', 'فیلد سفارشی با موفقیت ایجاد شد.');
     }
 
     public function edit($id)
@@ -60,8 +59,7 @@ class CustomOrderFieldsController
         $data = $this->prepareDataFromRequest();
         CustomOrderField::update($id, $data);
 
-        header('Location: /admin/custom-fields');
-        exit();
+        redirect_with_success('/admin/custom-fields', 'فیلد سفارشی با موفقیت به‌روزرسانی شد.');
     }
 
     public function delete($id)

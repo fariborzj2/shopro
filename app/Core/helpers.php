@@ -153,6 +153,13 @@ function redirect_back_with_error($message)
     exit();
 }
 
+function redirect_with_success($url, $message)
+{
+    $url = $url . (strpos($url, '?') === false ? '?' : '&') . 'success_msg=' . urlencode($message);
+    header("Location: " . $url);
+    exit();
+}
+
 /**
  * Generate a clean URL for the admin panel.
  *
