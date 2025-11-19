@@ -58,7 +58,9 @@
                     <div>
                         <img :src="selectedProduct.imageUrl" :alt="selectedProduct.name" class="w-full h-48 object-cover rounded-lg mb-4">
                         <h3 class="text-2xl font-bold text-center" x-text="selectedProduct.name"></h3>
-                        <form @submit.prevent="submitOrder" id="purchaseForm" class="mt-6">
+                        <form @submit.prevent="submitOrder" id="purchaseForm" class="mt-6" method="POST" action="/api/payment/start">
+                            <?php echo csrf_field(); ?>
+                            <input type="hidden" name="product_id" :value="selectedProduct.id">
                             <div class="space-y-4 text-right">
                                 <template x-for="field in customFields" :key="field.id">
                                     <div>
@@ -135,26 +137,31 @@ function store(data) {
         submitOrder() {
             const form = document.getElementById('purchaseForm');
             const formData = new FormData(form);
-            const customFieldsData = {};
-            for (const [key, value] of formData.entries()) {
-                customFieldsData[key] = value;
-            }
+            const payload = Object.fromEntries(formData.entries());
 
-            fetch('/api/payment/start', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    product_id: this.selectedProduct.id,
-                    custom_fields: customFieldsData
-                })
+            fetch(form.action, {
+                method: form.method,
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': payload.csrf_token
+                },
+                body: JSON.stringify(payload)
             })
             .then(res => res.json().then(data => ({ status: res.status, body: data })))
             .then(({ status, body }) => {
+                // Handle rotating CSRF token if backend sends a new one
+                if (body.new_csrf_token) {
+                    document.querySelector('meta[name="csrf-token"]').setAttribute('content', body.new_csrf_token);
+                }
+
                 if (status === 200 && body.payment_url) {
                     window.location.href = body.payment_url;
                 } else {
                     alert('خطا: ' + (body.error || 'امکان اتصال به درگاه پرداخت وجود ندارد.'));
                 }
+            }).catch(error => {
+                console.error('Error submitting order:', error);
+                alert('یک خطای پیش‌بینی نشده در هنگام پرداخت رخ داد.');
             });
         }
     }
