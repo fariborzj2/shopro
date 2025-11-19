@@ -70,7 +70,6 @@ class AuthController
     public function verifyOtp()
     {
         header('Content-Type: application/json');
-        session_start();
 
         $data = Request::json();
         $mobile = $data['mobile'] ?? null;
