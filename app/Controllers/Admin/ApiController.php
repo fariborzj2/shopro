@@ -22,7 +22,7 @@ class ApiController
 
         // --- Context and Path Configuration ---
         $context = isset($_POST['context']) ? basename($_POST['context']) : 'general';
-        $dateFolder = \jdate('Y-m-d'); // Use Persian date for folder name
+        $dateFolder = jdate('Y-m-d'); // Use Persian date for folder name
 
         $uploadDir = PROJECT_ROOT . "/public/uploads/images/{$context}/{$dateFolder}/";
         $uploadUrl = "/uploads/images/{$context}/{$dateFolder}/";
