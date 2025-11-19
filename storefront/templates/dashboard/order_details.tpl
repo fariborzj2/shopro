@@ -42,8 +42,39 @@
                 </div>
                 <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                     <dt class="text-sm font-medium text-gray-500">تاریخ</dt>
-                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2"><?= date('Y/m/d H:i', strtotime($order->order_time)) ?></dd>
+                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2"><?= \jdate('Y/m/d H:i', strtotime($order->order_time)) ?></dd>
                 </div>
+
+                <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                    <dt class="text-sm font-medium text-gray-500">نام محصول</dt>
+                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2"><?= htmlspecialchars($order->product_name) ?></dd>
+                </div>
+
+                <?php
+                if (!empty($order->custom_fields_data)) {
+                    $custom_fields = json_decode($order->custom_fields_data, true);
+                    if (is_array($custom_fields) && !empty($custom_fields)) {
+                ?>
+                    <div class="bg-white px-4 py-5 sm:px-6">
+                         <dt class="text-sm font-medium text-gray-500">اطلاعات تکمیلی</dt>
+                    </div>
+
+                <?php
+                        $loop_index = 0;
+                        foreach ($custom_fields as $field => $value) {
+                            $bg_class = ($loop_index % 2 == 0) ? 'bg-gray-50' : 'bg-white';
+                ?>
+                            <div class="<?= $bg_class ?> px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                                <dt class="text-sm font-medium text-gray-500"><?= htmlspecialchars(urldecode($field)) ?></dt>
+                                <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2"><?= htmlspecialchars($value) ?></dd>
+                            </div>
+                <?php
+                            $loop_index++;
+                        }
+                    }
+                }
+                ?>
+
             </dl>
         </div>
     </div>
