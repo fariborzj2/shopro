@@ -83,7 +83,6 @@ CREATE TABLE `orders` (
   `discount_used` DECIMAL(10, 2) DEFAULT 0,
   `quantity` INT NOT NULL,
   `payment_method` VARCHAR(50),
-  `delivery_address` TEXT,
   `custom_fields_data` JSON,
   `payment_ref_number` VARCHAR(255) DEFAULT NULL,
   `payment_card_number` VARCHAR(255) DEFAULT NULL,
