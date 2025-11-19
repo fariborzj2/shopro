@@ -84,7 +84,7 @@ class Order
             ':category_id' => $data['category_id'],
             ':amount' => $data['amount'],
             ':status' => $data['status'],
-            ':custom_fields_data' => $data['custom_fields_data'],
+            ':custom_fields_data' => json_encode($data['custom_fields_data']),
             ':order_code' => $data['order_code'],
             ':quantity' => $data['quantity'] ?? 1, // Default quantity to 1 if not provided
         ]);
@@ -140,7 +140,20 @@ class Order
             throw new \Exception("Invalid column for searching orders.");
         }
 
-        $sql = "SELECT * FROM orders WHERE $column = :value ORDER BY order_time DESC";
+        $sql = "
+            SELECT
+                o.*,
+                p.name_fa as product_name
+            FROM
+                orders o
+            JOIN
+                products p ON o.product_id = p.id
+            WHERE
+                o.{$column} = :value
+            ORDER BY
+                o.order_time DESC
+        ";
+
         $stmt = $pdo->prepare($sql);
         $stmt->execute([':value' => $value]);
         return $stmt->fetchAll(PDO::FETCH_OBJ);

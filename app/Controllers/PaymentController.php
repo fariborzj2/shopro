@@ -49,7 +49,7 @@ class PaymentController
             'category_id' => $product->category_id,
             'amount' => $product->price,
             'status' => 'pending',
-            'custom_fields_data' => json_encode($custom_fields),
+            'custom_fields_data' => $custom_fields,
             'order_code' => 'ORD-' . time() . rand(100, 999),
         ]);
 
@@ -135,8 +135,17 @@ class PaymentController
             }
 
             // Payment successful and amount is correct
-            Order::update($transaction->order_id, ['status' => 'paid']);
-            Transaction::update($transaction->id, ['status' => 'successful', 'gateway_response' => json_encode($result['response'])]);
+            $payment_response = $result['response'];
+
+            // Prepare data for updating the order
+            $order_update_data = [
+                'status' => 'paid',
+                'payment_gateway_response' => json_encode($payment_response)
+            ];
+
+            Order::update($transaction->order_id, $order_update_data);
+            Transaction::update($transaction->id, ['status' => 'successful', 'gateway_response' => json_encode($payment_response)]);
+
             // Redirect to a success/receipt page
             header('Location: /dashboard/orders/' . $transaction->order_id . '?status=success');
         } else {

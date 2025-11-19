@@ -215,3 +215,44 @@ function build_category_tree_options(array $categories, $parentId = null, $level
     }
     return $html;
 }
+
+/**
+ * Translates status strings to Persian.
+ *
+ * @param string $status The status string in English.
+ * @return string The translated status in Persian.
+ */
+function translate_status_fa($status)
+{
+    $translations = [
+        // Order Statuses
+        'pending' => 'در انتظار پرداخت',
+        'paid' => 'پرداخت موفق',
+        'processing' => 'در حال پردازش',
+        'shipped' => 'ارسال شده',
+        'delivered' => 'تحویل داده شده',
+        'cancelled' => 'لغو شده',
+        'failed' => 'پرداخت ناموفق',
+
+        // Transaction Statuses
+        'successful' => 'موفق',
+        // 'pending' and 'failed' are already defined above
+
+        // General Statuses
+        'active' => 'فعال',
+        'inactive' => 'غیرفعال',
+        'banned' => 'مسدود شده',
+        'available' => 'موجود',
+        'unavailable' => 'ناموجود',
+        'draft' => 'پیش‌نویس',
+        'published' => 'منتشر شده',
+        'scheduled' => 'زمان‌بندی شده',
+
+        // Review Statuses
+        // 'pending' is already defined
+        'approved' => 'تایید شده',
+        'rejected' => 'رد شده',
+    ];
+
+    return $translations[strtolower($status)] ?? htmlspecialchars($status);
+}
