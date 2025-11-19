@@ -143,13 +143,26 @@ function store(data) {
         submitOrder() {
             const form = document.getElementById('purchaseForm');
             const formData = new FormData(form);
-            const payload = Object.fromEntries(formData.entries());
+
+            const customFieldsPayload = {};
+            // Separate custom fields from main payload
+            this.customFields.forEach(field => {
+                const fieldName = field.name;
+                if (formData.has(fieldName)) {
+                    customFieldsPayload[fieldName] = formData.get(fieldName);
+                }
+            });
+
+            const payload = {
+                product_id: this.selectedProduct.id,
+                custom_fields: customFieldsPayload
+            };
 
             fetch(form.action, {
                 method: form.method,
                 headers: {
                     'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': payload.csrf_token
+                    'X-CSRF-TOKEN': formData.get('csrf_token')
                 },
                 body: JSON.stringify(payload)
             })
