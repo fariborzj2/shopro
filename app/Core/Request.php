@@ -26,4 +26,25 @@ class Request
     {
         return $_SERVER['REQUEST_METHOD'];
     }
+
+    /**
+     * Get the JSON body of the request as an associative array.
+     *
+     * @return array
+     */
+    public static function json()
+    {
+        $json = file_get_contents('php://input');
+        if (empty($json)) {
+            return [];
+        }
+        $data = json_decode($json, true);
+
+        // Check for json_decode errors
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            return [];
+        }
+
+        return $data;
+    }
 }

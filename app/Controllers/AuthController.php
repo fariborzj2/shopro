@@ -58,7 +58,10 @@ class AuthController
         // Save OTP to database only after successful sending
         OtpCode::create($mobile, $otp_hash, $expires_at);
 
-        echo json_encode(['message' => 'کد تایید با موفقیت ارسال شد.']);
+        echo json_encode([
+            'message' => 'کد تایید با موفقیت ارسال شد.',
+            'new_csrf_token' => csrf_token()
+        ]);
     }
 
     /**
@@ -67,7 +70,6 @@ class AuthController
     public function verifyOtp()
     {
         header('Content-Type: application/json');
-        session_start();
 
         $data = Request::json();
         $mobile = $data['mobile'] ?? null;

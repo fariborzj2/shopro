@@ -27,7 +27,28 @@ class User
     public static function find($id)
     {
         $stmt = Database::query("SELECT * FROM users WHERE id = :id", ['id' => $id]);
-        return $stmt->fetch(PDO::FETCH_ASSOC);
+        return $stmt->fetch(PDO::FETCH_OBJ);
+    }
+
+    /**
+     * Find a user by a specific column and value.
+     *
+     * @param string $column The column to search by (e.g., 'id', 'mobile').
+     * @param mixed $value The value to search for.
+     * @return mixed The user object or false if not found.
+     */
+    public static function findBy($column, $value)
+    {
+        // Whitelist of allowed columns to prevent SQL injection
+        $allowed_columns = ['id', 'mobile'];
+        if (!in_array($column, $allowed_columns)) {
+            return false;
+        }
+
+        // The column name is safe, but the value must be parameterized.
+        $sql = "SELECT * FROM users WHERE {$column} = :value LIMIT 1";
+        $stmt = Database::query($sql, ['value' => $value]);
+        return $stmt->fetch(PDO::FETCH_OBJ);
     }
 
     /**
