@@ -42,7 +42,7 @@ class ApiController
                     'name' => $field->name,
                     'label' => $field->label_fa,
                     'type' => $field->type,
-                    'options' => json_decode($field->options) ?? [],
+                    'options' => json_decode($field->options ?? '[]'),
                     'is_required' => (bool)$field->is_required,
                     'placeholder' => $field->placeholder,
                 ];
