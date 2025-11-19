@@ -64,7 +64,7 @@
                         </span>
                     </td>
                     <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm text-center">
-                        <a href="/orders/show/<?= $order['id'] ?>" class="text-indigo-600 hover:text-indigo-900">مشاهده</a>
+                        <a href="/admin/orders/show/<?= $order['id'] ?>" class="text-indigo-600 hover:text-indigo-900">مشاهده</a>
                     </td>
                 </tr>
             <?php endforeach; ?>

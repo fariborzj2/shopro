@@ -5,7 +5,7 @@
         </h2>
 
         <form action="<?php echo isset($field->id) ? url('/custom-fields/update/' . $field->id) : url('/custom-fields/store'); ?>" method="POST">
-            <input type="hidden" name="csrf_token" value="<?php echo csrf_token(); ?>">
+            <?php csrf_field(); ?>
 
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-4">
 

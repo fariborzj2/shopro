@@ -44,6 +44,20 @@
                 <div class="container mx-auto px-6 py-8">
                     <h3 class="text-gray-700 text-3xl font-medium"><?php echo isset($title) ? htmlspecialchars($title) : ''; ?></h3>
 
+                    <?php if (isset($_GET['error_msg'])): ?>
+                        <div class="mt-4 p-4 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
+                            <strong class="font-bold">خطا!</strong>
+                            <span class="block sm:inline"><?= htmlspecialchars(urldecode($_GET['error_msg'])) ?></span>
+                        </div>
+                    <?php endif; ?>
+
+                    <?php if (isset($_GET['success_msg'])): ?>
+                        <div class="mt-4 p-4 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative" role="alert">
+                            <strong class="font-bold">موفقیت!</strong>
+                            <span class="block sm:inline"><?= htmlspecialchars(urldecode($_GET['success_msg'])) ?></span>
+                        </div>
+                    <?php endif; ?>
+
                     <!-- Main content goes here -->
                     <?php echo $content; ?>
                 </div>
