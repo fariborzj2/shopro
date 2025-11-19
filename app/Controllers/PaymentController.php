@@ -49,7 +49,7 @@ class PaymentController
             'category_id' => $product->category_id,
             'amount' => $product->price,
             'status' => 'pending',
-            'custom_fields_data' => json_encode($custom_fields),
+            'custom_fields_data' => $custom_fields,
             'order_code' => 'ORD-' . time() . rand(100, 999),
         ]);
 
@@ -140,9 +140,7 @@ class PaymentController
             // Prepare data for updating the order
             $order_update_data = [
                 'status' => 'paid',
-                'payment_ref_number' => $payment_response['refNumber'] ?? null,
-                'payment_card_number' => $payment_response['cardNumber'] ?? null,
-                'paid_at' => isset($payment_response['paidAt']) ? date('Y-m-d H:i:s', strtotime($payment_response['paidAt'])) : null
+                'payment_gateway_response' => json_encode($payment_response)
             ];
 
             Order::update($transaction->order_id, $order_update_data);

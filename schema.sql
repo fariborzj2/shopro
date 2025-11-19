@@ -84,9 +84,7 @@ CREATE TABLE `orders` (
   `quantity` INT NOT NULL,
   `payment_method` VARCHAR(50),
   `custom_fields_data` JSON,
-  `payment_ref_number` VARCHAR(255) DEFAULT NULL,
-  `payment_card_number` VARCHAR(255) DEFAULT NULL,
-  `paid_at` DATETIME DEFAULT NULL,
+  `payment_gateway_response` JSON,
   FOREIGN KEY (`user_id`) REFERENCES `users`(`id`),
   FOREIGN KEY (`product_id`) REFERENCES `products`(`id`),
   FOREIGN KEY (`category_id`) REFERENCES `categories`(`id`)

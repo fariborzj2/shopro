@@ -20,6 +20,13 @@
         </div>
     <?php endif; ?>
 
+    <?php
+    $payment_details = null;
+    if (!empty($order->payment_gateway_response)) {
+        $payment_details = json_decode($order->payment_gateway_response);
+    }
+    ?>
+
     <div class="bg-white shadow overflow-hidden sm:rounded-lg">
         <div class="px-4 py-5 sm:px-6">
             <h3 class="text-lg leading-6 font-medium text-gray-900">
@@ -36,30 +43,35 @@
                     <dt class="text-sm font-medium text-gray-500">کد رهگیری داخلی</dt>
                     <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2"><?= htmlspecialchars($transaction->track_id) ?></dd>
                 </div>
-                <?php if (!empty($order->payment_ref_number)): ?>
+
+                <?php if ($payment_details && isset($payment_details->refNumber)): ?>
                 <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                     <dt class="text-sm font-medium text-gray-500">شماره پیگیری درگاه</dt>
-                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2"><?= htmlspecialchars($order->payment_ref_number) ?></dd>
+                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2"><?= htmlspecialchars($payment_details->refNumber) ?></dd>
                 </div>
                 <?php endif; ?>
-                <?php if (!empty($order->payment_card_number)): ?>
+
+                <?php if ($payment_details && isset($payment_details->cardNumber)): ?>
                 <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                     <dt class="text-sm font-medium text-gray-500">شماره کارت</dt>
-                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2"><?= htmlspecialchars($order->payment_card_number) ?></dd>
+                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2"><?= htmlspecialchars($payment_details->cardNumber) ?></dd>
                 </div>
                 <?php endif; ?>
+
                 <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                     <dt class="text-sm font-medium text-gray-500">مبلغ</dt>
                     <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2"><?= htmlspecialchars($order->amount) ?> تومان</dd>
                 </div>
+
                 <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                     <dt class="text-sm font-medium text-gray-500">تاریخ ثبت سفارش</dt>
                     <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2"><?= \jdate('Y/m/d H:i', strtotime($order->order_time)) ?></dd>
                 </div>
-                <?php if (!empty($order->paid_at)): ?>
+
+                <?php if ($payment_details && isset($payment_details->paidAt)): ?>
                 <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                     <dt class="text-sm font-medium text-gray-500">تاریخ پرداخت</dt>
-                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2"><?= \jdate('Y/m/d H:i', strtotime($order->paid_at)) ?></dd>
+                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2"><?= \jdate('Y/m/d H:i', strtotime($payment_details->paidAt)) ?></dd>
                 </div>
                 <?php endif; ?>
 
