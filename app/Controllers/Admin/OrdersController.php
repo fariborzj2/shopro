@@ -52,7 +52,16 @@ class OrdersController
      */
     public function show($id)
     {
-        // Implementation for showing a single order
+        $order = Order::find((int)$id);
+        if (!$order) {
+            // Or handle not found exception
+            return http_response_code(404);
+        }
+
+        return view('main', 'orders/show', [
+            'title' => 'جزئیات سفارش #' . $order->order_code,
+            'order' => $order
+        ]);
     }
 
     /**

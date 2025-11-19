@@ -37,9 +37,15 @@
                 <a href="/" class="text-2xl font-bold text-gray-900">لوگو</a>
             </div>
             <div>
-                <a href="#" class="bg-gray-800 text-white px-5 py-2 rounded-lg text-sm font-semibold hover:bg-gray-900 transition-colors">
-                    ورود
-                </a>
+                <?php if (isset($_SESSION['user_id'])): ?>
+                    <a href="/dashboard/orders" class="bg-gray-800 text-white px-5 py-2 rounded-lg text-sm font-semibold hover:bg-gray-900 transition-colors">
+                        داشبورد
+                    </a>
+                <?php else: ?>
+                    <a href="#" @click.prevent="$dispatch('open-auth-modal')" class="bg-gray-800 text-white px-5 py-2 rounded-lg text-sm font-semibold hover:bg-gray-900 transition-colors">
+                        ورود
+                    </a>
+                <?php endif; ?>
             </div>
         </header>
 
