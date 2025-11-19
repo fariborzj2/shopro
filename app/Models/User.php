@@ -64,7 +64,7 @@ class User
 
         $stmt = $pdo->prepare($sql);
         $stmt->execute([
-            'name' => $data['name'] ?? 'کاربر جدید',
+            'name' => $data['name'] ?? nul,
             'mobile' => $data['mobile'],
             'status' => $data['status'] ?? 'active'
         ]);
