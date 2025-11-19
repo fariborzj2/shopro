@@ -118,6 +118,10 @@ function authModal() {
             .then(({ status, body }) => {
                 if (status === 200) {
                     this.step = 'otp';
+                    // Update the CSRF token with the new one from the server
+                    if (body.new_csrf_token) {
+                        document.querySelector('meta[name="csrf-token"]').setAttribute('content', body.new_csrf_token);
+                    }
                 } else {
                     this.errorMessage = body.error || 'خطایی رخ داده است.';
                 }
