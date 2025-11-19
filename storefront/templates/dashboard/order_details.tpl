@@ -1,4 +1,4 @@
-<?php include '../header.tpl'; ?>
+<?php include 'header.tpl'; ?>
 
 <div class="max-w-4xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
 
@@ -52,4 +52,4 @@
     </div>
 </div>
 
-<?php include '../footer.tpl'; ?>
+<?php include 'footer.tpl'; ?>
