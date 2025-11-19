@@ -66,15 +66,21 @@
                                     <div>
                                         <label :for="'field_' + field.id" class="block text-sm font-medium text-gray-700 mb-1" x-text="field.label"></label>
 
-                                        <input x-if="['text', 'number', 'date', 'color'].includes(field.type)" :type="field.type" :name="field.name" :id="'field_' + field.id" :placeholder="field.placeholder" :required="field.is_required" class="w-full border-gray-300 rounded-md">
+                                        <template x-if="['text', 'number', 'date', 'color'].includes(field.type)">
+                                            <input :type="field.type" :name="field.name" :id="'field_' + field.id" :placeholder="field.placeholder" :required="field.is_required" class="w-full border-gray-300 rounded-md">
+                                        </template>
 
-                                        <textarea x-if="field.type === 'textarea'" :name="field.name" :id="'field_' + field.id" :placeholder="field.placeholder" :required="field.is_required" class="w-full border-gray-300 rounded-md"></textarea>
+                                        <template x-if="field.type === 'textarea'">
+                                            <textarea :name="field.name" :id="'field_' + field.id" :placeholder="field.placeholder" :required="field.is_required" class="w-full border-gray-300 rounded-md"></textarea>
+                                        </template>
 
-                                        <select x-if="field.type === 'select'" :name="field.name" :id="'field_' + field.id" :required="field.is_required" class="w-full border-gray-300 rounded-md">
-                                            <template x-for="option in field.options" :key="option.value">
-                                                <option :value="option.value" x-text="option.label"></option>
-                                            </template>
-                                        </select>
+                                        <template x-if="field.type === 'select'">
+                                            <select :name="field.name" :id="'field_' + field.id" :required="field.is_required" class="w-full border-gray-300 rounded-md">
+                                                <template x-for="option in field.options" :key="option.value">
+                                                    <option :value="option.value" x-text="option.label"></option>
+                                                </template>
+                                            </select>
+                                        </template>
 
                                         <!-- Add more field types like radio/checkbox if needed -->
 
