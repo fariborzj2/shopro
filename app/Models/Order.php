@@ -84,7 +84,7 @@ class Order
             ':category_id' => $data['category_id'],
             ':amount' => $data['amount'],
             ':status' => $data['status'],
-            ':custom_fields_data' => $data['custom_fields_data'],
+            ':custom_fields_data' => json_encode($data['custom_fields_data']),
             ':order_code' => $data['order_code'],
             ':quantity' => $data['quantity'] ?? 1, // Default quantity to 1 if not provided
         ]);
