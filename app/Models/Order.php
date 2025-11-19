@@ -133,20 +133,24 @@ class Order
     }
     public static function findAllBy(string $column, $value): array
     {
-        $pdo = Database::getConnection();
-        // Basic whitelist to prevent arbitrary column selection
+        // Whitelist to prevent SQL injection on column names
         $allowed_columns = ['user_id', 'product_id', 'status'];
         if (!in_array($column, $allowed_columns)) {
-            throw new \Exception("Invalid column for searching orders.");
+            throw new \InvalidArgumentException("Invalid column for searching orders: $column");
         }
 
+        $pdo = Database::getConnection();
         $sql = "
             SELECT
-                o.*,
-                p.name_fa as product_name
+                o.id,
+                o.order_code,
+                o.amount,
+                o.status,
+                o.order_time,
+                p.name_fa AS product_name
             FROM
                 orders o
-            JOIN
+            LEFT JOIN
                 products p ON o.product_id = p.id
             WHERE
                 o.{$column} = :value
