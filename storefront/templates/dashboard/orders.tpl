@@ -1,4 +1,4 @@
-<?php include 'header.tpl'; ?>
+<?php include '../header.tpl'; ?>
 
 <div class="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
     <h1 class="text-3xl font-bold text-gray-900 mb-8">تاریخچه سفارشات</h1>
@@ -39,4 +39,4 @@
     </div>
 </div>
 
-<?php include 'footer.tpl'; ?>
+<?php include '../footer.tpl'; ?>
