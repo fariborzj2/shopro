@@ -6,7 +6,7 @@
         <div class="bg-green-50 border-l-4 border-green-400 p-4 mb-6">
             <div class="flex">
                 <div class="ml-3">
-                    <p class="text-sm text-green-700">پرداخت شما با موفقیت انجام شد.</p>
+                    <p class="text-sm text-green-700">پرداخت شما با موفقیت انجام شد</p>
                 </div>
             </div>
         </div>
@@ -14,7 +14,7 @@
         <div class="bg-red-50 border-l-4 border-red-400 p-4 mb-6">
             <div class="flex">
                 <div class="ml-3">
-                    <p class="text-sm text-red-700">پرداخت ناموفق بود. <?= htmlspecialchars($transaction->gateway_response) ?></p>
+                    <p class="text-sm text-red-700">پرداخت ناموفق بود</p>
                 </div>
             </div>
         </div>
@@ -68,12 +68,6 @@
                     <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2"><?= \jdate('Y/m/d H:i', strtotime($order->order_time)) ?></dd>
                 </div>
 
-                <?php if ($payment_details && isset($payment_details->paidAt)): ?>
-                <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                    <dt class="text-sm font-medium text-gray-500">تاریخ پرداخت</dt>
-                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2"><?= \jdate('Y/m/d H:i', strtotime($payment_details->paidAt)) ?></dd>
-                </div>
-                <?php endif; ?>
 
                 <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                     <dt class="text-sm font-medium text-gray-500">نام محصول</dt>
@@ -87,12 +81,12 @@
                     if (is_array($custom_fields) && !empty($custom_fields)) {
                 ?>
                     <div class="bg-white px-4 py-5 sm:px-6 border-t border-gray-200">
-                         <dt class="text-sm font-medium text-gray-500">اطلاعات تکمیلی</dt>
+                         <dt class="text-md font-bold text-gray-900">اطلاعات تکمیلی</dt>
                     </div>
 
                 <?php
                         foreach ($custom_fields as $index => $field_data) {
-                            $bg_class = ($index % 2 == 0) ? 'bg-white' : 'bg-gray-50'; // Swapped for better alternating
+                            $bg_class = ($index % 2 == 0) ? 'bg-gray-50' : 'bg-white'; // Swapped for better alternating
                 ?>
                             <div class="<?= $bg_class ?> px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                                 <dt class="text-sm font-medium text-gray-500"><?= htmlspecialchars($field_data->label ?? $field_data->name) ?></dt>
