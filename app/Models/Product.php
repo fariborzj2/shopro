@@ -51,7 +51,7 @@ class Product
     public static function find($id)
     {
         $stmt = Database::query("SELECT * FROM products WHERE id = :id", ['id' => $id]);
-        return $stmt->fetch(PDO::FETCH_ASSOC);
+        return $stmt->fetch(PDO::FETCH_OBJ);
     }
 
     /**
