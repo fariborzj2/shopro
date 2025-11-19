@@ -107,7 +107,7 @@ function csrf_field()
 }
 
 /**
- * Verify the CSRF token.
+ * Verify the CSRF token. For security, the token is regenerated after a successful check.
  *
  * @return bool
  */
@@ -121,8 +121,9 @@ function verify_csrf_token()
     }
 
     if ($token && isset($_SESSION['csrf_token']) && hash_equals($_SESSION['csrf_token'], $token)) {
-        // Invalidate the token after use for AJAX requests as well for better security
-        unset($_SESSION['csrf_token']);
+        // Token is valid. For better security, regenerate the token immediately
+        // after successful validation. This is the "rotating token" pattern.
+        $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
         return true;
     }
 

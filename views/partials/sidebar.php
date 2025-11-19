@@ -24,6 +24,10 @@
             <span class="mx-3">محصولات</span>
         </a>
 
+        <a class="flex items-center mt-4 py-2 px-6 <?php echo is_active('/media') ? 'bg-gray-700 bg-opacity-25 text-gray-100' : 'text-gray-500 hover:bg-gray-700 hover:bg-opacity-25 hover:text-gray-100'; ?>" href="<?php echo url('/media'); ?>">
+            <span class="mx-3">کتابخانه رسانه</span>
+        </a>
+
         <a class="flex items-center mt-4 py-2 px-6 <?php echo is_active('/custom-fields') ? 'bg-gray-700 bg-opacity-25 text-gray-100' : 'text-gray-500 hover:bg-gray-700 hover:bg-opacity-25 hover:text-gray-100'; ?>" href="<?php echo url('/custom-fields'); ?>">
             <span class="mx-3">پارامترها</span>
         </a>
