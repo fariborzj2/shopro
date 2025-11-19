@@ -135,8 +135,19 @@ class PaymentController
             }
 
             // Payment successful and amount is correct
-            Order::update($transaction->order_id, ['status' => 'paid']);
-            Transaction::update($transaction->id, ['status' => 'successful', 'gateway_response' => json_encode($result['response'])]);
+            $payment_response = $result['response'];
+
+            // Prepare data for updating the order
+            $order_update_data = [
+                'status' => 'paid',
+                'payment_ref_number' => $payment_response['refNumber'] ?? null,
+                'payment_card_number' => $payment_response['cardNumber'] ?? null,
+                'paid_at' => isset($payment_response['paidAt']) ? date('Y-m-d H:i:s', strtotime($payment_response['paidAt'])) : null
+            ];
+
+            Order::update($transaction->order_id, $order_update_data);
+            Transaction::update($transaction->id, ['status' => 'successful', 'gateway_response' => json_encode($payment_response)]);
+
             // Redirect to a success/receipt page
             header('Location: /dashboard/orders/' . $transaction->order_id . '?status=success');
         } else {
