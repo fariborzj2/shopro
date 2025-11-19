@@ -4,9 +4,6 @@ namespace App\Controllers\Admin;
 
 use App\Models\Media;
 
-// Ensure the Jalali date functions are available
-require_once PROJECT_ROOT . '/app/Core/jdf.php';
-
 class ApiController
 {
     /**
@@ -123,5 +120,4 @@ class ApiController
             'context' => 'seed',
             'uploaded_by_admin_id' => $_SESSION['admin_id'] ?? null
         ]);
-  }
 }
