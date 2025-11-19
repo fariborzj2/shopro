@@ -131,6 +131,15 @@ function verify_csrf_token()
 }
 
 /**
+ * Regenerate the CSRF token.
+ * This should be called after a successful action that modifies state.
+ */
+function regenerate_csrf_token()
+{
+    $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+}
+
+/**
  * Redirect back to the previous page with an error message.
  *
  * @param string $message
