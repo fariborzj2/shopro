@@ -83,7 +83,6 @@ CREATE TABLE `orders` (
   `discount_used` DECIMAL(10, 2) DEFAULT 0,
   `quantity` INT NOT NULL,
   `payment_method` VARCHAR(50),
-  `delivery_address` TEXT,
   `custom_fields_data` JSON,
   `payment_gateway_response` JSON,
   FOREIGN KEY (`user_id`) REFERENCES `users`(`id`),
