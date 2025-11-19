@@ -37,7 +37,7 @@
             <dl>
                 <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                     <dt class="text-sm font-medium text-gray-500">وضعیت پرداخت</dt>
-                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2"><?= htmlspecialchars($transaction->status) ?></dd>
+                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2"><?= translate_status_fa($transaction->status) ?></dd>
                 </div>
                 <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                     <dt class="text-sm font-medium text-gray-500">کد رهگیری داخلی</dt>
@@ -82,24 +82,23 @@
 
                 <?php
                 if (!empty($order->custom_fields_data)) {
-                    $custom_fields = json_decode($order->custom_fields_data, true);
+                    // Decode as an array of objects
+                    $custom_fields = json_decode($order->custom_fields_data);
                     if (is_array($custom_fields) && !empty($custom_fields)) {
                 ?>
-                    <div class="bg-white px-4 py-5 sm:px-6">
+                    <div class="bg-white px-4 py-5 sm:px-6 border-t border-gray-200">
                          <dt class="text-sm font-medium text-gray-500">اطلاعات تکمیلی</dt>
                     </div>
 
                 <?php
-                        $loop_index = 0;
-                        foreach ($custom_fields as $field => $value) {
-                            $bg_class = ($loop_index % 2 == 0) ? 'bg-gray-50' : 'bg-white';
+                        foreach ($custom_fields as $index => $field_data) {
+                            $bg_class = ($index % 2 == 0) ? 'bg-white' : 'bg-gray-50'; // Swapped for better alternating
                 ?>
                             <div class="<?= $bg_class ?> px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                                <dt class="text-sm font-medium text-gray-500"><?= htmlspecialchars(urldecode($field)) ?></dt>
-                                <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2"><?= htmlspecialchars($value) ?></dd>
+                                <dt class="text-sm font-medium text-gray-500"><?= htmlspecialchars($field_data->label ?? $field_data->name) ?></dt>
+                                <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2"><?= htmlspecialchars($field_data->value) ?></dd>
                             </div>
                 <?php
-                            $loop_index++;
                         }
                     }
                 }

@@ -144,12 +144,16 @@ function store(data) {
             const form = document.getElementById('purchaseForm');
             const formData = new FormData(form);
 
-            const customFieldsPayload = {};
-            // Separate custom fields from main payload
+            const customFieldsPayload = [];
+            // Create an array of objects with name, label, and value
             this.customFields.forEach(field => {
                 const fieldName = field.name;
                 if (formData.has(fieldName)) {
-                    customFieldsPayload[fieldName] = formData.get(fieldName);
+                    customFieldsPayload.push({
+                        name: fieldName,
+                        label: field.label,
+                        value: formData.get(fieldName)
+                    });
                 }
             });
 

@@ -140,7 +140,20 @@ class Order
             throw new \Exception("Invalid column for searching orders.");
         }
 
-        $sql = "SELECT * FROM orders WHERE $column = :value ORDER BY order_time DESC";
+        $sql = "
+            SELECT
+                o.*,
+                p.name_fa as product_name
+            FROM
+                orders o
+            JOIN
+                products p ON o.product_id = p.id
+            WHERE
+                o.{$column} = :value
+            ORDER BY
+                o.order_time DESC
+        ";
+
         $stmt = $pdo->prepare($sql);
         $stmt->execute([':value' => $value]);
         return $stmt->fetchAll(PDO::FETCH_OBJ);

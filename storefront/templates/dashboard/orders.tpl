@@ -11,23 +11,37 @@
                         <div class="px-4 py-4 sm:px-6">
                             <div class="flex items-center justify-between">
                                 <p class="text-sm font-medium text-indigo-600 truncate">
-                                    سفارش #<?= htmlspecialchars($order->order_code) ?>
+                                    <?= htmlspecialchars($order->product_name) ?>
                                 </p>
                                 <div class="ml-2 flex-shrink-0 flex">
-                                    <p class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full <?= $order->status === 'paid' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800' ?>">
-                                        <?= htmlspecialchars($order->status) ?>
+                                    <p class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full
+                                        <?php
+                                            switch ($order->status) {
+                                                case 'paid':
+                                                case 'delivered':
+                                                    echo 'bg-green-100 text-green-800';
+                                                    break;
+                                                case 'cancelled':
+                                                case 'failed':
+                                                    echo 'bg-red-100 text-red-800';
+                                                    break;
+                                                default:
+                                                    echo 'bg-yellow-100 text-yellow-800';
+                                            }
+                                        ?>">
+                                        <?= translate_status_fa($order->status) ?>
                                     </p>
                                 </div>
                             </div>
                             <div class="mt-2 sm:flex sm:justify-between">
                                 <div class="sm:flex">
                                     <p class="flex items-center text-sm text-gray-500">
-                                        مبلغ: <?= htmlspecialchars($order->amount) ?> تومان
+                                        مبلغ: <?= htmlspecialchars(number_format($order->amount)) ?> تومان
                                     </p>
                                 </div>
                                 <div class="mt-2 flex items-center text-sm text-gray-500 sm:mt-0">
                                     <p>
-                                        تاریخ: <?= date('Y/m/d', strtotime($order->order_time)) ?>
+                                        تاریخ: <?= \jdate('Y/m/d', strtotime($order->order_time)) ?>
                                     </p>
                                 </div>
                             </div>
