@@ -1,41 +1,109 @@
-<?php partial('header'); ?>
+<div class="max-w-5xl mx-auto">
+    <!-- Header -->
+    <div class="mb-6">
+        <h1 class="text-2xl font-bold text-gray-900 dark:text-white">ایجاد صفحه جدید</h1>
+        <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">افزودن یک صفحه استاتیک جدید به سایت</p>
+    </div>
 
-<h1 class="text-3xl font-bold mb-6">ایجاد صفحه جدید</h1>
+    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700">
+        <form action="<?= url('/pages/store') ?>" method="POST" class="p-6">
+             <?php partial('csrf_field'); ?>
 
-<div class="bg-white shadow-md rounded-lg p-8">
-    <form action="<?= url('/pages/store') ?>" method="POST">
-        <div class="mb-4">
-            <label for="title" class="block text-gray-700 text-sm font-bold mb-2">عنوان</label>
-            <input type="text" id="title" name="title" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
-        </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                <!-- Title -->
+                <div class="col-span-1">
+                    <label for="title" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">عنوان صفحه <span class="text-red-500">*</span></label>
+                    <input type="text" id="title" name="title" class="w-full rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white px-4 py-2.5 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 transition-all shadow-sm" required>
+                </div>
 
-        <div class="mb-4">
-            <label for="slug" class="block text-gray-700 text-sm font-bold mb-2">اسلاگ (Slug)</label>
-            <input type="text" id="slug" name="slug" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
-        </div>
+                <!-- Slug -->
+                <div class="col-span-1">
+                    <label for="slug" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">اسلاگ (URL) <span class="text-red-500">*</span></label>
+                    <input type="text" id="slug" name="slug" dir="ltr" class="w-full rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white px-4 py-2.5 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 transition-all shadow-sm font-mono text-sm" required>
+                </div>
 
-        <div class="mb-4">
-            <label for="content" class="block text-gray-700 text-sm font-bold mb-2">محتوا</label>
-            <textarea id="content" name="content" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"></textarea>
-        </div>
+                <!-- Status -->
+                <div class="col-span-1">
+                    <label for="status" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">وضعیت انتشار</label>
+                    <div class="relative">
+                        <select id="status" name="status" class="w-full appearance-none rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white px-4 py-2.5 pr-10 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 transition-all shadow-sm">
+                            <option value="draft">پیش‌نویس</option>
+                            <option value="published">منتشر شده</option>
+                        </select>
+                         <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center px-3 text-gray-500">
+                            <?php partial('icon', ['name' => 'chevron-down', 'class' => 'w-4 h-4']); ?>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-        <div class="mb-6">
-            <label for="status" class="block text-gray-700 text-sm font-bold mb-2">وضعیت</label>
-            <select id="status" name="status" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700">
-                <option value="draft">پیش‌نویس</option>
-                <option value="published">منتشر شده</option>
-            </select>
-        </div>
+            <!-- Content -->
+            <div class="mb-6">
+                <label for="content" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">محتوای صفحه</label>
+                <div class="rounded-xl overflow-hidden border border-gray-300 dark:border-gray-600">
+                    <textarea id="content" name="content" class="tinymce-editor"></textarea>
+                </div>
+            </div>
 
-        <div class="flex items-center justify-between mt-6">
-            <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">ذخیره</button>
-            <a href="<?= url('/pages') ?>" class="text-gray-600">انصراف</a>
-        </div>
-    </form>
+            <!-- Actions -->
+            <div class="pt-6 border-t border-gray-100 dark:border-gray-700 flex items-center justify-end space-x-3 space-x-reverse">
+                <a href="<?= url('/pages') ?>" class="px-4 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-200 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-600 font-medium transition-colors">
+                    انصراف
+                </a>
+                <button type="submit" class="px-6 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 shadow-md hover:shadow-lg font-medium transition-all focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
+                    ذخیره صفحه
+                </button>
+            </div>
+        </form>
+    </div>
 </div>
 
-<!-- TinyMCE -->
-<script src="https://cdn.tiny.cloud/1/zhm469md3gofl79o8eo7l5581mn5292pu4o6zawa7p8nmna8/tinymce/8/tinymce.min.js" referrerpolicy="origin"></script>
-<script src="/js/tinymce-config.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const isDark = document.documentElement.classList.contains('dark');
+        tinymce.init({
+            selector: '.tinymce-editor',
+            plugins: 'directionality link image lists table media code',
+            toolbar: 'undo redo | formatselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image media | code ltr rtl',
+            language: 'fa',
+            height: 400,
+            relative_urls: false,
+            remove_script_host: false,
+            skin: isDark ? 'oxide-dark' : 'oxide',
+            content_css: isDark ? 'dark' : 'default',
+             // Image Upload
+            image_title: true,
+            automatic_uploads: true,
+            file_picker_types: 'image',
+            images_upload_handler: (blobInfo, progress) => new Promise((resolve, reject) => {
+                const xhr = new XMLHttpRequest();
+                xhr.withCredentials = false;
+                xhr.open('POST', '<?php echo url('api/upload-image'); ?>');
+                xhr.setRequestHeader('X-CSRF-TOKEN', document.querySelector('meta[name="csrf-token"]').getAttribute('content'));
 
-<?php partial('footer'); ?>
+                xhr.upload.onprogress = (e) => {
+                    progress(e.loaded / e.total * 100);
+                };
+
+                xhr.onload = () => {
+                    if (xhr.status < 200 || xhr.status >= 300) {
+                        return reject('HTTP Error: ' + xhr.status);
+                    }
+                    const json = JSON.parse(xhr.responseText);
+                    if (!json || typeof json.location != 'string') {
+                        return reject('Invalid JSON: ' + xhr.responseText);
+                    }
+                    if (json.csrf_token) {
+                        document.querySelector('meta[name="csrf-token"]').setAttribute('content', json.csrf_token);
+                    }
+                    resolve(json.location);
+                };
+                xhr.onerror = () => reject('Image upload failed due to a network error.');
+                const formData = new FormData();
+                formData.append('file', blobInfo.blob(), blobInfo.filename());
+                formData.append('context', 'pages');
+                xhr.send(formData);
+            })
+        });
+    });
+</script>
