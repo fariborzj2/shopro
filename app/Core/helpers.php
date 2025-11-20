@@ -224,7 +224,42 @@ function build_category_tree_options(array $categories, $parentId = null, $level
 }
 
 /**
- * Translates status strings to Persian.
+ * Translates order status strings to Persian.
+ *
+ * @param string $status The status string in English.
+ * @return string The translated status in Persian.
+ */
+function translate_order_status_fa($status)
+{
+    $translations = [
+        'pending' => 'درحال بررسی',
+        'completed' => 'تکمیل شده',
+        'cancelled' => 'لغو شده',
+        'phishing' => 'فیشینگ',
+    ];
+
+    return $translations[strtolower($status)] ?? htmlspecialchars($status);
+}
+
+/**
+ * Translates payment status strings to Persian.
+ *
+ * @param string $status The status string in English.
+ * @return string The translated status in Persian.
+ */
+function translate_payment_status_fa($status)
+{
+    $translations = [
+        'unpaid' => 'عدم پرداخت',
+        'paid' => 'پرداخت موفق',
+        'failed' => 'پرداخت ناموفق',
+    ];
+
+    return $translations[strtolower($status)] ?? htmlspecialchars($status);
+}
+
+/**
+ * Translates general status strings to Persian.
  *
  * @param string $status The status string in English.
  * @return string The translated status in Persian.
@@ -232,18 +267,9 @@ function build_category_tree_options(array $categories, $parentId = null, $level
 function translate_status_fa($status)
 {
     $translations = [
-        // Order Statuses
-        'pending' => 'در انتظار پرداخت',
-        'paid' => 'پرداخت موفق',
-        'processing' => 'در حال پردازش',
-        'shipped' => 'ارسال شده',
-        'delivered' => 'تحویل داده شده',
-        'cancelled' => 'لغو شده',
-        'failed' => 'پرداخت ناموفق',
-
         // Transaction Statuses
         'successful' => 'موفق',
-        // 'pending' and 'failed' are already defined above
+        'Unsuccessful' => 'ناموفق',
 
         // General Statuses
         'active' => 'فعال',
@@ -256,10 +282,23 @@ function translate_status_fa($status)
         'scheduled' => 'زمان‌بندی شده',
 
         // Review Statuses
-        // 'pending' is already defined
+        'pending' => 'در انتظار تایید',
         'approved' => 'تایید شده',
         'rejected' => 'رد شده',
     ];
 
-    return $translations[strtolower($status)] ?? htmlspecialchars($status);
+    // Fallback to other translators if needed, or just return keys
+    if (isset($translations[strtolower($status)])) {
+        return $translations[strtolower($status)];
+    }
+
+    // Check payment statuses
+    $p = translate_payment_status_fa($status);
+    if ($p !== $status) return $p;
+
+    // Check order statuses
+    $o = translate_order_status_fa($status);
+    if ($o !== $status) return $o;
+
+    return htmlspecialchars($status);
 }
