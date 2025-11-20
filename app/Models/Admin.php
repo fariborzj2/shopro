@@ -165,6 +165,10 @@ class Admin
 
         $permissionsJson = is_object($admin) ? ($admin->permissions ?? null) : ($admin['permissions'] ?? null);
 
+        if (empty($permissionsJson)) {
+            return false;
+        }
+
         $perms = json_decode($permissionsJson, true);
         if (!is_array($perms)) {
             return false;
