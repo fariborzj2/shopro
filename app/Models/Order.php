@@ -162,4 +162,19 @@ class Order
         $stmt->execute([':value' => $value]);
         return $stmt->fetchAll(PDO::FETCH_OBJ);
     }
+
+    /**
+     * Update the status of an order.
+     *
+     * @param int $id
+     * @param string $status
+     * @return bool
+     */
+    public static function updateStatus(int $id, string $status): bool
+    {
+        $pdo = Database::getConnection();
+        $sql = "UPDATE orders SET status = :status WHERE id = :id";
+        $stmt = $pdo->prepare($sql);
+        return $stmt->execute([':status' => $status, ':id' => $id]);
+    }
 }

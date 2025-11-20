@@ -18,11 +18,13 @@
                                         <?php
                                             switch ($order->status) {
                                                 case 'paid':
+                                                case 'completed':
                                                 case 'delivered':
                                                     echo 'bg-green-100 text-green-800';
                                                     break;
                                                 case 'cancelled':
                                                 case 'failed':
+                                                case 'phishing':
                                                     echo 'bg-red-100 text-red-800';
                                                     break;
                                                 default:

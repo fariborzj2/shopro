@@ -81,6 +81,24 @@ class OrdersController
     }
 
     /**
+     * Update the order status.
+     */
+    public function updateStatus($id)
+    {
+        $status = $_POST['status'] ?? null;
+        // 'processing', 'shipped', 'delivered', 'failed' are legacy but might still exist in data.
+        // New valid set for *setting* status:
+        $validStatuses = ['pending', 'paid', 'completed', 'cancelled', 'phishing'];
+
+        if (!$status || !in_array($status, $validStatuses)) {
+            redirect_back_with_error('وضعیت انتخاب شده نامعتبر است.');
+        }
+
+        Order::updateStatus($id, $status);
+        redirect_with_success(url('orders/show/' . $id), 'وضعیت سفارش با موفقیت تغییر کرد.');
+    }
+
+    /**
      * Remove the specified resource from storage.
      */
     public function delete($id)
