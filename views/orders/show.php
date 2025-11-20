@@ -125,7 +125,7 @@
     </div>
 
     <div class="mt-8">
-        <a href="/admin/orders" class="text-indigo-600 hover:text-indigo-800">بازگشت به لیست سفارشات</a>
+        <a href="<?php echo url('/orders') ?>" class="text-indigo-600 hover:text-indigo-800">بازگشت به لیست سفارشات</a>
     </div>
 </div>
 
