@@ -34,3 +34,7 @@
     font-style: normal;
     font-display: swap;
 }
+.font-estedad {
+    font: 13px/28px Estedad, ficon, Tahoma, Arial, sans-serif;
+    -webkit-text-size-adjust: 100%;
+}
