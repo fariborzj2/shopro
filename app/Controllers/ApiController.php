@@ -37,12 +37,28 @@ class ApiController
                 'description' => $product->description ?? ''
             ],
             'custom_fields' => array_map(function($field) {
+                $options = [];
+                if (in_array($field->type, ['select', 'radio', 'checkbox']) && !empty($field->options)) {
+                    // Options are stored as newline separated value:label pairs
+                    // e.g. "red:Red Color\nblue:Blue Color"
+                    $lines = explode("\n", $field->options);
+                    foreach ($lines as $line) {
+                        $parts = explode(':', trim($line), 2);
+                        if (count($parts) === 2) {
+                            $options[] = [
+                                'value' => trim($parts[0]),
+                                'label' => trim($parts[1])
+                            ];
+                        }
+                    }
+                }
+
                 return [
                     'id' => $field->id,
                     'name' => $field->name,
                     'label' => $field->label_fa,
                     'type' => $field->type,
-                    'options' => json_decode($field->options ?? '[]'),
+                    'options' => $options,
                     'is_required' => (bool)$field->is_required,
                     'placeholder' => $field->placeholder,
                 ];
