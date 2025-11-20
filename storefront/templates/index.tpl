@@ -61,35 +61,55 @@
                         <form @submit.prevent="submitOrder" id="purchaseForm" class="mt-6" method="POST" action="/api/payment/start">
                             <?php echo csrf_field(); ?>
                             <input type="hidden" name="product_id" :value="selectedProduct.id">
-                            <div class="space-y-4 text-right">
+                            <div class="space-y-5 text-right">
                                 <template x-for="field in customFields" :key="field.id">
                                     <div>
-                                        <label :for="'field_' + field.id" class="block text-sm font-medium text-gray-700 mb-1" x-text="field.label"></label>
+                                        <label :for="'field_' + field.id" class="block text-sm font-medium text-gray-700 mb-1.5" x-text="field.label + (field.is_required ? ' *' : '')"></label>
 
                                         <template x-if="['text', 'number', 'date', 'color'].includes(field.type)">
-                                            <input :type="field.type" :name="field.name" :id="'field_' + field.id" :placeholder="field.placeholder" :required="field.is_required" class="w-full border-gray-300 rounded-md">
+                                            <input :type="field.type" :name="field.name" :id="'field_' + field.id" :placeholder="field.placeholder" :required="field.is_required" class="block w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm py-2.5 px-3">
                                         </template>
 
                                         <template x-if="field.type === 'textarea'">
-                                            <textarea :name="field.name" :id="'field_' + field.id" :placeholder="field.placeholder" :required="field.is_required" class="w-full border-gray-300 rounded-md"></textarea>
+                                            <textarea :name="field.name" :id="'field_' + field.id" :placeholder="field.placeholder" :required="field.is_required" class="block w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm py-2.5 px-3" rows="3"></textarea>
                                         </template>
 
                                         <template x-if="field.type === 'select'">
-                                            <select :name="field.name" :id="'field_' + field.id" :required="field.is_required" class="w-full border-gray-300 rounded-md">
+                                            <select :name="field.name" :id="'field_' + field.id" :required="field.is_required" class="block w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm py-2.5 px-3 bg-white">
+                                                <option value="" disabled selected>انتخاب کنید...</option>
                                                 <template x-for="option in field.options" :key="option.value">
                                                     <option :value="option.value" x-text="option.label"></option>
                                                 </template>
                                             </select>
                                         </template>
 
-                                        <!-- Add more field types like radio/checkbox if needed -->
+                                        <template x-if="field.type === 'radio'">
+                                            <div class="space-y-2 mt-2">
+                                                <template x-for="option in field.options" :key="option.value">
+                                                    <div class="flex items-center">
+                                                        <input type="radio" :name="field.name" :id="'field_' + field.id + '_' + option.value" :value="option.value" :required="field.is_required" class="h-4 w-4 text-blue-600 border-gray-300 focus:ring-blue-500">
+                                                        <label :for="'field_' + field.id + '_' + option.value" class="mr-2 block text-sm text-gray-700 cursor-pointer" x-text="option.label"></label>
+                                                    </div>
+                                                </template>
+                                            </div>
+                                        </template>
 
+                                        <template x-if="field.type === 'checkbox'">
+                                             <div class="space-y-2 mt-2">
+                                                <template x-for="option in field.options" :key="option.value">
+                                                    <div class="flex items-center">
+                                                        <input type="checkbox" :name="field.name + '[]'" :id="'field_' + field.id + '_' + option.value" :value="option.value" class="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+                                                        <label :for="'field_' + field.id + '_' + option.value" class="mr-2 block text-sm text-gray-700 cursor-pointer" x-text="option.label"></label>
+                                                    </div>
+                                                </template>
+                                            </div>
+                                        </template>
                                     </div>
                                 </template>
                             </div>
                             <div class="mt-8 space-y-3">
-                                <button type="submit" class="w-full bg-blue-600 text-white py-3">پرداخت</button>
-                                <button @click="isModalOpen = false" type="button" class="w-full bg-gray-200 py-3">انصراف</button>
+                                <button type="submit" class="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors shadow-md hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">پرداخت نهایی</button>
+                                <button @click="isModalOpen = false" type="button" class="w-full bg-gray-100 text-gray-700 py-3 rounded-lg font-semibold hover:bg-gray-200 transition-colors focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2">انصراف</button>
                             </div>
                         </form>
                     </div>
