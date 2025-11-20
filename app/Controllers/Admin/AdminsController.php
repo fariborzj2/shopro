@@ -41,7 +41,7 @@ class AdminsController
         }
 
         $admin = Admin::find($adminId);
-        if (!$admin || !$admin->isSuperAdmin()) {
+        if (!$admin || !Admin::isSuperAdmin($admin)) {
             // Using a simple 403 message or redirect with error
             header('HTTP/1.1 403 Forbidden');
             echo "<h1>403 Forbidden</h1><p>شما اجازه دسترسی به این بخش را ندارید.</p>";
@@ -188,7 +188,7 @@ class AdminsController
         }
 
         // Prevent deleting self
-        if ($admin->id == $_SESSION['admin_id']) {
+        if ($admin['id'] == $_SESSION['admin_id']) {
             return redirect_back_with_error('شما نمی‌توانید حساب خود را حذف کنید.');
         }
 
