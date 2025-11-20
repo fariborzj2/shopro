@@ -115,4 +115,18 @@ class AuthController
         // Basic validation for Iranian mobile numbers
         return $mobile && is_string($mobile) && preg_match('/^09[0-9]{9}$/', $mobile);
     }
+
+    /**
+     * Handle user logout.
+     */
+    public function logout()
+    {
+        if (isset($_SESSION['user_id'])) {
+            unset($_SESSION['user_id']);
+            unset($_SESSION['user_mobile']);
+            session_destroy();
+        }
+        header('Location: /');
+        exit();
+    }
 }

@@ -38,7 +38,8 @@ class Database
                 $dbConfig = self::$config;
             }
 
-            $dsn = "mysql:host={$dbConfig['host']};port={$dbConfig['port']};dbname={$dbConfig['dbname']};charset={$dbConfig['charset']}";
+            $port = $dbConfig['port'] ?? 3306;
+            $dsn = "mysql:host={$dbConfig['host']};port={$port};dbname={$dbConfig['dbname']};charset={$dbConfig['charset']}";
 
             $options = [
                 PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
