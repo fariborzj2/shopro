@@ -34,7 +34,8 @@ class Order
                 o.order_status,
                 o.payment_status,
                 o.order_time,
-                u.name as user_name
+                u.name as user_name,
+                u.mobile as user_mobile
             FROM
                 orders o
             LEFT JOIN
