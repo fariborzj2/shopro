@@ -31,7 +31,8 @@ class Order
                 o.id,
                 o.order_code,
                 o.amount,
-                o.status,
+                o.order_status,
+                o.payment_status,
                 o.order_time,
                 u.name as user_name,
                 u.mobile as user_mobile
@@ -71,10 +72,10 @@ class Order
         $pdo = Database::getConnection();
         $sql = "
             INSERT INTO orders (
-                user_id, product_id, category_id, amount, status,
+                user_id, product_id, category_id, amount, order_status, payment_status,
                 custom_fields_data, order_code, quantity
             ) VALUES (
-                :user_id, :product_id, :category_id, :amount, :status,
+                :user_id, :product_id, :category_id, :amount, :order_status, :payment_status,
                 :custom_fields_data, :order_code, :quantity
             )
         ";
@@ -84,7 +85,8 @@ class Order
             ':product_id' => $data['product_id'],
             ':category_id' => $data['category_id'],
             ':amount' => $data['amount'],
-            ':status' => $data['status'],
+            ':order_status' => $data['order_status'] ?? 'pending',
+            ':payment_status' => $data['payment_status'] ?? 'unpaid',
             ':custom_fields_data' => json_encode($data['custom_fields_data']),
             ':order_code' => $data['order_code'],
             ':quantity' => $data['quantity'] ?? 1, // Default quantity to 1 if not provided
@@ -135,7 +137,7 @@ class Order
     public static function findAllBy(string $column, $value): array
     {
         // Whitelist to prevent SQL injection on column names
-        $allowed_columns = ['user_id', 'product_id', 'status'];
+        $allowed_columns = ['user_id', 'product_id', 'order_status', 'payment_status'];
         if (!in_array($column, $allowed_columns)) {
             throw new \InvalidArgumentException("Invalid column for searching orders: $column");
         }
@@ -146,7 +148,8 @@ class Order
                 o.id,
                 o.order_code,
                 o.amount,
-                o.status,
+                o.order_status,
+                o.payment_status,
                 o.order_time,
                 p.name_fa AS product_name
             FROM
@@ -165,16 +168,31 @@ class Order
     }
 
     /**
-     * Update the status of an order.
+     * Update the order status of an order.
      *
      * @param int $id
      * @param string $status
      * @return bool
      */
-    public static function updateStatus(int $id, string $status): bool
+    public static function updateOrderStatus(int $id, string $status): bool
     {
         $pdo = Database::getConnection();
-        $sql = "UPDATE orders SET status = :status WHERE id = :id";
+        $sql = "UPDATE orders SET order_status = :status WHERE id = :id";
+        $stmt = $pdo->prepare($sql);
+        return $stmt->execute([':status' => $status, ':id' => $id]);
+    }
+
+    /**
+     * Update the payment status of an order.
+     *
+     * @param int $id
+     * @param string $status
+     * @return bool
+     */
+    public static function updatePaymentStatus(int $id, string $status): bool
+    {
+        $pdo = Database::getConnection();
+        $sql = "UPDATE orders SET payment_status = :status WHERE id = :id";
         $stmt = $pdo->prepare($sql);
         return $stmt->execute([':status' => $status, ':id' => $id]);
     }

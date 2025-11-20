@@ -81,20 +81,27 @@ class OrdersController
     }
 
     /**
-     * Update the order status.
+     * Update the order status and payment status.
      */
     public function updateStatus($id)
     {
-        $status = $_POST['status'] ?? null;
-        // 'processing', 'shipped', 'delivered', 'failed' are legacy but might still exist in data.
-        // New valid set for *setting* status:
-        $validStatuses = ['pending', 'paid', 'completed', 'cancelled', 'phishing'];
+        $order_status = $_POST['order_status'] ?? null;
+        $payment_status = $_POST['payment_status'] ?? null;
 
-        if (!$status || !in_array($status, $validStatuses)) {
-            redirect_back_with_error('وضعیت انتخاب شده نامعتبر است.');
+        if ($order_status) {
+            $validOrderStatuses = ['pending', 'completed', 'cancelled', 'phishing'];
+            if (in_array($order_status, $validOrderStatuses)) {
+                 Order::updateOrderStatus($id, $order_status);
+            }
         }
 
-        Order::updateStatus($id, $status);
+        if ($payment_status) {
+            $validPaymentStatuses = ['unpaid', 'paid', 'failed'];
+             if (in_array($payment_status, $validPaymentStatuses)) {
+                 Order::updatePaymentStatus($id, $payment_status);
+            }
+        }
+
         redirect_with_success(url('orders/show/' . $id), 'وضعیت سفارش با موفقیت تغییر کرد.');
     }
 
