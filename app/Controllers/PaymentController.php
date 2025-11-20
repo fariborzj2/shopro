@@ -48,7 +48,8 @@ class PaymentController
             'product_id' => $product->id,
             'category_id' => $product->category_id,
             'amount' => $product->price,
-            'status' => 'pending',
+            'order_status' => 'pending',
+            'payment_status' => 'unpaid',
             'custom_fields_data' => $custom_fields,
             'order_code' => 'ORD-' . time() . rand(100, 999),
         ]);
@@ -79,7 +80,7 @@ class PaymentController
             Transaction::updateByOrderId($order_id, ['track_id' => $result['track_id']]);
             echo json_encode(['payment_url' => $result['payment_url']]);
         } else {
-            Order::update($order_id, ['status' => 'failed']);
+            Order::updatePaymentStatus($order_id, 'failed');
             Transaction::updateByOrderId($order_id, ['status' => 'failed', 'gateway_response' => $result['message']]);
             http_response_code(500);
             echo json_encode(['error' => 'خطا در اتصال به درگاه پرداخت: ' . $result['message']]);
@@ -107,7 +108,7 @@ class PaymentController
         }
 
         if ($success !== '1') {
-            Order::update($transaction->order_id, ['status' => 'failed']);
+            Order::updatePaymentStatus($transaction->order_id, 'failed');
             Transaction::update($transaction->id, ['status' => 'failed', 'gateway_response' => 'تراکنش توسط کاربر لغو شد.']);
             // Redirect to a failure page
             header('Location: /dashboard/orders/' . $transaction->order_id . '?status=cancelled');
@@ -127,7 +128,7 @@ class PaymentController
 
             if ($paid_amount != $transaction_amount_rials) {
                 // Amount mismatch - potential fraud
-                Order::update($transaction->order_id, ['status' => 'failed']);
+                Order::updatePaymentStatus($transaction->order_id, 'failed');
                 $mismatch_response = "مغایرت در مبلغ پرداخت شده. مبلغ تراکنش: {$transaction_amount_rials} ریال، مبلغ پرداخت شده: {$paid_amount} ریال.";
                 Transaction::update($transaction->id, ['status' => 'failed', 'gateway_response' => $mismatch_response]);
                 header('Location: /dashboard/orders/' . $transaction->order_id . '?status=mismatch');
@@ -137,20 +138,17 @@ class PaymentController
             // Payment successful and amount is correct
             $payment_response = $result['response'];
 
-            // Prepare data for updating the order
-            $order_update_data = [
-                'status' => 'paid',
-                'payment_gateway_response' => json_encode($payment_response)
-            ];
+            // Update payment status to paid
+            Order::updatePaymentStatus($transaction->order_id, 'paid');
+            Order::update($transaction->order_id, ['payment_gateway_response' => json_encode($payment_response)]);
 
-            Order::update($transaction->order_id, $order_update_data);
             Transaction::update($transaction->id, ['status' => 'successful', 'gateway_response' => json_encode($payment_response)]);
 
             // Redirect to a success/receipt page
             header('Location: /dashboard/orders/' . $transaction->order_id . '?status=success');
         } else {
             // Payment failed
-            Order::update($transaction->order_id, ['status' => 'failed']);
+            Order::updatePaymentStatus($transaction->order_id, 'failed');
             Transaction::update($transaction->id, ['status' => 'failed', 'gateway_response' => json_encode($result['response'])]);
             // Redirect to a failure page
             header('Location: /dashboard/orders/' . $transaction->order_id . '?status=failed');

@@ -23,6 +23,7 @@ $router->get('/blog/{slug}', 'BlogController@show');
 $router->get('/api/product-details/{id}', 'ApiController@productDetails');
 $router->post('/api/auth/send-otp', 'AuthController@sendOtp');
 $router->post('/api/auth/verify-otp', 'AuthController@verifyOtp');
+$router->get('/logout', 'AuthController@logout');
 $router->post('/api/payment/start', 'PaymentController@startPayment');
 $router->post('/reviews/store', 'ReviewsController@store');
 

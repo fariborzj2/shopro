@@ -81,6 +81,31 @@ class OrdersController
     }
 
     /**
+     * Update the order status and payment status.
+     */
+    public function updateStatus($id)
+    {
+        $order_status = $_POST['order_status'] ?? null;
+        $payment_status = $_POST['payment_status'] ?? null;
+
+        if ($order_status) {
+            $validOrderStatuses = ['pending', 'completed', 'cancelled', 'phishing'];
+            if (in_array($order_status, $validOrderStatuses)) {
+                 Order::updateOrderStatus($id, $order_status);
+            }
+        }
+
+        if ($payment_status) {
+            $validPaymentStatuses = ['unpaid', 'paid', 'failed'];
+             if (in_array($payment_status, $validPaymentStatuses)) {
+                 Order::updatePaymentStatus($id, $payment_status);
+            }
+        }
+
+        redirect_with_success(url('orders/show/' . $id), 'وضعیت سفارش با موفقیت تغییر کرد.');
+    }
+
+    /**
      * Remove the specified resource from storage.
      */
     public function delete($id)
