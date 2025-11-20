@@ -1,6 +1,6 @@
 <h1 class="text-3xl font-bold mb-4">داشبورد</h1>
 
-<!-- Stat Cards -->
+<!-- KPIs -->
 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mt-6">
     <div class="bg-white p-6 rounded-lg shadow-md">
         <h3 class="text-sm font-medium text-gray-500">فروش امروز</h3>
@@ -20,14 +20,50 @@
     </div>
 </div>
 
+<!-- New Reports Section -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
+    <div class="bg-white p-6 rounded-lg shadow-md border-t-4 border-indigo-500">
+        <h3 class="text-sm font-medium text-gray-500">مجموع کل کاربران</h3>
+        <p class="mt-2 text-3xl font-bold text-gray-800"><?= number_format($reports['total_users']) ?></p>
+    </div>
+    <div class="bg-white p-6 rounded-lg shadow-md border-t-4 border-green-500">
+        <h3 class="text-sm font-medium text-gray-500">مجموع سفارشات تکمیل‌شده</h3>
+        <p class="mt-2 text-3xl font-bold text-gray-800"><?= number_format($reports['total_completed_orders']) ?></p>
+    </div>
+    <div class="bg-white p-6 rounded-lg shadow-md border-t-4 border-red-500">
+        <h3 class="text-sm font-medium text-gray-500">سفارشات ناموفق امروز</h3>
+        <p class="mt-2 text-3xl font-bold text-gray-800"><?= number_format($reports['failed_orders_today']) ?></p>
+    </div>
+</div>
+
 <!-- Charts -->
 <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-8">
+    <!-- Sales Chart -->
     <div class="bg-white p-6 rounded-lg shadow-md">
-        <h3 class="text-lg font-semibold mb-4">روند فروش (۷ روز گذشته)</h3>
+        <div class="flex justify-between items-center mb-4">
+            <h3 class="text-lg font-semibold">روند فروش</h3>
+            <div class="flex space-x-2 space-x-reverse">
+                <button onclick="updateChart('sales', 'week')" class="px-3 py-1 text-xs font-medium bg-gray-100 hover:bg-gray-200 rounded-md transition">هفته</button>
+                <button onclick="updateChart('sales', 'month')" class="px-3 py-1 text-xs font-medium bg-gray-100 hover:bg-gray-200 rounded-md transition">ماه</button>
+                <button onclick="updateChart('sales', 'year')" class="px-3 py-1 text-xs font-medium bg-gray-100 hover:bg-gray-200 rounded-md transition">سال</button>
+            </div>
+        </div>
         <canvas id="salesChart"></canvas>
     </div>
+
+    <!-- Users Chart -->
     <div class="bg-white p-6 rounded-lg shadow-md">
-        <h3 class="text-lg font-semibold mb-4">کاربران جدید (این ماه)</h3>
+        <div class="flex justify-between items-center mb-4">
+            <h3 class="text-lg font-semibold">
+                کاربران جدید
+                <span class="text-sm font-normal text-gray-500 mr-2">(مجموع ماه جاری: <span id="totalUsersThisMonth"><?= $usersChartData['total_this_month'] ?? 0 ?></span>)</span>
+            </h3>
+            <div class="flex space-x-2 space-x-reverse">
+                <button onclick="updateChart('users', 'week')" class="px-3 py-1 text-xs font-medium bg-gray-100 hover:bg-gray-200 rounded-md transition">هفته</button>
+                <button onclick="updateChart('users', 'month')" class="px-3 py-1 text-xs font-medium bg-gray-100 hover:bg-gray-200 rounded-md transition">ماه</button>
+                <button onclick="updateChart('users', 'year')" class="px-3 py-1 text-xs font-medium bg-gray-100 hover:bg-gray-200 rounded-md transition">سال</button>
+            </div>
+        </div>
         <canvas id="usersChart"></canvas>
     </div>
 </div>
@@ -93,55 +129,121 @@
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-    // Sales Chart
-    const salesCtx = document.getElementById('salesChart').getContext('2d');
-    new Chart(salesCtx, {
-        type: 'line',
-        data: {
-            labels: <?= json_encode($salesChartData['labels']) ?>,
-            datasets: [{
-                label: 'فروش',
-                data: <?= json_encode($salesChartData['data']) ?>,
-                backgroundColor: 'rgba(79, 70, 229, 0.1)',
-                borderColor: 'rgba(79, 70, 229, 1)',
-                borderWidth: 2,
-                tension: 0.3
-            }]
-        },
-        options: {
-            responsive: true,
-            scales: {
-                y: {
-                    beginAtZero: true
-                }
-            }
-        }
-    });
+    // Initialize Charts
+    let salesChart, usersChart;
 
-    // Users Chart
-    const usersCtx = document.getElementById('usersChart').getContext('2d');
-    new Chart(usersCtx, {
-        type: 'bar',
-        data: {
-            labels: <?= json_encode($usersChartData['labels']) ?>,
-            datasets: [{
-                label: 'کاربران جدید',
-                data: <?= json_encode($usersChartData['data']) ?>,
-                backgroundColor: 'rgba(219, 39, 119, 0.8)',
-                borderColor: 'rgba(219, 39, 119, 1)',
-                borderWidth: 1
-            }]
-        },
-        options: {
-            responsive: true,
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    ticks: {
-                        stepSize: 1
+    function initCharts() {
+        // Sales Chart
+        const salesCtx = document.getElementById('salesChart').getContext('2d');
+        salesChart = new Chart(salesCtx, {
+            type: 'bar',
+            data: {
+                labels: <?= json_encode($salesChartData['labels']) ?>,
+                datasets: [
+                    {
+                        label: 'مبلغ فروش (تومان)',
+                        data: <?= json_encode($salesChartData['amounts']) ?>,
+                        backgroundColor: 'rgba(79, 70, 229, 0.2)',
+                        borderColor: 'rgba(79, 70, 229, 1)',
+                        borderWidth: 2,
+                        yAxisID: 'y',
+                        order: 2
+                    },
+                    {
+                        label: 'تعداد فروش',
+                        data: <?= json_encode($salesChartData['counts']) ?>,
+                        type: 'line',
+                        borderColor: 'rgba(236, 72, 153, 1)',
+                        backgroundColor: 'rgba(236, 72, 153, 0.2)',
+                        borderWidth: 2,
+                        pointRadius: 3,
+                        yAxisID: 'y1',
+                        order: 1
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                interaction: {
+                    mode: 'index',
+                    intersect: false,
+                },
+                scales: {
+                    x: {
+                        grid: { display: false }
+                    },
+                    y: {
+                        type: 'linear',
+                        display: true,
+                        position: 'left',
+                        grid: { display: false },
+                        title: { display: true, text: 'تومان' }
+                    },
+                    y1: {
+                        type: 'linear',
+                        display: true,
+                        position: 'right',
+                        grid: { display: false },
+                        title: { display: true, text: 'تعداد' },
+                        ticks: { stepSize: 1 }
                     }
                 }
             }
-        }
-    });
+        });
+
+        // Users Chart
+        const usersCtx = document.getElementById('usersChart').getContext('2d');
+        usersChart = new Chart(usersCtx, {
+            type: 'line',
+            data: {
+                labels: <?= json_encode($usersChartData['labels']) ?>,
+                datasets: [{
+                    label: 'کاربران جدید',
+                    data: <?= json_encode($usersChartData['data']) ?>,
+                    backgroundColor: 'rgba(16, 185, 129, 0.2)',
+                    borderColor: 'rgba(16, 185, 129, 1)',
+                    borderWidth: 2,
+                    fill: true,
+                    tension: 0.4
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    x: {
+                        grid: { display: false }
+                    },
+                    y: {
+                        beginAtZero: true,
+                        grid: { display: false },
+                        ticks: { stepSize: 1 }
+                    }
+                }
+            }
+        });
+    }
+
+    function updateChart(type, period) {
+        fetch(`/admin/dashboard/chart-data?type=${type}&period=${period}`)
+            .then(response => response.json())
+            .then(data => {
+                if (type === 'sales') {
+                    salesChart.data.labels = data.labels;
+                    salesChart.data.datasets[0].data = data.amounts;
+                    salesChart.data.datasets[1].data = data.counts;
+                    salesChart.update();
+                } else if (type === 'users') {
+                    usersChart.data.labels = data.labels;
+                    usersChart.data.datasets[0].data = data.data;
+                    usersChart.update();
+
+                    if (data.total_this_month !== undefined) {
+                         document.getElementById('totalUsersThisMonth').innerText = data.total_this_month;
+                    }
+                }
+            })
+            .catch(error => console.error('Error fetching chart data:', error));
+    }
+
+    document.addEventListener('DOMContentLoaded', initCharts);
 </script>

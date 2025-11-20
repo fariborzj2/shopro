@@ -52,6 +52,7 @@ $router->get('/admin/logout', 'Admin\LoginController@logout');
 // Dashboard
 $router->get('/admin', 'Admin\DashboardController@index');
 $router->get('/admin/dashboard', 'Admin\DashboardController@index');
+$router->get('/admin/dashboard/chart-data', 'Admin\DashboardController@getChartData');
 
 // Users
 $router->get('/admin/users', 'Admin\UsersController@index');
