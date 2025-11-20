@@ -1,106 +1,160 @@
-<div :class="sidebarOpen ? 'block' : 'hidden'" @click="sidebarOpen = false" class="fixed z-20 inset-0 bg-black opacity-50 transition-opacity lg:hidden"></div>
+<?php
+use App\Models\Admin;
 
-<div :class="sidebarOpen ? 'translate-x-0 ease-out' : '-translate-x-full ease-in'" class="fixed z-30 inset-y-0 left-0 w-64 transition duration-300 transform bg-gray-900 overflow-y-auto lg:translate-x-0 lg:static lg:inset-0">
-    <div class="flex items-center justify-center mt-8">
-        <div class="flex items-center">
-            <span class="text-white text-2xl mx-2 font-semibold">پنل مدیریت</span>
-        </div>
+// Fetch current admin object once
+$current_admin = null;
+if (isset($_SESSION['admin_id'])) {
+    $current_admin = Admin::find($_SESSION['admin_id']);
+}
+
+$can = function($permission) use ($current_admin) {
+    if (!$current_admin) return false;
+    return Admin::hasPermission($current_admin, $permission);
+};
+
+// Define Menu Items
+$menuItems = [
+    [
+        'label' => 'داشبورد',
+        'url' => '/dashboard',
+        'icon' => 'dashboard',
+        'permission' => 'dashboard'
+    ],
+    [
+        'label' => 'سفارشات',
+        'url' => '/orders',
+        'icon' => 'orders',
+        'permission' => 'orders'
+    ],
+    [
+        'label' => 'محصولات',
+        'url' => '/products',
+        'icon' => 'products',
+        'permission' => 'products'
+    ],
+    [
+        'label' => 'دسته‌بندی‌ها',
+        'url' => '/categories',
+        'icon' => 'categories',
+        'permission' => 'categories'
+    ],
+    [
+        'label' => 'کاربران',
+        'url' => '/users',
+        'icon' => 'users',
+        'permission' => 'users'
+    ],
+    [
+        'label' => 'مدیریت بلاگ',
+        'url' => '/blog/posts',
+        'icon' => 'blog',
+        'permission' => 'blog'
+    ],
+    [
+        'label' => 'نظرات',
+        'url' => '/reviews',
+        'icon' => 'message',
+        'permission' => 'reviews'
+    ],
+    [
+        'label' => 'کتابخانه رسانه',
+        'url' => '/media',
+        'icon' => 'media',
+        'permission' => 'media'
+    ],
+    [
+        'label' => 'پارامترها',
+        'url' => '/custom-fields',
+        'icon' => 'settings',
+        'permission' => 'custom_fields'
+    ],
+    [
+        'label' => 'مدیریت صفحات',
+        'url' => '/pages',
+        'icon' => 'pages',
+        'permission' => 'pages'
+    ],
+    [
+        'label' => 'سوالات متداول',
+        'url' => '/faq',
+        'icon' => 'faq',
+        'permission' => 'faq'
+    ],
+    [
+        'label' => 'تنظیمات',
+        'url' => '/settings',
+        'icon' => 'settings',
+        'permission' => 'settings'
+    ],
+];
+
+// Super Admin Items
+$superAdminItems = [
+    [
+        'label' => 'مدیریت مدیران',
+        'url' => '/admins',
+        'icon' => 'user',
+        'permission' => 'super_admin'
+    ]
+];
+
+?>
+
+<!-- Sidebar Overlay -->
+<div x-show="sidebarOpen" @click="sidebarOpen = false" class="fixed inset-0 z-40 bg-gray-900/50 backdrop-blur-sm lg:hidden" x-transition.opacity></div>
+
+<!-- Sidebar Component -->
+<aside :class="sidebarOpen ? 'translate-x-0' : 'translate-x-full lg:translate-x-0'"
+       class="fixed right-0 top-0 z-50 w-72 h-full overflow-y-auto transition-transform duration-300 ease-in-out
+              bg-white dark:bg-gray-800 border-l border-gray-200 dark:border-gray-700 lg:static shadow-2xl lg:shadow-none">
+
+    <!-- Logo Area -->
+    <div class="flex items-center justify-between h-16 px-6 border-b border-gray-100 dark:border-gray-700">
+        <span class="text-xl font-extrabold text-primary-600 dark:text-primary-400 tracking-tight">پنل مدیریت</span>
+        <button @click="sidebarOpen = false" class="lg:hidden text-gray-500 hover:text-gray-700 dark:text-gray-400">
+             <?php partial('icon', ['name' => 'close', 'class' => 'w-6 h-6']); ?>
+        </button>
     </div>
 
-    <?php
-    // Helper to check permissions for sidebar display
-    // Using a closure or ensuring Admin is imported if not already in context.
-    // Since this is a partial, we assume the global scope or manual import.
-    use App\Models\Admin;
-
-    // Fetch current admin object once
-    $current_admin = null;
-    if (isset($_SESSION['admin_id'])) {
-        $current_admin = Admin::find($_SESSION['admin_id']);
-    }
-
-    $can = function($permission) use ($current_admin) {
-        if (!$current_admin) return false;
-        return Admin::hasPermission($current_admin, $permission);
-    };
-    ?>
-    <nav class="mt-10">
-        <?php if ($can('dashboard')): ?>
-        <a class="flex items-center mt-1 py-2 px-6 <?php echo is_active('/dashboard') ? 'bg-gray-700 bg-opacity-25 text-gray-100' : 'text-gray-500 hover:bg-gray-700 hover:bg-opacity-25 hover:text-gray-100'; ?>" href="<?php echo url('/dashboard'); ?>">
-            <span class="mx-3">داشبورد</span>
-        </a>
-        <?php endif; ?>
-
-        <?php if ($can('users')): ?>
-        <a class="flex items-center mt-1 py-2 px-6 <?php echo is_active('/users') ? 'bg-gray-700 bg-opacity-25 text-gray-100' : 'text-gray-500 hover:bg-gray-700 hover:bg-opacity-25 hover:text-gray-100'; ?>" href="<?php echo url('/users'); ?>">
-            <span class="mx-3">کاربران</span>
-        </a>
-        <?php endif; ?>
-
-        <?php if ($can('categories')): ?>
-        <a class="flex items-center mt-1 py-2 px-6 <?php echo is_active('/categories') ? 'bg-gray-700 bg-opacity-25 text-gray-100' : 'text-gray-500 hover:bg-gray-700 hover:bg-opacity-25 hover:text-gray-100'; ?>" href="<?php echo url('/categories'); ?>">
-            <span class="mx-3">دسته‌بندی‌ها</span>
-        </a>
-        <?php endif; ?>
-
-        <?php if ($can('products')): ?>
-        <a class="flex items-center mt-1 py-2 px-6 <?php echo is_active('/products') ? 'bg-gray-700 bg-opacity-25 text-gray-100' : 'text-gray-500 hover:bg-gray-700 hover:bg-opacity-25 hover:text-gray-100'; ?>" href="<?php echo url('/products'); ?>">
-            <span class="mx-3">محصولات</span>
-        </a>
-        <?php endif; ?>
-
-        <?php if ($can('blog')): ?>
-        <a class="flex items-center mt-1 py-2 px-6 <?php echo is_active('/blog') ? 'bg-gray-700 bg-opacity-25 text-gray-100' : 'text-gray-500 hover:bg-gray-700 hover:bg-opacity-25 hover:text-gray-100'; ?>" href="<?php echo url('/blog/posts'); ?>">
-            <span class="mx-3">مدیریت بلاگ</span>
-        </a>
-        <?php endif; ?>
-
-        <?php if ($can('media')): ?>
-        <a class="flex items-center mt-1 py-2 px-6 <?php echo is_active('/media') ? 'bg-gray-700 bg-opacity-25 text-gray-100' : 'text-gray-500 hover:bg-gray-700 hover:bg-opacity-25 hover:text-gray-100'; ?>" href="<?php echo url('/media'); ?>">
-            <span class="mx-3">کتابخانه رسانه</span>
-        </a>
-        <?php endif; ?>
-
-        <?php if ($can('custom_fields')): ?>
-        <a class="flex items-center mt-1 py-2 px-6 <?php echo is_active('/custom-fields') ? 'bg-gray-700 bg-opacity-25 text-gray-100' : 'text-gray-500 hover:bg-gray-700 hover:bg-opacity-25 hover:text-gray-100'; ?>" href="<?php echo url('/custom-fields'); ?>">
-            <span class="mx-3">پارامترها</span>
-        </a>
-        <?php endif; ?>
-
-        <?php if ($can('orders')): ?>
-        <a class="flex items-center mt-1 py-2 px-6 <?php echo is_active('/orders') ? 'bg-gray-700 bg-opacity-25 text-gray-100' : 'text-gray-500 hover:bg-gray-700 hover:bg-opacity-25 hover:text-gray-100'; ?>" href="<?php echo url('/orders'); ?>">
-            <span class="mx-3">سفارشات</span>
-        </a>
-        <?php endif; ?>
-
-        <?php if ($can('pages')): ?>
-        <a class="flex items-center mt-1 py-2 px-6 <?php echo is_active('/pages') ? 'bg-gray-700 bg-opacity-25 text-gray-100' : 'text-gray-500 hover:bg-gray-700 hover:bg-opacity-25 hover:text-gray-100'; ?>" href="<?php echo url('/pages'); ?>">
-            <span class="mx-3">مدیریت صفحات</span>
-        </a>
-        <?php endif; ?>
-
-        <?php if ($can('faq')): ?>
-        <a class="flex items-center mt-1 py-2 px-6 <?php echo is_active('/faq') ? 'bg-gray-700 bg-opacity-25 text-gray-100' : 'text-gray-500 hover:bg-gray-700 hover:bg-opacity-25 hover:text-gray-100'; ?>" href="<?php echo url('/faq'); ?>">
-            <span class="mx-3">سوالات متداول</span>
-        </a>
-        <?php endif; ?>
-
-        <?php if ($can('reviews')): ?>
-        <a class="flex items-center mt-1 py-2 px-6 <?php echo is_active('/reviews') ? 'bg-gray-700 bg-opacity-25 text-gray-100' : 'text-gray-500 hover:bg-gray-700 hover:bg-opacity-25 hover:text-gray-100'; ?>" href="<?php echo url('/reviews'); ?>">
-            <span class="mx-3">نظرات</span>
-        </a>
-        <?php endif; ?>
-
-        <?php if ($can('settings')): ?>
-        <a class="flex items-center mt-1 py-2 px-6 <?php echo is_active('/settings') ? 'bg-gray-700 bg-opacity-25 text-gray-100' : 'text-gray-500 hover:bg-gray-700 hover:bg-opacity-25 hover:text-gray-100'; ?>" href="<?php echo url('/settings'); ?>">
-            <span class="mx-3">تنظیمات</span>
-        </a>
-        <?php endif; ?>
+    <!-- Navigation -->
+    <nav class="p-4 space-y-1.5">
+        <?php foreach ($menuItems as $item): ?>
+            <?php if ($can($item['permission'])): ?>
+                <?php
+                    $active = is_active($item['url']);
+                    // Modern active state: soft background, primary color text
+                    $baseClasses = "group flex items-center px-3 py-2.5 text-sm font-medium rounded-xl transition-all duration-200";
+                    $activeClasses = "bg-primary-50 text-primary-700 dark:bg-primary-900/20 dark:text-primary-300 shadow-sm";
+                    $inactiveClasses = "text-gray-600 hover:bg-gray-50 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-700/50 dark:hover:text-gray-100";
+                ?>
+                <a href="<?php echo url($item['url']); ?>" class="<?php echo $baseClasses . ' ' . ($active ? $activeClasses : $inactiveClasses); ?>">
+                    <?php partial('icon', ['name' => $item['icon'], 'class' => 'ml-3 flex-shrink-0 h-5 w-5 transition-colors ' . ($active ? 'text-primary-600 dark:text-primary-400' : 'text-gray-400 group-hover:text-gray-500 dark:text-gray-500 dark:group-hover:text-gray-300')]); ?>
+                    <span><?php echo $item['label']; ?></span>
+                    <?php if($active): ?>
+                        <!-- Active Indicator -->
+                        <span class="mr-auto w-1.5 h-1.5 rounded-full bg-primary-600 dark:bg-primary-400"></span>
+                    <?php endif; ?>
+                </a>
+            <?php endif; ?>
+        <?php endforeach; ?>
 
         <?php if ($current_admin && Admin::isSuperAdmin($current_admin)): ?>
-        <a class="flex items-center mt-1 py-2 px-6 <?php echo is_active('/admins') ? 'bg-gray-700 bg-opacity-25 text-gray-100' : 'text-gray-500 hover:bg-gray-700 hover:bg-opacity-25 hover:text-gray-100'; ?>" href="<?php echo url('/admins'); ?>">
-            <span class="mx-3 text-purple-400">مدیریت مدیران</span>
-        </a>
+            <div class="pt-6 pb-2">
+                <div class="px-3 text-xs font-semibold text-gray-400 uppercase tracking-wider">سیستم</div>
+            </div>
+
+            <?php foreach ($superAdminItems as $item): ?>
+                 <?php
+                    $active = is_active($item['url']);
+                    $baseClasses = "group flex items-center px-3 py-2.5 text-sm font-medium rounded-xl transition-all duration-200";
+                    $activeClasses = "bg-purple-50 text-purple-700 dark:bg-purple-900/20 dark:text-purple-300 shadow-sm";
+                    $inactiveClasses = "text-gray-600 hover:bg-gray-50 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-700/50 dark:hover:text-gray-100";
+                ?>
+                <a href="<?php echo url($item['url']); ?>" class="<?php echo $baseClasses . ' ' . ($active ? $activeClasses : $inactiveClasses); ?>">
+                    <?php partial('icon', ['name' => $item['icon'], 'class' => 'ml-3 flex-shrink-0 h-5 w-5 ' . ($active ? 'text-purple-600 dark:text-purple-400' : 'text-gray-400 group-hover:text-gray-500 dark:text-gray-500 dark:group-hover:text-gray-300')]); ?>
+                    <span><?php echo $item['label']; ?></span>
+                </a>
+            <?php endforeach; ?>
         <?php endif; ?>
     </nav>
-</div>
+</aside>

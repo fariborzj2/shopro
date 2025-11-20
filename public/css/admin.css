@@ -1,7 +1,118 @@
-/* A simple placeholder for admin CSS */
-body {
-    font: 13px/28px Estedad, ficon, Tahoma, Arial, sans-serif;
-    background-color: #f1f5f9;
+/* public/css/admin.css */
+
+/* Import Estedad Font */
+@font-face {
+    font-family: 'Estedad';
+    src: url('https://cdn.jsdelivr.net/gh/rastikerdar/estedad-font@v5.0.1/dist/fonts/ttf/Estedad-Thin.ttf') format('truetype');
+    font-weight: 100;
+    font-style: normal;
+    font-display: swap;
+}
+@font-face {
+    font-family: 'Estedad';
+    src: url('https://cdn.jsdelivr.net/gh/rastikerdar/estedad-font@v5.0.1/dist/fonts/ttf/Estedad-Light.ttf') format('truetype');
+    font-weight: 300;
+    font-style: normal;
+    font-display: swap;
+}
+@font-face {
+    font-family: 'Estedad';
+    src: url('https://cdn.jsdelivr.net/gh/rastikerdar/estedad-font@v5.0.1/dist/fonts/ttf/Estedad-Regular.ttf') format('truetype');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+}
+@font-face {
+    font-family: 'Estedad';
+    src: url('https://cdn.jsdelivr.net/gh/rastikerdar/estedad-font@v5.0.1/dist/fonts/ttf/Estedad-Medium.ttf') format('truetype');
+    font-weight: 500;
+    font-style: normal;
+    font-display: swap;
+}
+@font-face {
+    font-family: 'Estedad';
+    src: url('https://cdn.jsdelivr.net/gh/rastikerdar/estedad-font@v5.0.1/dist/fonts/ttf/Estedad-Bold.ttf') format('truetype');
+    font-weight: 700;
+    font-style: normal;
+    font-display: swap;
+}
+@font-face {
+    font-family: 'Estedad';
+    src: url('https://cdn.jsdelivr.net/gh/rastikerdar/estedad-font@v5.0.1/dist/fonts/ttf/Estedad-ExtraBold.ttf') format('truetype');
+    font-weight: 800;
+    font-style: normal;
+    font-display: swap;
+}
+@font-face {
+    font-family: 'Estedad';
+    src: url('https://cdn.jsdelivr.net/gh/rastikerdar/estedad-font@v5.0.1/dist/fonts/ttf/Estedad-Black.ttf') format('truetype');
+    font-weight: 900;
+    font-style: normal;
+    font-display: swap;
 }
 
-/* Add any other basic styles needed for layout integrity */
+:root {
+    --sidebar-width: 18rem; /* 288px */
+}
+
+body {
+    font-family: 'Estedad', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+::-webkit-scrollbar-thumb {
+    background: #cbd5e1; /* slate-300 */
+    border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8; /* slate-400 */
+}
+.dark ::-webkit-scrollbar-thumb {
+    background: #475569; /* slate-600 */
+}
+.dark ::-webkit-scrollbar-thumb:hover {
+    background: #64748b; /* slate-500 */
+}
+
+/* Utilities not in Tailwind CDN */
+.glass {
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+}
+
+/* Smooth transitions */
+.transition-all-300 {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Card Hover Effects */
+.hover-lift {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.hover-lift:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+/* Form Inputs - Estedad specific tweak */
+input, select, textarea, button {
+    font-family: inherit;
+}
+
+/* Animation definitions */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+.animate-fade-in-up {
+    animation: fadeIn 0.4s ease-out forwards;
+}
+
+[x-cloak] { display: none !important; }
