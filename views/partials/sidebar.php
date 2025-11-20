@@ -26,79 +26,79 @@
     ?>
     <nav class="mt-10">
         <?php if ($can('dashboard')): ?>
-        <a class="flex items-center mt-2 py-2 px-6 <?php echo is_active('/dashboard') ? 'bg-gray-700 bg-opacity-25 text-gray-100' : 'text-gray-500 hover:bg-gray-700 hover:bg-opacity-25 hover:text-gray-100'; ?>" href="<?php echo url('/dashboard'); ?>">
+        <a class="flex items-center mt-1 py-2 px-6 <?php echo is_active('/dashboard') ? 'bg-gray-700 bg-opacity-25 text-gray-100' : 'text-gray-500 hover:bg-gray-700 hover:bg-opacity-25 hover:text-gray-100'; ?>" href="<?php echo url('/dashboard'); ?>">
             <span class="mx-3">داشبورد</span>
         </a>
         <?php endif; ?>
 
         <?php if ($can('users')): ?>
-        <a class="flex items-center mt-2 py-2 px-6 <?php echo is_active('/users') ? 'bg-gray-700 bg-opacity-25 text-gray-100' : 'text-gray-500 hover:bg-gray-700 hover:bg-opacity-25 hover:text-gray-100'; ?>" href="<?php echo url('/users'); ?>">
+        <a class="flex items-center mt-1 py-2 px-6 <?php echo is_active('/users') ? 'bg-gray-700 bg-opacity-25 text-gray-100' : 'text-gray-500 hover:bg-gray-700 hover:bg-opacity-25 hover:text-gray-100'; ?>" href="<?php echo url('/users'); ?>">
             <span class="mx-3">کاربران</span>
         </a>
         <?php endif; ?>
 
         <?php if ($can('categories')): ?>
-        <a class="flex items-center mt-2 py-2 px-6 <?php echo is_active('/categories') ? 'bg-gray-700 bg-opacity-25 text-gray-100' : 'text-gray-500 hover:bg-gray-700 hover:bg-opacity-25 hover:text-gray-100'; ?>" href="<?php echo url('/categories'); ?>">
+        <a class="flex items-center mt-1 py-2 px-6 <?php echo is_active('/categories') ? 'bg-gray-700 bg-opacity-25 text-gray-100' : 'text-gray-500 hover:bg-gray-700 hover:bg-opacity-25 hover:text-gray-100'; ?>" href="<?php echo url('/categories'); ?>">
             <span class="mx-3">دسته‌بندی‌ها</span>
         </a>
         <?php endif; ?>
 
         <?php if ($can('products')): ?>
-        <a class="flex items-center mt-2 py-2 px-6 <?php echo is_active('/products') ? 'bg-gray-700 bg-opacity-25 text-gray-100' : 'text-gray-500 hover:bg-gray-700 hover:bg-opacity-25 hover:text-gray-100'; ?>" href="<?php echo url('/products'); ?>">
+        <a class="flex items-center mt-1 py-2 px-6 <?php echo is_active('/products') ? 'bg-gray-700 bg-opacity-25 text-gray-100' : 'text-gray-500 hover:bg-gray-700 hover:bg-opacity-25 hover:text-gray-100'; ?>" href="<?php echo url('/products'); ?>">
             <span class="mx-3">محصولات</span>
         </a>
         <?php endif; ?>
 
         <?php if ($can('blog')): ?>
-        <a class="flex items-center mt-2 py-2 px-6 <?php echo is_active('/blog') ? 'bg-gray-700 bg-opacity-25 text-gray-100' : 'text-gray-500 hover:bg-gray-700 hover:bg-opacity-25 hover:text-gray-100'; ?>" href="<?php echo url('/blog/posts'); ?>">
+        <a class="flex items-center mt-1 py-2 px-6 <?php echo is_active('/blog') ? 'bg-gray-700 bg-opacity-25 text-gray-100' : 'text-gray-500 hover:bg-gray-700 hover:bg-opacity-25 hover:text-gray-100'; ?>" href="<?php echo url('/blog/posts'); ?>">
             <span class="mx-3">مدیریت بلاگ</span>
         </a>
         <?php endif; ?>
 
         <?php if ($can('media')): ?>
-        <a class="flex items-center mt-2 py-2 px-6 <?php echo is_active('/media') ? 'bg-gray-700 bg-opacity-25 text-gray-100' : 'text-gray-500 hover:bg-gray-700 hover:bg-opacity-25 hover:text-gray-100'; ?>" href="<?php echo url('/media'); ?>">
+        <a class="flex items-center mt-1 py-2 px-6 <?php echo is_active('/media') ? 'bg-gray-700 bg-opacity-25 text-gray-100' : 'text-gray-500 hover:bg-gray-700 hover:bg-opacity-25 hover:text-gray-100'; ?>" href="<?php echo url('/media'); ?>">
             <span class="mx-3">کتابخانه رسانه</span>
         </a>
         <?php endif; ?>
 
         <?php if ($can('custom_fields')): ?>
-        <a class="flex items-center mt-2 py-2 px-6 <?php echo is_active('/custom-fields') ? 'bg-gray-700 bg-opacity-25 text-gray-100' : 'text-gray-500 hover:bg-gray-700 hover:bg-opacity-25 hover:text-gray-100'; ?>" href="<?php echo url('/custom-fields'); ?>">
+        <a class="flex items-center mt-1 py-2 px-6 <?php echo is_active('/custom-fields') ? 'bg-gray-700 bg-opacity-25 text-gray-100' : 'text-gray-500 hover:bg-gray-700 hover:bg-opacity-25 hover:text-gray-100'; ?>" href="<?php echo url('/custom-fields'); ?>">
             <span class="mx-3">پارامترها</span>
         </a>
         <?php endif; ?>
 
         <?php if ($can('orders')): ?>
-        <a class="flex items-center mt-2 py-2 px-6 <?php echo is_active('/orders') ? 'bg-gray-700 bg-opacity-25 text-gray-100' : 'text-gray-500 hover:bg-gray-700 hover:bg-opacity-25 hover:text-gray-100'; ?>" href="<?php echo url('/orders'); ?>">
+        <a class="flex items-center mt-1 py-2 px-6 <?php echo is_active('/orders') ? 'bg-gray-700 bg-opacity-25 text-gray-100' : 'text-gray-500 hover:bg-gray-700 hover:bg-opacity-25 hover:text-gray-100'; ?>" href="<?php echo url('/orders'); ?>">
             <span class="mx-3">سفارشات</span>
         </a>
         <?php endif; ?>
 
         <?php if ($can('pages')): ?>
-        <a class="flex items-center mt-2 py-2 px-6 <?php echo is_active('/pages') ? 'bg-gray-700 bg-opacity-25 text-gray-100' : 'text-gray-500 hover:bg-gray-700 hover:bg-opacity-25 hover:text-gray-100'; ?>" href="<?php echo url('/pages'); ?>">
+        <a class="flex items-center mt-1 py-2 px-6 <?php echo is_active('/pages') ? 'bg-gray-700 bg-opacity-25 text-gray-100' : 'text-gray-500 hover:bg-gray-700 hover:bg-opacity-25 hover:text-gray-100'; ?>" href="<?php echo url('/pages'); ?>">
             <span class="mx-3">مدیریت صفحات</span>
         </a>
         <?php endif; ?>
 
         <?php if ($can('faq')): ?>
-        <a class="flex items-center mt-2 py-2 px-6 <?php echo is_active('/faq') ? 'bg-gray-700 bg-opacity-25 text-gray-100' : 'text-gray-500 hover:bg-gray-700 hover:bg-opacity-25 hover:text-gray-100'; ?>" href="<?php echo url('/faq'); ?>">
+        <a class="flex items-center mt-1 py-2 px-6 <?php echo is_active('/faq') ? 'bg-gray-700 bg-opacity-25 text-gray-100' : 'text-gray-500 hover:bg-gray-700 hover:bg-opacity-25 hover:text-gray-100'; ?>" href="<?php echo url('/faq'); ?>">
             <span class="mx-3">سوالات متداول</span>
         </a>
         <?php endif; ?>
 
         <?php if ($can('reviews')): ?>
-        <a class="flex items-center mt-2 py-2 px-6 <?php echo is_active('/reviews') ? 'bg-gray-700 bg-opacity-25 text-gray-100' : 'text-gray-500 hover:bg-gray-700 hover:bg-opacity-25 hover:text-gray-100'; ?>" href="<?php echo url('/reviews'); ?>">
+        <a class="flex items-center mt-1 py-2 px-6 <?php echo is_active('/reviews') ? 'bg-gray-700 bg-opacity-25 text-gray-100' : 'text-gray-500 hover:bg-gray-700 hover:bg-opacity-25 hover:text-gray-100'; ?>" href="<?php echo url('/reviews'); ?>">
             <span class="mx-3">نظرات</span>
         </a>
         <?php endif; ?>
 
         <?php if ($can('settings')): ?>
-        <a class="flex items-center mt-2 py-2 px-6 <?php echo is_active('/settings') ? 'bg-gray-700 bg-opacity-25 text-gray-100' : 'text-gray-500 hover:bg-gray-700 hover:bg-opacity-25 hover:text-gray-100'; ?>" href="<?php echo url('/settings'); ?>">
+        <a class="flex items-center mt-1 py-2 px-6 <?php echo is_active('/settings') ? 'bg-gray-700 bg-opacity-25 text-gray-100' : 'text-gray-500 hover:bg-gray-700 hover:bg-opacity-25 hover:text-gray-100'; ?>" href="<?php echo url('/settings'); ?>">
             <span class="mx-3">تنظیمات</span>
         </a>
         <?php endif; ?>
 
         <?php if ($current_admin && Admin::isSuperAdmin($current_admin)): ?>
-        <a class="flex items-center mt-2 py-2 px-6 <?php echo is_active('/admins') ? 'bg-gray-700 bg-opacity-25 text-gray-100' : 'text-gray-500 hover:bg-gray-700 hover:bg-opacity-25 hover:text-gray-100'; ?>" href="<?php echo url('/admins'); ?>">
+        <a class="flex items-center mt-1 py-2 px-6 <?php echo is_active('/admins') ? 'bg-gray-700 bg-opacity-25 text-gray-100' : 'text-gray-500 hover:bg-gray-700 hover:bg-opacity-25 hover:text-gray-100'; ?>" href="<?php echo url('/admins'); ?>">
             <span class="mx-3 text-purple-400">مدیریت مدیران</span>
         </a>
         <?php endif; ?>
