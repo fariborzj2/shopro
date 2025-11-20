@@ -17,24 +17,11 @@ class DashboardController
         $usersChartData = Dashboard::getUsersChartData();
         $recentOrders = Dashboard::getRecentOrders(); // Fetch recent orders
 
-        // Prepare data for Chart.js
-        $sales_labels = $salesChartData['labels'];
-        $sales_values = $salesChartData['data'];
-
-        $users_labels = $usersChartData['labels'];
-        $users_values = $usersChartData['data'];
-
         return view('main', 'dashboard', [
             'title' => 'داشبورد',
             'kpis' => $kpis,
-            'sales_chart' => [
-                'labels' => json_encode($sales_labels),
-                'values' => json_encode($sales_values)
-            ],
-            'users_chart' => [
-                'labels' => json_encode($users_labels),
-                'values' => json_encode($users_values)
-            ],
+            'salesChartData' => $salesChartData, // Pass raw array for view logic
+            'usersChartData' => $usersChartData, // Pass raw array for view logic
             'recent_orders' => $recentOrders // Pass to view
         ]);
     }
