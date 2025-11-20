@@ -232,20 +232,16 @@ function build_category_tree_options(array $categories, $parentId = null, $level
 function translate_status_fa($status)
 {
     $translations = [
-        // Order Statuses
-        'pending' => 'عدم پرداخت',
+        'pending' => 'درحال بررسی',
         'paid' => 'پرداخت شده',
-        'processing' => 'پرداخت شده', // Mapping to closest requested status
-        'shipped' => 'تکمیل شده',    // Mapping to closest requested status
-        'delivered' => 'تکمیل شده',
+        'failed' => 'عدم پرداخت',
         'completed' => 'تکمیل شده',
         'cancelled' => 'لغو شده',
-        'failed' => 'عدم پرداخت',    // Mapping to closest requested status
         'phishing' => 'فیشینگ',
 
         // Transaction Statuses
         'successful' => 'موفق',
-        // 'pending' and 'failed' are already defined above
+        'Unsuccessful' => 'پرداخت ناموفق',
 
         // General Statuses
         'active' => 'فعال',

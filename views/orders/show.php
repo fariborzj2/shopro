@@ -48,8 +48,9 @@
                         <select name="status" class="block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
                             <?php
                             $statuses = [
-                                'pending' => 'عدم پرداخت',
+                                'pending' => 'درحال بررسی',
                                 'paid' => 'پرداخت شده',
+                                'failed' => 'عدم پرداخت',
                                 'completed' => 'تکمیل شده',
                                 'cancelled' => 'لغو شده',
                                 'phishing' => 'فیشینگ',
