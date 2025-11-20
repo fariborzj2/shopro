@@ -91,6 +91,11 @@ $router->post('/admin/orders/update_status/{id}', 'Admin\OrdersController@update
 
 // Admins
 $router->get('/admin/admins', 'Admin\AdminsController@index');
+$router->get('/admin/admins/create', 'Admin\AdminsController@create');
+$router->post('/admin/admins/store', 'Admin\AdminsController@store');
+$router->get('/admin/admins/edit/{id}', 'Admin\AdminsController@edit');
+$router->post('/admin/admins/update/{id}', 'Admin\AdminsController@update');
+$router->post('/admin/admins/delete/{id}', 'Admin\AdminsController@delete');
 
 
 // Settings

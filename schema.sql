@@ -99,6 +99,8 @@ CREATE TABLE `admins` (
   `name` VARCHAR(100),
   `email` VARCHAR(100) NOT NULL UNIQUE,
   `role` VARCHAR(50),
+  `is_super_admin` BOOLEAN NOT NULL DEFAULT FALSE,
+  `permissions` JSON DEFAULT NULL,
   `status` ENUM('active', 'inactive') NOT NULL DEFAULT 'active',
   `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   `last_login` TIMESTAMP NULL

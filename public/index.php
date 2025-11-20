@@ -67,6 +67,61 @@ if (strpos($uri, '/admin') === 0 && strpos($uri, '/admin/login') === false) {
         header('Location: /admin/login');
         exit();
     }
+
+    // Global Permission Guard
+    // We only check granular permissions for specific modules here.
+    // The AdminsController::checkSuperAdmin handles the 'admins' section.
+    // This block ensures that if a user tries to access /admin/products, they have 'products' permission.
+
+    $admin = \App\Models\Admin::find($_SESSION['admin_id']);
+    if (!$admin || $admin['status'] !== 'active') {
+        // Account deleted or deactivated
+        unset($_SESSION['admin_id']);
+        header('Location: /admin/login');
+        exit();
+    }
+
+    // If Super Admin, bypass all checks
+    if (!\App\Models\Admin::isSuperAdmin($admin)) {
+
+        // Define URI map to Permissions
+        // Key: URI segment, Value: Permission key
+        $permissionMap = [
+            '/admin/dashboard'      => 'dashboard',
+            '/admin/users'          => 'users',
+            '/admin/categories'     => 'categories',
+            '/admin/products'       => 'products',
+            '/admin/media'          => 'media',
+            '/admin/custom-fields'  => 'custom_fields',
+            '/admin/orders'         => 'orders',
+            '/admin/settings'       => 'settings',
+            '/admin/blog'           => 'blog',
+            '/admin/pages'          => 'pages',
+            '/admin/faq'            => 'faq',
+            '/admin/reviews'        => 'reviews',
+            // 'admins' is handled by checkSuperAdmin in controller, but good to block here too
+            '/admin/admins'         => 'SUPER_ADMIN_ONLY'
+        ];
+
+        $hasAccess = true;
+
+        foreach ($permissionMap as $prefix => $perm) {
+            if (strpos($uri, $prefix) === 0) {
+                if ($perm === 'SUPER_ADMIN_ONLY') {
+                    $hasAccess = false; // Non-super admins strictly blocked
+                } elseif (!\App\Models\Admin::hasPermission($admin, $perm)) {
+                    $hasAccess = false;
+                }
+                break; // Match found, stop checking
+            }
+        }
+
+        if (!$hasAccess) {
+            http_response_code(403);
+            echo "<h1>403 Forbidden</h1><p>شما مجوز دسترسی به این صفحه را ندارید.</p><a href='/admin'>بازگشت به داشبورد</a>";
+            exit();
+        }
+    }
 }
 
 // ----------------------------
