@@ -38,8 +38,11 @@
             </div>
             <div>
                 <?php if (isset($_SESSION['user_id'])): ?>
-                    <a href="/dashboard/orders" class="bg-gray-800 text-white px-5 py-2 rounded-lg text-sm font-semibold hover:bg-gray-900 transition-colors">
+                    <a href="/dashboard/orders" class="bg-gray-800 text-white px-5 py-2 rounded-lg text-sm font-semibold hover:bg-gray-900 transition-colors ml-2">
                         داشبورد
+                    </a>
+                    <a href="/logout" class="bg-red-600 text-white px-5 py-2 rounded-lg text-sm font-semibold hover:bg-red-700 transition-colors">
+                        خروج
                     </a>
                 <?php else: ?>
                     <a href="#" @click.prevent="$dispatch('open-auth-modal')" class="bg-gray-800 text-white px-5 py-2 rounded-lg text-sm font-semibold hover:bg-gray-900 transition-colors">
