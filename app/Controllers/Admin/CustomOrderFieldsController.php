@@ -26,9 +26,8 @@ class CustomOrderFieldsController
 
     public function store()
     {
-        if (!verify_csrf_token()) {
-            redirect_back_with_error('Invalid CSRF token.');
-        }
+        // CSRF token is verified globally in public/index.php for all POST requests.
+        // Re-verifying here would fail because the token is rotated after the first successful check.
         $data = $this->prepareDataFromRequest();
         CustomOrderField::create($data);
         redirect_with_success('/admin/custom-fields', 'فیلد سفارشی با موفقیت ایجاد شد.');
@@ -48,14 +47,13 @@ class CustomOrderFieldsController
 
     public function update($id)
     {
-        if (!verify_csrf_token()) {
-            redirect_back_with_error('Invalid CSRF token.');
-        }
         $field = CustomOrderField::find($id);
         if (!$field) {
             redirect_back_with_error('فیلد مورد نظر یافت نشد.');
         }
 
+        // CSRF token is verified globally in public/index.php for all POST requests.
+        // Re-verifying here would fail because the token is rotated after the first successful check.
         $data = $this->prepareDataFromRequest();
         CustomOrderField::update($id, $data);
 
