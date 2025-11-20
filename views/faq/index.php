@@ -5,7 +5,7 @@
             <h1 class="text-xl font-bold text-gray-800 dark:text-white">مدیریت سوالات متداول</h1>
             <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">سوالات و پاسخ‌های متداولی که در سایت نمایش داده می‌شوند</p>
         </div>
-        <a href="<?= url('/faq/create') ?>" class="inline-flex items-center justify-center px-4 py-2 bg-primary-600 text-white text-sm font-medium rounded-lg hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 shadow-sm transition-colors">
+        <a href="<?= url('faq/create') ?>" class="inline-flex items-center justify-center px-4 py-2 bg-primary-600 text-white text-sm font-medium rounded-lg hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 shadow-sm transition-colors">
             <?php partial('icon', ['name' => 'plus', 'class' => 'w-5 h-5 ml-2']); ?>
             افزودن سوال جدید
         </a>
