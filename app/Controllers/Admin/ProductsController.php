@@ -104,6 +104,9 @@ class ProductsController
             redirect_back_with_error('Product not found.');
         }
 
+        // Convert object to array for view compatibility
+        $product = (array) $product;
+
         $categories = Category::all();
         $settings = Setting::getAll();
 
