@@ -40,6 +40,31 @@
                 </div>
             </dl>
 
+            <div class="mt-8 border-t pt-6">
+                <h3 class="text-lg font-medium text-gray-900 mb-4">تغییر وضعیت سفارش</h3>
+                <form action="<?= url('orders/update_status/' . $order->id) ?>" method="POST" class="flex items-center gap-4">
+                    <?php csrf_field(); ?>
+                    <div class="w-64">
+                        <select name="status" class="block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
+                            <?php
+                            $statuses = [
+                                'pending' => 'عدم پرداخت',
+                                'paid' => 'پرداخت شده',
+                                'completed' => 'تکمیل شده',
+                                'cancelled' => 'لغو شده',
+                                'phishing' => 'فیشینگ',
+                            ];
+                            foreach ($statuses as $key => $label): ?>
+                                <option value="<?= $key ?>" <?= $order->status === $key ? 'selected' : '' ?>><?= $label ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                    <button type="submit" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                        ذخیره وضعیت
+                    </button>
+                </form>
+            </div>
+
             <?php
             if (!empty($order->custom_fields_data)) {
                 $custom_fields = json_decode($order->custom_fields_data);

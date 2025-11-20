@@ -233,13 +233,15 @@ function translate_status_fa($status)
 {
     $translations = [
         // Order Statuses
-        'pending' => 'در انتظار پرداخت',
-        'paid' => 'پرداخت موفق',
-        'processing' => 'در حال پردازش',
-        'shipped' => 'ارسال شده',
-        'delivered' => 'تحویل داده شده',
+        'pending' => 'عدم پرداخت',
+        'paid' => 'پرداخت شده',
+        'processing' => 'پرداخت شده', // Mapping to closest requested status
+        'shipped' => 'تکمیل شده',    // Mapping to closest requested status
+        'delivered' => 'تکمیل شده',
+        'completed' => 'تکمیل شده',
         'cancelled' => 'لغو شده',
-        'failed' => 'پرداخت ناموفق',
+        'failed' => 'عدم پرداخت',    // Mapping to closest requested status
+        'phishing' => 'فیشینگ',
 
         // Transaction Statuses
         'successful' => 'موفق',
