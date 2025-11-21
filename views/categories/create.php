@@ -1,24 +1,49 @@
-<div class="max-w-4xl mx-auto">
-    <!-- Header -->
-    <div class="mb-6">
-        <h1 class="text-2xl font-bold text-gray-900 dark:text-white">افزودن دسته‌بندی جدید</h1>
-        <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">مشخصات دسته‌بندی جدید را وارد کنید.</p>
-    </div>
+<h1 class="text-3xl font-bold mb-6">افزودن دسته‌بندی وبلاگ</h1>
 
-    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700">
-        <form action="<?php echo url('categories/store'); ?>" method="POST" enctype="multipart/form-data" accept-charset="UTF-8" class="p-6">
-
-            <?php require '_form.php'; ?>
-
-            <!-- Action Buttons -->
-            <div class="mt-8 pt-6 border-t border-gray-100 dark:border-gray-700 flex items-center justify-end space-x-3 space-x-reverse">
-                <a href="<?php echo url('categories'); ?>" class="px-4 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-200 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-600 font-medium transition-colors">
-                    انصراف
-                </a>
-                <button type="submit" class="px-6 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 shadow-md hover:shadow-lg font-medium transition-all focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
-                    ایجاد دسته‌بندی
-                </button>
+<div class="bg-white shadow-md rounded-lg p-8">
+    <form action="/blog/categories/store" method="POST">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="mb-4">
+                <label for="name_fa" class="block text-gray-700 text-sm font-bold mb-2">نام فارسی</label>
+                <input type="text" id="name_fa" name="name_fa" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
             </div>
-        </form>
-    </div>
+            <div class="mb-4">
+                <label for="name_en" class="block text-gray-700 text-sm font-bold mb-2">نام انگلیسی</label>
+                <input type="text" id="name_en" name="name_en" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+            </div>
+            <div class="mb-4 col-span-2">
+                <label for="slug" class="block text-gray-700 text-sm font-bold mb-2">اسلاگ (Slug)</label>
+                <input type="text" id="slug" name="slug" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+            </div>
+            <div class="mb-4">
+                <label for="parent_id" class="block text-gray-700 text-sm font-bold mb-2">والد</label>
+                <select id="parent_id" name="parent_id" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                    <option value="">— بدون والد —</option>
+                    <?php foreach ($categories as $category): ?>
+                        <option value="<?= $category['id'] ?>"><?= htmlspecialchars($category['name_fa']) ?></option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+            <div class="mb-4">
+                <label for="position" class="block text-gray-700 text-sm font-bold mb-2">موقعیت</label>
+                <input type="number" id="position" name="position" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" value="0">
+            </div>
+            <div class="mb-6">
+                <label for="status" class="block text-gray-700 text-sm font-bold mb-2">وضعیت</label>
+                <select id="status" name="status" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                    <option value="active" selected>فعال</option>
+                    <option value="inactive">غیرفعال</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="flex items-center justify-between mt-6">
+            <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+                ذخیره
+            </button>
+            <a href="/blog/categories" class="inline-block align-baseline font-bold text-sm text-blue-500 hover:text-blue-800">
+                انصراف
+            </a>
+        </div>
+    </form>
 </div>
