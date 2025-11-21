@@ -84,7 +84,7 @@ class BlogPostsController
             'title' => htmlspecialchars($_POST['title']),
             'slug' => htmlspecialchars($_POST['slug']),
             'content' => $_POST['content'] ?? '', // Note: Content should be purified, but for now we leave it
-            'excerpt' => htmlspecialchars($_POST['excerpt'] ?? ''),
+            'excerpt' => $_POST['excerpt'] ?? '', // Content should be purified
             'status' => $_POST['status'] ?? 'draft',
             'published_at' => $_POST['published_at'] ?? null,
             'is_editors_pick' => isset($_POST['is_editors_pick']) ? 1 : 0,
@@ -195,7 +195,7 @@ class BlogPostsController
             'title' => htmlspecialchars($_POST['title']),
             'slug' => htmlspecialchars($_POST['slug']),
             'content' => $_POST['content'] ?? '', // Note: Content should be purified, but for now we leave it
-            'excerpt' => htmlspecialchars($_POST['excerpt'] ?? ''),
+            'excerpt' => $_POST['excerpt'] ?? '', // Content should be purified
             'status' => $_POST['status'] ?? 'draft',
             'published_at' => $_POST['published_at'] ?? null,
             'is_editors_pick' => isset($_POST['is_editors_pick']) ? 1 : 0,
