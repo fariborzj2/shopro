@@ -41,7 +41,7 @@ class BlogPostsController
     {
         $categories = BlogCategory::all();
         $authors = Admin::all();
-        $tags = BlogTag::all();
+        $tags = BlogTag::findAll();
 
         return view('main', 'blog/posts/create', [
             'title' => 'افزودن نوشته جدید',
@@ -115,7 +115,7 @@ class BlogPostsController
 
         $categories = BlogCategory::all();
         $authors = Admin::all();
-        $tags = BlogTag::all();
+        $tags = BlogTag::findAll();
         $post_tags = BlogPost::getTagsByPostId($id);
 
         $all_faq_items = FaqItem::all();
