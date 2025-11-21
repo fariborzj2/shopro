@@ -8,6 +8,7 @@ use App\Models\Admin;
 use App\Models\BlogTag;
 use App\Models\FaqItem;
 use App\Core\Paginator;
+use App\Core\ImageUploader;
 
 class BlogPostsController
 {
@@ -77,20 +78,28 @@ class BlogPostsController
         // Use the logged-in admin's ID as the author
         $author_id = $_SESSION['admin_id'];
 
-        $post_id = BlogPost::create([
+        $data = [
             'category_id' => (int)$_POST['category_id'],
             'author_id' => $author_id,
             'title' => htmlspecialchars($_POST['title']),
             'slug' => htmlspecialchars($_POST['slug']),
             'content' => $_POST['content'] ?? '', // Note: Content should be purified, but for now we leave it
-            'excerpt' => htmlspecialchars($_POST['excerpt'] ?? ''),
+            'excerpt' => $_POST['excerpt'] ?? '', // Content should be purified
             'status' => $_POST['status'] ?? 'draft',
             'published_at' => $_POST['published_at'] ?? null,
             'is_editors_pick' => isset($_POST['is_editors_pick']) ? 1 : 0,
             'meta_title' => htmlspecialchars($_POST['meta_title'] ?? ''),
             'meta_description' => htmlspecialchars($_POST['meta_description'] ?? ''),
             'meta_keywords' => htmlspecialchars($_POST['meta_keywords'] ?? ''),
-        ]);
+        ];
+
+        // Image Upload
+        $uploader = new ImageUploader();
+        if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
+            $data['image_url'] = $uploader->upload($_FILES['image'], 'blog/featured');
+        }
+
+        $post_id = BlogPost::create($data);
 
         // Sync tags
         $tags = $_POST['tags'] ?? [];
@@ -180,20 +189,32 @@ class BlogPostsController
             return redirect_back_with_errors($errors);
         }
 
-        BlogPost::update($id, [
+        $data = [
             'category_id' => (int)$_POST['category_id'],
             'author_id' => (int)$_POST['author_id'], // Keep author, but it shouldn't be changeable from the form
             'title' => htmlspecialchars($_POST['title']),
             'slug' => htmlspecialchars($_POST['slug']),
             'content' => $_POST['content'] ?? '', // Note: Content should be purified, but for now we leave it
-            'excerpt' => htmlspecialchars($_POST['excerpt'] ?? ''),
+            'excerpt' => $_POST['excerpt'] ?? '', // Content should be purified
             'status' => $_POST['status'] ?? 'draft',
             'published_at' => $_POST['published_at'] ?? null,
             'is_editors_pick' => isset($_POST['is_editors_pick']) ? 1 : 0,
             'meta_title' => htmlspecialchars($_POST['meta_title'] ?? ''),
             'meta_description' => htmlspecialchars($_POST['meta_description'] ?? ''),
             'meta_keywords' => htmlspecialchars($_POST['meta_keywords'] ?? ''),
-        ]);
+        ];
+
+        // Image Upload
+        $uploader = new ImageUploader();
+        if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
+            // Delete old image if exists
+            if (!empty($post['image_url'])) {
+                @unlink(PROJECT_ROOT . '/public' . $post['image_url']);
+            }
+            $data['image_url'] = $uploader->upload($_FILES['image'], 'blog/featured');
+        }
+
+        BlogPost::update($id, $data);
 
         // Sync tags
         $tags = $_POST['tags'] ?? [];
@@ -217,5 +238,31 @@ class BlogPostsController
         BlogPost::delete($id);
         header('Location: /blog/posts');
         exit();
+    }
+
+    /**
+     * Delete the featured image of a blog post.
+     */
+    public function deleteImage($id)
+    {
+        header('Content-Type: application/json');
+
+        $post = BlogPost::find($id);
+        if (!$post) {
+            echo json_encode(['success' => false, 'message' => 'نوشته یافت نشد.']);
+            return;
+        }
+
+        if (!empty($post['image_url'])) {
+            // Delete physical file
+            @unlink(PROJECT_ROOT . '/public' . $post['image_url']);
+
+            // Update DB
+            BlogPost::update($id, ['image_url' => null]);
+
+            echo json_encode(['success' => true, 'message' => 'تصویر شاخص حذف شد.']);
+        } else {
+            echo json_encode(['success' => false, 'message' => 'تصویری برای حذف وجود ندارد.']);
+        }
     }
 }
