@@ -87,6 +87,9 @@ class BlogPostsController
             'status' => $_POST['status'] ?? 'draft',
             'published_at' => $_POST['published_at'] ?? null,
             'is_editors_pick' => isset($_POST['is_editors_pick']) ? 1 : 0,
+            'meta_title' => htmlspecialchars($_POST['meta_title'] ?? ''),
+            'meta_description' => htmlspecialchars($_POST['meta_description'] ?? ''),
+            'meta_keywords' => htmlspecialchars($_POST['meta_keywords'] ?? ''),
         ]);
 
         // Sync tags
@@ -187,6 +190,9 @@ class BlogPostsController
             'status' => $_POST['status'] ?? 'draft',
             'published_at' => $_POST['published_at'] ?? null,
             'is_editors_pick' => isset($_POST['is_editors_pick']) ? 1 : 0,
+            'meta_title' => htmlspecialchars($_POST['meta_title'] ?? ''),
+            'meta_description' => htmlspecialchars($_POST['meta_description'] ?? ''),
+            'meta_keywords' => htmlspecialchars($_POST['meta_keywords'] ?? ''),
         ]);
 
         // Sync tags
