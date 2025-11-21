@@ -58,6 +58,12 @@
                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
                 تنظیمات سئو
             </a>
+            <a href="#" @click.prevent="activeTab = 'faq'"
+               :class="{ 'border-primary-500 text-primary-600 dark:text-primary-400': activeTab === 'faq', 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:border-gray-300': activeTab !== 'faq' }"
+               class="whitespace-nowrap pb-4 px-1 border-b-2 font-medium text-sm transition-colors flex items-center gap-2">
+               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                سوالات متداول
+            </a>
         </nav>
     </div>
 
@@ -198,6 +204,56 @@
             <div class="rounded-xl overflow-hidden border border-gray-300 dark:border-gray-600">
                 <textarea id="content" name="content" class="tinymce-editor"><?= htmlspecialchars($post['content'] ?? '') ?></textarea>
             </div>
+        </div>
+    </div>
+
+    <!-- FAQ Tab Content -->
+    <div x-show="activeTab === 'faq'" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0" style="display: none;">
+        <div class="space-y-4" x-data="{
+            faqs: <?php
+                // Load existing FAQs if any.
+                // We need to ensure $post_faq_items contains full objects (id, question, answer).
+                // The controller currently passes IDs. We might need to fetch full objects or pass them here.
+                // Let's assume for now we need to pass objects from controller.
+                // If $post_faq_items is array of IDs, we need to fetch.
+                // Since I can't change controller in this same step easily without logic, I'll assume I'll fix controller to pass objects.
+                // Or I can use what I have. `edit` method in controller has:
+                // $post_faq_items = BlogPost::getFaqItemsByPostId($id); -> returns IDs.
+                // I need to change that to return objects.
+                // For now, let's initialize empty or with what we have, and I'll fix the controller in next step.
+                echo isset($post_faq_objects) ? json_encode($post_faq_objects) : '[]';
+            ?>,
+            addFaq() {
+                this.faqs.push({ id: null, question: '', answer: '' });
+            },
+            removeFaq(index) {
+                this.faqs.splice(index, 1);
+            }
+        }">
+            <template x-for="(faq, index) in faqs" :key="index">
+                <div class="bg-gray-50 dark:bg-gray-700/50 rounded-xl p-4 border border-gray-200 dark:border-gray-600 relative group">
+                    <button type="button" @click="removeFaq(index)" class="absolute top-2 left-2 text-red-400 hover:text-red-600 transition-colors">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                    </button>
+
+                    <div class="grid grid-cols-1 gap-4 pr-8">
+                        <div>
+                            <label class="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">سوال</label>
+                            <input type="text" x-model="faq.question" :name="`post_faqs[${index}][question]`" class="w-full rounded-lg border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-sm px-3 py-2" placeholder="سوال را وارد کنید..." required>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">پاسخ</label>
+                            <textarea x-model="faq.answer" :name="`post_faqs[${index}][answer]`" rows="2" class="w-full rounded-lg border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-sm px-3 py-2" placeholder="پاسخ را وارد کنید..." required></textarea>
+                        </div>
+                        <input type="hidden" :name="`post_faqs[${index}][id]`" x-model="faq.id">
+                    </div>
+                </div>
+            </template>
+
+            <button type="button" @click="addFaq()" class="w-full py-3 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-xl text-gray-500 dark:text-gray-400 hover:border-primary-500 hover:text-primary-500 transition-colors flex items-center justify-center gap-2">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                افزودن سوال جدید
+            </button>
         </div>
     </div>
 
