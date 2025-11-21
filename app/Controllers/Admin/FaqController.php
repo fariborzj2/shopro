@@ -9,12 +9,12 @@ class FaqController
     public function index()
     {
         $faq_items = FaqItem::findAll();
-        view('admin/faq/index', ['faq_items' => $faq_items]);
+        view('main', 'faq/index', ['items' => $faq_items]);
     }
 
     public function create()
     {
-        view('admin/faq/create');
+        view('main', 'faq/create');
     }
 
     public function store()
@@ -31,7 +31,7 @@ class FaqController
     public function edit($id)
     {
         $faq_item = FaqItem::find($id);
-        view('admin/faq/edit', ['faq_item' => $faq_item]);
+        view('main', 'faq/edit', ['item' => $faq_item]);
     }
 
     public function update($id)
