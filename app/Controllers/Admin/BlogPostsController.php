@@ -169,6 +169,12 @@ class BlogPostsController
         $all_faq_items = FaqItem::all();
         $post_faq_items = BlogPost::getFaqItemsByPostId($id);
 
+        // Fetch full objects for the FAQ tab
+        $post_faq_objects = [];
+        if (!empty($post_faq_items)) {
+            $post_faq_objects = FaqItem::findByIds($post_faq_items);
+        }
+
         // Convert gregorian published_at to jalali for the view
         if (!empty($post['published_at'])) {
             $ts = strtotime($post['published_at']);
@@ -184,7 +190,8 @@ class BlogPostsController
             'tags' => $tags,
             'post_tags' => $post_tags,
             'all_faq_items' => $all_faq_items,
-            'post_faq_items' => $post_faq_items
+            'post_faq_items' => $post_faq_items,
+            'post_faq_objects' => $post_faq_objects
         ]);
     }
 
@@ -284,8 +291,76 @@ class BlogPostsController
         BlogPost::syncTags($id, $tagIds);
 
         // Sync FAQ items
-        $faq_items = $_POST['faq_items'] ?? [];
-        BlogPost::syncFaqItems($id, $faq_items);
+        $post_faqs = $_POST['post_faqs'] ?? [];
+        $faq_ids = [];
+
+        foreach ($post_faqs as $faq_data) {
+            $faq_id = null;
+            if (!empty($faq_data['id'])) {
+                // Update existing
+                $faq_id = $faq_data['id'];
+                FaqItem::update($faq_id, [
+                    'question' => htmlspecialchars($faq_data['question']),
+                    'answer' => htmlspecialchars($faq_data['answer']),
+                    'status' => 'active',
+                    'position' => 0
+                ]);
+            } else {
+                // Create new
+                FaqItem::create([
+                    'question' => htmlspecialchars($faq_data['question']),
+                    'answer' => htmlspecialchars($faq_data['answer']),
+                    'status' => 'active',
+                    'position' => 0
+                ]);
+                $pdo = \App\Core\Database::getConnection();
+                $faq_id = $pdo->lastInsertId();
+            }
+
+            if ($faq_id) {
+                $faq_ids[] = $faq_id;
+            }
+        }
+
+        $manual_faq_ids = $_POST['faq_items'] ?? [];
+        $all_faq_ids = array_merge($faq_ids, $manual_faq_ids);
+
+        BlogPost::syncFaqItems($post_id, $all_faq_ids);
+        $post_faqs = $_POST['post_faqs'] ?? [];
+        $faq_ids = [];
+
+        foreach ($post_faqs as $faq_data) {
+            $faq_id = null;
+            if (!empty($faq_data['id'])) {
+                // Update existing
+                $faq_id = $faq_data['id'];
+                FaqItem::update($faq_id, [
+                    'question' => htmlspecialchars($faq_data['question']),
+                    'answer' => htmlspecialchars($faq_data['answer']),
+                    'status' => 'active',
+                    'position' => 0
+                ]);
+            } else {
+                // Create new
+                FaqItem::create([
+                    'question' => htmlspecialchars($faq_data['question']),
+                    'answer' => htmlspecialchars($faq_data['answer']),
+                    'status' => 'active',
+                    'position' => 0
+                ]);
+                $pdo = \App\Core\Database::getConnection();
+                $faq_id = $pdo->lastInsertId();
+            }
+
+            if ($faq_id) {
+                $faq_ids[] = $faq_id;
+            }
+        }
+
+        $manual_faq_ids = $_POST['faq_items'] ?? [];
+        $all_faq_ids = array_merge($faq_ids, $manual_faq_ids);
+
+        BlogPost::syncFaqItems($id, $all_faq_ids);
 
         header('Location: /blog/posts');
         exit();
