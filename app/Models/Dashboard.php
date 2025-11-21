@@ -19,8 +19,8 @@ class Dashboard
         $today = date('Y-m-d');
         $month_start = date('Y-m-01');
 
-        // Sales today
-        $stmt = $pdo->prepare("SELECT SUM(amount) FROM orders WHERE DATE(order_time) = ? AND payment_status = 'paid'");
+        // Sales today (Exclude cancelled orders)
+        $stmt = $pdo->prepare("SELECT SUM(amount) FROM orders WHERE DATE(order_time) = ? AND payment_status = 'paid' AND order_status != 'cancelled'");
         $stmt->execute([$today]);
         $sales_today = $stmt->fetchColumn() ?: 0;
 
@@ -63,6 +63,10 @@ class Dashboard
         $stmt = $pdo->query("SELECT COUNT(id) FROM orders WHERE order_status = 'completed'");
         $total_completed_orders = $stmt->fetchColumn() ?: 0;
 
+        // Total Sales Amount (Paid and not Cancelled)
+        $stmt = $pdo->query("SELECT SUM(amount) FROM orders WHERE payment_status = 'paid' AND order_status != 'cancelled'");
+        $total_sales = $stmt->fetchColumn() ?: 0;
+
         // Failed Orders Today
         $stmt = $pdo->prepare("SELECT COUNT(id) FROM orders WHERE payment_status = 'failed' AND DATE(order_time) = ?");
         $stmt->execute([$today]);
@@ -71,6 +75,7 @@ class Dashboard
         return [
             'total_users' => $total_users,
             'total_completed_orders' => $total_completed_orders,
+            'total_sales' => $total_sales,
             'failed_orders_today' => $failed_orders_today,
         ];
     }
