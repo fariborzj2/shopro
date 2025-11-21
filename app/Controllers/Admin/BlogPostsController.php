@@ -264,5 +264,6 @@ class BlogPostsController
         } else {
             echo json_encode(['success' => false, 'message' => 'تصویری برای حذف وجود ندارد.']);
         }
+        exit;
     }
 }

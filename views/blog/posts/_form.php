@@ -9,6 +9,15 @@
     },
 
     deleteImage() {
+        if (!this.imageUrl) return;
+
+        if (this.imageUrl.startsWith('data:')) {
+            // Just clear the local preview
+            this.imageUrl = '';
+            document.getElementById('image').value = '';
+            return;
+        }
+
         if (!confirm('آیا از حذف این تصویر مطمئن هستید؟')) return;
 
         let url = `<?php echo isset($post['id']) ? url('blog/posts/delete-image/' . $post['id']) : ''; ?>`;
@@ -130,7 +139,7 @@
                         <input id="image" name="image" type="file" class="sr-only" @change="previewImage($event)">
                     </label>
                 </div>
-                 <button type="button" x-show="imageUrl && !imageUrl.startsWith('data:')" @click.prevent="deleteImage()" class="mt-2 text-xs text-red-500 hover:text-red-700 flex items-center gap-1" style="display: none;">
+                 <button type="button" x-show="imageUrl" @click.prevent="deleteImage()" class="mt-2 text-xs text-red-500 hover:text-red-700 flex items-center gap-1" style="display: none;">
                     <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
                     حذف تصویر
                 </button>
