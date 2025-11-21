@@ -17,7 +17,7 @@
 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
 
     <!-- Card 1: Sales Today -->
-    <div class="group relative bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-card hover:shadow-lg transition-all duration-300 border border-gray-100 dark:border-gray-700">
+    <div class="group relative overflow-hidden bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-card hover:shadow-lg transition-all duration-300 border border-gray-100 dark:border-gray-700">
         <div class="absolute top-0 right-0 w-24 h-24 bg-primary-50 dark:bg-primary-900/10 rounded-bl-full -mr-4 -mt-4 opacity-50 transition-transform group-hover:scale-110"></div>
 
         <div class="flex items-center justify-between mb-4 relative z-10">
@@ -39,7 +39,7 @@
     </div>
 
     <!-- Card 2: Orders Today -->
-    <div class="group relative bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-card hover:shadow-lg transition-all duration-300 border border-gray-100 dark:border-gray-700">
+    <div class="group relative overflow-hidden bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-card hover:shadow-lg transition-all duration-300 border border-gray-100 dark:border-gray-700">
          <div class="absolute top-0 right-0 w-24 h-24 bg-blue-50 dark:bg-blue-900/10 rounded-bl-full -mr-4 -mt-4 opacity-50 transition-transform group-hover:scale-110"></div>
         <div class="flex items-center justify-between mb-4 relative z-10">
             <div class="p-3 bg-blue-50 dark:bg-blue-900/20 rounded-xl text-blue-600 dark:text-blue-400 shadow-sm group-hover:scale-105 transition-transform">
@@ -53,7 +53,7 @@
     </div>
 
     <!-- Card 3: New Users -->
-    <div class="group relative bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-card hover:shadow-lg transition-all duration-300 border border-gray-100 dark:border-gray-700">
+    <div class="group relative overflow-hidden bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-card hover:shadow-lg transition-all duration-300 border border-gray-100 dark:border-gray-700">
         <div class="absolute top-0 right-0 w-24 h-24 bg-purple-50 dark:bg-purple-900/10 rounded-bl-full -mr-4 -mt-4 opacity-50 transition-transform group-hover:scale-110"></div>
         <div class="flex items-center justify-between mb-4 relative z-10">
              <div class="p-3 bg-purple-50 dark:bg-purple-900/20 rounded-xl text-purple-600 dark:text-purple-400 shadow-sm group-hover:scale-105 transition-transform">
@@ -67,7 +67,7 @@
     </div>
 
     <!-- Card 4: Monthly Orders -->
-    <div class="group relative bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-card hover:shadow-lg transition-all duration-300 border border-gray-100 dark:border-gray-700">
+    <div class="group relative overflow-hidden bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-card hover:shadow-lg transition-all duration-300 border border-gray-100 dark:border-gray-700">
          <div class="absolute top-0 right-0 w-24 h-24 bg-orange-50 dark:bg-orange-900/10 rounded-bl-full -mr-4 -mt-4 opacity-50 transition-transform group-hover:scale-110"></div>
         <div class="flex items-center justify-between mb-4 relative z-10">
              <div class="p-3 bg-orange-50 dark:bg-orange-900/20 rounded-xl text-orange-600 dark:text-orange-400 shadow-sm group-hover:scale-105 transition-transform">
