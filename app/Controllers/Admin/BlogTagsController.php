@@ -102,4 +102,21 @@ class BlogTagsController
         }
         exit;
     }
+
+    public function search()
+    {
+        $query = $_GET['q'] ?? '';
+        if (strlen($query) < 1) {
+            echo json_encode([]);
+            exit;
+        }
+
+        // Add a search method to BlogTag model if not exists, or use Database::query here
+        $stmt = Database::query("SELECT * FROM blog_tags WHERE name LIKE :query LIMIT 10", ['query' => '%' . $query . '%']);
+        $tags = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        header('Content-Type: application/json');
+        echo json_encode($tags);
+        exit;
+    }
 }

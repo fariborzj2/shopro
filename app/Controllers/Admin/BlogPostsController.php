@@ -78,6 +78,14 @@ class BlogPostsController
         // Use the logged-in admin's ID as the author
         $author_id = $_SESSION['admin_id'];
 
+        // Handle Meta Keywords (array to string)
+        $meta_keywords = '';
+        if (isset($_POST['meta_keywords']) && is_array($_POST['meta_keywords'])) {
+            $meta_keywords = implode(',', $_POST['meta_keywords']);
+        } elseif (isset($_POST['meta_keywords'])) {
+            $meta_keywords = $_POST['meta_keywords'];
+        }
+
         $data = [
             'category_id' => (int)$_POST['category_id'],
             'author_id' => $author_id,
@@ -90,7 +98,7 @@ class BlogPostsController
             'is_editors_pick' => isset($_POST['is_editors_pick']) ? 1 : 0,
             'meta_title' => htmlspecialchars($_POST['meta_title'] ?? ''),
             'meta_description' => htmlspecialchars($_POST['meta_description'] ?? ''),
-            'meta_keywords' => htmlspecialchars($_POST['meta_keywords'] ?? ''),
+            'meta_keywords' => htmlspecialchars($meta_keywords),
         ];
 
         // Image Upload
@@ -101,9 +109,37 @@ class BlogPostsController
 
         $post_id = BlogPost::create($data);
 
-        // Sync tags
-        $tags = $_POST['tags'] ?? [];
-        BlogPost::syncTags($post_id, $tags);
+        // Sync tags (handle IDs and new Strings)
+        $rawTags = $_POST['tags'] ?? [];
+        $tagIds = [];
+        foreach ($rawTags as $tag) {
+            if (strpos($tag, 'new:') === 0) {
+                // Create new tag
+                $tagName = substr($tag, 4);
+                $slug = preg_replace('/[^a-z0-9-]+/', '-', strtolower($tagName));
+                $existing = BlogTag::findBy('name', $tagName);
+                if ($existing) {
+                    $tagIds[] = $existing->id;
+                } else {
+                    // Create logic in controller or model. Model Create returns bool, need to adjust if we want ID.
+                    // But Model Create doesn't return ID in current implementation.
+                    // Let's use direct creation to get ID or update Model.
+                    // Assuming BlogTag::create just does insert.
+                    // I'll implement a helper here or assume standard behavior.
+                    // Since BlogTag::create returns true, I need to fetch it back or use PDO lastInsertId if inside the model.
+                    // Let's check BlogTag::create implementation again.
+                    // It uses Database::query.
+                    BlogTag::create(['name' => $tagName, 'slug' => $slug, 'status' => 'active']);
+                    $newTag = BlogTag::findBy('name', $tagName);
+                    if ($newTag) {
+                        $tagIds[] = $newTag->id;
+                    }
+                }
+            } else {
+                $tagIds[] = (int)$tag;
+            }
+        }
+        BlogPost::syncTags($post_id, $tagIds);
 
         // Sync FAQ items
         $faq_items = $_POST['faq_items'] ?? [];
@@ -189,6 +225,14 @@ class BlogPostsController
             return redirect_back_with_errors($errors);
         }
 
+        // Handle Meta Keywords
+        $meta_keywords = '';
+        if (isset($_POST['meta_keywords']) && is_array($_POST['meta_keywords'])) {
+            $meta_keywords = implode(',', $_POST['meta_keywords']);
+        } elseif (isset($_POST['meta_keywords'])) {
+            $meta_keywords = $_POST['meta_keywords'];
+        }
+
         $data = [
             'category_id' => (int)$_POST['category_id'],
             'author_id' => (int)$_POST['author_id'], // Keep author, but it shouldn't be changeable from the form
@@ -201,7 +245,7 @@ class BlogPostsController
             'is_editors_pick' => isset($_POST['is_editors_pick']) ? 1 : 0,
             'meta_title' => htmlspecialchars($_POST['meta_title'] ?? ''),
             'meta_description' => htmlspecialchars($_POST['meta_description'] ?? ''),
-            'meta_keywords' => htmlspecialchars($_POST['meta_keywords'] ?? ''),
+            'meta_keywords' => htmlspecialchars($meta_keywords),
         ];
 
         // Image Upload
@@ -217,8 +261,27 @@ class BlogPostsController
         BlogPost::update($id, $data);
 
         // Sync tags
-        $tags = $_POST['tags'] ?? [];
-        BlogPost::syncTags($id, $tags);
+        $rawTags = $_POST['tags'] ?? [];
+        $tagIds = [];
+        foreach ($rawTags as $tag) {
+            if (strpos($tag, 'new:') === 0) {
+                $tagName = substr($tag, 4);
+                $slug = preg_replace('/[^a-z0-9-]+/', '-', strtolower($tagName));
+                $existing = BlogTag::findBy('name', $tagName);
+                if ($existing) {
+                    $tagIds[] = $existing->id;
+                } else {
+                    BlogTag::create(['name' => $tagName, 'slug' => $slug, 'status' => 'active']);
+                    $newTag = BlogTag::findBy('name', $tagName);
+                    if ($newTag) {
+                        $tagIds[] = $newTag->id;
+                    }
+                }
+            } else {
+                $tagIds[] = (int)$tag;
+            }
+        }
+        BlogPost::syncTags($id, $tagIds);
 
         // Sync FAQ items
         $faq_items = $_POST['faq_items'] ?? [];

@@ -10,13 +10,13 @@ class ReviewsController
     public function index()
     {
         $reviews = Review::findAll();
-        view('admin/reviews/index', ['reviews' => $reviews]);
+        view('main', 'reviews/index', ['reviews' => $reviews]);
     }
 
     public function edit($id)
     {
         $review = Review::find($id);
-        view('admin/reviews/edit', ['review' => $review]);
+        view('main', 'reviews/edit', ['review' => $review]);
     }
 
     public function update($id)

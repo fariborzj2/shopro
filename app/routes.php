@@ -130,6 +130,7 @@ $router->get('/admin/blog/posts/edit/{id}', 'Admin\BlogPostsController@edit');
 $router->post('/admin/blog/posts/update/{id}', 'Admin\BlogPostsController@update');
 $router->post('/admin/blog/posts/delete/{id}', 'Admin\BlogPostsController@delete');
 $router->post('/admin/blog/posts/delete-image/{id}', 'Admin\BlogPostsController@deleteImage');
+$router->get('/admin/api/tags/search', 'Admin\BlogTagsController@search');
 
 // Custom Order Fields
 $router->get('/admin/custom-fields', 'Admin\CustomOrderFieldsController@index');
