@@ -69,7 +69,7 @@ $actionUrl = $isEdit ? url('blog/categories/update/' . $category['id']) : url('b
         </div>
     </div>
 
-    <div class="flex items-center justify-end gap-4 mt-6">
+    <div class="flex items-center justify-end mt-8 pt-6 border-t border-gray-100 dark:border-gray-700 gap-4">
         <a href="/blog/categories" class="px-4 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-200 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-600 font-medium transition-colors">
             انصراف
         </a>
