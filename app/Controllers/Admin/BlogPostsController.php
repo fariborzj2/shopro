@@ -82,7 +82,7 @@ class BlogPostsController
         }
 
         if (!empty($errors)) {
-            return redirect_back_with_errors($errors);
+            return redirect_back_with_error(implode('<br>', $errors));
         }
 
         // Use the logged-in admin's ID as the author
@@ -265,7 +265,7 @@ class BlogPostsController
         }
 
         if (!empty($errors)) {
-            return redirect_back_with_errors($errors);
+            return redirect_back_with_error(implode('<br>', $errors));
         }
 
         $data = [
