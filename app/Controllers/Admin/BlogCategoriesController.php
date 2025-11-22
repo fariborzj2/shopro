@@ -40,6 +40,11 @@ class BlogCategoriesController
             return redirect_back_with_error('نام فارسی و اسلاگ الزامی است.');
         }
 
+        // Check for duplicate slug
+        if (BlogCategory::findBy('slug', $_POST['slug'])) {
+            return redirect_back_with_error('این اسلاگ قبلا استفاده شده است. لطفا اسلاگ دیگری انتخاب کنید.');
+        }
+
         BlogCategory::create([
             'parent_id' => $_POST['parent_id'],
             'name_fa' => $_POST['name_fa'],
@@ -86,6 +91,12 @@ class BlogCategoriesController
             return redirect_back_with_error('نام فارسی و اسلاگ الزامی است.');
         }
 
+        // Check for duplicate slug
+        $existing = BlogCategory::findBy('slug', $_POST['slug']);
+        if ($existing && $existing->id != $id) {
+            return redirect_back_with_error('این اسلاگ قبلا توسط دسته‌بندی دیگری استفاده شده است.');
+        }
+
         BlogCategory::update($id, [
             'parent_id' => $_POST['parent_id'],
             'name_fa' => $_POST['name_fa'],
@@ -95,7 +106,7 @@ class BlogCategoriesController
             'position' => $_POST['position']
         ]);
 
-        header('Location: /blog/categories');
+        header('Location: /admin/blog/categories');
         exit();
     }
 
