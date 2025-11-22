@@ -19,7 +19,7 @@ $actionUrl = $isEdit ? url('pages/update/' . $page['id']) : url('pages/store');
         <!-- Slug -->
         <div class="col-span-1">
             <label for="slug" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">اسلاگ (URL) <span class="text-red-500">*</span></label>
-            <input type="text" id="slug" name="slug" value="<?php echo htmlspecialchars($page['slug'] ?? ''); ?>" dir="ltr" class="w-full rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white px-4 py-2.5 focus:ring-primary-500 focus:border-primary-500 shadow-sm font-mono text-sm transition-colors" required>
+            <input type="text" id="slug" name="slug" value="<?php echo htmlspecialchars($page['slug'] ?? ''); ?>" dir="ltr" class="w-full rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white px-4 py-2.5 focus:ring-primary-500 focus:border-primary-500 shadow-sm transition-colors" required>
         </div>
 
         <!-- Status -->
