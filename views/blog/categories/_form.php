@@ -5,6 +5,7 @@ $actionUrl = $isEdit ? '/blog/categories/update/' . $category['id'] : '/blog/cat
 ?>
 
 <form action="<?php echo $actionUrl; ?>" method="POST">
+    <?php csrf_field(); ?>
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         <!-- Name FA -->
         <div class="mb-4">

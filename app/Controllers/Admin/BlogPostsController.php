@@ -273,7 +273,7 @@ class BlogPostsController
         foreach ($rawTags as $tag) {
             if (strpos($tag, 'new:') === 0) {
                 $tagName = substr($tag, 4);
-                $slug = preg_replace('/[^a-z0-9-]+/', '-', strtolower($tagName));
+                $slug = $tagName; // Use name as slug per requirements
                 $existing = BlogTag::findBy('name', $tagName);
                 if ($existing) {
                     $tagIds[] = $existing->id;

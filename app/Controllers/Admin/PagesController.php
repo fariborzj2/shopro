@@ -35,6 +35,11 @@ class PagesController
             return;
         }
 
+        // Handle Meta Keywords (array to string)
+        if (isset($data['meta_keywords']) && is_array($data['meta_keywords'])) {
+            $data['meta_keywords'] = implode(',', $data['meta_keywords']);
+        }
+
         Page::create($data);
         redirect('/pages');
     }
@@ -63,6 +68,11 @@ class PagesController
             // Handle error
             redirect('/pages/edit/' . $id);
             return;
+        }
+
+        // Handle Meta Keywords (array to string)
+        if (isset($data['meta_keywords']) && is_array($data['meta_keywords'])) {
+            $data['meta_keywords'] = implode(',', $data['meta_keywords']);
         }
 
         Page::update($id, $data);

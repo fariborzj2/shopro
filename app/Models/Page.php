@@ -27,11 +27,16 @@ class Page
 
     public static function create($data)
     {
-        $sql = "INSERT INTO pages (title, slug, content, status) VALUES (:title, :slug, :content, :status)";
+        $sql = "INSERT INTO pages (title, slug, content, short_description, meta_title, meta_keywords, meta_description, status)
+                VALUES (:title, :slug, :content, :short_description, :meta_title, :meta_keywords, :meta_description, :status)";
         Database::query($sql, [
             'title' => $data['title'],
             'slug' => $data['slug'],
             'content' => $data['content'],
+            'short_description' => $data['short_description'] ?? null,
+            'meta_title' => $data['meta_title'] ?? null,
+            'meta_keywords' => $data['meta_keywords'] ?? null,
+            'meta_description' => $data['meta_description'] ?? null,
             'status' => $data['status'],
         ]);
         return true;
@@ -39,12 +44,25 @@ class Page
 
     public static function update($id, $data)
     {
-        $sql = "UPDATE pages SET title = :title, slug = :slug, content = :content, status = :status WHERE id = :id";
+        $sql = "UPDATE pages SET
+                title = :title,
+                slug = :slug,
+                content = :content,
+                short_description = :short_description,
+                meta_title = :meta_title,
+                meta_keywords = :meta_keywords,
+                meta_description = :meta_description,
+                status = :status
+                WHERE id = :id";
         Database::query($sql, [
             'id' => $id,
             'title' => $data['title'],
             'slug' => $data['slug'],
             'content' => $data['content'],
+            'short_description' => $data['short_description'] ?? null,
+            'meta_title' => $data['meta_title'] ?? null,
+            'meta_keywords' => $data['meta_keywords'] ?? null,
+            'meta_description' => $data['meta_description'] ?? null,
             'status' => $data['status'],
         ]);
         return true;

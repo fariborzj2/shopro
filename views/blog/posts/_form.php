@@ -270,7 +270,8 @@
                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">کلمات کلیدی متا</label>
                 <div x-data="tagInput({
                     initialTags: <?php echo isset($post['meta_keywords']) && $post['meta_keywords'] ? json_encode(explode(',', $post['meta_keywords'])) : '[]'; ?>,
-                    fieldName: 'meta_keywords[]'
+                    fieldName: 'meta_keywords[]',
+                    noPrefix: true
                 })" class="w-full">
                     <div class="relative rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-2 py-1.5 flex flex-wrap gap-2 focus-within:ring-2 focus-within:ring-primary-500/20 focus-within:border-primary-500 transition-all shadow-sm min-h-[46px]" @click="$refs.input.focus()">
                         <!-- Chips -->
