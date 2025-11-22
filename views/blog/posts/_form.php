@@ -73,13 +73,13 @@
             <!-- Title -->
             <div class="col-span-1">
                 <label for="title" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">عنوان پست <span class="text-red-500">*</span></label>
-                <input type="text" id="title" name="title" value="<?php echo htmlspecialchars($post['title'] ?? ''); ?>" class="w-full rounded-xl border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white px-4 py-2.5 focus:ring-primary-500 focus:border-primary-500 shadow-sm" required>
+                <input type="text" id="title" name="title" value="<?php echo htmlspecialchars($post['title'] ?? ''); ?>" class="w-full rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white px-4 py-2.5 focus:ring-primary-500 focus:border-primary-500 shadow-sm" required>
             </div>
 
             <!-- Slug -->
             <div class="col-span-1">
                 <label for="slug" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">اسلاگ (URL)</label>
-                <input type="text" id="slug" name="slug" value="<?php echo htmlspecialchars($post['slug'] ?? ''); ?>" dir="ltr" class="w-full rounded-xl border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white px-4 py-2.5 focus:ring-primary-500 focus:border-primary-500 shadow-sm font-mono text-sm">
+                <input type="text" id="slug" name="slug" value="<?php echo htmlspecialchars($post['slug'] ?? ''); ?>" dir="ltr" class="w-full rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white px-4 py-2.5 focus:ring-primary-500 focus:border-primary-500 shadow-sm font-mono text-sm">
                 <p class="text-xs text-gray-500 mt-1">در صورت خالی بودن، از روی عنوان ساخته می‌شود.</p>
             </div>
 
@@ -87,7 +87,7 @@
             <div class="col-span-1">
                 <label for="category_id" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">دسته‌بندی</label>
                 <div class="relative">
-                    <select id="category_id" name="category_id" class="w-full appearance-none rounded-xl border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white px-4 py-2.5 pr-10 focus:ring-primary-500 focus:border-primary-500 shadow-sm">
+                    <select id="category_id" name="category_id" class="w-full appearance-none rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white px-4 py-2.5 pr-10 focus:ring-primary-500 focus:border-primary-500 shadow-sm">
                         <option value="">انتخاب کنید...</option>
                         <?php foreach ($categories as $category): ?>
                             <option value="<?php echo $category['id']; ?>" <?php echo (isset($post['category_id']) && $category['id'] == $post['category_id']) ? 'selected' : ''; ?>>
@@ -105,7 +105,7 @@
             <div class="col-span-1">
                  <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1" for="published_at">تاریخ و ساعت انتشار</label>
                  <div class="relative">
-                     <input type="text" id="published_at" name="published_at" class="w-full rounded-xl border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white px-4 py-2.5 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 transition-all shadow-sm"
+                     <input type="text" id="published_at" name="published_at" class="w-full rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white px-4 py-2.5 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 transition-all shadow-sm"
                             autocomplete="off" placeholder="انتخاب کنید..." />
                  </div>
             </div>
@@ -118,7 +118,7 @@
                     fieldName: 'tags[]',
                     fetchUrl: '<?php echo url('api/tags/search'); ?>'
                 })" class="w-full relative">
-                    <div class="relative rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-2 py-1.5 flex flex-wrap gap-2 focus-within:ring-2 focus-within:ring-primary-500/20 focus-within:border-primary-500 transition-all shadow-sm min-h-[46px]" @click="$refs.input.focus()">
+                    <div class="relative rounded-xl border border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-2 py-1.5 flex flex-wrap gap-2 focus-within:ring-2 focus-within:ring-primary-500/20 focus-within:border-primary-500 transition-all shadow-sm min-h-[46px]" @click="$refs.input.focus()">
                         <!-- Chips -->
                         <template x-for="(tag, index) in items" :key="index">
                             <span class="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-medium bg-indigo-50 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-400">
@@ -151,7 +151,7 @@
             <div class="col-span-1">
                 <label for="status" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">وضعیت انتشار</label>
                 <div class="relative">
-                    <select id="status" name="status" class="w-full appearance-none rounded-xl border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white px-4 py-2.5 pr-10 focus:ring-primary-500 focus:border-primary-500 shadow-sm">
+                    <select id="status" name="status" class="w-full appearance-none rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white px-4 py-2.5 pr-10 focus:ring-primary-500 focus:border-primary-500 shadow-sm">
                         <option value="draft" <?php echo (isset($post['status']) && $post['status'] == 'draft') ? 'selected' : ''; ?>>پیش‌نویس</option>
                         <option value="published" <?php echo (isset($post['status']) && $post['status'] == 'published') ? 'selected' : ''; ?>>منتشر شده</option>
                         <option value="archived" <?php echo (isset($post['status']) && $post['status'] == 'archived') ? 'selected' : ''; ?>>آرشیو شده</option>
@@ -165,7 +165,7 @@
             <!-- Image Upload (Redesigned) -->
             <div class="col-span-1 md:col-span-2">
                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">تصویر شاخص</label>
-                <div class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 dark:border-gray-600 border-dashed rounded-xl bg-gray-50 dark:bg-gray-800/50 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors cursor-pointer group relative">
+                <div class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border border-gray-300 dark:border-gray-600 border-dashed rounded-xl bg-gray-50 dark:bg-gray-800/50 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors cursor-pointer group relative">
                      <label for="image" class="w-full h-full flex flex-col items-center justify-center cursor-pointer">
                          <!-- Placeholder -->
                         <div x-show="!imageUrl" class="space-y-1 text-center">
@@ -202,7 +202,7 @@
         <!-- Summary -->
         <div class="mb-6">
             <label for="excerpt" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">خلاصه متن</label>
-            <div class="rounded-xl overflow-hidden border border-gray-300 dark:border-gray-600">
+            <div class="rounded-xl overflow-hidden border border border-gray-300 dark:border-gray-600">
                 <textarea id="excerpt" name="excerpt" rows="3" class="tinymce-editor"><?= htmlspecialchars($post['excerpt'] ?? '') ?></textarea>
             </div>
         </div>
@@ -210,7 +210,7 @@
         <!-- Content -->
         <div class="mb-6">
             <label for="content" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">محتوای کامل</label>
-            <div class="rounded-xl overflow-hidden border border-gray-300 dark:border-gray-600">
+            <div class="rounded-xl overflow-hidden border border border-gray-300 dark:border-gray-600">
                 <textarea id="content" name="content" class="tinymce-editor"><?= htmlspecialchars($post['content'] ?? '') ?></textarea>
             </div>
         </div>
@@ -248,18 +248,18 @@
                     <div class="grid grid-cols-1 gap-4 pr-8">
                         <div>
                             <label class="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">سوال</label>
-                            <input type="text" x-model="faq.question" :name="`post_faqs[${index}][question]`" class="w-full rounded-lg border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-sm px-3 py-2" placeholder="سوال را وارد کنید..." required>
+                            <input type="text" x-model="faq.question" :name="`post_faqs[${index}][question]`" class="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-sm px-3 py-2" placeholder="سوال را وارد کنید..." required>
                         </div>
                         <div>
                             <label class="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">پاسخ</label>
-                            <textarea x-model="faq.answer" :name="`post_faqs[${index}][answer]`" rows="2" class="w-full rounded-lg border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-sm px-3 py-2" placeholder="پاسخ را وارد کنید..." required></textarea>
+                            <textarea x-model="faq.answer" :name="`post_faqs[${index}][answer]`" rows="2" class="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-sm px-3 py-2" placeholder="پاسخ را وارد کنید..." required></textarea>
                         </div>
                         <input type="hidden" :name="`post_faqs[${index}][id]`" x-model="faq.id">
                     </div>
                 </div>
             </template>
 
-            <button type="button" @click="addFaq()" class="w-full py-3 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-xl text-gray-500 dark:text-gray-400 hover:border-primary-500 hover:text-primary-500 transition-colors flex items-center justify-center gap-2">
+            <button type="button" @click="addFaq()" class="w-full py-3 border-2 border-dashed border border-gray-300 dark:border-gray-600 rounded-xl text-gray-500 dark:text-gray-400 hover:border-primary-500 hover:text-primary-500 transition-colors flex items-center justify-center gap-2">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
                 افزودن سوال جدید
             </button>
@@ -271,7 +271,7 @@
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
              <div class="col-span-1">
                 <label for="meta_title" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">عنوان متا (Meta Title)</label>
-                <input type="text" id="meta_title" name="meta_title" value="<?php echo htmlspecialchars($post['meta_title'] ?? ''); ?>" class="w-full rounded-xl border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white px-4 py-2.5 focus:ring-primary-500 focus:border-primary-500 shadow-sm">
+                <input type="text" id="meta_title" name="meta_title" value="<?php echo htmlspecialchars($post['meta_title'] ?? ''); ?>" class="w-full rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white px-4 py-2.5 focus:ring-primary-500 focus:border-primary-500 shadow-sm">
                 <p class="text-xs text-gray-500 mt-1">عنوان نمایش داده شده در نتایج جستجو (معمولا کمتر از 60 کاراکتر)</p>
             </div>
 
@@ -282,7 +282,7 @@
                     fieldName: 'meta_keywords[]',
                     noPrefix: true
                 })" class="w-full">
-                    <div class="relative rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-2 py-1.5 flex flex-wrap gap-2 focus-within:ring-2 focus-within:ring-primary-500/20 focus-within:border-primary-500 transition-all shadow-sm min-h-[46px]" @click="$refs.input.focus()">
+                    <div class="relative rounded-xl border border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-2 py-1.5 flex flex-wrap gap-2 focus-within:ring-2 focus-within:ring-primary-500/20 focus-within:border-primary-500 transition-all shadow-sm min-h-[46px]" @click="$refs.input.focus()">
                         <!-- Chips -->
                         <template x-for="(tag, index) in items" :key="index">
                             <span class="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-medium bg-primary-50 text-primary-700 dark:bg-primary-900/30 dark:text-primary-400">
@@ -305,7 +305,7 @@
 
              <div class="col-span-1 md:col-span-2">
                 <label for="meta_description" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">توضیحات متا (Meta Description)</label>
-                <textarea id="meta_description" name="meta_description" rows="3" class="w-full rounded-xl border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white px-4 py-2.5 focus:ring-primary-500 focus:border-primary-500 shadow-sm"><?php echo htmlspecialchars($post['meta_description'] ?? ''); ?></textarea>
+                <textarea id="meta_description" name="meta_description" rows="3" class="w-full rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white px-4 py-2.5 focus:ring-primary-500 focus:border-primary-500 shadow-sm"><?php echo htmlspecialchars($post['meta_description'] ?? ''); ?></textarea>
                 <p class="text-xs text-gray-500 mt-1">توضیحات نمایش داده شده در نتایج جستجو (معمولا بین 150 تا 160 کاراکتر)</p>
             </div>
         </div>
