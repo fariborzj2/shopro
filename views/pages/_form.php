@@ -13,20 +13,20 @@ $actionUrl = $isEdit ? url('pages/update/' . $page['id']) : url('pages/store');
         <!-- Title -->
         <div class="col-span-1">
             <label for="title" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">عنوان صفحه <span class="text-red-500">*</span></label>
-            <input type="text" id="title" name="title" value="<?php echo htmlspecialchars($page['title'] ?? ''); ?>" class="w-full rounded-xl border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white px-4 py-2.5 focus:ring-primary-500 focus:border-primary-500 shadow-sm transition-colors" required>
+            <input type="text" id="title" name="title" value="<?php echo htmlspecialchars($page['title'] ?? ''); ?>" class="w-full rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white px-4 py-2.5 focus:ring-primary-500 focus:border-primary-500 shadow-sm transition-colors" required>
         </div>
 
         <!-- Slug -->
         <div class="col-span-1">
             <label for="slug" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">اسلاگ (URL) <span class="text-red-500">*</span></label>
-            <input type="text" id="slug" name="slug" value="<?php echo htmlspecialchars($page['slug'] ?? ''); ?>" dir="ltr" class="w-full rounded-xl border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white px-4 py-2.5 focus:ring-primary-500 focus:border-primary-500 shadow-sm font-mono text-sm transition-colors" required>
+            <input type="text" id="slug" name="slug" value="<?php echo htmlspecialchars($page['slug'] ?? ''); ?>" dir="ltr" class="w-full rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white px-4 py-2.5 focus:ring-primary-500 focus:border-primary-500 shadow-sm font-mono text-sm transition-colors" required>
         </div>
 
         <!-- Status -->
         <div class="col-span-1">
             <label for="status" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">وضعیت انتشار</label>
             <div class="relative">
-                <select id="status" name="status" class="w-full appearance-none rounded-xl border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white px-4 py-2.5 pr-10 focus:ring-primary-500 focus:border-primary-500 shadow-sm transition-colors">
+                <select id="status" name="status" class="w-full appearance-none rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white px-4 py-2.5 pr-10 focus:ring-primary-500 focus:border-primary-500 shadow-sm transition-colors">
                     <option value="draft" <?php echo (isset($page['status']) && $page['status'] == 'draft') ? 'selected' : ''; ?>>پیش‌نویس</option>
                     <option value="published" <?php echo (isset($page['status']) && $page['status'] == 'published') ? 'selected' : ''; ?>>منتشر شده</option>
                 </select>
@@ -40,7 +40,7 @@ $actionUrl = $isEdit ? url('pages/update/' . $page['id']) : url('pages/store');
         <div class="col-span-1">
              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1" for="published_at">تاریخ و ساعت انتشار</label>
              <div class="relative">
-                 <input type="text" id="published_at" name="published_at" class="w-full rounded-xl border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white px-4 py-2.5 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 transition-all shadow-sm"
+                 <input type="text" id="published_at" name="published_at" class="w-full rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white px-4 py-2.5 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 transition-all shadow-sm"
                         autocomplete="off" placeholder="انتخاب کنید..." />
              </div>
         </div>
@@ -49,13 +49,13 @@ $actionUrl = $isEdit ? url('pages/update/' . $page['id']) : url('pages/store');
     <!-- Short Description -->
     <div class="mb-6">
         <label for="short_description" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">توضیحات کوتاه</label>
-        <textarea id="short_description" name="short_description" rows="3" class="w-full rounded-xl border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white px-4 py-2.5 focus:ring-primary-500 focus:border-primary-500 shadow-sm transition-colors"><?php echo htmlspecialchars($page['short_description'] ?? ''); ?></textarea>
+        <textarea id="short_description" name="short_description" rows="3" class="w-full rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white px-4 py-2.5 focus:ring-primary-500 focus:border-primary-500 shadow-sm transition-colors"><?php echo htmlspecialchars($page['short_description'] ?? ''); ?></textarea>
     </div>
 
     <!-- Content -->
     <div class="mb-6">
         <label for="content" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">محتوای کامل</label>
-        <div class="rounded-xl overflow-hidden border border-gray-300 dark:border-gray-600">
+        <div class="rounded-xl overflow-hidden border border border-gray-300 dark:border-gray-600">
             <textarea id="content" name="content" class="tinymce-editor"><?php echo htmlspecialchars($page['content'] ?? ''); ?></textarea>
         </div>
     </div>
@@ -67,7 +67,7 @@ $actionUrl = $isEdit ? url('pages/update/' . $page['id']) : url('pages/store');
             <!-- Meta Title -->
             <div class="col-span-1">
                 <label for="meta_title" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">عنوان متا (Meta Title)</label>
-                <input type="text" id="meta_title" name="meta_title" value="<?php echo htmlspecialchars($page['meta_title'] ?? ''); ?>" class="w-full rounded-xl border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white px-4 py-2.5 focus:ring-primary-500 focus:border-primary-500 shadow-sm transition-colors">
+                <input type="text" id="meta_title" name="meta_title" value="<?php echo htmlspecialchars($page['meta_title'] ?? ''); ?>" class="w-full rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white px-4 py-2.5 focus:ring-primary-500 focus:border-primary-500 shadow-sm transition-colors">
             </div>
 
             <!-- Meta Keywords (Tag Input) -->
@@ -78,7 +78,7 @@ $actionUrl = $isEdit ? url('pages/update/' . $page['id']) : url('pages/store');
                     fieldName: 'meta_keywords[]',
                     noPrefix: true
                 })" class="w-full">
-                    <div class="relative rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-2 py-1.5 flex flex-wrap gap-2 focus-within:ring-2 focus-within:ring-primary-500/20 focus-within:border-primary-500 transition-all shadow-sm min-h-[46px]" @click="$refs.input.focus()">
+                    <div class="relative rounded-xl border border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-2 py-1.5 flex flex-wrap gap-2 focus-within:ring-2 focus-within:ring-primary-500/20 focus-within:border-primary-500 transition-all shadow-sm min-h-[46px]" @click="$refs.input.focus()">
                         <!-- Chips -->
                         <template x-for="(tag, index) in items" :key="index">
                             <span class="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-medium bg-primary-50 text-primary-700 dark:bg-primary-900/30 dark:text-primary-400">
@@ -102,16 +102,16 @@ $actionUrl = $isEdit ? url('pages/update/' . $page['id']) : url('pages/store');
             <!-- Meta Description -->
             <div class="col-span-1 md:col-span-2">
                 <label for="meta_description" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">توضیحات متا (Meta Description)</label>
-                <textarea id="meta_description" name="meta_description" rows="3" class="w-full rounded-xl border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white px-4 py-2.5 focus:ring-primary-500 focus:border-primary-500 shadow-sm transition-colors"><?php echo htmlspecialchars($page['meta_description'] ?? ''); ?></textarea>
+                <textarea id="meta_description" name="meta_description" rows="3" class="w-full rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white px-4 py-2.5 focus:ring-primary-500 focus:border-primary-500 shadow-sm transition-colors"><?php echo htmlspecialchars($page['meta_description'] ?? ''); ?></textarea>
             </div>
         </div>
     </div>
 
     <div class="flex items-center justify-end gap-4 mt-8 border-t border-gray-100 dark:border-gray-700 pt-6">
-        <a href="<?php echo url('pages'); ?>" class="px-4 py-2 rounded-xl text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors font-medium">
+        <a href="<?php echo url('pages'); ?>" class="px-4 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-200 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-600 font-medium transition-colors">
             انصراف
         </a>
-        <button type="submit" class="bg-primary-600 hover:bg-primary-700 text-white font-bold py-2.5 px-6 rounded-xl focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-all shadow-lg shadow-primary-500/30">
+        <button type="submit" class="px-6 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 shadow-md hover:shadow-lg font-medium transition-all focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
             <?php echo $isEdit ? 'به‌روزرسانی' : 'ذخیره'; ?>
         </button>
     </div>
