@@ -284,7 +284,7 @@
     </div>
 </div>
 
-<?php require_once __DIR__ . '/../../partials/tag_input_script.php'; ?>
+<?php require_once __DIR__ . '/../partials/tag_input_script.php'; ?>
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {
