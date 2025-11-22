@@ -88,24 +88,13 @@ class BlogPostsController
         // Use the logged-in admin's ID as the author
         $author_id = $_SESSION["admin_id"];
 
-        // Handle Meta Keywords (array to string)
-        $meta_keywords = "";
-        if (
-            isset($_POST["meta_keywords"]) &&
-            is_array($_POST["meta_keywords"])
-        ) {
-            $meta_keywords = implode(",", $_POST["meta_keywords"]);
-        } elseif (isset($_POST["meta_keywords"])) {
-            $meta_keywords = $_POST["meta_keywords"];
-        }
-
         $data = [
             "category_id" => (int) $_POST["category_id"],
             "author_id" => $author_id,
             "title" => htmlspecialchars($_POST["title"]),
             "slug" => htmlspecialchars($_POST["slug"]),
-            "content" => $_POST["content"] ?? "", // Note: Content should be purified, but for now we leave it
-            "excerpt" => $_POST["excerpt"] ?? "", // Content should be purified
+            "content" => $_POST["content"] ?? "",
+            "excerpt" => $_POST["excerpt"] ?? "",
             "status" => $_POST["status"] ?? "draft",
             "published_at" => $_POST["published_at"] ?? null,
             "is_editors_pick" => isset($_POST["is_editors_pick"]) ? 1 : 0,
@@ -113,7 +102,7 @@ class BlogPostsController
             "meta_description" => htmlspecialchars(
                 $_POST["meta_description"] ?? ""
             ),
-            "meta_keywords" => htmlspecialchars($meta_keywords),
+            "meta_keywords" => $_POST["meta_keywords"] ?? null,
         ];
 
         // Handle published_at (Timestamp)
@@ -279,24 +268,13 @@ class BlogPostsController
             return redirect_back_with_errors($errors);
         }
 
-        // Handle Meta Keywords
-        $meta_keywords = "";
-        if (
-            isset($_POST["meta_keywords"]) &&
-            is_array($_POST["meta_keywords"])
-        ) {
-            $meta_keywords = implode(",", $_POST["meta_keywords"]);
-        } elseif (isset($_POST["meta_keywords"])) {
-            $meta_keywords = $_POST["meta_keywords"];
-        }
-
         $data = [
             "category_id" => (int) $_POST["category_id"],
-            "author_id" => (int) $_POST["author_id"], // Keep author, but it shouldn't be changeable from the form
+            "author_id" => (int) $_POST["author_id"],
             "title" => htmlspecialchars($_POST["title"]),
             "slug" => htmlspecialchars($_POST["slug"]),
-            "content" => $_POST["content"] ?? "", // Note: Content should be purified, but for now we leave it
-            "excerpt" => $_POST["excerpt"] ?? "", // Content should be purified
+            "content" => $_POST["content"] ?? "",
+            "excerpt" => $_POST["excerpt"] ?? "",
             "status" => $_POST["status"] ?? "draft",
             "published_at" => $_POST["published_at"] ?? null,
             "is_editors_pick" => isset($_POST["is_editors_pick"]) ? 1 : 0,
@@ -304,7 +282,7 @@ class BlogPostsController
             "meta_description" => htmlspecialchars(
                 $_POST["meta_description"] ?? ""
             ),
-            "meta_keywords" => htmlspecialchars($meta_keywords),
+            "meta_keywords" => $_POST["meta_keywords"] ?? null,
         ];
 
         // Handle Jalali Date Conversion for published_at

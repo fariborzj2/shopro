@@ -78,11 +78,16 @@ $actionUrl = $isEdit ? url('pages/update/' . $page->id) : url('pages/store');
             <!-- Meta Keywords (Tag Input) -->
             <div class="col-span-1">
                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">کلمات کلیدی متا (Meta Keywords)</label>
-                <div x-data="tagInput({
-                    initialTags: <?php echo isset($page->meta_keywords) && $page->meta_keywords ? json_encode(array_map('trim', explode(',', htmlspecialchars_decode($page->meta_keywords)))) : '[]'; ?>,
-                    fieldName: 'meta_keywords[]',
+                <div x-data='tagInput({
+                    initialTags: <?php
+                    $tags = isset($page->meta_keywords) && $page->meta_keywords
+                        ? json_decode($page->meta_keywords, true)
+                        : [];
+                    echo json_encode(array_map("trim", is_array($tags) ? $tags : []), JSON_UNESCAPED_UNICODE);
+                    ?>,
+                    fieldName: "meta_keywords[]",
                     noPrefix: true
-                })" class="w-full">
+                })' class="w-full">
                     <div class="relative rounded-xl border border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-2 py-1.5 flex flex-wrap gap-2 focus-within:ring-2 focus-within:ring-primary-500/20 focus-within:border-primary-500 transition-all shadow-sm min-h-[46px]" @click="$refs.input.focus()">
                         <!-- Chips -->
                         <template x-for="(tag, index) in items" :key="index">
