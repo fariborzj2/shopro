@@ -7,6 +7,7 @@ function tagInput(config) {
         suggestions: [],
         isFocused: false,
         fieldName: config.fieldName || 'tags[]',
+        noPrefix: config.noPrefix || false,
 
         init() {
             this.$watch('inputValue', (value) => {
@@ -87,6 +88,9 @@ function tagInput(config) {
 
              if (typeof item === 'object' && item.id) {
                  return item.id; // It's an ID
+             }
+             if (this.noPrefix) {
+                 return item;
              }
              return 'new:' + item; // Flag as new
         }
