@@ -278,7 +278,7 @@
             <div class="col-span-1">
                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">کلمات کلیدی متا</label>
                 <div x-data="tagInput({
-                    initialTags: <?php echo isset($post['meta_keywords']) && $post['meta_keywords'] ? json_encode(explode(',', $post['meta_keywords'])) : '[]'; ?>,
+                    initialTags: <?php echo isset($post['meta_keywords']) && $post['meta_keywords'] ? json_encode(array_map('trim', explode(',', htmlspecialchars_decode($post['meta_keywords'])))) : '[]'; ?>,
                     fieldName: 'meta_keywords[]',
                     noPrefix: true
                 })" class="w-full">
@@ -295,7 +295,7 @@
                         </template>
 
                         <!-- Input -->
-                        <input x-ref="input" type="text" x-model="inputValue" @keydown="handleKeydown" @paste="handlePaste($event)"
+                        <input x-ref="input" type="text" x-model="inputValue" @keydown="handleKeydown" @paste="handlePaste($event)" @input.stop
                                class="flex-1 min-w-[120px] bg-transparent border-none outline-none focus:ring-0 p-1 text-sm text-gray-900 dark:text-white placeholder-gray-400"
                                placeholder="تایپ کنید و Enter بزنید...">
                     </div>
