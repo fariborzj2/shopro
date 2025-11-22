@@ -32,7 +32,8 @@ class CategoriesController
             'title' => 'افزودن دسته‌بندی جدید',
             'allCategories' => $allCategories,
             'customFields' => $customFields,
-            'attachedFieldIds' => []
+            'attachedFieldIds' => [],
+            'category' => null
         ]);
     }
 

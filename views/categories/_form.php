@@ -1,3 +1,10 @@
+<?php
+// Ensure $category is defined and is an object to prevent errors in Create/Edit modes
+$category = $category ?? new stdClass();
+if (is_array($category)) {
+    $category = (object) $category;
+}
+?>
 <input type="hidden" name="csrf_token" value="<?php echo csrf_token(); ?>">
 
 <div x-data="{
