@@ -316,27 +316,17 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-         // Initialize Persian Datepicker
-        const publishedAtInput = $('#published_at');
-        if (publishedAtInput.length) {
-            // Better approach: Convert PHP timestamp to millisecond for JS
+         // Initialize Custom Jalali Datepicker
+        const publishedAtSelector = '#published_at';
+        if (document.querySelector(publishedAtSelector)) {
             let initialValue = null;
             <?php if (!empty($post['published_at'])): ?>
+                // Convert PHP Gregorian timestamp (seconds) to JS Date object or milliseconds
                 initialValue = <?php echo strtotime($post['published_at']) * 1000; ?>;
             <?php endif; ?>
 
-            publishedAtInput.persianDatepicker({
-                format: 'YYYY/MM/DD HH:mm:ss',
-                timePicker: {
-                    enabled: true,
-                    meridiem: {
-                        enabled: true
-                    }
-                },
-                initialValueType: 'gregorian',
-                initialValue: initialValue,
-                autoClose: true,
-                // altField: '#published_at', // Disabled to prevent overwriting the input with timestamp
+            new JalaliDatepicker(publishedAtSelector, {
+                initialValue: initialValue
             });
         }
 

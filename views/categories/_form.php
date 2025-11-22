@@ -265,46 +265,17 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-         // Initialize Persian Datepicker
-        const publishedAtInput = $('#published_at');
-        if (publishedAtInput.length) {
-            // Pre-fill value if exists (convert Gregorian to Jalali for display)
-            <?php if (!empty($category->published_at)): ?>
-                const serverDate = new Date("<?php echo $category->published_at; ?>");
-                if (!isNaN(serverDate)) {
-                     // We can use 'initialValue' option of persianDatepicker, or let it sync
-                     // But the simplest way is to convert it to Jalali in PHP and put it in value attribute if possible.
-                     // Since we didn't pass a Jalali string, let's use JS to set initial state if needed,
-                     // OR better, use PHP helper to format it before rendering.
-                     // But since I am in JS block, I'll rely on the plugin's ability or just send the timestamp.
-                     // Actually, the plugin expects a timestamp or formatted string.
-                     // Let's rely on PHP to pass the Jalali date to the view if we want pre-filling.
-                }
-            <?php endif; ?>
-
-            // Better approach: Convert PHP timestamp to millisecond for JS
+         // Initialize Custom Jalali Datepicker
+        const publishedAtSelector = '#published_at';
+        if (document.querySelector(publishedAtSelector)) {
             let initialValue = null;
             <?php if (!empty($category->published_at)): ?>
+                // Convert PHP Gregorian timestamp (seconds) to JS Date object or milliseconds
                 initialValue = <?php echo strtotime($category->published_at) * 1000; ?>;
             <?php endif; ?>
 
-            publishedAtInput.persianDatepicker({
-                format: 'YYYY/MM/DD HH:mm:ss',
-                timePicker: {
-                    enabled: true,
-                    meridiem: {
-                        enabled: true
-                    }
-                },
-                initialValueType: 'gregorian',
-                initialValue: initialValue,
-                autoClose: true,
-                // altField: '#published_at', // Disabled to prevent overwriting the input with timestamp
-
-                // Theme hacks if needed, but default is okay.
-                onSelect: function(unix){
-                    // console.log('datepicker select : ' + unix);
-                }
+            new JalaliDatepicker(publishedAtSelector, {
+                initialValue: initialValue
             });
         }
 
