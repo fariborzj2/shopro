@@ -41,9 +41,9 @@
                         <?php endif; ?>
 
                         <div class="flex items-center gap-3">
-                            <a href="<?php echo url('/admin/custom-fields/edit/' . $field->id); ?>" class="text-indigo-600 dark:text-indigo-400 text-sm font-medium">ویرایش</a>
+                            <a href="<?php echo url('/custom-fields/edit/' . $field->id); ?>" class="text-indigo-600 dark:text-indigo-400 text-sm font-medium">ویرایش</a>
                             <span class="text-gray-300 dark:text-gray-600">|</span>
-                            <form action="<?php echo url('/admin/custom-fields/delete/' . $field->id); ?>" method="POST" class="inline-block" onsubmit="return confirm('آیا از حذف این پارامتر اطمینان دارید؟');">
+                            <form action="<?php echo url('/custom-fields/delete/' . $field->id); ?>" method="POST" class="inline-block" onsubmit="return confirm('آیا از حذف این پارامتر اطمینان دارید؟');">
                                 <?php partial('csrf_field'); ?>
                                 <button type="submit" class="text-red-600 dark:text-red-400 text-sm font-medium">حذف</button>
                             </form>
@@ -96,10 +96,10 @@
                             </td>
                             <td class="px-6 py-4 text-sm text-center">
                                 <div class="flex items-center justify-center gap-3 opacity-0 group-hover:opacity-100 transition-opacity">
-                                    <a href="<?php echo url('/admin/custom-fields/edit/' . $field->id); ?>" class="text-indigo-600 hover:text-indigo-900 dark:text-indigo-400 dark:hover:text-indigo-300 p-1 rounded-md hover:bg-indigo-50 dark:hover:bg-indigo-900/30 transition-colors" title="ویرایش">
+                                    <a href="<?php echo url('/custom-fields/edit/' . $field->id); ?>" class="text-indigo-600 hover:text-indigo-900 dark:text-indigo-400 dark:hover:text-indigo-300 p-1 rounded-md hover:bg-indigo-50 dark:hover:bg-indigo-900/30 transition-colors" title="ویرایش">
                                         <?php partial('icon', ['name' => 'edit', 'class' => 'w-5 h-5']); ?>
                                     </a>
-                                    <form action="<?php echo url('/admin/custom-fields/delete/' . $field->id); ?>" method="POST" class="inline-block" onsubmit="return confirm('آیا از حذف این پارامتر اطمینان دارید؟');">
+                                    <form action="<?php echo url('/custom-fields/delete/' . $field->id); ?>" method="POST" class="inline-block" onsubmit="return confirm('آیا از حذف این پارامتر اطمینان دارید؟');">
                                         <?php partial('csrf_field'); ?>
                                         <button type="submit" class="text-gray-400 hover:text-red-600 dark:text-gray-500 dark:hover:text-red-400 p-1 rounded-md hover:bg-red-50 dark:hover:bg-red-900/30 transition-colors" title="حذف">
                                             <?php partial('icon', ['name' => 'trash', 'class' => 'w-5 h-5']); ?>
