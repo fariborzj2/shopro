@@ -259,7 +259,7 @@
                         <template x-for="(tag, index) in items" :key="index">
                             <span class="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-medium bg-primary-50 text-primary-700 dark:bg-primary-900/30 dark:text-primary-400">
                                 <span x-text="tag"></span>
-                                <button type="button" @click.stop="removeTag(index)" class="ml-1.5 text-primary-400 hover:text-primary-600 dark:text-primary-500 dark:hover:text-primary-300 focus:outline-none">
+                                <button type="button" @click.stop="removeTag(index)" class="mr-1.5 text-primary-400 hover:text-primary-600 dark:text-primary-500 dark:hover:text-primary-300 focus:outline-none">
                                     <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                                 </button>
                                 <input type="hidden" :name="fieldName" :value="tag">
@@ -267,7 +267,7 @@
                         </template>
 
                         <!-- Input -->
-                        <input x-ref="input" type="text" x-model="inputValue" @keydown="handleKeydown" @keydown.backspace="handleKeydown"
+                        <input x-ref="input" type="text" x-model="inputValue" @keydown="handleKeydown" @paste="handlePaste($event)"
                                class="flex-1 min-w-[120px] bg-transparent border-none outline-none focus:ring-0 p-1 text-sm text-gray-900 dark:text-white placeholder-gray-400"
                                placeholder="تایپ کنید و Enter بزنید...">
                     </div>
