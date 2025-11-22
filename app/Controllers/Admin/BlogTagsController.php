@@ -35,15 +35,15 @@ class BlogTagsController
         }
 
         // Validation
-        if (empty($_POST['name']) || empty($_POST['slug'])) {
+        if (empty($_POST['name'])) {
             http_response_code(400);
-            echo json_encode(['success' => false, 'message' => 'نام و اسلاگ الزامی است.']);
+            echo json_encode(['success' => false, 'message' => 'نام برچسب الزامی است.']);
             exit;
         }
 
         $data = [
             'name' => htmlspecialchars($_POST['name']),
-            'slug' => htmlspecialchars($_POST['slug']),
+            'slug' => htmlspecialchars($_POST['name']), // Use Name as Slug per user request
             'status' => $_POST['status'] ?? 'active',
         ];
 
@@ -67,15 +67,15 @@ class BlogTagsController
             $_POST = $jsonData;
         }
 
-        if (empty($_POST['name']) || empty($_POST['slug'])) {
+        if (empty($_POST['name'])) {
             http_response_code(400);
-            echo json_encode(['success' => false, 'message' => 'نام و اسلاگ الزامی است.']);
+            echo json_encode(['success' => false, 'message' => 'نام برچسب الزامی است.']);
             exit;
         }
 
         $data = [
             'name' => htmlspecialchars($_POST['name']),
-            'slug' => htmlspecialchars($_POST['slug']),
+            'slug' => htmlspecialchars($_POST['name']), // Use Name as Slug per user request
             'status' => $_POST['status'] ?? 'active',
         ];
 
