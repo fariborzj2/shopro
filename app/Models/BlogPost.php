@@ -112,8 +112,8 @@ class BlogPost
             $published_at = date('Y-m-d H:i:s');
         }
 
-        $sql = "INSERT INTO blog_posts (category_id, author_id, title, slug, content, excerpt, status, published_at, is_editors_pick, meta_title, meta_description, meta_keywords)
-                VALUES (:category_id, :author_id, :title, :slug, :content, :excerpt, :status, :published_at, :is_editors_pick, :meta_title, :meta_description, :meta_keywords)";
+        $sql = "INSERT INTO blog_posts (category_id, author_id, title, slug, content, excerpt, image_url, status, published_at, is_editors_pick, meta_title, meta_description, meta_keywords)
+                VALUES (:category_id, :author_id, :title, :slug, :content, :excerpt, :image_url, :status, :published_at, :is_editors_pick, :meta_title, :meta_description, :meta_keywords)";
 
         $pdo = Database::getConnection();
         $stmt = $pdo->prepare($sql);
@@ -125,6 +125,7 @@ class BlogPost
             'slug' => $data['slug'],
             'content' => $data['content'],
             'excerpt' => $data['excerpt'],
+            'image_url' => $data['image_url'] ?? null,
             'status' => $status,
             'published_at' => $published_at,
             'is_editors_pick' => isset($data['is_editors_pick']) ? 1 : 0,
@@ -175,9 +176,9 @@ class BlogPost
         }
 
         $sql = "UPDATE blog_posts
-                SET category_id = :category_id, author_id = :author_id, title = :title, slug = :slug, content = :content, excerpt = :excerpt, status = :status, published_at = :published_at, is_editors_pick = :is_editors_pick, meta_title = :meta_title, meta_description = :meta_description, meta_keywords = :meta_keywords
-                WHERE id = :id";
-        Database::query($sql, [
+                SET category_id = :category_id, author_id = :author_id, title = :title, slug = :slug, content = :content, excerpt = :excerpt, status = :status, published_at = :published_at, is_editors_pick = :is_editors_pick, meta_title = :meta_title, meta_description = :meta_description, meta_keywords = :meta_keywords";
+
+        $params = [
             'id' => $id,
             'category_id' => $data['category_id'],
             'author_id' => $data['author_id'],
@@ -191,7 +192,16 @@ class BlogPost
             'meta_title' => $data['meta_title'] ?? null,
             'meta_description' => $data['meta_description'] ?? null,
             'meta_keywords' => $data['meta_keywords'] ?? null
-        ]);
+        ];
+
+        if (array_key_exists('image_url', $data)) {
+            $sql .= ", image_url = :image_url";
+            $params['image_url'] = $data['image_url'];
+        }
+
+        $sql .= " WHERE id = :id";
+
+        Database::query($sql, $params);
 
         // Regenerate sitemap if the post's status has changed to published or was already published
         if ($data['status'] === 'published') {
