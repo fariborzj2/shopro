@@ -1,7 +1,7 @@
 <?php
 // Determine if we are in "create" or "edit" mode based on $category existence
 $isEdit = isset($category) && !empty($category['id']);
-$actionUrl = $isEdit ? '/blog/categories/update/' . $category['id'] : '/blog/categories/store';
+$actionUrl = $isEdit ? url('blog/categories/update/' . $category['id']) : url('blog/categories/store');
 ?>
 
 <form action="<?php echo $actionUrl; ?>" method="POST">

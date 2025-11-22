@@ -336,7 +336,7 @@
                 initialValueType: 'gregorian',
                 initialValue: initialValue,
                 autoClose: true,
-                altField: '#published_at',
+                // altField: '#published_at', // Disabled to prevent overwriting the input with timestamp
             });
         }
 
