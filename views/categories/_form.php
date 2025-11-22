@@ -76,7 +76,7 @@
             <!-- Slug -->
             <div class="col-span-1">
                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1" for="slug">اسلاگ (انگلیسی) <span class="text-red-500">*</span></label>
-                <input class="w-full rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white px-4 py-2.5 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 transition-all shadow-sm font-mono text-sm" dir="ltr"
+                <input class="w-full rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white px-4 py-2.5 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 transition-all shadow-sm " dir="ltr"
                        type="text" name="slug" id="slug" value="<?php echo htmlspecialchars($category->slug ?? ''); ?>" required>
             </div>
 
@@ -91,7 +91,7 @@
             <div class="col-span-1">
                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1" for="parent_id">دسته‌بندی والد</label>
                 <div class="relative">
-                    <select class="w-full appearance-none rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white px-4 py-2.5 pr-10 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 transition-all shadow-sm" name="parent_id" id="parent_id">
+                    <select class="w-full appearance-none rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white px-4 py-2.5 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 transition-all shadow-sm" name="parent_id" id="parent_id">
                         <option value="">-- بدون والد (دسته‌بندی اصلی) --</option>
                         <?php
                             $selectedId = $category->parent_id ?? null;
@@ -109,7 +109,7 @@
             <div class="col-span-1">
                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1" for="status">وضعیت انتشار</label>
                 <div class="relative">
-                    <select class="w-full appearance-none rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white px-4 py-2.5 pr-10 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 transition-all shadow-sm" name="status" id="status">
+                    <select class="w-full appearance-none rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white px-4 py-2.5 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 transition-all shadow-sm" name="status" id="status">
                         <option value="active" <?php echo (isset($category->status) && $category->status === 'active') ? 'selected' : ''; ?>>فعال</option>
                         <option value="inactive" <?php echo (isset($category->status) && $category->status === 'inactive') ? 'selected' : ''; ?>>غیرفعال</option>
                     </select>
