@@ -1,0 +1,267 @@
+/* Jalali Datepicker Styles - Matching Admin Panel Theme */
+:root {
+    --jdp-primary: #2563eb; /* primary-600 */
+    --jdp-primary-hover: #1d4ed8; /* primary-700 */
+    --jdp-bg: #ffffff;
+    --jdp-bg-dark: #1f2937; /* gray-800 */
+    --jdp-text: #1f2937; /* gray-800 */
+    --jdp-text-dark: #f9fafb; /* gray-50 */
+    --jdp-border: #e5e7eb; /* gray-200 */
+    --jdp-border-dark: #374151; /* gray-700 */
+    --jdp-hover: #f3f4f6; /* gray-100 */
+    --jdp-hover-dark: #374151; /* gray-700 */
+    --jdp-radius: 0.75rem; /* rounded-xl */
+    --jdp-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    --jdp-font: 'Estedad', sans-serif;
+    --jdp-z-index: 9999;
+}
+
+.dark {
+    --jdp-bg: #1f2937;
+    --jdp-text: #f3f4f6;
+    --jdp-border: #374151;
+    --jdp-hover: #374151;
+}
+
+/* Overlay */
+.jdp-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(2px);
+    z-index: var(--jdp-z-index);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.2s ease, visibility 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.jdp-overlay.visible {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* Container */
+.jdp-container {
+    background-color: var(--jdp-bg);
+    color: var(--jdp-text);
+    border-radius: var(--jdp-radius);
+    box-shadow: var(--jdp-shadow);
+    width: 340px;
+    max-width: 95vw;
+    font-family: var(--jdp-font);
+    direction: rtl;
+    overflow: hidden;
+    border: 1px solid var(--jdp-border);
+    transform: scale(0.95);
+    transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.jdp-overlay.visible .jdp-container {
+    transform: scale(1);
+}
+
+/* Header */
+.jdp-header {
+    padding: 1rem;
+    background-color: var(--jdp-primary);
+    color: white;
+    text-align: center;
+}
+
+.jdp-year-month {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: bold;
+    font-size: 1.1rem;
+}
+
+.jdp-nav-btn {
+    background: none;
+    border: none;
+    color: white;
+    cursor: pointer;
+    padding: 0.25rem;
+    border-radius: 0.5rem;
+    transition: background-color 0.2s;
+}
+
+.jdp-nav-btn:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Grid */
+.jdp-grid {
+    padding: 1rem;
+}
+
+.jdp-weekdays {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    text-align: center;
+    font-size: 0.85rem;
+    color: var(--jdp-text);
+    opacity: 0.7;
+    margin-bottom: 0.5rem;
+}
+
+.jdp-days {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 2px;
+}
+
+.jdp-day {
+    aspect-ratio: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border-radius: 0.5rem;
+    font-size: 0.9rem;
+    transition: all 0.2s;
+}
+
+.jdp-day:hover:not(.empty):not(.disabled) {
+    background-color: var(--jdp-hover);
+}
+
+.jdp-day.selected {
+    background-color: var(--jdp-primary);
+    color: white;
+    font-weight: bold;
+}
+
+.jdp-day.today {
+    border: 1px solid var(--jdp-primary);
+    color: var(--jdp-primary);
+}
+
+.jdp-day.today.selected {
+    color: white;
+}
+
+.jdp-day.empty {
+    cursor: default;
+}
+
+.jdp-day.disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+}
+
+/* Time Picker */
+.jdp-time-picker {
+    border-top: 1px solid var(--jdp-border);
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.jdp-time-row {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.jdp-time-label {
+    width: 3rem;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.jdp-slider-container {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.jdp-slider {
+    flex: 1;
+    height: 4px;
+    -webkit-appearance: none;
+    background: var(--jdp-border);
+    border-radius: 2px;
+    outline: none;
+}
+
+.jdp-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: var(--jdp-primary);
+    cursor: pointer;
+    transition: transform 0.1s;
+}
+
+.jdp-slider::-webkit-slider-thumb:hover {
+    transform: scale(1.2);
+}
+
+.jdp-time-input {
+    width: 3rem;
+    text-align: center;
+    border: 1px solid var(--jdp-border);
+    border-radius: 0.375rem;
+    padding: 0.25rem;
+    background: var(--jdp-bg);
+    color: var(--jdp-text);
+    font-family: var(--jdp-font);
+}
+
+.jdp-time-input:focus {
+    outline: 2px solid var(--jdp-primary);
+    border-color: transparent;
+}
+
+/* Footer */
+.jdp-footer {
+    padding: 1rem;
+    border-top: 1px solid var(--jdp-border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.jdp-btn {
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    border: none;
+    font-family: var(--jdp-font);
+}
+
+.jdp-btn-cancel {
+    background-color: transparent;
+    color: var(--jdp-text);
+}
+
+.jdp-btn-cancel:hover {
+    background-color: var(--jdp-hover);
+}
+
+.jdp-btn-confirm {
+    background-color: var(--jdp-primary);
+    color: white;
+}
+
+.jdp-btn-confirm:hover {
+    background-color: var(--jdp-primary-hover);
+}
+
+.jdp-current-time {
+    font-size: 0.9rem;
+    font-weight: bold;
+    color: var(--jdp-text);
+}

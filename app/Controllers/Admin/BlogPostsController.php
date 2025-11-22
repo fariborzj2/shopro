@@ -101,22 +101,16 @@ class BlogPostsController
             'meta_keywords' => htmlspecialchars($meta_keywords),
         ];
 
-        // Handle Jalali Date Conversion for published_at
+        // Handle published_at (Timestamp)
         if (!empty($_POST['published_at'])) {
-            // Expected format from persian-datepicker: YYYY/MM/DD HH:mm:ss
-            $jalaliDate = $_POST['published_at'];
-            $parts = preg_split('/[\/\-\s:]/', $jalaliDate);
-            if (count($parts) >= 5) {
-                 $jy = (int)$parts[0];
-                 $jm = (int)$parts[1];
-                 $jd = (int)$parts[2];
-                 $h = (int)$parts[3];
-                 $m = (int)$parts[4];
-                 $s = isset($parts[5]) ? (int)$parts[5] : 0;
-
-                 $gregorian = jalali_to_gregorian($jy, $jm, $jd);
-                 $data['published_at'] = sprintf('%04d-%02d-%02d %02d:%02d:%02d', $gregorian[0], $gregorian[1], $gregorian[2], $h, $m, $s);
-            }
+            // The custom datepicker sends a timestamp in seconds.
+            $timestamp = (int)$_POST['published_at'];
+            $data['published_at'] = date('Y-m-d H:i:s', $timestamp);
+        // Handle published_at (Timestamp)
+        if (!empty($_POST['published_at'])) {
+            // The custom datepicker sends a timestamp in seconds.
+            $timestamp = (int)$_POST['published_at'];
+            $data['published_at'] = date('Y-m-d H:i:s', $timestamp);
         }
 
         // Image Upload
