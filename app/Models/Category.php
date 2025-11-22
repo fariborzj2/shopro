@@ -86,7 +86,7 @@ class Category
             'description' => $data['description'] ?? null,
             'meta_title' => $data['meta_title'] ?? null,
             'meta_description' => $data['meta_description'] ?? null,
-            'meta_keywords' => $data['meta_keywords'] ?? null,
+            'meta_keywords' => isset($data['meta_keywords']) ? (is_array($data['meta_keywords']) ? json_encode($data['meta_keywords'], JSON_UNESCAPED_UNICODE) : $data['meta_keywords']) : null,
             'published_at' => $data['published_at'] ?? null,
             'image_url' => $data['image_url'] ?? null,
             'thumbnail_url' => $data['thumbnail_url'] ?? null
@@ -115,7 +115,7 @@ class Category
             'description' => $data['description'] ?? null,
             'meta_title' => $data['meta_title'] ?? null,
             'meta_description' => $data['meta_description'] ?? null,
-            'meta_keywords' => $data['meta_keywords'] ?? null
+            'meta_keywords' => isset($data['meta_keywords']) ? (is_array($data['meta_keywords']) ? json_encode($data['meta_keywords'], JSON_UNESCAPED_UNICODE) : $data['meta_keywords']) : null
         ];
 
         if (array_key_exists('published_at', $data)) {
