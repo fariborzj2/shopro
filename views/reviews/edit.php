@@ -41,7 +41,7 @@
                 <?php csrf_field(); ?>
 
                 <div class="mb-4">
-                    <textarea name="admin_reply" rows="4" class="w-full rounded-xl border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white px-4 py-3 focus:ring-primary-500 focus:border-primary-500 shadow-sm transition-colors placeholder-gray-400" placeholder="پاسخ خود را اینجا بنویسید..."><?php echo htmlspecialchars($review['admin_reply'] ?? ''); ?></textarea>
+                    <textarea name="admin_reply" rows="4" class="w-full rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white px-4 py-3 focus:ring-primary-500 focus:border-primary-500 shadow-sm transition-colors placeholder-gray-400" placeholder="پاسخ خود را اینجا بنویسید..."><?php echo htmlspecialchars($review['admin_reply'] ?? ''); ?></textarea>
                 </div>
 
                 <div class="flex items-center justify-between">
@@ -80,7 +80,7 @@
 
             <div class="mt-6 pt-6 border-t border-gray-100 dark:border-gray-700">
                 <a href="<?php echo url('reviews'); ?>" class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 text-sm flex items-center justify-center gap-1">
-                    <?php partial('icon', ['name' => 'chevron-down', 'class' => 'w-4 h-4 rotate-90']); ?>
+                    <?php partial('icon', ['name' => 'chevron-down', 'class' => 'w-4 h-4 rotate-180']); ?>
                     بازگشت به لیست نظرات
                 </a>
             </div>
