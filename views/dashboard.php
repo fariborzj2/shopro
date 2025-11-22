@@ -17,7 +17,7 @@
 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
 
     <!-- Card 1: Sales Today -->
-    <div class="group relative bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-card hover:shadow-lg transition-all duration-300 border border-gray-100 dark:border-gray-700">
+    <div class="group relative overflow-hidden bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-card hover:shadow-lg transition-all duration-300 border border-gray-100 dark:border-gray-700">
         <div class="absolute top-0 right-0 w-24 h-24 bg-primary-50 dark:bg-primary-900/10 rounded-bl-full -mr-4 -mt-4 opacity-50 transition-transform group-hover:scale-110"></div>
 
         <div class="flex items-center justify-between mb-4 relative z-10">
@@ -39,7 +39,7 @@
     </div>
 
     <!-- Card 2: Orders Today -->
-    <div class="group relative bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-card hover:shadow-lg transition-all duration-300 border border-gray-100 dark:border-gray-700">
+    <div class="group relative overflow-hidden bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-card hover:shadow-lg transition-all duration-300 border border-gray-100 dark:border-gray-700">
          <div class="absolute top-0 right-0 w-24 h-24 bg-blue-50 dark:bg-blue-900/10 rounded-bl-full -mr-4 -mt-4 opacity-50 transition-transform group-hover:scale-110"></div>
         <div class="flex items-center justify-between mb-4 relative z-10">
             <div class="p-3 bg-blue-50 dark:bg-blue-900/20 rounded-xl text-blue-600 dark:text-blue-400 shadow-sm group-hover:scale-105 transition-transform">
@@ -53,7 +53,7 @@
     </div>
 
     <!-- Card 3: New Users -->
-    <div class="group relative bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-card hover:shadow-lg transition-all duration-300 border border-gray-100 dark:border-gray-700">
+    <div class="group relative overflow-hidden bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-card hover:shadow-lg transition-all duration-300 border border-gray-100 dark:border-gray-700">
         <div class="absolute top-0 right-0 w-24 h-24 bg-purple-50 dark:bg-purple-900/10 rounded-bl-full -mr-4 -mt-4 opacity-50 transition-transform group-hover:scale-110"></div>
         <div class="flex items-center justify-between mb-4 relative z-10">
              <div class="p-3 bg-purple-50 dark:bg-purple-900/20 rounded-xl text-purple-600 dark:text-purple-400 shadow-sm group-hover:scale-105 transition-transform">
@@ -67,7 +67,7 @@
     </div>
 
     <!-- Card 4: Monthly Orders -->
-    <div class="group relative bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-card hover:shadow-lg transition-all duration-300 border border-gray-100 dark:border-gray-700">
+    <div class="group relative overflow-hidden bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-card hover:shadow-lg transition-all duration-300 border border-gray-100 dark:border-gray-700">
          <div class="absolute top-0 right-0 w-24 h-24 bg-orange-50 dark:bg-orange-900/10 rounded-bl-full -mr-4 -mt-4 opacity-50 transition-transform group-hover:scale-110"></div>
         <div class="flex items-center justify-between mb-4 relative z-10">
              <div class="p-3 bg-orange-50 dark:bg-orange-900/20 rounded-xl text-orange-600 dark:text-orange-400 shadow-sm group-hover:scale-105 transition-transform">
@@ -142,7 +142,7 @@
                 <button onclick="updateChart('sales', 'year')" class="px-4 py-1.5 text-xs font-medium rounded-lg transition-all focus:outline-none text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white" id="sales-year-btn">سال</button>
             </div>
         </div>
-        <div class="relative h-80 w-full">
+        <div class="relative h-60 w-full">
              <canvas id="salesChart"></canvas>
         </div>
     </div>
@@ -162,7 +162,7 @@
                 <button onclick="updateChart('users', 'year')" class="px-4 py-1.5 text-xs font-medium rounded-lg transition-all focus:outline-none text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white" id="users-year-btn">سال</button>
             </div>
         </div>
-        <div class="relative h-80 w-full">
+        <div class="relative h-60 w-full">
              <canvas id="usersChart"></canvas>
         </div>
     </div>
@@ -258,7 +258,7 @@
                             </td>
                             <td class="px-6 py-4 text-sm text-center">
                                 <a href="<?= url('orders/show/' . $order['id']) ?>" class="text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 transition-colors p-1 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 inline-flex">
-                                    <?php partial('icon', ['name' => 'chevron-down', 'class' => 'w-5 h-5 rotate-[-90deg]']); ?>
+                                    <?php partial('icon', ['name' => 'eye', 'class' => 'w-5 h-5']); ?>
                                 </a>
                             </td>
                         </tr>
