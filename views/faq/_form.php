@@ -13,7 +13,7 @@ $actionUrl = $isEdit ? url('faq/update/' . $item['id']) : url('faq/store');
             <label for="question" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">سوال <span class="text-red-500">*</span></label>
             <input type="text" id="question" name="question"
                    value="<?php echo htmlspecialchars($item['question'] ?? ''); ?>"
-                   class="w-full rounded-xl border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white px-4 py-2.5 focus:ring-primary-500 focus:border-primary-500 shadow-sm transition-colors"
+                   class="w-full rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white px-4 py-2.5 focus:ring-primary-500 focus:border-primary-500 shadow-sm transition-colors"
                    required>
         </div>
 
@@ -21,7 +21,7 @@ $actionUrl = $isEdit ? url('faq/update/' . $item['id']) : url('faq/store');
         <div>
             <label for="answer" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">پاسخ <span class="text-red-500">*</span></label>
             <textarea id="answer" name="answer" rows="5"
-                      class="w-full rounded-xl border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white px-4 py-2.5 focus:ring-primary-500 focus:border-primary-500 shadow-sm transition-colors"
+                      class="w-full rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white px-4 py-2.5 focus:ring-primary-500 focus:border-primary-500 shadow-sm transition-colors"
                       required><?php echo htmlspecialchars($item['answer'] ?? ''); ?></textarea>
         </div>
 
@@ -31,14 +31,14 @@ $actionUrl = $isEdit ? url('faq/update/' . $item['id']) : url('faq/store');
                 <label for="position" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">ترتیب نمایش</label>
                 <input type="number" id="position" name="position"
                        value="<?php echo htmlspecialchars($item['position'] ?? '0'); ?>"
-                       class="w-full rounded-xl border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white px-4 py-2.5 focus:ring-primary-500 focus:border-primary-500 shadow-sm transition-colors">
+                       class="w-full rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white px-4 py-2.5 focus:ring-primary-500 focus:border-primary-500 shadow-sm transition-colors">
             </div>
 
             <!-- Status -->
             <div>
                 <label for="status" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">وضعیت</label>
                 <div class="relative">
-                    <select id="status" name="status" class="w-full appearance-none rounded-xl border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white px-4 py-2.5 pr-10 focus:ring-primary-500 focus:border-primary-500 shadow-sm transition-colors">
+                    <select id="status" name="status" class="w-full appearance-none rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white px-4 py-2.5 pr-10 focus:ring-primary-500 focus:border-primary-500 shadow-sm transition-colors">
                         <option value="active" <?php echo (isset($item['status']) && $item['status'] === 'active') ? 'selected' : ''; ?>>فعال</option>
                         <option value="inactive" <?php echo (isset($item['status']) && $item['status'] === 'inactive') ? 'selected' : ''; ?>>غیرفعال</option>
                     </select>
@@ -51,10 +51,10 @@ $actionUrl = $isEdit ? url('faq/update/' . $item['id']) : url('faq/store');
     </div>
 
     <div class="flex items-center justify-end gap-4 mt-8 border-t border-gray-100 dark:border-gray-700 pt-6">
-        <a href="<?php echo url('faq'); ?>" class="px-4 py-2 rounded-xl text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors font-medium">
+        <a href="<?php echo url('faq'); ?>" class="px-4 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-200 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-600 font-medium transition-colors">
             انصراف
         </a>
-        <button type="submit" class="bg-primary-600 hover:bg-primary-700 text-white font-bold py-2.5 px-6 rounded-xl focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-all shadow-lg shadow-primary-500/30">
+        <button type="submit" class="px-6 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 shadow-md hover:shadow-lg font-medium transition-all focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
             <?php echo $isEdit ? 'به‌روزرسانی' : 'ذخیره'; ?>
         </button>
     </div>
