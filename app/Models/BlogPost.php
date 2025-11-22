@@ -100,14 +100,18 @@ class BlogPost
         $published_at = null;
 
         if (!empty($data['published_at'])) {
-            list($jy, $jm, $jd) = explode('/', $data['published_at']);
-            list($gy, $gm, $gd) = jalali_to_gregorian((int)$jy, (int)$jm, (int)$jd);
-            $published_at_gregorian = "$gy-$gm-$gd 00:00:00";
+            // Check if the date is already in Gregorian format (contains -)
+            if (strpos($data['published_at'], '-') !== false) {
+                $published_at = $data['published_at'];
+            } else {
+                list($jy, $jm, $jd) = explode('/', $data['published_at']);
+                list($gy, $gm, $gd) = jalali_to_gregorian((int)$jy, (int)$jm, (int)$jd);
+                $published_at = "$gy-$gm-$gd 00:00:00";
+            }
 
-            if (strtotime($published_at_gregorian) > time()) {
+            if (strtotime($published_at) > time()) {
                 $status = 'scheduled';
             }
-            $published_at = $published_at_gregorian;
         } elseif ($status === 'published') {
             $published_at = date('Y-m-d H:i:s');
         }
@@ -157,14 +161,18 @@ class BlogPost
         $published_at = null;
 
         if (!empty($data['published_at'])) {
-            list($jy, $jm, $jd) = explode('/', $data['published_at']);
-            list($gy, $gm, $gd) = jalali_to_gregorian((int)$jy, (int)$jm, (int)$jd);
-            $published_at_gregorian = "$gy-$gm-$gd 00:00:00";
+            // Check if the date is already in Gregorian format (contains -)
+            if (strpos($data['published_at'], '-') !== false) {
+                $published_at = $data['published_at'];
+            } else {
+                list($jy, $jm, $jd) = explode('/', $data['published_at']);
+                list($gy, $gm, $gd) = jalali_to_gregorian((int)$jy, (int)$jm, (int)$jd);
+                $published_at = "$gy-$gm-$gd 00:00:00";
+            }
 
-            if (strtotime($published_at_gregorian) > time()) {
+            if (strtotime($published_at) > time()) {
                 $status = 'scheduled';
             }
-            $published_at = $published_at_gregorian;
         } elseif ($status === 'published') {
             $current = self::find($id);
             // Only set publish date if it's not already published
