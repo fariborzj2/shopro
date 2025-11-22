@@ -36,10 +36,6 @@ class PagesController
             return;
         }
 
-        // Handle Meta Keywords (array to string)
-        if (isset($data["meta_keywords"]) && is_array($data["meta_keywords"])) {
-            $data["meta_keywords"] = implode(",", $data["meta_keywords"]);
-        }
 
         // Handle published_at (Timestamp)
         if (!empty($data["published_at"])) {
