@@ -10,7 +10,7 @@
     </div>
 
     <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700">
-        <form action="<?php echo isset($field->id) ? url('/admin/custom-fields/update/' . $field->id) : url('/admin/custom-fields/store'); ?>" method="POST" class="p-6">
+        <form action="<?php echo isset($field->id) ? url('/custom-fields/update/' . $field->id) : url('/custom-fields/store'); ?>" method="POST" class="p-6">
             <?php partial('csrf_field'); ?>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -87,7 +87,7 @@
                 <div class="col-span-1">
                     <label for="validation_rules" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">قوانین اعتبارسنجی</label>
                     <input type="text" id="validation_rules" name="validation_rules" dir="ltr"
-                           class="w-full rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white px-4 py-2.5 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 transition-all shadow-sm font-mono text-sm"
+                           class="w-full rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white px-4 py-2.5 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 transition-all shadow-sm"
                            value="<?php echo htmlspecialchars($field->validation_rules ?? ''); ?>" placeholder="required|min:3">
                 </div>
 
@@ -136,7 +136,7 @@
 
             <!-- Actions -->
             <div class="mt-8 pt-6 border-t border-gray-100 dark:border-gray-700 flex items-center justify-end space-x-3 space-x-reverse">
-                <a href="<?php echo url('/admin/custom-fields'); ?>" class="px-4 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-200 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-600 font-medium transition-colors">
+                <a href="<?php echo url('/custom-fields'); ?>" class="px-4 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-200 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-600 font-medium transition-colors">
                     انصراف
                 </a>
                 <button type="submit" class="px-6 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 shadow-md hover:shadow-lg font-medium transition-all focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
