@@ -46,16 +46,26 @@ function tagInput(config) {
                 if (this.inputValue) {
                     this.addTag(this.inputValue);
                 }
-            } else if (event.key === 'Backspace' && !this.inputValue && this.items.length > 0) {
-                this.items.pop();
+            } else if (event.key === 'Backspace') {
+                if (!this.inputValue && this.items.length > 0) {
+                    this.items.pop();
+                }
+            }
+        },
+
+        handlePaste(event) {
+            event.preventDefault();
+            let paste = (event.clipboardData || window.clipboardData).getData('text');
+            if (paste) {
+                let tags = paste.split(',');
+                tags.forEach(tag => {
+                    this.addTag(tag);
+                });
             }
         },
 
         fetchSuggestions(query) {
             // Only fetch if it's the 'Tags' field which has an API. Meta keywords might just be local?
-            // Prompt says "When reached 3 chars, suggest PREVIOUS tags".
-            // So both could potentially use the API if we want suggestions.
-            // Let's assume the 'config' tells us if we should fetch.
             if (!config.fetchUrl) return;
 
             fetch(`${config.fetchUrl}?q=${query}`)
@@ -68,24 +78,6 @@ function tagInput(config) {
 
         // Helper to get value for hidden input
         getItemValue(item) {
-             // If it's an object (existing tag), we might want to send ID or Name.
-             // If the controller expects IDs for existing tags and Strings for new ones, we send accordingly.
-             // However, for simplicity and handling "new tags" seamlessly, often sending names for everything
-             // and letting controller resolve/create is easier.
-             // OR send ID if available, Name if not.
-             // Let's send the Name if it's an object, or the string itself.
-             // Actually, standardizing on Names for submission is usually safer if the backend syncs by name.
-             // But `syncTags` typically uses IDs.
-             // Let's see: `syncTags` in `BlogPost` uses `tag_id`.
-             // So for existing tags, we MUST send IDs.
-             // For new tags, we send Name.
-             // So the controller needs to distinguish.
-             // Let's send:
-             // If object (has ID): return ID (as string/int)
-             // If string: return "new:TAGNAME" or just "TAGNAME" and let controller figure it out (if is_numeric check?)
-             // Using a mixed array is tricky in PHP `syncTags` if it expects IDs.
-             // I will modify the controller to handle this.
-
              if (typeof item === 'object' && item.id) {
                  return item.id; // It's an ID
              }
