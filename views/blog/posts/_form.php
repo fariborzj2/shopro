@@ -101,6 +101,15 @@
                 </div>
             </div>
 
+            <!-- Published At (Persian Date Picker) -->
+            <div class="col-span-1">
+                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1" for="published_at">تاریخ و ساعت انتشار</label>
+                 <div class="relative">
+                     <input type="text" id="published_at" name="published_at" class="w-full rounded-xl border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white px-4 py-2.5 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 transition-all shadow-sm"
+                            autocomplete="off" placeholder="انتخاب کنید..." />
+                 </div>
+            </div>
+
             <!-- Tags Input -->
             <div class="col-span-1">
                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">تگ‌ها</label>
@@ -307,6 +316,30 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {
+         // Initialize Persian Datepicker
+        const publishedAtInput = $('#published_at');
+        if (publishedAtInput.length) {
+            // Better approach: Convert PHP timestamp to millisecond for JS
+            let initialValue = null;
+            <?php if (!empty($post['published_at'])): ?>
+                initialValue = <?php echo strtotime($post['published_at']) * 1000; ?>;
+            <?php endif; ?>
+
+            publishedAtInput.persianDatepicker({
+                format: 'YYYY/MM/DD HH:mm:ss',
+                timePicker: {
+                    enabled: true,
+                    meridiem: {
+                        enabled: true
+                    }
+                },
+                initialValueType: 'gregorian',
+                initialValue: initialValue,
+                autoClose: true,
+                altField: '#published_at',
+            });
+        }
+
         const isDark = document.documentElement.classList.contains('dark');
         tinymce.init({
             selector: '.tinymce-editor',

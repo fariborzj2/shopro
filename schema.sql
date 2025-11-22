@@ -48,6 +48,7 @@ CREATE TABLE `categories` (
   `meta_title` VARCHAR(255),
   `meta_description` TEXT,
   `meta_keywords` VARCHAR(255),
+  `published_at` TIMESTAMP NULL,
   `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   FOREIGN KEY (`parent_id`) REFERENCES `categories`(`id`) ON DELETE SET NULL
