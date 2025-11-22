@@ -54,6 +54,7 @@ class BlogPostsController
             "categories" => $categories,
             "authors" => $authors,
             "tags" => $tags,
+            "post" => null
         ]);
     }
 

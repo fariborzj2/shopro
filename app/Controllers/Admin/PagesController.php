@@ -20,6 +20,7 @@ class PagesController
     {
         view("main", "pages/create", [
             "title" => "ایجاد صفحه جدید",
+            "page" => null
         ]);
     }
 
