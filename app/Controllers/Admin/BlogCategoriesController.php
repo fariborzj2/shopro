@@ -49,7 +49,7 @@ class BlogCategoriesController
             'position' => $_POST['position']
         ]);
 
-        header('Location: /blog/categories');
+        header('Location: /admin/blog/categories');
         exit();
     }
 
@@ -107,7 +107,7 @@ class BlogCategoriesController
     public function delete($id)
     {
         BlogCategory::delete($id);
-        header('Location: /blog/categories');
+        header('Location: /admin/blog/categories');
         exit();
     }
 }
