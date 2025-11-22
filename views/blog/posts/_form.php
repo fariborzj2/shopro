@@ -1,6 +1,13 @@
+<?php
+// Ensure $post is defined and is an object to prevent errors in Create/Edit modes
+$post = $post ?? new stdClass();
+if (is_array($post)) {
+    $post = (object) $post;
+}
+?>
 <div x-data="{
     activeTab: 'main',
-    imageUrl: '<?php echo isset($post['image_url']) ? asset($post['image_url']) : ''; ?>',
+    imageUrl: '<?php echo isset($post->image_url) ? asset($post->image_url) : ''; ?>',
 
     previewImage(event) {
         const reader = new FileReader();
@@ -20,7 +27,7 @@
 
         if (!confirm('آیا از حذف این تصویر مطمئن هستید؟')) return;
 
-        let url = `<?php echo isset($post['id']) ? url('blog/posts/delete-image/' . $post['id']) : ''; ?>`;
+        let url = `<?php echo isset($post->id) ? url('blog/posts/delete-image/' . $post->id) : ''; ?>`;
         if (!url) return;
 
         fetch(url, {
@@ -73,13 +80,13 @@
             <!-- Title -->
             <div class="col-span-1">
                 <label for="title" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">عنوان پست <span class="text-red-500">*</span></label>
-                <input type="text" id="title" name="title" value="<?php echo htmlspecialchars($post['title'] ?? ''); ?>" class="w-full rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white px-4 py-2.5 focus:ring-primary-500 focus:border-primary-500 shadow-sm" required>
+                <input type="text" id="title" name="title" value="<?php echo htmlspecialchars($post->title ?? ''); ?>" class="w-full rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white px-4 py-2.5 focus:ring-primary-500 focus:border-primary-500 shadow-sm" required>
             </div>
 
             <!-- Slug -->
             <div class="col-span-1">
                 <label for="slug" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">اسلاگ (URL)</label>
-                <input type="text" id="slug" name="slug" value="<?php echo htmlspecialchars($post['slug'] ?? ''); ?>" dir="ltr" class="w-full rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white px-4 py-2.5 focus:ring-primary-500 focus:border-primary-500 shadow-sm">
+                <input type="text" id="slug" name="slug" value="<?php echo htmlspecialchars($post->slug ?? ''); ?>" dir="ltr" class="w-full rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white px-4 py-2.5 focus:ring-primary-500 focus:border-primary-500 shadow-sm">
                 <p class="text-xs text-gray-500 mt-1">در صورت خالی بودن، از روی عنوان ساخته می‌شود.</p>
             </div>
 
@@ -90,8 +97,8 @@
                     <select id="category_id" name="category_id" class="w-full appearance-none rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white px-4 py-2.5 pr-10 focus:ring-primary-500 focus:border-primary-500 shadow-sm">
                         <option value="">انتخاب کنید...</option>
                         <?php foreach ($categories as $category): ?>
-                            <option value="<?php echo $category['id']; ?>" <?php echo (isset($post['category_id']) && $category['id'] == $post['category_id']) ? 'selected' : ''; ?>>
-                                <?php echo htmlspecialchars($category['name']); ?>
+                            <option value="<?php echo $category->id; ?>" <?php echo (isset($post->category_id) && $category->id == $post->category_id) ? 'selected' : ''; ?>>
+                                <?php echo htmlspecialchars($category->name); ?>
                             </option>
                         <?php endforeach; ?>
                     </select>
@@ -131,7 +138,7 @@
                         </template>
 
                         <!-- Input -->
-                        <input x-ref="input" type="text" x-model="inputValue" @keydown="handleKeydown" @paste="handlePaste($event)"
+                        <input x-ref="input" type="text" x-model="inputValue" @keydown="handleKeydown" @paste="handlePaste($event)" @input.stop
                                class="flex-1 min-w-[120px] bg-transparent border-none outline-none focus:ring-0 p-1 text-sm text-gray-900 dark:text-white placeholder-gray-400"
                                placeholder="تگ را وارد کنید...">
                     </div>
@@ -152,9 +159,9 @@
                 <label for="status" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">وضعیت انتشار</label>
                 <div class="relative">
                     <select id="status" name="status" class="w-full appearance-none rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white px-4 py-2.5 pr-10 focus:ring-primary-500 focus:border-primary-500 shadow-sm">
-                        <option value="draft" <?php echo (isset($post['status']) && $post['status'] == 'draft') ? 'selected' : ''; ?>>پیش‌نویس</option>
-                        <option value="published" <?php echo (isset($post['status']) && $post['status'] == 'published') ? 'selected' : ''; ?>>منتشر شده</option>
-                        <option value="archived" <?php echo (isset($post['status']) && $post['status'] == 'archived') ? 'selected' : ''; ?>>آرشیو شده</option>
+                        <option value="draft" <?php echo (isset($post->status) && $post->status == 'draft') ? 'selected' : ''; ?>>پیش‌نویس</option>
+                        <option value="published" <?php echo (isset($post->status) && $post->status == 'published') ? 'selected' : ''; ?>>منتشر شده</option>
+                        <option value="archived" <?php echo (isset($post->status) && $post->status == 'archived') ? 'selected' : ''; ?>>آرشیو شده</option>
                     </select>
                     <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center px-3 text-gray-500">
                         <?php partial('icon', ['name' => 'chevron-down', 'class' => 'w-4 h-4']); ?>
@@ -203,7 +210,7 @@
         <div class="mb-6">
             <label for="excerpt" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">خلاصه متن</label>
             <div class="rounded-xl overflow-hidden border border border-gray-300 dark:border-gray-600">
-                <textarea id="excerpt" name="excerpt" rows="3" class="tinymce-editor"><?= htmlspecialchars($post['excerpt'] ?? '') ?></textarea>
+                <textarea id="excerpt" name="excerpt" rows="3" class="tinymce-editor"><?= htmlspecialchars($post->excerpt ?? '') ?></textarea>
             </div>
         </div>
 
@@ -211,7 +218,7 @@
         <div class="mb-6">
             <label for="content" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">محتوای کامل</label>
             <div class="rounded-xl overflow-hidden border border border-gray-300 dark:border-gray-600">
-                <textarea id="content" name="content" class="tinymce-editor"><?= htmlspecialchars($post['content'] ?? '') ?></textarea>
+                <textarea id="content" name="content" class="tinymce-editor"><?= htmlspecialchars($post->content ?? '') ?></textarea>
             </div>
         </div>
     </div>
@@ -220,16 +227,6 @@
     <div x-show="activeTab === 'faq'" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0" style="display: none;">
         <div class="space-y-4" x-data="{
             faqs: <?php
-                // Load existing FAQs if any.
-                // We need to ensure $post_faq_items contains full objects (id, question, answer).
-                // The controller currently passes IDs. We might need to fetch full objects or pass them here.
-                // Let's assume for now we need to pass objects from controller.
-                // If $post_faq_items is array of IDs, we need to fetch.
-                // Since I can't change controller in this same step easily without logic, I'll assume I'll fix controller to pass objects.
-                // Or I can use what I have. `edit` method in controller has:
-                // $post_faq_items = BlogPost::getFaqItemsByPostId($id); -> returns IDs.
-                // I need to change that to return objects.
-                // For now, let's initialize empty or with what we have, and I'll fix the controller in next step.
                 echo isset($post_faq_objects) ? json_encode($post_faq_objects) : '[]';
             ?>,
             addFaq() {
@@ -271,14 +268,14 @@
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
              <div class="col-span-1">
                 <label for="meta_title" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">عنوان متا (Meta Title)</label>
-                <input type="text" id="meta_title" name="meta_title" value="<?php echo htmlspecialchars($post['meta_title'] ?? ''); ?>" class="w-full rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white px-4 py-2.5 focus:ring-primary-500 focus:border-primary-500 shadow-sm">
+                <input type="text" id="meta_title" name="meta_title" value="<?php echo htmlspecialchars($post->meta_title ?? ''); ?>" class="w-full rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white px-4 py-2.5 focus:ring-primary-500 focus:border-primary-500 shadow-sm">
                 <p class="text-xs text-gray-500 mt-1">عنوان نمایش داده شده در نتایج جستجو (معمولا کمتر از 60 کاراکتر)</p>
             </div>
 
             <div class="col-span-1">
                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">کلمات کلیدی متا</label>
                 <div x-data="tagInput({
-                    initialTags: <?php echo isset($post['meta_keywords']) && $post['meta_keywords'] ? json_encode(array_map('trim', explode(',', htmlspecialchars_decode($post['meta_keywords'])))) : '[]'; ?>,
+                    initialTags: <?php echo isset($post->meta_keywords) && $post->meta_keywords ? json_encode(array_map('trim', explode(',', htmlspecialchars_decode($post->meta_keywords)))) : '[]'; ?>,
                     fieldName: 'meta_keywords[]',
                     noPrefix: true
                 })" class="w-full">
@@ -305,14 +302,14 @@
 
              <div class="col-span-1 md:col-span-2">
                 <label for="meta_description" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">توضیحات متا (Meta Description)</label>
-                <textarea id="meta_description" name="meta_description" rows="3" class="w-full rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white px-4 py-2.5 focus:ring-primary-500 focus:border-primary-500 shadow-sm"><?php echo htmlspecialchars($post['meta_description'] ?? ''); ?></textarea>
+                <textarea id="meta_description" name="meta_description" rows="3" class="w-full rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white px-4 py-2.5 focus:ring-primary-500 focus:border-primary-500 shadow-sm"><?php echo htmlspecialchars($post->meta_description ?? ''); ?></textarea>
                 <p class="text-xs text-gray-500 mt-1">توضیحات نمایش داده شده در نتایج جستجو (معمولا بین 150 تا 160 کاراکتر)</p>
             </div>
         </div>
     </div>
 </div>
 
-<?php require_once __DIR__ . '/../../partials/tag_input_script.php'; ?>
+<?php require_once __DIR__ . '/../partials/tag_input_script.php'; ?>
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {
@@ -320,9 +317,9 @@
         const publishedAtSelector = '#published_at';
         if (document.querySelector(publishedAtSelector)) {
             let initialValue = null;
-            <?php if (!empty($post['published_at'])): ?>
+            <?php if (!empty($post->published_at)): ?>
                 // Convert PHP Gregorian timestamp (seconds) to JS Date object or milliseconds
-                initialValue = <?php echo strtotime($post['published_at']) * 1000; ?>;
+                initialValue = <?php echo strtotime($post->published_at) * 1000; ?>;
             <?php endif; ?>
 
             new JalaliDatepicker(publishedAtSelector, {

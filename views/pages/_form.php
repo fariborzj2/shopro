@@ -1,7 +1,12 @@
 <?php
+// Ensure $page is defined and is an object to prevent errors in Create/Edit modes
+$page = $page ?? new stdClass();
+if (is_array($page)) {
+    $page = (object) $page;
+}
 // Determine if we are in "create" or "edit" mode
-$isEdit = isset($page) && !empty($page['id']);
-$actionUrl = $isEdit ? url('pages/update/' . $page['id']) : url('pages/store');
+$isEdit = isset($page->id) && !empty($page->id);
+$actionUrl = $isEdit ? url('pages/update/' . $page->id) : url('pages/store');
 ?>
 
 <?php require_once __DIR__ . '/../partials/tag_input_script.php'; ?>
@@ -13,13 +18,13 @@ $actionUrl = $isEdit ? url('pages/update/' . $page['id']) : url('pages/store');
         <!-- Title -->
         <div class="col-span-1">
             <label for="title" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">عنوان صفحه <span class="text-red-500">*</span></label>
-            <input type="text" id="title" name="title" value="<?php echo htmlspecialchars($page['title'] ?? ''); ?>" class="w-full rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white px-4 py-2.5 focus:ring-primary-500 focus:border-primary-500 shadow-sm transition-colors" required>
+            <input type="text" id="title" name="title" value="<?php echo htmlspecialchars($page->title ?? ''); ?>" class="w-full rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white px-4 py-2.5 focus:ring-primary-500 focus:border-primary-500 shadow-sm transition-colors" required>
         </div>
 
         <!-- Slug -->
         <div class="col-span-1">
             <label for="slug" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">اسلاگ (URL) <span class="text-red-500">*</span></label>
-            <input type="text" id="slug" name="slug" value="<?php echo htmlspecialchars($page['slug'] ?? ''); ?>" dir="ltr" class="w-full rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white px-4 py-2.5 focus:ring-primary-500 focus:border-primary-500 shadow-sm transition-colors" required>
+            <input type="text" id="slug" name="slug" value="<?php echo htmlspecialchars($page->slug ?? ''); ?>" dir="ltr" class="w-full rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white px-4 py-2.5 focus:ring-primary-500 focus:border-primary-500 shadow-sm transition-colors" required>
         </div>
 
         <!-- Status -->
@@ -27,8 +32,8 @@ $actionUrl = $isEdit ? url('pages/update/' . $page['id']) : url('pages/store');
             <label for="status" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">وضعیت انتشار</label>
             <div class="relative">
                 <select id="status" name="status" class="w-full appearance-none rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white px-4 py-2.5 pr-10 focus:ring-primary-500 focus:border-primary-500 shadow-sm transition-colors">
-                    <option value="draft" <?php echo (isset($page['status']) && $page['status'] == 'draft') ? 'selected' : ''; ?>>پیش‌نویس</option>
-                    <option value="published" <?php echo (isset($page['status']) && $page['status'] == 'published') ? 'selected' : ''; ?>>منتشر شده</option>
+                    <option value="draft" <?php echo (isset($page->status) && $page->status == 'draft') ? 'selected' : ''; ?>>پیش‌نویس</option>
+                    <option value="published" <?php echo (isset($page->status) && $page->status == 'published') ? 'selected' : ''; ?>>منتشر شده</option>
                 </select>
                 <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center px-3 text-gray-500">
                     <?php partial('icon', ['name' => 'chevron-down', 'class' => 'w-4 h-4']); ?>
@@ -49,14 +54,14 @@ $actionUrl = $isEdit ? url('pages/update/' . $page['id']) : url('pages/store');
     <!-- Short Description -->
     <div class="mb-6">
         <label for="short_description" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">توضیحات کوتاه</label>
-        <textarea id="short_description" name="short_description" rows="3" class="w-full rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white px-4 py-2.5 focus:ring-primary-500 focus:border-primary-500 shadow-sm transition-colors"><?php echo htmlspecialchars($page['short_description'] ?? ''); ?></textarea>
+        <textarea id="short_description" name="short_description" rows="3" class="w-full rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white px-4 py-2.5 focus:ring-primary-500 focus:border-primary-500 shadow-sm transition-colors"><?php echo htmlspecialchars($page->short_description ?? ''); ?></textarea>
     </div>
 
     <!-- Content -->
     <div class="mb-6">
         <label for="content" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">محتوای کامل</label>
         <div class="rounded-xl overflow-hidden border border border-gray-300 dark:border-gray-600">
-            <textarea id="content" name="content" class="tinymce-editor"><?php echo htmlspecialchars($page['content'] ?? ''); ?></textarea>
+            <textarea id="content" name="content" class="tinymce-editor"><?php echo htmlspecialchars($page->content ?? ''); ?></textarea>
         </div>
     </div>
 
@@ -67,14 +72,14 @@ $actionUrl = $isEdit ? url('pages/update/' . $page['id']) : url('pages/store');
             <!-- Meta Title -->
             <div class="col-span-1">
                 <label for="meta_title" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">عنوان متا (Meta Title)</label>
-                <input type="text" id="meta_title" name="meta_title" value="<?php echo htmlspecialchars($page['meta_title'] ?? ''); ?>" class="w-full rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white px-4 py-2.5 focus:ring-primary-500 focus:border-primary-500 shadow-sm transition-colors">
+                <input type="text" id="meta_title" name="meta_title" value="<?php echo htmlspecialchars($page->meta_title ?? ''); ?>" class="w-full rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white px-4 py-2.5 focus:ring-primary-500 focus:border-primary-500 shadow-sm transition-colors">
             </div>
 
             <!-- Meta Keywords (Tag Input) -->
             <div class="col-span-1">
                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">کلمات کلیدی متا (Meta Keywords)</label>
                 <div x-data="tagInput({
-                    initialTags: <?php echo isset($page['meta_keywords']) && $page['meta_keywords'] ? json_encode(array_map('trim', explode(',', htmlspecialchars_decode($page['meta_keywords'])))) : '[]'; ?>,
+                    initialTags: <?php echo isset($page->meta_keywords) && $page->meta_keywords ? json_encode(array_map('trim', explode(',', htmlspecialchars_decode($page->meta_keywords)))) : '[]'; ?>,
                     fieldName: 'meta_keywords[]',
                     noPrefix: true
                 })" class="w-full">
@@ -102,7 +107,7 @@ $actionUrl = $isEdit ? url('pages/update/' . $page['id']) : url('pages/store');
             <!-- Meta Description -->
             <div class="col-span-1 md:col-span-2">
                 <label for="meta_description" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">توضیحات متا (Meta Description)</label>
-                <textarea id="meta_description" name="meta_description" rows="3" class="w-full rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white px-4 py-2.5 focus:ring-primary-500 focus:border-primary-500 shadow-sm transition-colors"><?php echo htmlspecialchars($page['meta_description'] ?? ''); ?></textarea>
+                <textarea id="meta_description" name="meta_description" rows="3" class="w-full rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white px-4 py-2.5 focus:ring-primary-500 focus:border-primary-500 shadow-sm transition-colors"><?php echo htmlspecialchars($page->meta_description ?? ''); ?></textarea>
             </div>
         </div>
     </div>
@@ -123,9 +128,9 @@ $actionUrl = $isEdit ? url('pages/update/' . $page['id']) : url('pages/store');
         const publishedAtSelector = '#published_at';
         if (document.querySelector(publishedAtSelector)) {
             let initialValue = null;
-            <?php if (!empty($page['published_at'])): ?>
+            <?php if (!empty($page->published_at)): ?>
                 // Convert PHP Gregorian timestamp (seconds) to JS Date object or milliseconds
-                initialValue = <?php echo strtotime($page['published_at']) * 1000; ?>;
+                initialValue = <?php echo strtotime($page->published_at) * 1000; ?>;
             <?php endif; ?>
 
             new JalaliDatepicker(publishedAtSelector, {
