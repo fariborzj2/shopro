@@ -175,7 +175,7 @@ class BlogPostsController
             $faq_items = $_POST["faq_items"] ?? [];
             BlogPost::syncFaqItems($post_id, $faq_items);
 
-            header("Location: /blog/posts");
+            header("Location: /admin/blog/posts");
             exit();
         }
     }
@@ -393,7 +393,7 @@ class BlogPostsController
 
         BlogPost::syncFaqItems($id, $all_faq_ids);
 
-        header("Location: /blog/posts");
+        header("Location: /admin/blog/posts");
         exit();
     }
 
@@ -405,7 +405,7 @@ class BlogPostsController
     public function delete($id)
     {
         BlogPost::delete($id);
-        header("Location: /blog/posts");
+        header("Location: /admin/blog/posts");
         exit();
     }
 
