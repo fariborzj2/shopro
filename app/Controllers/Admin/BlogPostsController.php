@@ -85,6 +85,11 @@ class BlogPostsController
             return redirect_back_with_error(implode('<br>', $errors));
         }
 
+        // Check for duplicate slug
+        if (BlogPost::findBySlug($_POST['slug'])) {
+            return redirect_back_with_error('این اسلاگ قبلا استفاده شده است. لطفا اسلاگ دیگری انتخاب کنید.');
+        }
+
         // Use the logged-in admin's ID as the author
         $author_id = $_SESSION["admin_id"];
 
@@ -266,6 +271,12 @@ class BlogPostsController
 
         if (!empty($errors)) {
             return redirect_back_with_error(implode('<br>', $errors));
+        }
+
+        // Check for duplicate slug
+        $existing = BlogPost::findBySlug($_POST['slug']);
+        if ($existing && $existing->id != $id) {
+            return redirect_back_with_error('این اسلاگ قبلا توسط نوشته دیگری استفاده شده است.');
         }
 
         $data = [
