@@ -269,6 +269,7 @@ CREATE TABLE `pages` (
   `meta_title` VARCHAR(255),
   `meta_keywords` VARCHAR(255),
   `meta_description` TEXT,
+  `published_at` TIMESTAMP NULL,
   `status` ENUM('published', 'draft') NOT NULL DEFAULT 'draft',
   `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP

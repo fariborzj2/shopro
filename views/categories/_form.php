@@ -299,7 +299,7 @@
                 initialValueType: 'gregorian',
                 initialValue: initialValue,
                 autoClose: true,
-                altField: '#published_at', // Syncs back to the input
+                // altField: '#published_at', // Disabled to prevent overwriting the input with timestamp
 
                 // Theme hacks if needed, but default is okay.
                 onSelect: function(unix){

@@ -27,8 +27,8 @@ class Page
 
     public static function create($data)
     {
-        $sql = "INSERT INTO pages (title, slug, content, short_description, meta_title, meta_keywords, meta_description, status)
-                VALUES (:title, :slug, :content, :short_description, :meta_title, :meta_keywords, :meta_description, :status)";
+        $sql = "INSERT INTO pages (title, slug, content, short_description, meta_title, meta_keywords, meta_description, status, published_at)
+                VALUES (:title, :slug, :content, :short_description, :meta_title, :meta_keywords, :meta_description, :status, :published_at)";
         Database::query($sql, [
             'title' => $data['title'],
             'slug' => $data['slug'],
@@ -38,23 +38,14 @@ class Page
             'meta_keywords' => $data['meta_keywords'] ?? null,
             'meta_description' => $data['meta_description'] ?? null,
             'status' => $data['status'],
+            'published_at' => $data['published_at'] ?? null,
         ]);
         return true;
     }
 
     public static function update($id, $data)
     {
-        $sql = "UPDATE pages SET
-                title = :title,
-                slug = :slug,
-                content = :content,
-                short_description = :short_description,
-                meta_title = :meta_title,
-                meta_keywords = :meta_keywords,
-                meta_description = :meta_description,
-                status = :status
-                WHERE id = :id";
-        Database::query($sql, [
+        $fields = [
             'id' => $id,
             'title' => $data['title'],
             'slug' => $data['slug'],
@@ -64,7 +55,26 @@ class Page
             'meta_keywords' => $data['meta_keywords'] ?? null,
             'meta_description' => $data['meta_description'] ?? null,
             'status' => $data['status'],
-        ]);
+        ];
+
+        $sql = "UPDATE pages SET
+                title = :title,
+                slug = :slug,
+                content = :content,
+                short_description = :short_description,
+                meta_title = :meta_title,
+                meta_keywords = :meta_keywords,
+                meta_description = :meta_description,
+                status = :status";
+
+        if (array_key_exists('published_at', $data)) {
+            $sql .= ", published_at = :published_at";
+            $fields['published_at'] = $data['published_at'];
+        }
+
+        $sql .= " WHERE id = :id";
+
+        Database::query($sql, $fields);
         return true;
     }
 
