@@ -72,8 +72,8 @@ class Category
     public static function create($data)
     {
         $db = Database::getConnection();
-        $sql = "INSERT INTO categories (parent_id, name_fa, name_en, status, position, slug, short_description, description, meta_title, meta_description, meta_keywords, image_url, thumbnail_url)
-                VALUES (:parent_id, :name_fa, :name_en, :status, :position, :slug, :short_description, :description, :meta_title, :meta_description, :meta_keywords, :image_url, :thumbnail_url)";
+        $sql = "INSERT INTO categories (parent_id, name_fa, name_en, status, position, slug, short_description, description, meta_title, meta_description, meta_keywords, published_at, image_url, thumbnail_url)
+                VALUES (:parent_id, :name_fa, :name_en, :status, :position, :slug, :short_description, :description, :meta_title, :meta_description, :meta_keywords, :published_at, :image_url, :thumbnail_url)";
         $stmt = $db->prepare($sql);
         $stmt->execute([
             'parent_id' => $data['parent_id'] ?: null,
@@ -87,6 +87,7 @@ class Category
             'meta_title' => $data['meta_title'] ?? null,
             'meta_description' => $data['meta_description'] ?? null,
             'meta_keywords' => $data['meta_keywords'] ?? null,
+            'published_at' => $data['published_at'] ?? null,
             'image_url' => $data['image_url'] ?? null,
             'thumbnail_url' => $data['thumbnail_url'] ?? null
         ]);
@@ -116,6 +117,10 @@ class Category
             'meta_description' => $data['meta_description'] ?? null,
             'meta_keywords' => $data['meta_keywords'] ?? null
         ];
+
+        if (array_key_exists('published_at', $data)) {
+            $fields['published_at'] = $data['published_at'];
+        }
 
         // Only add image fields to the update query if they are present in the data
         if (array_key_exists('image_url', $data)) {

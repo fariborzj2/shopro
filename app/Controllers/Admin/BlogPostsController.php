@@ -101,6 +101,24 @@ class BlogPostsController
             'meta_keywords' => htmlspecialchars($meta_keywords),
         ];
 
+        // Handle Jalali Date Conversion for published_at
+        if (!empty($_POST['published_at'])) {
+            // Expected format from persian-datepicker: YYYY/MM/DD HH:mm:ss
+            $jalaliDate = $_POST['published_at'];
+            $parts = preg_split('/[\/\-\s:]/', $jalaliDate);
+            if (count($parts) >= 5) {
+                 $jy = (int)$parts[0];
+                 $jm = (int)$parts[1];
+                 $jd = (int)$parts[2];
+                 $h = (int)$parts[3];
+                 $m = (int)$parts[4];
+                 $s = isset($parts[5]) ? (int)$parts[5] : 0;
+
+                 $gregorian = jalali_to_gregorian($jy, $jm, $jd);
+                 $data['published_at'] = sprintf('%04d-%02d-%02d %02d:%02d:%02d', $gregorian[0], $gregorian[1], $gregorian[2], $h, $m, $s);
+            }
+        }
+
         // Image Upload
         $uploader = new ImageUploader();
         if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
@@ -176,11 +194,13 @@ class BlogPostsController
         }
 
         // Convert gregorian published_at to jalali for the view
-        if (!empty($post['published_at'])) {
-            $ts = strtotime($post['published_at']);
-            list($jy, $jm, $jd) = gregorian_to_jalali(date('Y', $ts), date('m', $ts), date('d', $ts));
-            $post['published_at_jalali'] = "$jy/$jm/$jd";
-        }
+        // We don't need to convert here if we are initializing the datepicker with a Gregorian timestamp/date.
+        // The datepicker JS will handle the display.
+        // if (!empty($post['published_at'])) {
+        //     $ts = strtotime($post['published_at']);
+        //     list($jy, $jm, $jd) = gregorian_to_jalali(date('Y', $ts), date('m', $ts), date('d', $ts));
+        //     $post['published_at_jalali'] = "$jy/$jm/$jd";
+        // }
 
         return view('main', 'blog/posts/edit', [
             'title' => 'ویرایش نوشته',
@@ -254,6 +274,24 @@ class BlogPostsController
             'meta_description' => htmlspecialchars($_POST['meta_description'] ?? ''),
             'meta_keywords' => htmlspecialchars($meta_keywords),
         ];
+
+        // Handle Jalali Date Conversion for published_at
+        if (!empty($_POST['published_at'])) {
+            // Expected format from persian-datepicker: YYYY/MM/DD HH:mm:ss
+            $jalaliDate = $_POST['published_at'];
+            $parts = preg_split('/[\/\-\s:]/', $jalaliDate);
+            if (count($parts) >= 5) {
+                 $jy = (int)$parts[0];
+                 $jm = (int)$parts[1];
+                 $jd = (int)$parts[2];
+                 $h = (int)$parts[3];
+                 $m = (int)$parts[4];
+                 $s = isset($parts[5]) ? (int)$parts[5] : 0;
+
+                 $gregorian = jalali_to_gregorian($jy, $jm, $jd);
+                 $data['published_at'] = sprintf('%04d-%02d-%02d %02d:%02d:%02d', $gregorian[0], $gregorian[1], $gregorian[2], $h, $m, $s);
+            }
+        }
 
         // Image Upload
         $uploader = new ImageUploader();

@@ -61,6 +61,28 @@ class CategoriesController
             'meta_keywords' => htmlspecialchars($_POST['meta_keywords'] ?? '')
         ];
 
+        // Handle Jalali Date Conversion for published_at
+        if (!empty($_POST['published_at'])) {
+            // Expected format from persian-datepicker: YYYY/MM/DD HH:mm:ss
+            $jalaliDate = $_POST['published_at'];
+            // Assuming input is YYYY/MM/DD HH:mm:ss or YYYY-MM-DD HH:mm:ss
+            // We need to convert it to Gregorian for DB storage
+            // Use jdf helper if available or custom logic
+
+            $parts = preg_split('/[\/\-\s:]/', $jalaliDate);
+            if (count($parts) >= 5) {
+                 $jy = (int)$parts[0];
+                 $jm = (int)$parts[1];
+                 $jd = (int)$parts[2];
+                 $h = (int)$parts[3];
+                 $m = (int)$parts[4];
+                 $s = isset($parts[5]) ? (int)$parts[5] : 0;
+
+                 $gregorian = jalali_to_gregorian($jy, $jm, $jd);
+                 $data['published_at'] = sprintf('%04d-%02d-%02d %02d:%02d:%02d', $gregorian[0], $gregorian[1], $gregorian[2], $h, $m, $s);
+            }
+        }
+
         $uploader = new ImageUploader();
 
         if (isset($_FILES['image_url']) && $_FILES['image_url']['error'] === UPLOAD_ERR_OK) {
@@ -154,6 +176,23 @@ class CategoriesController
             'meta_description' => htmlspecialchars($_POST['meta_description'] ?? ''),
             'meta_keywords' => htmlspecialchars($_POST['meta_keywords'] ?? '')
         ];
+
+        // Handle Jalali Date Conversion for published_at
+        if (!empty($_POST['published_at'])) {
+            $jalaliDate = $_POST['published_at'];
+            $parts = preg_split('/[\/\-\s:]/', $jalaliDate);
+            if (count($parts) >= 5) {
+                 $jy = (int)$parts[0];
+                 $jm = (int)$parts[1];
+                 $jd = (int)$parts[2];
+                 $h = (int)$parts[3];
+                 $m = (int)$parts[4];
+                 $s = isset($parts[5]) ? (int)$parts[5] : 0;
+
+                 $gregorian = jalali_to_gregorian($jy, $jm, $jd);
+                 $data['published_at'] = sprintf('%04d-%02d-%02d %02d:%02d:%02d', $gregorian[0], $gregorian[1], $gregorian[2], $h, $m, $s);
+            }
+        }
 
         $uploader = new ImageUploader();
 

@@ -126,6 +126,15 @@
                        type="number" name="position" id="position" value="<?php echo htmlspecialchars($category->position ?? '0'); ?>">
             </div>
 
+             <!-- Published At (Persian Date Picker) -->
+            <div class="col-span-1">
+                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1" for="published_at">تاریخ و ساعت انتشار</label>
+                 <div class="relative">
+                     <input type="text" id="published_at" name="published_at" class="w-full rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white px-4 py-2.5 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 transition-all shadow-sm"
+                            autocomplete="off" placeholder="انتخاب کنید..." />
+                 </div>
+            </div>
+
             <div class="md:col-span-2">
                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1" for="short_description">توضیحات کوتاه</label>
                 <textarea class="w-full rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white px-4 py-2.5 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 transition-all shadow-sm"
@@ -256,6 +265,49 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {
+         // Initialize Persian Datepicker
+        const publishedAtInput = $('#published_at');
+        if (publishedAtInput.length) {
+            // Pre-fill value if exists (convert Gregorian to Jalali for display)
+            <?php if (!empty($category->published_at)): ?>
+                const serverDate = new Date("<?php echo $category->published_at; ?>");
+                if (!isNaN(serverDate)) {
+                     // We can use 'initialValue' option of persianDatepicker, or let it sync
+                     // But the simplest way is to convert it to Jalali in PHP and put it in value attribute if possible.
+                     // Since we didn't pass a Jalali string, let's use JS to set initial state if needed,
+                     // OR better, use PHP helper to format it before rendering.
+                     // But since I am in JS block, I'll rely on the plugin's ability or just send the timestamp.
+                     // Actually, the plugin expects a timestamp or formatted string.
+                     // Let's rely on PHP to pass the Jalali date to the view if we want pre-filling.
+                }
+            <?php endif; ?>
+
+            // Better approach: Convert PHP timestamp to millisecond for JS
+            let initialValue = null;
+            <?php if (!empty($category->published_at)): ?>
+                initialValue = <?php echo strtotime($category->published_at) * 1000; ?>;
+            <?php endif; ?>
+
+            publishedAtInput.persianDatepicker({
+                format: 'YYYY/MM/DD HH:mm:ss',
+                timePicker: {
+                    enabled: true,
+                    meridiem: {
+                        enabled: true
+                    }
+                },
+                initialValueType: 'gregorian',
+                initialValue: initialValue,
+                autoClose: true,
+                altField: '#published_at', // Syncs back to the input
+
+                // Theme hacks if needed, but default is okay.
+                onSelect: function(unix){
+                    // console.log('datepicker select : ' + unix);
+                }
+            });
+        }
+
         // Helper for dark mode in TinyMCE
         const isDark = document.documentElement.classList.contains('dark');
         const skin = isDark ? 'oxide-dark' : 'oxide';
