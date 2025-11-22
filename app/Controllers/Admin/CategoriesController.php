@@ -58,7 +58,7 @@ class CategoriesController
             'description' => $_POST['description'] ?? '',
             'meta_title' => htmlspecialchars($_POST['meta_title'] ?? ''),
             'meta_description' => htmlspecialchars($_POST['meta_description'] ?? ''),
-            'meta_keywords' => htmlspecialchars($_POST['meta_keywords'] ?? '')
+            'meta_keywords' => htmlspecialchars(is_array($_POST['meta_keywords'] ?? '') ? implode(',', $_POST['meta_keywords']) : ($_POST['meta_keywords'] ?? ''))
         ];
 
         // Handle published_at (Timestamp)

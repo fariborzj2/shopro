@@ -249,9 +249,30 @@
             </div>
             <div class="col-span-1">
                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1" for="meta_keywords">کلمات کلیدی متا</label>
-                <input class="w-full rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white px-4 py-2.5 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 transition-all shadow-sm"
-                       type="text" name="meta_keywords" id="meta_keywords" value="<?php echo htmlspecialchars($category->meta_keywords ?? ''); ?>">
-                <p class="text-xs text-gray-500 mt-1">با کاما (,) جدا کنید.</p>
+                <div x-data="tagInput({
+                    initialTags: <?php echo isset($category->meta_keywords) && $category->meta_keywords ? json_encode(explode(',', $category->meta_keywords)) : '[]'; ?>,
+                    fieldName: 'meta_keywords[]',
+                    noPrefix: true
+                })" class="w-full">
+                    <div class="relative rounded-xl border border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-2 py-1.5 flex flex-wrap gap-2 focus-within:ring-2 focus-within:ring-primary-500/20 focus-within:border-primary-500 transition-all shadow-sm min-h-[46px]" @click="$refs.input.focus()">
+                        <!-- Chips -->
+                        <template x-for="(tag, index) in items" :key="index">
+                            <span class="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-medium bg-primary-50 text-primary-700 dark:bg-primary-900/30 dark:text-primary-400">
+                                <span x-text="tag"></span>
+                                <button type="button" @click.stop="removeTag(index)" class="ml-1.5 text-primary-400 hover:text-primary-600 dark:text-primary-500 dark:hover:text-primary-300 focus:outline-none">
+                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                                </button>
+                                <input type="hidden" :name="fieldName" :value="tag">
+                            </span>
+                        </template>
+
+                        <!-- Input -->
+                        <input x-ref="input" type="text" x-model="inputValue" @keydown="handleKeydown" @keydown.backspace="handleKeydown"
+                               class="flex-1 min-w-[120px] bg-transparent border-none outline-none focus:ring-0 p-1 text-sm text-gray-900 dark:text-white placeholder-gray-400"
+                               placeholder="تایپ کنید و Enter بزنید...">
+                    </div>
+                </div>
+                <p class="text-xs text-gray-500 mt-1">برای افزودن Enter یا کاما بزنید.</p>
             </div>
             <div class="md:col-span-2">
                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1" for="meta_description">توضیحات متا (Meta Description)</label>
@@ -262,6 +283,8 @@
         </div>
     </div>
 </div>
+
+<?php require_once __DIR__ . '/../../partials/tag_input_script.php'; ?>
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {
