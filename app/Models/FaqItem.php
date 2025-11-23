@@ -7,6 +7,11 @@ use PDO;
 
 class FaqItem
 {
+    public static function all()
+    {
+        return self::findAll();
+    }
+
     public static function findAll()
     {
         $stmt = Database::query("SELECT * FROM faq_items ORDER BY position ASC");

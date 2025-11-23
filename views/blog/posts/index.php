@@ -32,12 +32,7 @@
                                 'archived' => 'bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300',
                                 default => 'bg-gray-100 text-gray-700'
                             };
-                            $status_text = match($post['status']) {
-                                'published' => 'منتشر شده',
-                                'draft' => 'پیش‌نویس',
-                                'archived' => 'آرشیو',
-                                default => $post['status']
-                            };
+                            $status_text = translate_status_fa($post['status']);
                         ?>
                         <span class="px-2 py-1 text-xs font-semibold rounded-full <?= $status_class ?>">
                             <?= $status_text ?>
@@ -95,12 +90,7 @@
                                         'archived' => 'bg-gray-50 text-gray-700 dark:bg-gray-700 dark:text-gray-300 border border-gray-200 dark:border-gray-600',
                                         default => 'bg-gray-50 text-gray-700'
                                     };
-                                    $status_text = match($post['status']) {
-                                        'published' => 'منتشر شده',
-                                        'draft' => 'پیش‌نویس',
-                                        'archived' => 'آرشیو',
-                                        default => $post['status']
-                                    };
+                                    $status_text = translate_status_fa($post['status']);
                                 ?>
                                 <span class="px-2.5 py-0.5 rounded-full text-xs font-medium <?= $status_class ?>">
                                     <?= $status_text ?>
