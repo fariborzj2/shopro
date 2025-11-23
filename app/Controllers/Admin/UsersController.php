@@ -61,7 +61,7 @@ class UsersController
             redirect_back_with_error('User not found.');
         }
 
-        return view('main', 'admin/users/edit', [
+        return view('main', 'users/edit', [
             'title' => 'ویرایش کاربر',
             'user' => $user
         ]);
@@ -90,7 +90,7 @@ class UsersController
             'status' => $_POST['status'] ?? 'active'
         ]);
 
-        header('Location: /users');
+        header('Location: /admin/users');
         exit();
     }
 
