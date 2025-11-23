@@ -73,8 +73,8 @@ class StorefrontController
         }
 
         echo $template->render('page', [
-            'pageTitle' => $page['title'],
-            'content' => $page['content']
+            'page_title' => $page['title'],
+            'page_content' => $page['content']
         ]);
     }
 
