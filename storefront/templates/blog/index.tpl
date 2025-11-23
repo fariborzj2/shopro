@@ -25,7 +25,7 @@
                 <div class="card mb-4">
                     <div class="card-body">
                         <h2 class="card-title"><a href="/blog/<?= $post->slug ?>"><?= htmlspecialchars($post->title) ?></a></h2>
-                        <p class="card-text"><?= htmlspecialchars($post->excerpt) ?></p>
+                        <p class="card-text excerpt"><?= htmlspecialchars($post->excerpt) ?></p>
                         <a href="/blog/<?= $post->slug ?>" class="btn btn-primary">ادامه مطلب &rarr;</a>
                     </div>
                 </div>

@@ -18,7 +18,6 @@ class BlogController
         $this->template = new Template(__DIR__ . '/../../storefront/templates');
     }
 
-    // ... index() and category() methods remain the same ...
     public function index()
     {
         $page = $_GET['page'] ?? 1;
@@ -27,8 +26,14 @@ class BlogController
 
         $offset = ($page - 1) * self::POSTS_PER_PAGE;
         $result = BlogPost::findAllPublishedWithCount(self::POSTS_PER_PAGE, $offset, $search, $category_id);
-        $posts = $result['posts'];
+        $raw_posts = $result['posts'];
         $total_posts = $result['total_count'];
+
+        // Sanitize and normalize posts
+        $posts = [];
+        foreach ($raw_posts as $post) {
+            $posts[] = $this->sanitizePost($post);
+        }
 
         $paginator = new Paginator($total_posts, self::POSTS_PER_PAGE, $page, '/blog');
         $categories = BlogCategory::findAllBy('status', 'active');
@@ -38,6 +43,11 @@ class BlogController
         // Slider and featured categories
         $settings = \App\Models\Setting::getAll();
         $slider_posts = BlogPost::findMostViewed($settings['slider_posts_limit'] ?? 5, $settings['slider_time_range'] ?? 40);
+        // Sanitize slider posts
+        foreach ($slider_posts as &$sp) {
+            $sp = $this->sanitizePost($sp);
+        }
+
         $featured_category_ids = json_decode($settings['featured_categories'] ?? '[]', true);
         $featured_categories = [];
         if (!empty($featured_category_ids)) {
@@ -45,7 +55,11 @@ class BlogController
             $all_categories = \App\Models\BlogCategory::all();
             foreach ($all_categories as $category) {
                 if (in_array($category['id'], $featured_category_ids)) {
-                    $category['posts'] = BlogPost::findAllPublished($posts_limit, 0, null, $category['id']);
+                    $cat_posts = BlogPost::findAllPublished($posts_limit, 0, null, $category['id']);
+                    $category['posts'] = [];
+                    foreach ($cat_posts as $cp) {
+                        $category['posts'][] = $this->sanitizePost($cp);
+                    }
                     $featured_categories[] = $category;
                 }
             }
@@ -77,8 +91,14 @@ class BlogController
         $offset = ($page - 1) * self::POSTS_PER_PAGE;
 
         $result = BlogPost::findAllPublishedWithCount(self::POSTS_PER_PAGE, $offset, null, $category->id);
-        $posts = $result['posts'];
+        $raw_posts = $result['posts'];
         $total_posts = $result['total_count'];
+
+        // Sanitize and normalize posts
+        $posts = [];
+        foreach ($raw_posts as $post) {
+            $posts[] = $this->sanitizePost($post);
+        }
 
         $paginator = new Paginator($total_posts, self::POSTS_PER_PAGE, $page, '/blog/category/' . $slug);
         $sidebar_data = $this->_getSidebarData();
@@ -192,21 +212,63 @@ class BlogController
     private function _getSidebarData()
     {
         // Most Viewed Posts (e.g., top 5)
-        $mostViewed = BlogPost::findMostViewed(5);
+        $mostViewedRaw = BlogPost::findMostViewed(5);
+        $mostViewed = [];
+        foreach ($mostViewedRaw as $p) {
+            $mostViewed[] = $this->sanitizePost($p);
+        }
 
         // Editor's Picks (e.g., top 5)
-        $editorsPicks = BlogPost::findEditorsPicks(5);
+        $editorsPicksRaw = BlogPost::findEditorsPicks(5);
+        $editorsPicks = [];
+        foreach ($editorsPicksRaw as $p) {
+            $editorsPicks[] = $this->sanitizePost($p);
+        }
 
         // Most Discussed (e.g., top 5 by comment count - if comments exist)
-        // Assuming findMostDiscussed exists or we can add it later. For now, reuse most viewed or popular if missing.
-        // Let's check if findMostDiscussed exists in BlogPost model. It's not in the read_file output.
-        // So I will leave it empty or reuse logic.
-        $mostDiscussed = []; // Placeholder
+        $mostDiscussedRaw = []; // Placeholder
+        $mostDiscussed = [];
+        foreach ($mostDiscussedRaw as $p) {
+            $mostDiscussed[] = $this->sanitizePost($p);
+        }
 
         return [
             'most_viewed' => $mostViewed,
             'editors_picks' => $editorsPicks,
             'most_commented' => $mostDiscussed,
         ];
+    }
+
+    /**
+     * Sanitize and normalize a blog post object/array.
+     *
+     * @param mixed $post
+     * @return object
+     */
+    private function sanitizePost($post)
+    {
+        // Convert to object if array
+        if (is_array($post)) {
+            $postObj = (object) $post;
+        } else {
+            $postObj = $post;
+        }
+
+        // Sanitize Title
+        $postObj->title = strip_tags($postObj->title ?? '');
+
+        // Sanitize Excerpt
+        // Use excerpt if available, otherwise strip content
+        $rawExcerpt = !empty($postObj->excerpt) ? $postObj->excerpt : ($postObj->content ?? '');
+        $cleanExcerpt = strip_tags($rawExcerpt);
+
+        // Trim to 200 chars safely
+        if (mb_strlen($cleanExcerpt) > 200) {
+            $postObj->excerpt = mb_substr($cleanExcerpt, 0, 200) . '...';
+        } else {
+            $postObj->excerpt = $cleanExcerpt;
+        }
+
+        return $postObj;
     }
 }
