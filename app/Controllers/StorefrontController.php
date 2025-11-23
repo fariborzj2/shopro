@@ -64,17 +64,17 @@ class StorefrontController
             return;
         }
 
-        $page = Page::findBy('slug', $slug);
+        $page = Page::findBySlug($slug);
 
-        if (!$page || $page->status !== 'published') {
+        if (!$page || $page['status'] !== 'published') {
             header("HTTP/1.0 404 Not Found");
             echo "404 - Page not found.";
             exit();
         }
 
         echo $template->render('page', [
-            'pageTitle' => $page->title,
-            'content' => $page->content
+            'pageTitle' => $page['title'],
+            'content' => $page['content']
         ]);
     }
 

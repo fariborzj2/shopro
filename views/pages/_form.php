@@ -53,12 +53,10 @@ $actionUrl = $isEdit ? url('pages/update/' . $page->id) : url('pages/store');
         </div>
     </div>
 
-    <!-- Short Content -->
+    <!-- Short Description -->
     <div class="mb-6">
-        <label for="short_description" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">محتوای کامل</label>
-        <div class="rounded-xl overflow-hidden border border border-gray-300 dark:border-gray-600">
-            <textarea id="short_description" name="short_description" class="tinymce-editor"><?php echo htmlspecialchars($page->short_description ?? ''); ?></textarea>
-        </div>
+        <label for="short_description" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">توضیحات کوتاه</label>
+        <textarea id="short_description" name="short_description" rows="3" class="w-full rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white px-4 py-2.5 focus:ring-primary-500 focus:border-primary-500 shadow-sm transition-colors"><?php echo htmlspecialchars($page->short_description ?? ''); ?></textarea>
     </div>
 
     <!-- Content -->
@@ -140,9 +138,6 @@ $actionUrl = $isEdit ? url('pages/update/' . $page->id) : url('pages/store');
             <?php if (!empty($page->published_at)): ?>
                 // Convert PHP Gregorian timestamp (seconds) to JS Date object or milliseconds
                 initialValue = <?php echo strtotime($page->published_at) * 1000; ?>;
-             <?php else: ?>
-                // Default to current time if creating a new post
-                initialValue = Date.now();
             <?php endif; ?>
 
             new JalaliDatepicker(publishedAtSelector, {
