@@ -37,4 +37,6 @@
 
 body {
     font-family: 'Estedad', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    line-height: 30px;
+    font-size: 13px;
 }
