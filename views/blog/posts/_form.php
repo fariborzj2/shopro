@@ -347,6 +347,7 @@ if (is_array($post)) {
             directionality: 'rtl',
             skin: isDark ? 'oxide-dark' : 'oxide',
             content_css: isDark ? 'dark' : 'default',
+            content_css: "/css/tiny-custom.css";
              images_upload_handler: (blobInfo, progress) => new Promise((resolve, reject) => {
                 const xhr = new XMLHttpRequest();
                 xhr.withCredentials = false;
