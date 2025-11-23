@@ -116,7 +116,7 @@ class BlogPost
                 }
             }
 
-            if (strtotime($published_at) > time()) {
+            if ($published_at && strtotime($published_at) > time()) {
                 $status = 'scheduled';
             }
         } elseif ($status === 'published') {
@@ -181,7 +181,7 @@ class BlogPost
                 }
             }
 
-            if (strtotime($published_at) > time()) {
+            if ($published_at && strtotime($published_at) > time()) {
                 $status = 'scheduled';
             }
         } elseif ($status === 'published') {
