@@ -140,6 +140,17 @@ function regenerate_csrf_token()
 }
 
 /**
+ * Redirect to a specific path within the admin panel.
+ *
+ * @param string $path
+ */
+function redirect($path)
+{
+    header("Location: " . url($path));
+    exit();
+}
+
+/**
  * Redirect back to the previous page with an error message.
  *
  * @param string $message

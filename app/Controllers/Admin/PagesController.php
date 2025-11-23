@@ -26,30 +26,26 @@ class PagesController
 
     public function store()
     {
-        $request = new Request();
-        $data = $request->all();
+        $data = $_POST;
 
         // Basic validation
         if (empty($data["title"]) || empty($data["slug"])) {
             // Handle error, maybe redirect back with message
-            redirect("/pages/create");
+            redirect_back_with_error("Title and Slug are required.");
             return;
         }
 
-
         // Handle published_at (Timestamp)
         if (!empty($data["published_at"])) {
-            $timestamp = (int) $data["published_at"];
+            // The datepicker sends timestamp in milliseconds, convert to seconds
+            $timestamp = (int) ($data["published_at"] / 1000);
             $data["published_at"] = date("Y-m-d H:i:s", $timestamp);
-            // Handle published_at (Timestamp)
-            if (!empty($data["published_at"])) {
-                $timestamp = (int) $data["published_at"];
-                $data["published_at"] = date("Y-m-d H:i:s", $timestamp);
-            }
-
-            Page::create($data);
-            redirect("/pages");
+        } else {
+            $data["published_at"] = null;
         }
+
+        Page::create($data);
+        redirect("/pages");
     }
 
     public function edit($id)
@@ -68,13 +64,12 @@ class PagesController
 
     public function update($id)
     {
-        $request = new Request();
-        $data = $request->all();
+        $data = $_POST;
 
         // Basic validation
         if (empty($data["title"]) || empty($data["slug"])) {
             // Handle error
-            redirect("/pages/edit/" . $id);
+            redirect_back_with_error("Title and Slug are required.");
             return;
         }
 
