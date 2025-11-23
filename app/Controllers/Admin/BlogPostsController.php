@@ -90,8 +90,15 @@ class BlogPostsController
             return redirect_back_with_error('این اسلاگ قبلا استفاده شده است. لطفا اسلاگ دیگری انتخاب کنید.');
         }
 
-        // Use the logged-in admin's ID as the author
-        $author_id = $_SESSION["admin_id"];
+        // Use the logged-in admin's ID as the author if not provided, or force it
+        // The user reported "Undefined array key author_id".
+        // This suggests the form might not be sending it, or it is optional.
+        // We should rely on the session for security, or validated input.
+        $author_id = $_SESSION["admin_id"] ?? null;
+        if (!$author_id) {
+            // Should not happen if middleware works, but safety first
+            return redirect_back_with_error('خطای احراز هویت: شناسه نویسنده یافت نشد.');
+        }
 
         $data = [
             "category_id" => (int) $_POST["category_id"],
@@ -279,9 +286,17 @@ class BlogPostsController
             return redirect_back_with_error('این اسلاگ قبلا توسط نوشته دیگری استفاده شده است.');
         }
 
+        // Ensure author_id is set. Use existing or session.
+        // If the form doesn't send author_id, keep the old one or use current admin?
+        // Usually, only admins edit, so we might not want to change the author unless explicit.
+        // But if the form sends it (e.g. super admin changing author), use it.
+        // The error "Undefined array key author_id" suggests it's NOT sent.
+        // So we should check if it's set.
+        $author_id = isset($_POST["author_id"]) ? (int)$_POST["author_id"] : $post['author_id'];
+
         $data = [
             "category_id" => (int) $_POST["category_id"],
-            "author_id" => (int) $_POST["author_id"],
+            "author_id" => $author_id,
             "title" => htmlspecialchars($_POST["title"]),
             "slug" => htmlspecialchars($_POST["slug"]),
             "content" => $_POST["content"] ?? "",
