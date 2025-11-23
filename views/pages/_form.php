@@ -10,6 +10,8 @@ $actionUrl = $isEdit ? url('pages/update/' . $page->id) : url('pages/store');
 ?>
 
 <?php require_once __DIR__ . '/../partials/tag_input_script.php'; ?>
+<?php $tinyMceContext = 'pages'; ?>
+<?php require_once __DIR__ . '/../partials/tinymce_config.php'; ?>
 
 <form action="<?php echo $actionUrl; ?>" method="POST">
     <?php csrf_field(); ?>
@@ -51,10 +53,12 @@ $actionUrl = $isEdit ? url('pages/update/' . $page->id) : url('pages/store');
         </div>
     </div>
 
-    <!-- Short Description -->
+    <!-- Short Content -->
     <div class="mb-6">
-        <label for="short_description" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">توضیحات کوتاه</label>
-        <textarea id="short_description" name="short_description" rows="3" class="w-full rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white px-4 py-2.5 focus:ring-primary-500 focus:border-primary-500 shadow-sm transition-colors"><?php echo htmlspecialchars($page->short_description ?? ''); ?></textarea>
+        <label for="short_description" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">محتوای کامل</label>
+        <div class="rounded-xl overflow-hidden border border border-gray-300 dark:border-gray-600">
+            <textarea id="short_description" name="short_description" class="tinymce-editor"><?php echo htmlspecialchars($page->short_description ?? ''); ?></textarea>
+        </div>
     </div>
 
     <!-- Content -->
@@ -136,51 +140,14 @@ $actionUrl = $isEdit ? url('pages/update/' . $page->id) : url('pages/store');
             <?php if (!empty($page->published_at)): ?>
                 // Convert PHP Gregorian timestamp (seconds) to JS Date object or milliseconds
                 initialValue = <?php echo strtotime($page->published_at) * 1000; ?>;
+             <?php else: ?>
+                // Default to current time if creating a new post
+                initialValue = Date.now();
             <?php endif; ?>
 
             new JalaliDatepicker(publishedAtSelector, {
                 initialValue: initialValue
             });
         }
-
-        const isDark = document.documentElement.classList.contains('dark');
-        tinymce.init({
-            selector: '.tinymce-editor',
-            plugins: 'directionality link image lists table media code',
-            toolbar: 'undo redo | formatselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image media | code ltr rtl',
-            language: 'fa',
-            height: 500,
-            relative_urls: false,
-            remove_script_host: false,
-            directionality: 'rtl',
-            skin: isDark ? 'oxide-dark' : 'oxide',
-            content_css: isDark ? 'dark' : 'default',
-             images_upload_handler: (blobInfo, progress) => new Promise((resolve, reject) => {
-                const xhr = new XMLHttpRequest();
-                xhr.withCredentials = false;
-                xhr.open('POST', '<?php echo url('api/upload-image'); ?>');
-                xhr.setRequestHeader('X-CSRF-TOKEN', document.querySelector('meta[name="csrf-token"]').getAttribute('content'));
-
-                xhr.upload.onprogress = (e) => {
-                    progress(e.loaded / e.total * 100);
-                };
-
-                xhr.onload = () => {
-                    if (xhr.status < 200 || xhr.status >= 300) {
-                        return reject('HTTP Error: ' + xhr.status);
-                    }
-                    const json = JSON.parse(xhr.responseText);
-                    if (!json || typeof json.location != 'string') {
-                        return reject('Invalid JSON: ' + xhr.responseText);
-                    }
-                    resolve(json.location);
-                };
-                xhr.onerror = () => reject('Image upload failed due to a network error.');
-                const formData = new FormData();
-                formData.append('file', blobInfo.blob(), blobInfo.filename());
-                formData.append('context', 'pages');
-                xhr.send(formData);
-            })
-        });
     });
 </script>
