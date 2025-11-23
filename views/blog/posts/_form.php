@@ -315,6 +315,7 @@ if (is_array($post)) {
 </div>
 
 <?php require_once PROJECT_ROOT . '/views/partials/tag_input_script.php'; ?>
+<?php $tinyMceContext = 'blog_posts'; ?>
 <?php require_once PROJECT_ROOT . '/views/partials/tinymce_config.php'; ?>
 
 <script>
