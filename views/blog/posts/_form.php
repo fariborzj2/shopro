@@ -315,6 +315,7 @@ if (is_array($post)) {
 </div>
 
 <?php require_once PROJECT_ROOT . '/views/partials/tag_input_script.php'; ?>
+<?php require_once PROJECT_ROOT . '/views/partials/tinymce_config.php'; ?>
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {
@@ -334,48 +335,5 @@ if (is_array($post)) {
                 initialValue: initialValue
             });
         }
-
-        const isDark = document.documentElement.classList.contains('dark');
-        tinymce.init({
-            selector: '.tinymce-editor',
-            plugins: 'directionality link image lists table media code',
-            toolbar: 'undo redo | formatselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image media | code ltr rtl',
-            language: 'fa',
-            height: 500,
-            relative_urls: false,
-            remove_script_host: false,
-            directionality: 'rtl',
-            skin: isDark ? 'oxide-dark' : 'oxide',
-            content_css: [
-                isDark ? 'dark' : 'default',
-                '/css/tiny-custom.css'
-            ],
-             images_upload_handler: (blobInfo, progress) => new Promise((resolve, reject) => {
-                const xhr = new XMLHttpRequest();
-                xhr.withCredentials = false;
-                xhr.open('POST', '<?php echo url('api/upload-image'); ?>');
-                xhr.setRequestHeader('X-CSRF-TOKEN', document.querySelector('meta[name="csrf-token"]').getAttribute('content'));
-
-                xhr.upload.onprogress = (e) => {
-                    progress(e.loaded / e.total * 100);
-                };
-
-                xhr.onload = () => {
-                    if (xhr.status < 200 || xhr.status >= 300) {
-                        return reject('HTTP Error: ' + xhr.status);
-                    }
-                    const json = JSON.parse(xhr.responseText);
-                    if (!json || typeof json.location != 'string') {
-                        return reject('Invalid JSON: ' + xhr.responseText);
-                    }
-                    resolve(json.location);
-                };
-                xhr.onerror = () => reject('Image upload failed due to a network error.');
-                const formData = new FormData();
-                formData.append('file', blobInfo.blob(), blobInfo.filename());
-                formData.append('context', 'blog_posts');
-                xhr.send(formData);
-            })
-        });
     });
 </script>
