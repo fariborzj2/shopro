@@ -1,4 +1,4 @@
-<?php partial('storefront/header', ['title' => $pageTitle]) ?>
+<?php include __DIR__ . '/../header.tpl'; ?>
 
 <div class="container">
     <!-- Slider Section -->
@@ -50,7 +50,7 @@
 
         </div>
         <div class="col-lg-4">
-            <?php partial('blog/_sidebar', ['sidebar' => $sidebar]); ?>
+            <?php include '_sidebar.tpl'; ?>
         </div>
     </div>
 
@@ -92,4 +92,4 @@
     });
 </script>
 
-<?php partial('storefront/footer') ?>
+<?php include __DIR__ . '/../footer.tpl'; ?>

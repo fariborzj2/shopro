@@ -206,7 +206,7 @@ class BlogController
         return [
             'most_viewed' => $mostViewed,
             'editors_picks' => $editorsPicks,
-            'most_discussed' => $mostDiscussed,
+            'most_commented' => $mostDiscussed,
         ];
     }
 }
