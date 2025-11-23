@@ -1,4 +1,4 @@
-<?php partial('storefront/header', ['title' => $pageTitle, 'metaDescription' => $metaDescription, 'canonicalUrl' => $canonicalUrl, 'schema_data' => $schema_data]) ?>
+<?php include __DIR__ . '/../header.tpl'; ?>
 
 <div class="container">
     <div class="row">
@@ -178,4 +178,4 @@
     })
 </script>
 
-<?php partial('storefront/footer') ?>
+<?php include __DIR__ . '/../footer.tpl'; ?>

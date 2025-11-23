@@ -366,7 +366,7 @@ class BlogPost
         $sql = "SELECT * FROM blog_posts WHERE status = 'published' AND (published_at IS NULL OR published_at <= NOW())";
 
         if ($days) {
-            $sql .= " AND published_at >= DATE_SUB(NOW(), INTERVAL :days DAY)";
+            $sql .= " AND published_at >= :cutoff_date";
         }
 
         $sql .= " ORDER BY views_count DESC LIMIT :limit";
@@ -375,7 +375,8 @@ class BlogPost
         $stmt = $pdo->prepare($sql);
         $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
         if ($days) {
-            $stmt->bindValue(':days', $days, PDO::PARAM_INT);
+            $cutoff_date = date('Y-m-d H:i:s', strtotime("-{$days} days"));
+            $stmt->bindValue(':cutoff_date', $cutoff_date);
         }
         $stmt->execute();
 
