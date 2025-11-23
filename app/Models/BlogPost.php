@@ -360,4 +360,42 @@ class BlogPost
 
         return $stmt->fetchAll(PDO::FETCH_OBJ);
     }
+
+    public static function findMostViewed($limit = 5, $days = null)
+    {
+        $sql = "SELECT * FROM blog_posts WHERE status = 'published' AND (published_at IS NULL OR published_at <= NOW())";
+
+        if ($days) {
+            $sql .= " AND published_at >= DATE_SUB(NOW(), INTERVAL :days DAY)";
+        }
+
+        $sql .= " ORDER BY views_count DESC LIMIT :limit";
+
+        $pdo = Database::getConnection();
+        $stmt = $pdo->prepare($sql);
+        $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
+        if ($days) {
+            $stmt->bindValue(':days', $days, PDO::PARAM_INT);
+        }
+        $stmt->execute();
+
+        return $stmt->fetchAll(PDO::FETCH_OBJ);
+    }
+
+    public static function findEditorsPicks($limit = 5)
+    {
+        $sql = "SELECT * FROM blog_posts WHERE status = 'published' AND is_editors_pick = 1 AND (published_at IS NULL OR published_at <= NOW()) ORDER BY published_at DESC LIMIT :limit";
+        $pdo = Database::getConnection();
+        $stmt = $pdo->prepare($sql);
+        $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
+        $stmt->execute();
+
+        return $stmt->fetchAll(PDO::FETCH_OBJ);
+    }
+
+    public static function findAllPublished($limit = 10, $offset = 0, $search = null, $category_id = null)
+    {
+       $result = self::findAllPublishedWithCount($limit, $offset, $search, $category_id);
+       return $result['posts'];
+    }
 }

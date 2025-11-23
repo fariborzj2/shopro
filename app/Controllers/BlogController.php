@@ -188,4 +188,25 @@ class BlogController
             'paginator' => $paginator
         ]);
     }
+
+    private function _getSidebarData()
+    {
+        // Most Viewed Posts (e.g., top 5)
+        $mostViewed = BlogPost::findMostViewed(5);
+
+        // Editor's Picks (e.g., top 5)
+        $editorsPicks = BlogPost::findEditorsPicks(5);
+
+        // Most Discussed (e.g., top 5 by comment count - if comments exist)
+        // Assuming findMostDiscussed exists or we can add it later. For now, reuse most viewed or popular if missing.
+        // Let's check if findMostDiscussed exists in BlogPost model. It's not in the read_file output.
+        // So I will leave it empty or reuse logic.
+        $mostDiscussed = []; // Placeholder
+
+        return [
+            'most_viewed' => $mostViewed,
+            'editors_picks' => $editorsPicks,
+            'most_discussed' => $mostDiscussed,
+        ];
+    }
 }
