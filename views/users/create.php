@@ -9,38 +9,7 @@
         <form action="<?php echo url('/users/store') ?>" method="POST" class="p-6 space-y-6">
             <?php partial('csrf_field'); ?>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <!-- Name -->
-                <div class="col-span-1">
-                    <label for="name" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">نام و نام خانوادگی <span class="text-red-500">*</span></label>
-                    <input type="text" id="name" name="name"
-                           class="w-full rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white px-4 py-2.5 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 transition-all shadow-sm"
-                           required placeholder="مثال: علی محمدی">
-                </div>
-
-                <!-- Mobile -->
-                <div class="col-span-1">
-                    <label for="mobile" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">شماره موبایل <span class="text-red-500">*</span></label>
-                    <input type="text" id="mobile" name="mobile" dir="ltr"
-                           class="w-full rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white px-4 py-2.5 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 transition-all shadow-sm font-mono"
-                           required placeholder="09123456789">
-                </div>
-
-                <!-- Status -->
-                <div class="col-span-1 md:col-span-2">
-                    <label for="status" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">وضعیت حساب</label>
-                    <div class="relative">
-                        <select id="status" name="status" class="w-full appearance-none rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white px-4 py-2.5 pr-10 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 transition-all shadow-sm">
-                            <option value="active" selected>فعال</option>
-                            <option value="inactive">غیرفعال</option>
-                            <option value="banned">مسدود</option>
-                        </select>
-                        <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center px-3 text-gray-500">
-                            <?php partial('icon', ['name' => 'chevron-down', 'class' => 'w-4 h-4']); ?>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <?php require '_form.php'; ?>
 
             <!-- Actions -->
             <div class="pt-6 border-t border-gray-100 dark:border-gray-700 flex items-center justify-end space-x-3 space-x-reverse">
