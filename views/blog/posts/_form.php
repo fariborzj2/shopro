@@ -325,6 +325,9 @@ if (is_array($post)) {
             <?php if (!empty($post->published_at)): ?>
                 // Convert PHP Gregorian timestamp (seconds) to JS Date object or milliseconds
                 initialValue = <?php echo strtotime($post->published_at) * 1000; ?>;
+            <?php else: ?>
+                // Default to current time if creating a new post
+                initialValue = Date.now();
             <?php endif; ?>
 
             new JalaliDatepicker(publishedAtSelector, {
