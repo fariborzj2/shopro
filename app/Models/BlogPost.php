@@ -73,7 +73,7 @@ class BlogPost
      */
     public static function getTagsByPostId($post_id)
     {
-        $sql = "SELECT t.name, t.slug
+        $sql = "SELECT t.id, t.name, t.slug
                 FROM blog_tags t
                 JOIN blog_post_tags bpt ON t.id = bpt.tag_id
                 WHERE bpt.post_id = :post_id";
