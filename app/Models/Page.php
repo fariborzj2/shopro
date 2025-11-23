@@ -22,7 +22,7 @@ class Page
     public static function findBySlug($slug)
     {
         $stmt = Database::query("SELECT * FROM pages WHERE slug = :slug AND status = 'published'", ['slug' => $slug]);
-        return $stmt->fetch(PDO::FETCH_ASSOC);
+        return $stmt->fetch(PDO::FETCH_OBJ);
     }
 
     public static function create($data)
