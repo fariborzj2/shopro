@@ -297,6 +297,8 @@ if (is_array($category)) {
 </div>
 
 <?php require_once __DIR__ . '/../partials/tag_input_script.php'; ?>
+<?php $tinyMceContext = 'categories'; ?>
+<?php require_once __DIR__ . '/../partials/tinymce_config.php'; ?>
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {
@@ -313,60 +315,5 @@ if (is_array($category)) {
                 initialValue: initialValue
             });
         }
-
-        // Helper for dark mode in TinyMCE
-        const isDark = document.documentElement.classList.contains('dark');
-        const skin = isDark ? 'oxide-dark' : 'oxide';
-        const contentCss = isDark ? 'dark' : 'default';
-
-        tinymce.init({
-            selector: '.tinymce-editor',
-            plugins: 'directionality link image lists table media code',
-            toolbar: 'undo redo | formatselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image media | code ltr rtl',
-            language: 'fa',
-            height: 350,
-            relative_urls: false,
-            remove_script_host: false,
-            skin: skin,
-            content_css: contentCss,
-
-            // Image Upload
-            image_title: true,
-            automatic_uploads: true,
-            file_picker_types: 'image',
-            images_upload_handler: (blobInfo, progress) => new Promise((resolve, reject) => {
-                const xhr = new XMLHttpRequest();
-                xhr.withCredentials = false;
-                xhr.open('POST', '<?php echo url('api/upload-image'); ?>');
-                xhr.setRequestHeader('X-CSRF-TOKEN', document.querySelector('meta[name="csrf-token"]').getAttribute('content'));
-
-                xhr.upload.onprogress = (e) => {
-                    progress(e.loaded / e.total * 100);
-                };
-
-                xhr.onload = () => {
-                    if (xhr.status < 200 || xhr.status >= 300) {
-                        return reject('HTTP Error: ' + xhr.status);
-                    }
-                    const json = JSON.parse(xhr.responseText);
-                    if (!json || typeof json.location != 'string') {
-                        return reject('Invalid JSON: ' + xhr.responseText);
-                    }
-                    // Update CSRF token if rotated
-                     if (json.csrf_token) {
-                        document.querySelector('meta[name="csrf-token"]').setAttribute('content', json.csrf_token);
-                        const inputToken = document.querySelector('input[name="csrf_token"]');
-                        if (inputToken) inputToken.value = json.csrf_token;
-                    }
-                    resolve(json.location);
-                };
-                xhr.onerror = () => reject('Image upload failed due to a network error.');
-
-                const formData = new FormData();
-                formData.append('file', blobInfo.blob(), blobInfo.filename());
-                formData.append('context', 'categories');
-                xhr.send(formData);
-            })
-        });
     });
 </script>

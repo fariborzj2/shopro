@@ -67,7 +67,18 @@ $actionUrl = $isEdit ? url('blog/categories/update/' . $category['id']) : url('b
                 </div>
             </div>
         </div>
+
+        <!-- Description -->
+        <div class="mb-4 col-span-1 md:col-span-2">
+            <label for="notes" class="block text-gray-700 dark:text-gray-300 text-sm font-bold mb-2">توضیحات</label>
+            <div class="rounded-xl overflow-hidden border border-gray-300 dark:border-gray-600">
+                <textarea id="notes" name="notes" class="tinymce-editor"><?php echo htmlspecialchars($category['notes'] ?? ''); ?></textarea>
+            </div>
+        </div>
     </div>
+
+    <?php $tinyMceContext = 'blog_categories'; ?>
+    <?php require_once PROJECT_ROOT . '/views/partials/tinymce_config.php'; ?>
 
     <div class="flex items-center justify-end mt-8 pt-6 border-t border-gray-100 dark:border-gray-700 gap-4">
         <a href="/blog/categories" class="px-4 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-200 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-600 font-medium transition-colors">
