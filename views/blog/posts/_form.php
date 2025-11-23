@@ -120,11 +120,11 @@ if (is_array($post)) {
             <!-- Tags Input -->
             <div class="col-span-1">
                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">تگ‌ها</label>
-                <div x-data="tagInput({
-                    initialTags: <?php echo isset($post_tags) ? json_encode($post_tags) : '[]'; ?>,
-                    fieldName: 'tags[]',
-                    fetchUrl: '<?php echo url('api/tags/search'); ?>'
-                })" class="w-full relative">
+                <div x-data='tagInput({
+                    initialTags: <?php echo isset($post_tags) ? json_encode($post_tags, JSON_HEX_APOS) : "[]"; ?>,
+                    fieldName: "tags[]",
+                    fetchUrl: "<?php echo url('api/tags/search'); ?>"
+                })' class="w-full relative">
                     <div class="relative rounded-xl border border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-2 py-1.5 flex flex-wrap gap-2 focus-within:ring-2 focus-within:ring-primary-500/20 focus-within:border-primary-500 transition-all shadow-sm min-h-[46px]" @click="$refs.input.focus()">
                         <!-- Chips -->
                         <template x-for="(tag, index) in items" :key="index">
