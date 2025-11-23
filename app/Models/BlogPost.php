@@ -103,10 +103,17 @@ class BlogPost
             // Check if the date is already in Gregorian format (contains -)
             if (strpos($data['published_at'], '-') !== false) {
                 $published_at = $data['published_at'];
-            } else {
-                list($jy, $jm, $jd) = explode('/', $data['published_at']);
-                list($gy, $gm, $gd) = jalali_to_gregorian((int)$jy, (int)$jm, (int)$jd);
-                $published_at = "$gy-$gm-$gd 00:00:00";
+            } elseif (strpos($data['published_at'], '/') !== false) {
+                // Only attempt explode if slash exists to avoid "Undefined array key 1"
+                $parts = explode('/', $data['published_at']);
+                if (count($parts) === 3) {
+                     list($jy, $jm, $jd) = $parts;
+                     list($gy, $gm, $gd) = jalali_to_gregorian((int)$jy, (int)$jm, (int)$jd);
+                     $published_at = "$gy-$gm-$gd 00:00:00";
+                } else {
+                     // Fallback or error? For now, ignore invalid format or set to now
+                     // Better to leave null or handle gracefully
+                }
             }
 
             if (strtotime($published_at) > time()) {
@@ -164,10 +171,14 @@ class BlogPost
             // Check if the date is already in Gregorian format (contains -)
             if (strpos($data['published_at'], '-') !== false) {
                 $published_at = $data['published_at'];
-            } else {
-                list($jy, $jm, $jd) = explode('/', $data['published_at']);
-                list($gy, $gm, $gd) = jalali_to_gregorian((int)$jy, (int)$jm, (int)$jd);
-                $published_at = "$gy-$gm-$gd 00:00:00";
+            } elseif (strpos($data['published_at'], '/') !== false) {
+                // Only attempt explode if slash exists to avoid "Undefined array key 1"
+                $parts = explode('/', $data['published_at']);
+                if (count($parts) === 3) {
+                     list($jy, $jm, $jd) = $parts;
+                     list($gy, $gm, $gd) = jalali_to_gregorian((int)$jy, (int)$jm, (int)$jd);
+                     $published_at = "$gy-$gm-$gd 00:00:00";
+                }
             }
 
             if (strtotime($published_at) > time()) {
