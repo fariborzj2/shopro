@@ -33,11 +33,13 @@
                         <div class="mt-8 sm:mt-10 sm:flex sm:justify-center lg:justify-start gap-4">
                             <div class="rounded-md shadow">
                                 <a href="#products" class="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-bold rounded-2xl text-white bg-primary-600 hover:bg-primary-700 md:py-4 md:text-lg md:px-10 transition-all transform hover:-translate-y-1 hover:shadow-lg shadow-primary-500/30">
-                                    مشاهده محصولات
+                                    <svg class="w-5 h-5 ml-2 -mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
+                                    شروع خرید
                                 </a>
                             </div>
                             <div class="mt-3 sm:mt-0">
                                 <a href="/page/about-us" class="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-bold rounded-2xl text-primary-700 bg-white hover:bg-gray-50 md:py-4 md:text-lg md:px-10 transition-all border-gray-100 shadow-sm hover:shadow-md">
+                                    <svg class="w-5 h-5 ml-2 -mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                                     درباره ما
                                 </a>
                             </div>
