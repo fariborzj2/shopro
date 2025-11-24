@@ -1,324 +1,280 @@
 <?php include 'header.tpl'; ?>
 
-<!-- Page-Specific Styles -->
-<style>
-    /* Hero Section */
-    .hero-section {
-        text-align: center;
-        padding-block: 5rem 4rem;
-        position: relative;
-    }
-
-    .hero-title {
-        font-size: clamp(2rem, 5vw, 3.5rem);
-        font-weight: 900;
-        line-height: 1.2;
-        margin-bottom: 1.5rem;
-        background: linear-gradient(135deg, var(--color-text-main) 0%, var(--color-primary) 100%);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-    }
-
-    .hero-subtitle {
-        font-size: 1.125rem;
-        color: var(--color-text-muted);
-        max-width: 600px;
-        margin-inline: auto;
-        margin-bottom: 2.5rem;
-    }
-
-    /* Tabs Navigation */
-    .tabs-nav {
-        display: flex;
-        gap: 1rem;
-        overflow-x: auto;
-        padding-bottom: 1rem;
-        margin-bottom: 2rem;
-        border-bottom: 1px solid var(--color-border);
-        scrollbar-width: none; /* Firefox */
-    }
-    .tabs-nav::-webkit-scrollbar { display: none; }
-
-    .tab-btn {
-        padding: 0.75rem 1.5rem;
-        border-radius: 2rem;
-        font-weight: 600;
-        white-space: nowrap;
-        border: 1px solid transparent;
-        transition: var(--transition-smooth);
-        color: var(--color-text-muted);
-        background: rgba(255, 255, 255, 0.3);
-    }
-
-    .tab-btn.active {
-        background: var(--color-primary);
-        color: white;
-        box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
-    }
-
-    .tab-btn:not(.active):hover {
-        background: white;
-        color: var(--color-text-main);
-        border-color: var(--color-border);
-    }
-
-    /* Bento Grid for Products */
-    .product-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-        gap: 2rem;
-    }
-
-    .product-card {
-        display: flex;
-        flex-direction: column;
-        background: white;
-        border-radius: var(--radius-lg);
-        overflow: hidden;
-        transition: var(--transition-smooth);
-        border: 1px solid rgba(255,255,255,0.6);
-        position: relative;
-        cursor: pointer;
-    }
-
-    .product-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 15px 30px -5px rgba(0, 0, 0, 0.1);
-        z-index: 2;
-    }
-
-    .product-image-wrapper {
-        aspect-ratio: 4/3;
-        overflow: hidden;
-        background: #f1f5f9;
-    }
-
-    .product-image {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        transition: transform 0.5s ease;
-    }
-
-    .product-card:hover .product-image {
-        transform: scale(1.05);
-    }
-
-    .product-content {
-        padding: 1.5rem;
-        display: flex;
-        flex-direction: column;
-        gap: 0.5rem;
-        flex-grow: 1;
-    }
-
-    .product-title {
-        font-size: 1.1rem;
-        font-weight: 700;
-        color: var(--color-text-main);
-    }
-
-    .product-price {
-        font-size: 1rem;
-        font-weight: 600;
-        color: var(--color-primary);
-        margin-top: auto;
-    }
-</style>
-
 <!-- App Container -->
 <main
     x-data="store(<?php echo htmlspecialchars($store_data, ENT_QUOTES, 'UTF-8'); ?>)"
     x-init="init()"
-    x-cloak
+    class="flex-grow"
 >
     <!-- Hero Section -->
-    <section class="hero-section">
-        <h1 class="hero-title">تجربه خریدی بی‌نظیر</h1>
-        <p class="hero-subtitle">محصولات با کیفیت و ارسال سریع را با ما تجربه کنید. انتخابی هوشمندانه برای سبک زندگی مدرن.</p>
-        <div>
-            <a href="#products" class="btn btn-primary" style="padding: 1rem 2.5rem; font-size: 1.1rem;">شروع خرید</a>
+    <section class="relative bg-white overflow-hidden">
+        <div class="max-w-7xl mx-auto">
+            <div class="relative z-10 pb-8 bg-white sm:pb-16 md:pb-20 lg:max-w-2xl lg:w-full lg:pb-28 xl:pb-32">
+
+                <!-- Polygon Decoration -->
+                <svg class="hidden lg:block absolute left-0 inset-y-0 h-full w-48 text-white transform translate-x-1/2" fill="currentColor" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+                    <polygon points="50,0 100,0 50,100 0,100" />
+                </svg>
+
+                <main class="mt-10 mx-auto max-w-7xl px-4 sm:mt-12 sm:px-6 md:mt-16 lg:mt-20 lg:px-8 xl:mt-28">
+                    <div class="sm:text-center lg:text-right">
+                        <h1 class="text-4xl tracking-tight font-extrabold text-gray-900 sm:text-5xl md:text-6xl">
+                            <span class="block xl:inline">تجربه خریدی</span>
+                            <span class="block text-primary-600 xl:inline">متفاوت و هوشمند</span>
+                        </h1>
+                        <p class="mt-3 text-base text-gray-500 sm:mt-5 sm:text-lg sm:max-w-xl sm:mx-auto md:mt-5 md:text-xl lg:mx-0">
+                            بهترین محصولات با بالاترین کیفیت و ضمانت بازگشت وجه. همین حالا سفارش دهید و درب منزل تحویل بگیرید.
+                        </p>
+                        <div class="mt-5 sm:mt-8 sm:flex sm:justify-center lg:justify-start">
+                            <div class="rounded-md shadow">
+                                <a href="#products" class="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-xl text-white bg-primary-600 hover:bg-primary-700 md:py-4 md:text-lg md:px-10 transition-all">
+                                    شروع خرید
+                                </a>
+                            </div>
+                            <div class="mt-3 sm:mt-0 sm:mr-3">
+                                <a href="/page/about-us" class="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-xl text-primary-700 bg-primary-100 hover:bg-primary-200 md:py-4 md:text-lg md:px-10 transition-all">
+                                    بیشتر بدانید
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </main>
+            </div>
+        </div>
+
+        <!-- Hero Image -->
+        <div class="lg:absolute lg:inset-y-0 lg:left-0 lg:w-1/2 bg-gray-50">
+            <img class="h-56 w-full object-cover sm:h-72 md:h-96 lg:w-full lg:h-full opacity-90" src="https://placehold.co/800x600/f1f5f9/334155?text=Store+Banner" alt="Store Banner">
         </div>
     </section>
 
     <!-- Products Section -->
-    <section id="products" style="padding-block: 4rem;">
-        <!-- Category Tabs -->
-        <nav class="tabs-nav" aria-label="دسته‌بندی‌ها">
-            <button
-                @click.prevent="setActiveCategory('all')"
-                :class="{'active': activeCategory === 'all'}"
-                class="tab-btn"
-            >
-                همه محصولات
-            </button>
-            <template x-for="category in categories" :key="category.id">
-                <button
-                    @click.prevent="setActiveCategory(category.id)"
-                    :class="{'active': activeCategory === category.id}"
-                    class="tab-btn"
-                    x-text="category.name"
-                ></button>
-            </template>
-        </nav>
+    <section id="products" class="py-16 bg-gray-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center">
+                <h2 class="text-base text-primary-600 font-semibold tracking-wide uppercase">محصولات</h2>
+                <p class="mt-2 text-3xl leading-8 font-extrabold tracking-tight text-gray-900 sm:text-4xl">
+                    جدیدترین محصولات ما
+                </p>
+                <p class="mt-4 max-w-2xl text-xl text-gray-500 lg:mx-auto">
+                    از بین دسته‌بندی‌های متنوع انتخاب کنید و بهترین‌ها را بیابید.
+                </p>
+            </div>
 
-        <!-- Product Grid -->
-        <div class="product-grid">
-            <template x-for="product in filteredProducts" :key="product.id">
-                <article
-                    @click="selectProduct(product)"
-                    class="product-card glass-panel"
-                >
-                    <div class="product-image-wrapper">
-                        <img :src="product.imageUrl" :alt="product.name" class="product-image" loading="lazy">
-                    </div>
-                    <div class="product-content">
-                        <h3 class="product-title" x-text="product.name"></h3>
-                        <p class="product-price" x-text="new Intl.NumberFormat('fa-IR').format(product.price) + ' تومان'"></p>
-                    </div>
-                </article>
-            </template>
+            <!-- Category Tabs -->
+            <div class="mt-10 flex justify-center pb-8">
+                <div class="flex space-x-2 space-x-reverse overflow-x-auto pb-2 no-scrollbar">
+                    <button
+                        @click.prevent="setActiveCategory('all')"
+                        :class="{'bg-primary-600 text-white shadow-lg shadow-primary-500/30': activeCategory === 'all', 'bg-white text-gray-600 hover:bg-gray-100': activeCategory !== 'all'}"
+                        class="px-6 py-2.5 rounded-full text-sm font-bold transition-all whitespace-nowrap"
+                    >
+                        همه محصولات
+                    </button>
+                    <template x-for="category in categories" :key="category.id">
+                        <button
+                            @click.prevent="setActiveCategory(category.id)"
+                            :class="{'bg-primary-600 text-white shadow-lg shadow-primary-500/30': activeCategory === category.id, 'bg-white text-gray-600 hover:bg-gray-100': activeCategory !== category.id}"
+                            class="px-6 py-2.5 rounded-full text-sm font-bold transition-all whitespace-nowrap"
+                            x-text="category.name"
+                        ></button>
+                    </template>
+                </div>
+            </div>
+
+            <!-- Product Grid -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+                <template x-for="product in filteredProducts" :key="product.id">
+                    <article
+                        @click="selectProduct(product)"
+                        class="group bg-white rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 cursor-pointer flex flex-col overflow-hidden"
+                    >
+                        <!-- Image -->
+                        <div class="aspect-w-4 aspect-h-3 bg-gray-200 relative overflow-hidden">
+                            <img
+                                :src="product.imageUrl"
+                                :alt="product.name"
+                                class="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500"
+                                loading="lazy"
+                            >
+                            <!-- Overlay -->
+                            <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-10 transition-opacity"></div>
+                        </div>
+
+                        <!-- Content -->
+                        <div class="p-5 flex-1 flex flex-col">
+                            <h3 class="text-lg font-bold text-gray-900 mb-2 group-hover:text-primary-600 transition-colors" x-text="product.name"></h3>
+                            <p class="text-sm text-gray-500 line-clamp-2 mb-4 flex-grow" x-text="product.description || 'توضیحات محصول...'"></p>
+
+                            <div class="flex items-center justify-between mt-auto pt-4 border-t border-gray-100">
+                                <span class="text-lg font-black text-primary-600" x-text="new Intl.NumberFormat('fa-IR').format(product.price) + ' تومان'"></span>
+                                <button class="p-2 rounded-full bg-gray-50 text-gray-400 group-hover:bg-primary-50 group-hover:text-primary-600 transition-colors">
+                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                                </button>
+                            </div>
+                        </div>
+                    </article>
+                </template>
+            </div>
+
+            <!-- Empty State -->
+            <div x-show="filteredProducts.length === 0" class="text-center py-12">
+                <p class="text-gray-500 text-lg">محصولی در این دسته‌بندی یافت نشد.</p>
+            </div>
         </div>
     </section>
 
     <!-- Purchase Modal -->
     <div
         x-show="isModalOpen"
-        style="display: none;"
-        class="modal-overlay"
-        x-transition:enter="fade-enter-active"
-        x-transition:enter-start="fade-enter-from"
-        x-transition:enter-end="fade-enter-to"
-        x-transition:leave="fade-leave-active"
-        x-transition:leave-start="fade-leave-from"
-        x-transition:leave-end="fade-leave-to"
+        class="relative z-50"
+        aria-labelledby="modal-title"
+        role="dialog"
+        aria-modal="true"
+        x-cloak
     >
-        <!-- Modal Backdrop -->
-        <div class="absolute inset-0" @click="isModalOpen = false"></div>
-
-        <!-- Modal Content -->
         <div
             x-show="isModalOpen"
-            class="modal-content glass-panel"
-            style="max-width: 600px; max-height: 90vh; overflow-y: auto;"
-            x-transition:enter="slide-up-enter-active"
-            x-transition:enter-start="slide-up-enter-from"
-            x-transition:enter-end="slide-up-enter-to"
-            x-transition:leave="slide-up-leave-active"
-            x-transition:leave-start="slide-up-leave-from"
-            x-transition:leave-end="slide-up-leave-to"
-            @click.outside="isModalOpen = false"
-        >
-             <div style="padding: 1rem;">
-                <template x-if="selectedProduct">
-                    <div>
-                        <div class="product-image-wrapper" style="border-radius: var(--radius-md); margin-bottom: 1.5rem;">
-                            <img :src="selectedProduct.imageUrl" :alt="selectedProduct.name" class="product-image">
-                        </div>
+            x-transition:enter="ease-out duration-300"
+            x-transition:enter-start="opacity-0"
+            x-transition:enter-end="opacity-100"
+            x-transition:leave="ease-in duration-200"
+            x-transition:leave-start="opacity-100"
+            x-transition:leave-end="opacity-0"
+            class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity backdrop-blur-sm"
+        ></div>
 
-                        <h3 class="hero-title" style="font-size: 1.8rem; margin-bottom: 2rem;" x-text="selectedProduct.name"></h3>
+        <div class="fixed inset-0 z-10 overflow-y-auto">
+            <div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
+                <div
+                    x-show="isModalOpen"
+                    x-transition:enter="ease-out duration-300"
+                    x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                    x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100"
+                    x-transition:leave="ease-in duration-200"
+                    x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
+                    x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                    @click.outside="isModalOpen = false"
+                    class="relative transform overflow-hidden rounded-2xl bg-white text-right shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg border border-gray-200"
+                >
+                    <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                        <template x-if="selectedProduct">
+                            <div>
+                                <!-- Header -->
+                                <div class="flex items-center justify-between mb-6 pb-4 border-b border-gray-100">
+                                    <h3 class="text-xl font-bold text-gray-900" id="modal-title" x-text="selectedProduct.name"></h3>
+                                    <button @click="isModalOpen = false" class="text-gray-400 hover:text-gray-500">
+                                        <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                                        </svg>
+                                    </button>
+                                </div>
 
-                        <form @submit.prevent="submitOrder" id="purchaseForm" method="POST" action="/api/payment/start">
-                            <?php echo csrf_field(); ?>
-                            <input type="hidden" name="product_id" :value="selectedProduct.id">
+                                <form @submit.prevent="submitOrder" id="purchaseForm" method="POST" action="/api/payment/start">
+                                    <?php echo csrf_field(); ?>
+                                    <input type="hidden" name="product_id" :value="selectedProduct.id">
 
-                            <!-- Custom Fields -->
-                            <div class="form-group">
-                                <template x-for="field in customFields" :key="field.id">
-                                    <div style="margin-bottom: 1.5rem;">
-                                        <label :for="'field_' + field.id" class="form-label">
-                                            <span x-text="field.label"></span>
-                                            <span x-show="field.is_required" style="color: var(--color-danger)">*</span>
-                                        </label>
+                                    <div class="space-y-5 max-h-[60vh] overflow-y-auto px-1 -mx-1 custom-scrollbar">
+                                        <template x-for="field in customFields" :key="field.id">
+                                            <div>
+                                                <label :for="'field_' + field.id" class="block text-sm font-bold text-gray-700 mb-2">
+                                                    <span x-text="field.label"></span>
+                                                    <span x-show="field.is_required" class="text-red-500">*</span>
+                                                </label>
 
-                                        <!-- Text/Number/Date Inputs -->
-                                        <template x-if="['text', 'number', 'date', 'color'].includes(field.type)">
-                                            <input
-                                                :type="field.type"
-                                                :name="field.name"
-                                                :id="'field_' + field.id"
-                                                :placeholder="field.placeholder"
-                                                :required="field.is_required"
-                                                class="form-control"
-                                            >
-                                        </template>
-
-                                        <!-- Textarea -->
-                                        <template x-if="field.type === 'textarea'">
-                                            <textarea
-                                                :name="field.name"
-                                                :id="'field_' + field.id"
-                                                :placeholder="field.placeholder"
-                                                :required="field.is_required"
-                                                class="form-control"
-                                                rows="3"
-                                            ></textarea>
-                                        </template>
-
-                                        <!-- Select -->
-                                        <template x-if="field.type === 'select'">
-                                            <select
-                                                :name="field.name"
-                                                :id="'field_' + field.id"
-                                                :required="field.is_required"
-                                                class="form-control"
-                                            >
-                                                <option value="" disabled selected>انتخاب کنید...</option>
-                                                <template x-for="option in field.options" :key="option.value">
-                                                    <option :value="option.value" x-text="option.label"></option>
+                                                <!-- Text/Number/Date -->
+                                                <template x-if="['text', 'number', 'date', 'color'].includes(field.type)">
+                                                    <input
+                                                        :type="field.type"
+                                                        :name="field.name"
+                                                        :id="'field_' + field.id"
+                                                        :placeholder="field.placeholder"
+                                                        :required="field.is_required"
+                                                        class="block w-full rounded-xl border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm py-3 px-4 bg-gray-50"
+                                                    >
                                                 </template>
-                                            </select>
-                                        </template>
 
-                                        <!-- Radio -->
-                                        <template x-if="field.type === 'radio'">
-                                            <div style="display: flex; flex-direction: column; gap: 0.5rem;">
-                                                <template x-for="option in field.options" :key="option.value">
-                                                    <label class="flex items-center" style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
-                                                        <input
-                                                            type="radio"
-                                                            :name="field.name"
-                                                            :id="'field_' + field.id + '_' + option.value"
-                                                            :value="option.value"
-                                                            :required="field.is_required"
-                                                            style="accent-color: var(--color-primary);"
-                                                        >
-                                                        <span x-text="option.label"></span>
-                                                    </label>
+                                                <!-- Textarea -->
+                                                <template x-if="field.type === 'textarea'">
+                                                    <textarea
+                                                        :name="field.name"
+                                                        :id="'field_' + field.id"
+                                                        :placeholder="field.placeholder"
+                                                        :required="field.is_required"
+                                                        class="block w-full rounded-xl border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm py-3 px-4 bg-gray-50"
+                                                        rows="3"
+                                                    ></textarea>
                                                 </template>
-                                            </div>
-                                        </template>
 
-                                        <!-- Checkbox -->
-                                        <template x-if="field.type === 'checkbox'">
-                                             <div style="display: flex; flex-direction: column; gap: 0.5rem;">
-                                                <template x-for="option in field.options" :key="option.value">
-                                                    <label class="flex items-center" style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
-                                                        <input
-                                                            type="checkbox"
-                                                            :name="field.name + '[]'"
-                                                            :id="'field_' + field.id + '_' + option.value"
-                                                            :value="option.value"
-                                                            style="accent-color: var(--color-primary);"
-                                                        >
-                                                        <span x-text="option.label"></span>
-                                                    </label>
+                                                <!-- Select -->
+                                                <template x-if="field.type === 'select'">
+                                                    <select
+                                                        :name="field.name"
+                                                        :id="'field_' + field.id"
+                                                        :required="field.is_required"
+                                                        class="block w-full rounded-xl border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm py-3 px-4 bg-gray-50"
+                                                    >
+                                                        <option value="" disabled selected>انتخاب کنید...</option>
+                                                        <template x-for="option in field.options" :key="option.value">
+                                                            <option :value="option.value" x-text="option.label"></option>
+                                                        </template>
+                                                    </select>
+                                                </template>
+
+                                                <!-- Radio -->
+                                                <template x-if="field.type === 'radio'">
+                                                    <div class="space-y-2">
+                                                        <template x-for="option in field.options" :key="option.value">
+                                                            <label class="flex items-center space-x-3 space-x-reverse cursor-pointer">
+                                                                <input
+                                                                    type="radio"
+                                                                    :name="field.name"
+                                                                    :id="'field_' + field.id + '_' + option.value"
+                                                                    :value="option.value"
+                                                                    :required="field.is_required"
+                                                                    class="h-4 w-4 border-gray-300 text-primary-600 focus:ring-primary-500"
+                                                                >
+                                                                <span class="text-sm text-gray-700" x-text="option.label"></span>
+                                                            </label>
+                                                        </template>
+                                                    </div>
+                                                </template>
+
+                                                <!-- Checkbox -->
+                                                <template x-if="field.type === 'checkbox'">
+                                                     <div class="space-y-2">
+                                                        <template x-for="option in field.options" :key="option.value">
+                                                            <label class="flex items-center space-x-3 space-x-reverse cursor-pointer">
+                                                                <input
+                                                                    type="checkbox"
+                                                                    :name="field.name + '[]'"
+                                                                    :id="'field_' + field.id + '_' + option.value"
+                                                                    :value="option.value"
+                                                                    class="h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-500"
+                                                                >
+                                                                <span class="text-sm text-gray-700" x-text="option.label"></span>
+                                                            </label>
+                                                        </template>
+                                                    </div>
                                                 </template>
                                             </div>
                                         </template>
                                     </div>
-                                </template>
-                            </div>
 
-                            <!-- Actions -->
-                            <div style="display: flex; flex-direction: column; gap: 1rem; margin-top: 2rem;">
-                                <button type="submit" class="btn btn-primary" style="width: 100%;">پرداخت نهایی</button>
-                                <button @click="isModalOpen = false" type="button" class="btn btn-ghost" style="width: 100%;">انصراف</button>
+                                    <div class="mt-8 flex flex-col gap-3">
+                                        <button type="submit" class="w-full inline-flex justify-center rounded-xl border border-transparent bg-primary-600 px-4 py-3 text-base font-bold text-white shadow-sm hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 sm:text-sm transition-colors">
+                                            پرداخت نهایی
+                                        </button>
+                                        <button @click="isModalOpen = false" type="button" class="w-full inline-flex justify-center rounded-xl border border-gray-300 bg-white px-4 py-3 text-base font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 sm:text-sm transition-colors">
+                                            انصراف
+                                        </button>
+                                    </div>
+                                </form>
                             </div>
-                        </form>
+                        </template>
                     </div>
-                </template>
-             </div>
+                </div>
+            </div>
         </div>
     </div>
 </main>
@@ -353,8 +309,6 @@ function store(data) {
 
             this.selectedProduct = product;
             this.isModalOpen = true;
-
-            // Simple Skeleton / Loading state could be added here, but keeping it simple for now
             this.customFields = [];
 
             fetch(`/api/product-details/${product.id}`)
@@ -372,7 +326,6 @@ function store(data) {
             const form = document.getElementById('purchaseForm');
             const formData = new FormData(form);
 
-            // Revised logic for data collection:
             const payloadFields = [];
             this.customFields.forEach(field => {
                 let val = null;
@@ -397,9 +350,6 @@ function store(data) {
                 custom_fields: payloadFields
             };
 
-            // Get CSRF token safely from form data (fallback to meta if needed, but form data is primary for <form>)
-            // Since we are using JSON fetch, we need to manually pass it in header.
-            // The form has <?php echo csrf_field(); ?> which creates <input type="hidden" name="csrf_token" ...>
             let csrfToken = formData.get('csrf_token');
             if (!csrfToken) {
                 const metaTag = document.querySelector('meta[name="csrf-token"]');
@@ -431,21 +381,6 @@ function store(data) {
                 alert('یک خطای پیش‌بینی نشده در هنگام پرداخت رخ داد.');
             });
         }
-    }
-}
-</script>
-
-<!-- JSON-LD Schema -->
-<script type="application/ld+json">
-{
-    "@context": "https://schema.org",
-    "@type": "WebSite",
-    "name": "فروشگاه مدرن",
-    "url": "<?php echo (isset($_SERVER['HTTPS']) ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST']; ?>",
-    "potentialAction": {
-        "@type": "SearchAction",
-        "target": "<?php echo (isset($_SERVER['HTTPS']) ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST']; ?>/search?q={search_term_string}",
-        "query-input": "required name=search_term_string"
     }
 }
 </script>

@@ -1,106 +1,139 @@
-        </main>
+    <!-- Footer -->
+    <footer class="bg-white border-t border-gray-200 mt-auto">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-12">
 
-        <!-- ===== Footer ===== -->
-        <footer class="site-footer glass-panel">
-            <div class="container">
-                <div class="footer-grid">
-                    <nav class="footer-column" aria-labelledby="footer-links-title">
-                        <h4 id="footer-links-title" class="footer-heading">لینک‌های دسترسی</h4>
-                        <ul>
-                            <li><a href="/page/about-us" class="footer-link">درباره ما</a></li>
-                            <li><a href="/page/terms" class="footer-link">قوانین و مقررات</a></li>
-                            <li><a href="/page/contact-us" class="footer-link">تماس با ما</a></li>
-                            <li><a href="/page/faq" class="footer-link">سوالات متداول</a></li>
-                        </ul>
-                    </nav>
+                <!-- Section 1: Links -->
+                <div>
+                    <h3 class="text-sm font-bold text-gray-900 tracking-wider uppercase mb-4">دسترسی سریع</h3>
+                    <ul class="space-y-3">
+                        <li><a href="/page/about-us" class="text-base text-gray-500 hover:text-primary-600 transition-colors">درباره ما</a></li>
+                        <li><a href="/page/terms" class="text-base text-gray-500 hover:text-primary-600 transition-colors">قوانین و مقررات</a></li>
+                        <li><a href="/page/contact-us" class="text-base text-gray-500 hover:text-primary-600 transition-colors">تماس با ما</a></li>
+                        <li><a href="/page/faq" class="text-base text-gray-500 hover:text-primary-600 transition-colors">سوالات متداول</a></li>
+                    </ul>
+                </div>
 
-                    <div class="footer-column">
-                        <h4 class="footer-heading">ارتباط با ما</h4>
-                        <address style="font-style: normal; color: var(--color-text-muted);">
-                            <p style="margin-bottom: 0.5rem">تهران، خیابان آزادی، پلاک ۱۲۳</p>
-                            <p>info@example.com</p>
-                        </address>
-                    </div>
-
-                    <div class="footer-column">
-                        <h4 class="footer-heading">شبکه‌های اجتماعی</h4>
-                        <div style="display: flex; gap: 1rem;">
-                            <!-- SVG Icons (Placeholders) -->
-                            <a href="#" class="btn-ghost" style="padding: 0.5rem; border-radius: 50%; display: grid; place-items: center;">
-                                <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
-                            </a>
-                        </div>
+                <!-- Section 2: Contact -->
+                <div>
+                    <h3 class="text-sm font-bold text-gray-900 tracking-wider uppercase mb-4">ارتباط با ما</h3>
+                    <div class="space-y-3 text-base text-gray-500">
+                        <p class="flex items-start">
+                            <span class="ml-2">📍</span>
+                            تهران، خیابان آزادی، پلاک ۱۲۳
+                        </p>
+                        <p class="flex items-center">
+                            <span class="ml-2">📧</span>
+                            <a href="mailto:info@example.com" class="hover:text-primary-600 transition-colors">info@example.com</a>
+                        </p>
                     </div>
                 </div>
 
-                <div style="text-center; margin-top: 3rem; padding-top: 2rem; border-top: 1px solid var(--color-border); color: var(--color-text-muted); text-align: center;">
-                    <p class="text-sm">&copy; ۱۴۰۳ - تمامی حقوق برای فروشگاه محفوظ است.</p>
+                <!-- Section 3: Socials -->
+                <div>
+                    <h3 class="text-sm font-bold text-gray-900 tracking-wider uppercase mb-4">شبکه‌های اجتماعی</h3>
+                    <div class="flex space-x-4 space-x-reverse">
+                        <a href="#" class="text-gray-400 hover:text-primary-600 transition-colors">
+                            <span class="sr-only">Instagram</span>
+                            <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M12.315 2c2.43 0 2.784.013 3.808.06 1.064.049 1.791.218 2.427.465a4.902 4.902 0 011.772 1.153 4.902 4.902 0 011.153 1.772c.247.636.416 1.363.465 2.427.048 1.067.06 1.407.06 4.123v.08c0 2.643-.012 2.987-.06 4.043-.049 1.064-.218 1.791-.465 2.427a4.902 4.902 0 01-1.153 1.772 4.902 4.902 0 01-1.772 1.153c-.636.247-1.363.416-2.427.465-1.067.048-1.407.06-4.123.06h-.08c-2.643 0-2.987-.012-4.043-.06-1.064-.049-1.791-.218-2.427-.465a4.902 4.902 0 01-1.772-1.153 4.902 4.902 0 01-1.153-1.772c-.247-.636-.416-1.363-.465-2.427-.047-1.024-.06-1.379-.06-3.808v-.63c0-2.43.013-2.784.06-3.808.049-1.064.218-1.791.465-2.427a4.902 4.902 0 011.153-1.772 4.902 4.902 0 011.772-1.153c.636-.247 1.363-.416 2.427-.465 1.067-.047 1.407-.06 4.123-.06h.08c2.594 0 2.971.011 4.022.059.752.035 1.308.145 1.843.352.536.208 1.01.524 1.424.949.425.414.741.89.949 1.424.207.535.317 1.092.352 1.843.048 1.05.059 1.428.059 4.022 0 2.594-.011 2.971-.059 4.022-.035.752-.145 1.308-.352 1.843a4.908 4.908 0 01-.949 1.424 4.908 4.908 0 01-1.424.949c-.535.207-1.092.317-1.843.352-1.05.048-1.429.059-4.022.059-2.594 0-2.971-.011-4.022-.059-.752-.035-1.308-.145-1.843-.352a4.908 4.908 0 01-1.424-.949 4.908 4.908 0 01-.949-1.424c-.207-.535-.317-1.092-.352-1.843-.048-1.05-.059-1.428-.059-4.022 0-2.594.011-2.971.059-4.022.035-.752.145-1.308.352-1.843.208-.536.524-1.01.949-1.424.414-.425.89-.741 1.424-.949.535-.207 1.092-.317 1.843-.352 1.05-.048 1.428-.059 4.022-.059zm0 6a3 3 0 100 6 3 3 0 000-6zm0 1.6a1.4 1.4 0 110 2.8 1.4 1.4 0 010-2.8zm5.2-1.8a.8.8 0 100 1.6.8.8 0 000-1.6z" clip-rule="evenodd" /></svg>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-primary-600 transition-colors">
+                            <span class="sr-only">Twitter</span>
+                            <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24"><path d="M8.29 20.251c7.547 0 11.675-6.253 11.675-11.675 0-.178 0-.355-.012-.53A8.348 8.348 0 0022 5.92a8.19 8.19 0 01-2.357.646 4.118 4.118 0 001.804-2.27 8.224 8.224 0 01-2.605.996 4.107 4.107 0 00-6.993 3.743 11.65 11.65 0 01-8.457-4.287 4.106 4.106 0 001.27 5.477A4.072 4.072 0 012.8 9.713v.052a4.105 4.105 0 003.292 4.022 4.095 4.095 0 01-1.853.07 4.108 4.108 0 003.834 2.85A8.233 8.233 0 012 18.407a11.616 11.616 0 006.29 1.84" /></svg>
+                        </a>
+                    </div>
                 </div>
             </div>
-        </footer>
 
-    </div>
+            <div class="mt-12 pt-8 border-t border-gray-100">
+                <p class="text-base text-gray-400 text-center">
+                    &copy; ۱۴۰۳ فروشگاه مدرن. تمامی حقوق محفوظ است.
+                </p>
+            </div>
+        </div>
+    </footer>
 
-    <!-- Auth Modal (Refactored to new Design System) -->
+    <!-- Auth Modal (Standardized for Alpine/Tailwind) -->
     <div
         x-data="authModal()"
         @open-auth-modal.window="openModal()"
         x-show="isOpen"
         x-cloak
-        class="modal-overlay"
-        x-transition:enter="fade-enter-active"
-        x-transition:enter-start="fade-enter-from"
-        x-transition:enter-end="fade-enter-to"
-        x-transition:leave="fade-leave-active"
-        x-transition:leave-start="fade-leave-from"
-        x-transition:leave-end="fade-leave-to"
+        class="relative z-50"
+        aria-labelledby="modal-title"
+        role="dialog"
+        aria-modal="true"
     >
+        <!-- Background backdrop -->
         <div
-            @click.outside="closeModal()"
             x-show="isOpen"
-            x-transition:enter="slide-up-enter-active"
-            x-transition:enter-start="slide-up-enter-from"
-            x-transition:enter-end="slide-up-enter-to"
-            x-transition:leave="slide-up-leave-active"
-            x-transition:leave-start="slide-up-leave-from"
-            x-transition:leave-end="slide-up-leave-to"
-            class="modal-content"
-        >
-            <h2 class="footer-heading" style="text-align: center; font-size: 1.5rem; margin-bottom: 2rem;" x-text="currentTitle()"></h2>
+            x-transition:enter="ease-out duration-300"
+            x-transition:enter-start="opacity-0"
+            x-transition:enter-end="opacity-100"
+            x-transition:leave="ease-in duration-200"
+            x-transition:leave-start="opacity-100"
+            x-transition:leave-end="opacity-0"
+            class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity backdrop-blur-sm"
+        ></div>
 
-            <!-- Step 1: Enter Mobile -->
-            <div x-show="step === 'mobile'">
-                <form @submit.prevent="sendOtp()">
-                    <div style="margin-bottom: 1.5rem;">
-                        <input type="tel" x-model="mobile" placeholder="شماره موبایل (مثال: 09123456789)" class="form-input" required>
+        <!-- Modal panel -->
+        <div class="fixed inset-0 z-10 w-screen overflow-y-auto">
+            <div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
+                <div
+                    x-show="isOpen"
+                    x-transition:enter="ease-out duration-300"
+                    x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                    x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100"
+                    x-transition:leave="ease-in duration-200"
+                    x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
+                    x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                    @click.outside="closeModal()"
+                    class="relative transform overflow-hidden rounded-2xl bg-white text-right shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-md border border-gray-100"
+                >
+                    <div class="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
+                        <div class="sm:flex sm:items-start">
+                            <div class="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-right w-full">
+                                <h3 class="text-xl font-bold leading-6 text-gray-900 mb-6" id="modal-title" x-text="currentTitle()"></h3>
+
+                                <!-- Step 1: Mobile -->
+                                <div x-show="step === 'mobile'">
+                                    <form @submit.prevent="sendOtp()">
+                                        <div class="mb-4">
+                                            <label for="mobile" class="block text-sm font-medium text-gray-700 mb-1">شماره موبایل</label>
+                                            <input type="tel" x-model="mobile" class="block w-full rounded-lg border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm py-3 px-4 bg-gray-50 text-center text-lg tracking-wider" placeholder="09xxxxxxxxx" required>
+                                        </div>
+                                        <button type="submit" :disabled="isLoading" class="inline-flex w-full justify-center rounded-xl bg-primary-600 px-3 py-3 text-sm font-bold text-white shadow-sm hover:bg-primary-500 sm:w-full transition-colors disabled:opacity-50">
+                                            <span x-show="!isLoading">ارسال کد تایید</span>
+                                            <span x-show="isLoading">در حال ارسال...</span>
+                                        </button>
+                                    </form>
+                                </div>
+
+                                <!-- Step 2: OTP -->
+                                <div x-show="step === 'otp'">
+                                    <p class="text-sm text-gray-500 mb-4 text-center">
+                                        کد ارسال شده به <span x-text="mobile" class="font-bold text-gray-800"></span> را وارد کنید.
+                                    </p>
+                                    <form @submit.prevent="verifyOtp()">
+                                        <div class="mb-4">
+                                            <input type="text" x-model="otp" maxlength="6" class="block w-full rounded-lg border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 text-2xl font-bold tracking-[0.5em] text-center py-3 px-4 bg-gray-50" placeholder="------" required>
+                                        </div>
+                                        <button type="submit" :disabled="isLoading" class="inline-flex w-full justify-center rounded-xl bg-green-600 px-3 py-3 text-sm font-bold text-white shadow-sm hover:bg-green-500 sm:w-full transition-colors disabled:opacity-50">
+                                            <span x-show="!isLoading">تایید و ورود</span>
+                                            <span x-show="isLoading">در حال بررسی...</span>
+                                        </button>
+                                    </form>
+                                    <button @click="step = 'mobile'; errorMessage = ''" class="mt-4 w-full text-center text-sm text-gray-400 hover:text-gray-600">
+                                        تغییر شماره
+                                    </button>
+                                </div>
+
+                                <p x-show="errorMessage" x-text="errorMessage" class="mt-4 text-sm text-red-600 text-center bg-red-50 p-2 rounded-lg"></p>
+                            </div>
+                        </div>
                     </div>
-                    <button type="submit" :disabled="isLoading" class="btn btn-primary" style="width: 100%;">
-                        <span x-show="!isLoading">ارسال کد تایید</span>
-                        <span x-show="isLoading">در حال ارسال...</span>
-                    </button>
-                </form>
+                </div>
             </div>
-
-            <!-- Step 2: Verify OTP -->
-            <div x-show="step === 'otp'">
-                <p style="text-align: center; margin-bottom: 1.5rem; color: var(--color-text-muted);">
-                    کد ۶ رقمی ارسال شده به <span x-text="mobile" style="font-weight: bold; color: var(--color-text-main);"></span> را وارد کنید.
-                </p>
-                <form @submit.prevent="verifyOtp()">
-                    <div style="margin-bottom: 1.5rem;">
-                        <input type="text" x-model="otp" maxlength="6" placeholder="------" class="form-input" style="letter-spacing: 0.5em; font-weight: bold; font-size: 1.25rem;" required>
-                    </div>
-                    <button type="submit" :disabled="isLoading" class="btn btn-success" style="width: 100%; background-color: var(--color-success); color: white;">
-                        <span x-show="!isLoading">تایید و ورود</span>
-                        <span x-show="isLoading">در حال بررسی...</span>
-                    </button>
-                </form>
-                <button @click="step = 'mobile'; errorMessage = ''" class="btn-ghost" style="width: 100%; margin-top: 1rem; border: none; font-size: 0.9rem;">
-                    تغییر شماره موبایل
-                </button>
-            </div>
-
-            <p x-show="errorMessage" x-text="errorMessage" style="color: var(--color-danger); text-align: center; margin-top: 1.5rem; font-size: 0.9rem;"></p>
         </div>
     </div>
 
@@ -108,7 +141,7 @@
 function authModal() {
     return {
         isOpen: false,
-        step: 'mobile', // 'mobile' or 'otp'
+        step: 'mobile',
         mobile: '',
         otp: '',
         isLoading: false,
@@ -124,9 +157,8 @@ function authModal() {
             this.errorMessage = '';
         },
         currentTitle() {
-            return this.step === 'mobile' ? 'ورود یا ثبت‌نام' : 'کد تایید را وارد کنید';
+            return this.step === 'mobile' ? 'ورود به حساب کاربری' : 'تایید شماره موبایل';
         },
-
         sendOtp() {
             this.isLoading = true;
             this.errorMessage = '';
@@ -142,20 +174,16 @@ function authModal() {
             .then(({ status, body }) => {
                 if (status === 200) {
                     this.step = 'otp';
-                    // Update the CSRF token with the new one from the server
                     if (body.new_csrf_token) {
                         document.querySelector('meta[name="csrf-token"]').setAttribute('content', body.new_csrf_token);
                     }
                 } else {
-                    this.errorMessage = body.error || 'خطایی رخ داده است.';
+                    this.errorMessage = body.error || 'خطا در ارسال کد.';
                 }
             })
-            .catch(() => {
-                this.errorMessage = 'خطای ارتباط با سرور.';
-            })
+            .catch(() => { this.errorMessage = 'خطای ارتباط با سرور.'; })
             .finally(() => { this.isLoading = false; });
         },
-
         verifyOtp() {
             this.isLoading = true;
             this.errorMessage = '';
@@ -170,19 +198,12 @@ function authModal() {
             .then(res => res.json().then(data => ({ status: res.status, body: data })))
             .then(({ status, body }) => {
                 if (status === 200) {
-                    // Success feedback can be improved, but strict logic preservation means we keep the alert for now or enhance it slightly?
-                    // The prompt allows visual enhancement.
-                    // I'll keep the logic simple as per instructions.
-                    alert('شما با موفقیت وارد شدید!');
-                    this.closeModal();
                     window.location.reload();
                 } else {
-                    this.errorMessage = body.error || 'کد تایید نامعتبر است.';
+                    this.errorMessage = body.error || 'کد نامعتبر است.';
                 }
             })
-            .catch(() => {
-                this.errorMessage = 'خطای ارتباط با سرور.';
-            })
+            .catch(() => { this.errorMessage = 'خطای ارتباط با سرور.'; })
             .finally(() => { this.isLoading = false; });
         }
     }
