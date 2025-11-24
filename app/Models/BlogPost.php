@@ -346,11 +346,12 @@ class BlogPost
 
     public static function findRelatedPosts($post_id, $limit = 5)
     {
-        $sql = "SELECT bp.*, COUNT(bpt.tag_id) as common_tags
+        // Optimized to exclude content
+        $sql = "SELECT bp.id, bp.title, bp.slug, bp.excerpt, bp.image_url, bp.published_at, COUNT(bpt.tag_id) as common_tags
                 FROM blog_post_tags bpt
                 JOIN blog_posts bp ON bpt.post_id = bp.id
                 WHERE bpt.tag_id IN (SELECT tag_id FROM blog_post_tags WHERE post_id = :post_id)
-                AND bp.id != :post_id
+                AND bp.id != :exclude_id
                 GROUP BY bp.id
                 ORDER BY common_tags DESC
                 LIMIT :limit";
@@ -358,6 +359,7 @@ class BlogPost
         $pdo = Database::getConnection();
         $stmt = $pdo->prepare($sql);
         $stmt->bindValue(':post_id', $post_id, PDO::PARAM_INT);
+        $stmt->bindValue(':exclude_id', $post_id, PDO::PARAM_INT);
         $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
         $stmt->execute();
 

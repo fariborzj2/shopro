@@ -6,9 +6,9 @@
             <h1 class="mt-4"><?= $post->title ?></h1>
             <p class="lead">by <a href="#"><?= $post->author_name ?></a></p>
             <hr>
-            <p>Posted on <?= date('F j, Y, g:i a', strtotime($post->created_at)) ?></p>
+            <p>Posted on <?= date('F j, Y, g:i a', strtotime($post->published_at)) ?></p>
             <hr>
-            <img class="img-fluid rounded" src="<?= $post->featured_image ?>" alt="">
+            <img class="img-fluid rounded" src="<?= $post->image_url ?? 'https://placehold.co/800x400' ?>" alt="<?= htmlspecialchars($post->title) ?>">
             <hr>
             <?= $post->content ?>
             <hr>
@@ -86,7 +86,7 @@
                             <label for="captcha">کپچا</label>
                             <div class="d-flex">
                                 <input type="text" name="captcha" class="form-control" required>
-                                <img src="<?= \App\Core\Captcha::generate() ?>" alt="Captcha" class="ml-2">
+                                <img src="<?= $captcha_image ?>" alt="Captcha" class="ml-2">
                             </div>
                         </div>
                         <button type="submit" class="btn btn-primary">ارسال نظر</button>
@@ -94,21 +94,29 @@
                 </div>
 
                 <div id="comments-list" class="mt-4">
-                    <?php function display_comments($comments, $level = 0) { ?>
-                        <?php foreach ($comments as $comment) : ?>
-                            <div class="comment" style="margin-left: <?= $level * 20 ?>px">
-                                <p><strong><?= $comment['name'] ?></strong></p>
-                                <p><?= $comment['comment'] ?></p>
-                                <?php if ($level < 3) : ?>
-                                    <button class="btn btn-sm btn-link" @click="showReplyForm(<?= $comment['id'] ?>)">پاسخ</button>
-                                <?php endif; ?>
-                                <?php if (!empty($comment['children'])) : ?>
-                                    <?php display_comments($comment['children'], $level + 1); ?>
-                                <?php endif; ?>
-                            </div>
-                        <?php endforeach; ?>
-                    <?php } ?>
-                    <?php display_comments($comments); ?>
+                    <?php
+                    if (!function_exists('display_comments')) {
+                        function display_comments($comments, $level = 0) {
+                            foreach ($comments as $comment) {
+                                ?>
+                                <div class="comment" style="margin-left: <?= $level * 20 ?>px">
+                                    <p><strong><?= htmlspecialchars($comment['name']) ?></strong></p>
+                                    <p><?= nl2br(htmlspecialchars($comment['comment'])) ?></p>
+                                    <?php if ($level < 3) : ?>
+                                        <button class="btn btn-sm btn-link" @click="showReplyForm(<?= $comment['id'] ?>)">پاسخ</button>
+                                    <?php endif; ?>
+                                    <?php if (!empty($comment['children'])) : ?>
+                                        <?php display_comments($comment['children'], $level + 1); ?>
+                                    <?php endif; ?>
+                                </div>
+                                <?php
+                            }
+                        }
+                    }
+                    // Initialize empty comments if not set
+                    $comments = $comments ?? [];
+                    display_comments($comments);
+                    ?>
                 </div>
             </div>
         </div>

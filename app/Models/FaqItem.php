@@ -26,6 +26,9 @@ class FaqItem
 
     public static function findByIds($ids)
     {
+        if (empty($ids)) {
+            return [];
+        }
         $inQuery = implode(',', array_fill(0, count($ids), '?'));
         $stmt = Database::query("SELECT * FROM faq_items WHERE id IN ($inQuery)", $ids);
         return $stmt->fetchAll(PDO::FETCH_OBJ);
