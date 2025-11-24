@@ -55,4 +55,16 @@ class Review
         Database::query("DELETE FROM reviews WHERE id = :id", ['id' => $id]);
         return true;
     }
+
+    public static function findLatestHighRated($limit)
+    {
+        $sql = "SELECT r.*, u.name as user_name
+                FROM reviews r
+                JOIN users u ON r.user_id = u.id
+                WHERE r.status = 'approved' AND r.rating >= 4
+                ORDER BY r.created_at DESC
+                LIMIT :limit";
+        $stmt = Database::query($sql, ['limit' => $limit]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
 }
