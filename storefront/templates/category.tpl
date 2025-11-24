@@ -25,9 +25,32 @@
                         >
                     </div>
                     <div class="p-6 flex-1 flex flex-col">
+                        <!-- Availability Badge -->
+                        <div class="mb-2">
+                            <template x-if="product.status === 'available'">
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                    موجود
+                                </span>
+                            </template>
+                            <template x-if="product.status !== 'available'">
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                                    ناموجود
+                                </span>
+                            </template>
+                        </div>
+
                         <h2 class="text-lg font-bold text-gray-900 mb-2 group-hover:text-primary-600 transition-colors" x-text="product.name"></h2>
-                        <div class="mt-auto flex items-end justify-between">
-                            <span class="text-xl font-black text-primary-600" x-text="new Intl.NumberFormat('fa-IR').format(product.price) + ' تومان'"></span>
+                        <div class="mt-auto flex flex-col">
+                            <div class="flex items-center justify-between">
+                                <div class="flex flex-col">
+                                    <!-- Old Price -->
+                                    <template x-if="product.old_price && parseFloat(product.old_price) > parseFloat(product.price)">
+                                        <span class="text-sm text-gray-400 line-through decoration-red-400" x-text="new Intl.NumberFormat('fa-IR').format(product.old_price) + ' تومان'"></span>
+                                    </template>
+                                    <!-- Current Price -->
+                                    <span class="text-xl font-black text-primary-600" x-text="new Intl.NumberFormat('fa-IR').format(product.price) + ' تومان'"></span>
+                                </div>
+                            </div>
                         </div>
                         <button
                             @click="showReviews(product.id)"
