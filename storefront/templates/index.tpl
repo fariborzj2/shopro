@@ -124,19 +124,6 @@
         color: var(--color-primary);
         margin-top: auto;
     }
-
-    /* Animations */
-    .fade-enter-active, .fade-leave-active { transition: opacity 0.3s ease; }
-    .fade-enter-from, .fade-leave-to { opacity: 0; }
-
-    .slide-up-enter-active, .slide-up-leave-active { transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
-    .slide-up-enter-from, .slide-up-leave-to { opacity: 0; transform: translateY(20px) scale(0.95); }
-
-    /* Modal Form Styles */
-    .form-group { margin-bottom: 1.5rem; text-align: right; }
-    .form-label { display: block; margin-bottom: 0.5rem; font-weight: 500; color: var(--color-text-main); font-size: 0.95rem; }
-    .form-control { width: 100%; padding: 0.75rem 1rem; border: 1px solid #cbd5e1; border-radius: var(--radius-md); transition: var(--transition-smooth); }
-    .form-control:focus { border-color: var(--color-primary); outline: 3px solid rgba(59, 130, 246, 0.1); }
 </style>
 
 <!-- App Container -->
@@ -201,9 +188,9 @@
         class="modal-overlay"
         x-transition:enter="fade-enter-active"
         x-transition:enter-start="fade-enter-from"
-        x-transition:enter-end="opacity-100"
+        x-transition:enter-end="fade-enter-to"
         x-transition:leave="fade-leave-active"
-        x-transition:leave-start="opacity-100"
+        x-transition:leave-start="fade-leave-from"
         x-transition:leave-end="fade-leave-to"
     >
         <!-- Modal Backdrop -->
@@ -216,9 +203,9 @@
             style="max-width: 600px; max-height: 90vh; overflow-y: auto;"
             x-transition:enter="slide-up-enter-active"
             x-transition:enter-start="slide-up-enter-from"
-            x-transition:enter-end="opacity-100 translate-y-0 scale-100"
+            x-transition:enter-end="slide-up-enter-to"
             x-transition:leave="slide-up-leave-active"
-            x-transition:leave-start="opacity-100 translate-y-0 scale-100"
+            x-transition:leave-start="slide-up-leave-from"
             x-transition:leave-end="slide-up-leave-to"
             @click.outside="isModalOpen = false"
         >
@@ -385,53 +372,6 @@ function store(data) {
             const form = document.getElementById('purchaseForm');
             const formData = new FormData(form);
 
-            const customFieldsPayload = [];
-            // Create an array of objects with name, label, and value
-            this.customFields.forEach(field => {
-                const fieldName = field.name;
-                // Handle Checkboxes (Arrays)
-                if (field.type === 'checkbox') {
-                     // Checkboxes might have multiple values.
-                     // The logic below might need adjustment for multi-value checkboxes if backend expects specific format.
-                     // But based on original code, it just grabbed 'formData.get' which only gets the first value for same-name inputs.
-                     // The original code: customFieldsPayload.push({..., value: formData.get(fieldName)})
-                     // If the input name is 'field_name[]', formData.getAll should be used.
-
-                     // Fix: Use getAll for array inputs
-                     const values = formData.getAll(fieldName + '[]');
-                     if (values.length > 0) {
-                        customFieldsPayload.push({
-                            name: fieldName,
-                            label: field.label,
-                            value: values.join(', ') // Or however backend wants it. Original was simple.
-                            // Reverting to original logic to ensure "Logic Preservation",
-                            // but original logic 'formData.get(fieldName)' is buggy for checkboxes named 'name[]'.
-                            // The original code in prompt used: :name="field.name + '[]'".
-                            // But then in submit: formData.has(fieldName) -> formData.get(fieldName).
-                            // If fieldName is 'foo', but input is 'foo[]', formData.has('foo') is false.
-                            // The original code was likely buggy for checkboxes.
-                            // I will TRY to fix it by checking for array name.
-                         });
-                     }
-                } else {
-                    if (formData.has(fieldName)) {
-                        customFieldsPayload.push({
-                            name: fieldName,
-                            label: field.label,
-                            value: formData.get(fieldName)
-                        });
-                    }
-                }
-            });
-
-            // Re-implementing the original logic strictly where possible, but fixing the checkbox name issue if obvious.
-            // Actually, let's stick to the original JS logic pattern to avoid backend issues,
-            // but the original code definitely had `name="field.name + '[]'"` for checkboxes.
-            // And `this.customFields.forEach(field => { const fieldName = field.name; if (formData.has(fieldName))...`
-            // If field.name is "colors", input is "colors[]". formData.has("colors") is FALSE.
-            // So the original code never sent checkbox data?
-            // I should probably fix this.
-
             // Revised logic for data collection:
             const payloadFields = [];
             this.customFields.forEach(field => {
@@ -457,18 +397,28 @@ function store(data) {
                 custom_fields: payloadFields
             };
 
+            // Get CSRF token safely from form data (fallback to meta if needed, but form data is primary for <form>)
+            // Since we are using JSON fetch, we need to manually pass it in header.
+            // The form has <?php echo csrf_field(); ?> which creates <input type="hidden" name="csrf_token" ...>
+            let csrfToken = formData.get('csrf_token');
+            if (!csrfToken) {
+                const metaTag = document.querySelector('meta[name="csrf-token"]');
+                if (metaTag) csrfToken = metaTag.getAttribute('content');
+            }
+
             fetch(form.action, {
                 method: form.method,
                 headers: {
                     'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                    'X-CSRF-TOKEN': csrfToken
                 },
                 body: JSON.stringify(payload)
             })
             .then(res => res.json().then(data => ({ status: res.status, body: data })))
             .then(({ status, body }) => {
                 if (body.new_csrf_token) {
-                    document.querySelector('meta[name="csrf-token"]').setAttribute('content', body.new_csrf_token);
+                    const metaTag = document.querySelector('meta[name="csrf-token"]');
+                    if (metaTag) metaTag.setAttribute('content', body.new_csrf_token);
                 }
 
                 if (status === 200 && body.payment_url) {

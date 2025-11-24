@@ -227,6 +227,33 @@
             border-color: var(--color-primary);
             background: white;
         }
+
+        /* =========================================
+           Animation & Transition Utilities
+           (Semantic replacements for Tailwind)
+           ========================================= */
+
+        /* Fade Transition (General) */
+        .fade-enter-active, .fade-leave-active { transition: opacity 0.3s ease; }
+        .fade-enter-from, .fade-leave-to { opacity: 0; }
+        .fade-enter-to, .fade-leave-from { opacity: 1; }
+
+        /* Slide Up Modal Transition */
+        .slide-up-enter-active { transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
+        .slide-up-leave-active { transition: all 0.3s ease-in; }
+        .slide-up-enter-from, .slide-up-leave-to { opacity: 0; transform: translateY(20px) scale(0.95); }
+        .slide-up-enter-to, .slide-up-leave-from { opacity: 1; transform: translateY(0) scale(1); }
+
+        /* Collapse / Expand (Accordion) */
+        .collapse-enter-active, .collapse-leave-active { transition: all 0.3s ease-in-out; overflow: hidden; }
+        .collapse-enter-from, .collapse-leave-to { max-height: 0; opacity: 0; padding-block: 0; }
+        .collapse-enter-to, .collapse-leave-from { max-height: 500px; opacity: 1; } /* Approximate max-height */
+
+        /* Tab Content Fade */
+        .tab-fade-enter-active { transition: opacity 0.3s ease-out; }
+        .tab-fade-enter-from { opacity: 0; }
+        .tab-fade-enter-to { opacity: 1; }
+
     </style>
 </head>
 <body x-data class="no-scrollbar">
