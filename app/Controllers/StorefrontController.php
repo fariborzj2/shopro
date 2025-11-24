@@ -6,15 +6,19 @@ use App\Models\FaqItem;
 use App\Models\Page;
 use App\Models\Category;
 use App\Models\Product;
+use App\Models\Setting;
 use App\Core\Template;
 
 class StorefrontController
 {
+    protected $settings;
+
     public function __construct()
     {
         if (session_status() == PHP_SESSION_NONE) {
             session_start();
         }
+        $this->settings = Setting::getAll();
     }
 
     /**
@@ -34,8 +38,11 @@ class StorefrontController
                     'id' => $p->id,
                     'name' => $p->name_fa,
                     'price' => (float)$p->price,
+                    'old_price' => $p->old_price ? (float)$p->old_price : null,
+                    'status' => $p->status,
                     'category' => $p->category_id,
                     'imageUrl' => $p->image_url ?? 'https://placehold.co/400x400/EEE/31343C?text=No+Image',
+                    'description' => isset($p->description) ? $p->description : '' // Ensure description is available if used in view
                 ];
             }, $products),
             'isUserLoggedIn' => isset($_SESSION['user_id'])
@@ -43,8 +50,9 @@ class StorefrontController
 
         $template = new Template(__DIR__ . '/../../storefront/templates');
         echo $template->render('index', [
-            'pageTitle' => 'صفحه اصلی',
-            'store_data' => $store_data
+            'pageTitle' => $this->settings['site_title'] ?? 'فروشگاه مدرن',
+            'store_data' => $store_data,
+            'settings' => $this->settings
         ]);
     }
 
@@ -59,7 +67,8 @@ class StorefrontController
             $faqItems = FaqItem::findAll('position ASC');
             echo $template->render('faq', [
                 'pageTitle' => 'سوالات متداول',
-                'faqItems' => $faqItems
+                'faqItems' => $faqItems,
+                'settings' => $this->settings
             ]);
             return;
         }
@@ -74,7 +83,8 @@ class StorefrontController
 
         echo $template->render('page', [
             'page_title' => $page->title,
-            'page_content' => $page->content
+            'page_content' => $page->content,
+            'settings' => $this->settings
         ]);
     }
 
@@ -108,6 +118,8 @@ class StorefrontController
                     'id' => $p->id,
                     'name' => $p->name_fa,
                     'price' => (float)$p->price,
+                    'old_price' => $p->old_price ? (float)$p->old_price : null,
+                    'status' => $p->status,
                     'imageUrl' => $p->image_url ?? 'https://placehold.co/400x400/EEE/31343C?text=No+Image',
                     'reviews' => $reviews[$p->id] ?? []
                 ];
@@ -120,7 +132,8 @@ class StorefrontController
             'pageTitle' => $category->name_fa,
             'category' => $category,
             'store_data' => $store_data,
-            'reviews' => $reviews
+            'reviews' => $reviews,
+            'settings' => $this->settings
         ]);
     }
 }
