@@ -302,7 +302,9 @@ class BlogPost
     public static function findAllPublishedWithCount($limit, $offset, $search = null, $category_id = null, $tag_id = null)
     {
         $params = [];
-        $sql = "SELECT SQL_CALC_FOUND_ROWS bp.*, bc.name_fa as category_name, bc.slug as category_slug, a.name as author_name
+        // Optimized query to exclude 'content' for listing pages to save memory
+        $sql = "SELECT SQL_CALC_FOUND_ROWS bp.id, bp.title, bp.slug, bp.excerpt, bp.published_at, bp.image_url, bp.views_count,
+                bc.name_fa as category_name, bc.slug as category_slug, a.name as author_name
                 FROM blog_posts bp
                 LEFT JOIN blog_categories bc ON bp.category_id = bc.id
                 LEFT JOIN admins a ON bp.author_id = a.id";
@@ -312,6 +314,7 @@ class BlogPost
         $sql .= " WHERE bp.status = 'published' AND (bp.published_at IS NULL OR bp.published_at <= NOW())";
 
         if ($search) {
+            // For searching, we still need to check content, but we don't select it
             $sql .= " AND (bp.title LIKE :search OR bp.content LIKE :search)";
             $params['search'] = '%' . $search . '%';
         }
