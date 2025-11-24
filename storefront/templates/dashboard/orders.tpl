@@ -1,71 +1,131 @@
-<?php include 'header.tpl'; ?>
+<?php include __DIR__ . '/../header.tpl'; ?>
 
-<div class="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
-    <h1 class="text-3xl font-bold text-gray-900 mb-8">تاریخچه سفارشات</h1>
+<style>
+    .dashboard-container {
+        padding-block: 4rem;
+        max-width: 1000px;
+        margin-inline: auto;
+    }
+    .page-title {
+        font-size: 2rem;
+        font-weight: 800;
+        margin-bottom: 2rem;
+        color: var(--color-text-main);
+    }
 
-    <div class="bg-white shadow overflow-hidden sm:rounded-lg">
-        <ul class="divide-y divide-gray-200">
-            <?php foreach ($orders as $order): ?>
-                <li>
-                    <a href="/dashboard/orders/<?= $order->id ?>" class="block hover:bg-gray-50">
-                        <div class="px-4 py-4 sm:px-6">
-                            <div class="flex items-center justify-between">
-                                <p class="text-sm font-medium text-indigo-600 truncate">
-                                    <?= htmlspecialchars($order->product_name) ?>
-                                </p>
-                                <div class="ml-2 flex-shrink-0 flex flex-col gap-1">
-                                    <p class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full
-                                        <?php
-                                            switch ($order->payment_status) {
-                                                case 'paid':
-                                                    echo 'bg-green-100 text-green-800';
-                                                    break;
-                                                case 'failed':
-                                                case 'phishing':
-                                                    echo 'bg-red-100 text-red-800';
-                                                    break;
-                                                default:
-                                                    echo 'bg-yellow-100 text-yellow-800';
-                                            }
-                                        ?>">
-                                        <?= translate_payment_status_fa($order->payment_status) ?>
-                                    </p>
-                                    <p class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full
-                                        <?php
-                                            switch ($order->order_status) {
-                                                case 'completed':
-                                                    echo 'bg-green-100 text-green-800';
-                                                    break;
-                                                case 'cancelled':
-                                                case 'phishing':
-                                                    echo 'bg-red-100 text-red-800';
-                                                    break;
-                                                default: // pending
-                                                    echo 'bg-blue-100 text-blue-800';
-                                            }
-                                        ?>">
-                                        <?= translate_order_status_fa($order->order_status) ?>
-                                    </p>
-                                </div>
-                            </div>
-                            <div class="mt-2 sm:flex sm:justify-between">
-                                <div class="sm:flex">
-                                    <p class="flex items-center text-sm text-gray-500">
-                                        مبلغ: <?= htmlspecialchars(number_format($order->amount)) ?> تومان
-                                    </p>
-                                </div>
-                                <div class="mt-2 flex items-center text-sm text-gray-500 sm:mt-0">
-                                    <p>
-                                        تاریخ: <?= \jdate('Y/m/d', strtotime($order->order_time)) ?>
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                    </a>
-                </li>
-            <?php endforeach; ?>
-        </ul>
+    .orders-list {
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+    }
+
+    .order-card {
+        padding: 1.5rem;
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        transition: var(--transition-smooth);
+        position: relative;
+        border-right: 4px solid transparent; /* Status indicator strip */
+    }
+
+    .order-card:hover {
+        transform: translateX(-4px); /* Move left for RTL hover effect */
+        background: white;
+    }
+
+    @media (min-width: 768px) {
+        .order-card {
+            flex-direction: row;
+            align-items: center;
+            justify-content: space-between;
+        }
+    }
+
+    .order-info h3 {
+        font-size: 1.1rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+        color: var(--color-primary);
+    }
+
+    .order-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+        font-size: 0.9rem;
+        color: var(--color-text-muted);
+    }
+
+    .status-badge {
+        display: inline-flex;
+        align-items: center;
+        padding: 0.25rem 0.75rem;
+        border-radius: 2rem;
+        font-size: 0.85rem;
+        font-weight: 600;
+    }
+
+    .status-success { background: rgba(16, 185, 129, 0.1); color: #059669; }
+    .status-danger { background: rgba(239, 68, 68, 0.1); color: #dc2626; }
+    .status-warning { background: rgba(245, 158, 11, 0.1); color: #d97706; }
+    .status-info { background: rgba(59, 130, 246, 0.1); color: #2563eb; }
+
+    /* Dynamic border colors based on status logic if possible, or just generic */
+    .order-card.status-paid { border-right-color: #10b981; }
+    .order-card.status-failed { border-right-color: #ef4444; }
+    .order-card.status-pending { border-right-color: #f59e0b; }
+</style>
+
+<div class="dashboard-container">
+    <h1 class="page-title">تاریخچه سفارشات</h1>
+
+    <div class="orders-list">
+        <?php foreach ($orders as $order): ?>
+            <?php
+                // Determine status class for styling
+                $statusClass = 'status-warning';
+                if ($order->payment_status == 'paid') $statusClass = 'status-success';
+                if ($order->payment_status == 'failed' || $order->payment_status == 'phishing') $statusClass = 'status-danger';
+
+                $borderClass = 'status-pending';
+                if ($order->payment_status == 'paid') $borderClass = 'status-paid';
+                if ($order->payment_status == 'failed') $borderClass = 'status-failed';
+            ?>
+
+            <a href="/dashboard/orders/<?= $order->id ?>" class="glass-panel order-card <?= $borderClass ?>">
+                <div class="order-info">
+                    <h3><?= htmlspecialchars($order->product_name) ?></h3>
+                    <div class="order-meta">
+                        <span>مبلغ: <?= htmlspecialchars(number_format($order->amount)) ?> تومان</span>
+                        <span>•</span>
+                        <span>تاریخ: <?= \jdate('Y/m/d', strtotime($order->order_time)) ?></span>
+                    </div>
+                </div>
+
+                <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                    <span class="status-badge <?= $statusClass ?>">
+                        <?= translate_payment_status_fa($order->payment_status) ?>
+                    </span>
+
+                    <?php
+                        $orderStatusClass = 'status-info';
+                        if ($order->order_status == 'completed') $orderStatusClass = 'status-success';
+                        if ($order->order_status == 'cancelled' || $order->order_status == 'phishing') $orderStatusClass = 'status-danger';
+                    ?>
+                    <span class="status-badge <?= $orderStatusClass ?>">
+                        <?= translate_order_status_fa($order->order_status) ?>
+                    </span>
+                </div>
+            </a>
+        <?php endforeach; ?>
+
+        <?php if(empty($orders)): ?>
+            <div class="glass-panel" style="text-align: center; padding: 3rem; color: var(--color-text-muted);">
+                هنوز سفارشی ثبت نکرده‌اید.
+            </div>
+        <?php endif; ?>
     </div>
 </div>
 
-<?php include 'footer.tpl'; ?>
+<?php include __DIR__ . '/../footer.tpl'; ?>
