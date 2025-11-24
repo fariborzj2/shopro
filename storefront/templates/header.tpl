@@ -22,6 +22,45 @@
         <link rel="canonical" href="<?php echo $canonicalUrl; ?>">
     <?php endif; ?>
 
+    <!-- Estedad Font Configuration -->
+    <style>
+        @font-face {
+            font-family: 'Estedad';
+            src: url('/fonts/estedad/Estedad-Regular.woff2') format('woff2');
+            font-weight: 400;
+            font-style: normal;
+            font-display: swap;
+        }
+        @font-face {
+            font-family: 'Estedad';
+            src: url('/fonts/estedad/Estedad-Medium.woff2') format('woff2');
+            font-weight: 500;
+            font-style: normal;
+            font-display: swap;
+        }
+        @font-face {
+            font-family: 'Estedad';
+            src: url('/fonts/estedad/Estedad-SemiBold.woff2') format('woff2');
+            font-weight: 600;
+            font-style: normal;
+            font-display: swap;
+        }
+        @font-face {
+            font-family: 'Estedad';
+            src: url('/fonts/estedad/Estedad-Bold.woff2') format('woff2');
+            font-weight: 700;
+            font-style: normal;
+            font-display: swap;
+        }
+        @font-face {
+            font-family: 'Estedad';
+            src: url('/fonts/estedad/Estedad-ExtraBold.woff2') format('woff2');
+            font-weight: 800;
+            font-style: normal;
+            font-display: swap;
+        }
+    </style>
+
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com?plugins=typography,forms,aspect-ratio"></script>
     <script>
