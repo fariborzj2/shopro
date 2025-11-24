@@ -115,7 +115,17 @@
                             <button @click="openItem === <?= $faq->id ?> ? openItem = null : openItem = <?= $faq->id ?>" class="accordion-btn">
                                 <?= htmlspecialchars($faq->question) ?>
                             </button>
-                            <div x-show="openItem === <?= $faq->id ?>" style="display: none;" x-transition class="accordion-body">
+                            <div
+                                x-show="openItem === <?= $faq->id ?>"
+                                style="display: none;"
+                                x-transition:enter="collapse-enter-active"
+                                x-transition:enter-start="collapse-enter-from"
+                                x-transition:enter-end="collapse-enter-to"
+                                x-transition:leave="collapse-leave-active"
+                                x-transition:leave-start="collapse-leave-from"
+                                x-transition:leave-end="collapse-leave-to"
+                                class="accordion-body"
+                            >
                                 <?= $faq->answer ?>
                             </div>
                         </div>

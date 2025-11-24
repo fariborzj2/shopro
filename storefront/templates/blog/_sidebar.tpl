@@ -69,7 +69,7 @@
     </nav>
 
     <div class="tab-content">
-        <div x-show="activeTab === 'most-commented'" style="display: none;" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100">
+        <div x-show="activeTab === 'most-commented'" style="display: none;" x-transition:enter="tab-fade-enter-active" x-transition:enter-start="tab-fade-enter-from" x-transition:enter-end="tab-fade-enter-to">
             <div class="sidebar-list">
                 <?php if (!empty($sidebar['most_commented'])): ?>
                     <?php foreach ($sidebar['most_commented'] as $post): ?>
@@ -81,7 +81,7 @@
             </div>
         </div>
 
-        <div x-show="activeTab === 'most-viewed'" style="display: none;" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100">
+        <div x-show="activeTab === 'most-viewed'" style="display: none;" x-transition:enter="tab-fade-enter-active" x-transition:enter-start="tab-fade-enter-from" x-transition:enter-end="tab-fade-enter-to">
             <div class="sidebar-list">
                 <?php if (!empty($sidebar['most_viewed'])): ?>
                     <?php foreach ($sidebar['most_viewed'] as $post): ?>
@@ -93,7 +93,7 @@
             </div>
         </div>
 
-        <div x-show="activeTab === 'editors-picks'" style="display: none;" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100">
+        <div x-show="activeTab === 'editors-picks'" style="display: none;" x-transition:enter="tab-fade-enter-active" x-transition:enter-start="tab-fade-enter-from" x-transition:enter-end="tab-fade-enter-to">
             <div class="sidebar-list">
                 <?php if (!empty($sidebar['editors_picks'])): ?>
                     <?php foreach ($sidebar['editors_picks'] as $post): ?>

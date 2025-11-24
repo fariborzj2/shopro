@@ -135,12 +135,12 @@
     x-show="showModal"
     style="display: none;"
     class="modal-overlay"
-    x-transition:enter="transition ease-out duration-300"
-    x-transition:enter-start="opacity-0"
-    x-transition:enter-end="opacity-100"
-    x-transition:leave="transition ease-in duration-200"
-    x-transition:leave-start="opacity-100"
-    x-transition:leave-end="opacity-0"
+    x-transition:enter="fade-enter-active"
+    x-transition:enter-start="fade-enter-from"
+    x-transition:enter-end="fade-enter-to"
+    x-transition:leave="fade-leave-active"
+    x-transition:leave-start="fade-leave-from"
+    x-transition:leave-end="fade-leave-to"
 >
     <!-- Modal Backdrop -->
     <div class="absolute inset-0" @click="showModal = false"></div>
@@ -148,9 +148,12 @@
     <div
         class="modal-content glass-panel"
         style="max-width: 800px; max-height: 85vh; overflow-y: auto; padding: 0;"
-        x-transition:enter="transition ease-out duration-300"
-        x-transition:enter-start="opacity-0 translate-y-4 scale-95"
-        x-transition:enter-end="opacity-100 translate-y-0 scale-100"
+        x-transition:enter="slide-up-enter-active"
+        x-transition:enter-start="slide-up-enter-from"
+        x-transition:enter-end="slide-up-enter-to"
+        x-transition:leave="slide-up-leave-active"
+        x-transition:leave-start="slide-up-leave-from"
+        x-transition:leave-end="slide-up-leave-to"
     >
         <div style="padding: 1.5rem; border-bottom: 1px solid var(--color-border); display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; background: white; z-index: 10;">
             <h5 style="font-size: 1.25rem; font-weight: 700;">نظرات محصول: <span x-text="product.name" style="color: var(--color-primary);"></span></h5>

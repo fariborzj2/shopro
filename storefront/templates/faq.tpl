@@ -89,12 +89,12 @@
                 <div
                     x-show="open === <?= $index ?>"
                     style="display: none;"
-                    x-transition:enter="transition ease-out duration-300"
-                    x-transition:enter-start="opacity-0 max-h-0"
-                    x-transition:enter-end="opacity-100 max-h-[500px]"
-                    x-transition:leave="transition ease-in duration-200"
-                    x-transition:leave-start="opacity-100 max-h-[500px]"
-                    x-transition:leave-end="opacity-0 max-h-0"
+                    x-transition:enter="collapse-enter-active"
+                    x-transition:enter-start="collapse-enter-from"
+                    x-transition:enter-end="collapse-enter-to"
+                    x-transition:leave="collapse-leave-active"
+                    x-transition:leave-start="collapse-leave-from"
+                    x-transition:leave-end="collapse-leave-to"
                     class="accordion-content prose"
                 >
                     <p><?= nl2br(htmlspecialchars($item['answer'])) ?></p>
