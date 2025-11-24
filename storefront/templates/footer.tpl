@@ -1,9 +1,17 @@
     <!-- Footer -->
     <footer class="bg-white border-t border-gray-200 mt-auto">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-12">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8 lg:gap-12">
 
-                <!-- Section 1: Links -->
+                <!-- Section 1: About Us -->
+                <div class="md:col-span-1">
+                    <h3 class="text-sm font-bold text-gray-900 tracking-wider uppercase mb-4">درباره فروشگاه مدرن</h3>
+                    <p class="text-gray-500 text-sm leading-relaxed text-justify">
+                        فروشگاه مدرن با هدف ارائه بهترین محصولات دیجیتال و لوازم جانبی با ضمانت اصالت و قیمت مناسب تأسیس شده است. ما متعهد به ارائه خدماتی متمایز و پشتیبانی ۲۴ ساعته هستیم تا تجربه خریدی مطمئن و لذت‌بخش را برای شما رقم بزنیم.
+                    </p>
+                </div>
+
+                <!-- Section 2: Links -->
                 <div>
                     <h3 class="text-sm font-bold text-gray-900 tracking-wider uppercase mb-4">دسترسی سریع</h3>
                     <ul class="space-y-3">
@@ -14,7 +22,7 @@
                     </ul>
                 </div>
 
-                <!-- Section 2: Contact -->
+                <!-- Section 3: Contact -->
                 <div>
                     <h3 class="text-sm font-bold text-gray-900 tracking-wider uppercase mb-4">ارتباط با ما</h3>
                     <div class="space-y-3 text-base text-gray-500">
@@ -35,7 +43,7 @@
                     </div>
                 </div>
 
-                <!-- Section 3: Socials -->
+                <!-- Section 4: Socials -->
                 <div>
                     <h3 class="text-sm font-bold text-gray-900 tracking-wider uppercase mb-4">شبکه‌های اجتماعی</h3>
                     <div class="flex space-x-4 space-x-reverse">
