@@ -363,7 +363,8 @@ class BlogPost
 
     public static function findMostViewed($limit = 5, $days = null)
     {
-        $sql = "SELECT * FROM blog_posts WHERE status = 'published' AND (published_at IS NULL OR published_at <= NOW())";
+        // Select only necessary columns to avoid memory issues with large content
+        $sql = "SELECT id, title, slug, excerpt, published_at, image_url, views_count FROM blog_posts WHERE status = 'published' AND (published_at IS NULL OR published_at <= NOW())";
 
         if ($days) {
             $sql .= " AND published_at >= :cutoff_date";
@@ -385,7 +386,7 @@ class BlogPost
 
     public static function findEditorsPicks($limit = 5)
     {
-        $sql = "SELECT * FROM blog_posts WHERE status = 'published' AND is_editors_pick = 1 AND (published_at IS NULL OR published_at <= NOW()) ORDER BY published_at DESC LIMIT :limit";
+        $sql = "SELECT id, title, slug, excerpt, published_at, image_url, is_editors_pick FROM blog_posts WHERE status = 'published' AND is_editors_pick = 1 AND (published_at IS NULL OR published_at <= NOW()) ORDER BY published_at DESC LIMIT :limit";
         $pdo = Database::getConnection();
         $stmt = $pdo->prepare($sql);
         $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
