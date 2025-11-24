@@ -103,14 +103,38 @@
 
                         <!-- Content -->
                         <div class="p-5 flex-1 flex flex-col">
+                            <!-- Availability Badge -->
+                            <div class="mb-2">
+                                <template x-if="product.status === 'available'">
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                        موجود
+                                    </span>
+                                </template>
+                                <template x-if="product.status !== 'available'">
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                                        ناموجود
+                                    </span>
+                                </template>
+                            </div>
+
                             <h3 class="text-lg font-bold text-gray-900 mb-2 group-hover:text-primary-600 transition-colors" x-text="product.name"></h3>
                             <p class="text-sm text-gray-500 line-clamp-2 mb-4 flex-grow" x-text="product.description || 'توضیحات محصول...'"></p>
 
-                            <div class="flex items-center justify-between mt-auto pt-4 border-t border-gray-100">
-                                <span class="text-lg font-black text-primary-600" x-text="new Intl.NumberFormat('fa-IR').format(product.price) + ' تومان'"></span>
-                                <button class="p-2 rounded-full bg-gray-50 text-gray-400 group-hover:bg-primary-50 group-hover:text-primary-600 transition-colors">
-                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
-                                </button>
+                            <div class="flex flex-col mt-auto pt-4 border-t border-gray-100">
+                                <div class="flex items-center justify-between">
+                                    <div class="flex flex-col">
+                                        <!-- Old Price -->
+                                        <template x-if="product.old_price && parseFloat(product.old_price) > parseFloat(product.price)">
+                                            <span class="text-sm text-gray-400 line-through decoration-red-400" x-text="new Intl.NumberFormat('fa-IR').format(product.old_price) + ' تومان'"></span>
+                                        </template>
+                                        <!-- Current Price -->
+                                        <span class="text-lg font-black text-primary-600" x-text="new Intl.NumberFormat('fa-IR').format(product.price) + ' تومان'"></span>
+                                    </div>
+
+                                    <button class="p-2 rounded-full bg-gray-50 text-gray-400 group-hover:bg-primary-50 group-hover:text-primary-600 transition-colors">
+                                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </article>
