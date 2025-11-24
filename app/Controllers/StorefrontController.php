@@ -6,6 +6,7 @@ use App\Models\FaqItem;
 use App\Models\Page;
 use App\Models\Category;
 use App\Models\Product;
+use App\Models\Review;
 use App\Models\Setting;
 use App\Core\Template;
 
@@ -28,6 +29,7 @@ class StorefrontController
     {
         $categories = Category::findAllBy('status', 'active', 'position ASC');
         $products = Product::findAllBy('status', 'available', 'position ASC');
+        $latestReviews = Review::findLatestHighRated(6);
 
         $store_data = json_encode([
             'categories' => array_map(function($c) {
@@ -42,9 +44,18 @@ class StorefrontController
                     'status' => $p->status,
                     'category' => $p->category_id,
                     'imageUrl' => $p->image_url ?? 'https://placehold.co/400x400/EEE/31343C?text=No+Image',
-                    'description' => isset($p->description) ? $p->description : '' // Ensure description is available if used in view
+                    'description' => isset($p->description) ? $p->description : ''
                 ];
             }, $products),
+            'reviews' => array_map(function($r) {
+                return [
+                    'id' => $r['id'],
+                    'userName' => $r['user_name'] ?? 'کاربر ناشناس',
+                    'rating' => (int)$r['rating'],
+                    'comment' => $r['comment'],
+                    'date' => \jdate('j F Y', strtotime($r['created_at']))
+                ];
+            }, $latestReviews),
             'isUserLoggedIn' => isset($_SESSION['user_id'])
         ]);
 
