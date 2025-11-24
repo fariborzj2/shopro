@@ -1,10 +1,10 @@
-<?php include 'header.tpl'; ?>
+<?php include __DIR__ . '/../header.tpl'; ?>
 
 <div class="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
     <div class="text-center mb-12">
         <h1 class="text-3xl font-bold text-gray-900">دسته‌بندی: <?= htmlspecialchars($category->name_fa) ?></h1>
-        <?php if ($category->description): ?>
-            <p class="mt-2 text-lg text-gray-600"><?= htmlspecialchars($category->description) ?></p>
+        <?php if (!empty($category->notes)): ?>
+            <p class="mt-2 text-lg text-gray-600"><?= htmlspecialchars($category->notes) ?></p>
         <?php endif; ?>
     </div>
 
@@ -13,7 +13,7 @@
         <?php foreach ($posts as $post): ?>
             <div class="bg-white shadow-md rounded-lg overflow-hidden">
                 <a href="/blog/<?= $post->slug ?>">
-                    <img src="<?= htmlspecialchars($post->featured_image ?? 'https://placehold.co/600x400/EEE/31343C?text=No+Image') ?>" alt="<?= htmlspecialchars($post->title) ?>" class="w-full h-48 object-cover">
+                    <img src="<?= htmlspecialchars($post->image_url ?? 'https://placehold.co/600x400/EEE/31343C?text=No+Image') ?>" alt="<?= htmlspecialchars($post->title) ?>" class="w-full h-48 object-cover">
                 </a>
                 <div class="p-6">
                     <h2 class="text-xl font-bold mb-2">
@@ -32,8 +32,22 @@
 
     <!-- Pagination -->
     <div class="mt-12">
-        <?= $paginator->render() ?>
+        <?php if ($paginator->total_pages > 1) : ?>
+            <nav>
+                <ul class="pagination">
+                    <?php if ($paginator->hasPrev()) : ?>
+                        <li class="page-item"><a class="page-link" href="<?= $paginator->getPrevUrl() ?>">قبلی</a></li>
+                    <?php endif; ?>
+                    <?php for ($i = 1; $i <= $paginator->total_pages; $i++) : ?>
+                        <li class="page-item <?= ($i == $paginator->current_page) ? 'active' : '' ?>"><a class="page-link" href="<?= $paginator->buildUrl($i) ?>"><?= $i ?></a></li>
+                    <?php endfor; ?>
+                    <?php if ($paginator->hasNext()) : ?>
+                        <li class="page-item"><a class="page-link" href="<?= $paginator->getNextUrl() ?>">بعدی</a></li>
+                    <?php endif; ?>
+                </ul>
+            </nav>
+        <?php endif; ?>
     </div>
 </div>
 
-<?php include 'footer.tpl'; ?>
+<?php include __DIR__ . '/../footer.tpl'; ?>

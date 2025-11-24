@@ -114,64 +114,74 @@ class BlogController
 
     public function show($slug)
     {
-        $post = BlogPost::findBySlug($slug);
-        if (!$post) {
-            http_response_code(404);
-            echo "پست یافت نشد.";
-            return;
+        try {
+            $post = BlogPost::findBySlug($slug);
+            if (!$post) {
+                http_response_code(404);
+                echo "پست یافت نشد.";
+                return;
+            }
+
+            $faq_ids = BlogPost::getFaqItemsByPostId($post->id);
+            $faq_items = !empty($faq_ids) ? FaqItem::findByIds($faq_ids) : [];
+
+            $tags = BlogPost::getTagsByPostId($post->id);
+
+            $settings = \App\Models\Setting::getAll();
+            $related_posts_limit = $settings['related_posts_limit'] ?? 5;
+            $related_posts = BlogPost::findRelatedPosts($post->id, $related_posts_limit);
+
+            $comments = \App\Models\Comment::findByPostId($post->id);
+            $captcha_image = \App\Core\Captcha::generate();
+
+            // Prepare data for SEO and Schema
+            $base_url = (isset($_SERVER['HTTPS']) ? "https" : "http") . "://$_SERVER[HTTP_HOST]";
+            $canonical_url = $base_url . '/blog/' . $post->slug;
+
+            $schema_data = [
+                'article' => [
+                    '@context' => 'https://schema.org',
+                    '@type' => 'Article',
+                    'headline' => $post->title,
+                    'image' => $post->image_url ? $base_url . $post->image_url : null,
+                    'author' => ['@type' => 'Person', 'name' => $post->author_name],
+                    'publisher' => ['@type' => 'Organization', 'name' => 'نام سایت شما', 'logo' => ['@type' => 'ImageObject', 'url' => $base_url . '/logo.png']],
+                    'datePublished' => date('c', strtotime($post->published_at)),
+                    'dateModified' => date('c', strtotime($post->updated_at ?? $post->published_at)),
+                    'mainEntityOfPage' => $canonical_url,
+                ],
+                'faq' => !empty($faq_items) ? [
+                    '@context' => 'https://schema.org',
+                    '@type' => 'FAQPage',
+                    'mainEntity' => array_map(function($faq) {
+                        return [
+                            '@type' => 'Question',
+                            'name' => $faq->question,
+                            'acceptedAnswer' => [
+                                '@type' => 'Answer',
+                                'text' => $faq->answer,
+                            ],
+                        ];
+                    }, $faq_items),
+                ] : null,
+            ];
+
+            echo $this->template->render('blog/show', [
+                'pageTitle' => $post->title,
+                'metaDescription' => $post->excerpt,
+                'canonicalUrl' => $canonical_url,
+                'post' => $post,
+                'faq_items' => $faq_items,
+                'tags' => $tags,
+                'related_posts' => $related_posts,
+                'schema_data' => $schema_data,
+                'comments' => $comments,
+                'captcha_image' => $captcha_image
+            ]);
+        } catch (\Throwable $e) {
+            http_response_code(500);
+            echo "Error: " . $e->getMessage() . " in " . $e->getFile() . ":" . $e->getLine();
         }
-
-        $faq_ids = BlogPost::getFaqItemsByPostId($post->id);
-        $faq_items = !empty($faq_ids) ? FaqItem::findByIds($faq_ids) : [];
-
-        $tags = BlogPost::getTagsByPostId($post->id);
-
-        $settings = \App\Models\Setting::getAll();
-        $related_posts_limit = $settings['related_posts_limit'] ?? 5;
-        $related_posts = BlogPost::findRelatedPosts($post->id, $related_posts_limit);
-
-        // Prepare data for SEO and Schema
-        $base_url = (isset($_SERVER['HTTPS']) ? "https" : "http") . "://$_SERVER[HTTP_HOST]";
-        $canonical_url = $base_url . '/blog/' . $post->slug;
-
-        $schema_data = [
-            'article' => [
-                '@context' => 'https://schema.org',
-                '@type' => 'Article',
-                'headline' => $post->title,
-                'image' => $post->featured_image ? $base_url . $post->featured_image : null,
-                'author' => ['@type' => 'Person', 'name' => $post->author_name],
-                'publisher' => ['@type' => 'Organization', 'name' => 'نام سایت شما', 'logo' => ['@type' => 'ImageObject', 'url' => $base_url . '/logo.png']],
-                'datePublished' => date('c', strtotime($post->published_at)),
-                'dateModified' => date('c', strtotime($post->updated_at)),
-                'mainEntityOfPage' => $canonical_url,
-            ],
-            'faq' => !empty($faq_items) ? [
-                '@context' => 'https://schema.org',
-                '@type' => 'FAQPage',
-                'mainEntity' => array_map(function($faq) {
-                    return [
-                        '@type' => 'Question',
-                        'name' => $faq->question,
-                        'acceptedAnswer' => [
-                            '@type' => 'Answer',
-                            'text' => $faq->answer,
-                        ],
-                    ];
-                }, $faq_items),
-            ] : null,
-        ];
-
-        echo $this->template->render('blog/show', [
-            'pageTitle' => $post->title,
-            'metaDescription' => $post->excerpt,
-            'canonicalUrl' => $canonical_url,
-            'post' => $post,
-            'faq_items' => $faq_items,
-            'tags' => $tags,
-            'related_posts' => $related_posts,
-            'schema_data' => $schema_data,
-        ]);
     }
 
     public function tags()

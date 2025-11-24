@@ -8,7 +8,7 @@
                 <?php foreach ($slider_posts as $post): ?>
                     <div class="swiper-slide">
                         <a href="/blog/<?= $post->slug ?>">
-                            <img src="<?= $post->featured_image ?? 'https://placehold.co/800x400' ?>" alt="<?= htmlspecialchars($post->title) ?>">
+                            <img src="<?= $post->image_url ?? 'https://placehold.co/800x400' ?>" alt="<?= htmlspecialchars($post->title) ?>">
                             <div class="slider-caption"><?= htmlspecialchars($post->title) ?></div>
                         </a>
                     </div>
