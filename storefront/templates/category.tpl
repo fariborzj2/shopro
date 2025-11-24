@@ -15,49 +15,60 @@
         <!-- Products Grid -->
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
             <template x-for="product in products" :key="product.id">
-                <article class="group bg-white rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 flex flex-col overflow-hidden">
-                    <div class="aspect-w-1 aspect-h-1 w-full overflow-hidden bg-gray-200">
+                <article class="group bg-white rounded-2xl shadow-card hover:shadow-lg transition-all duration-300 border border-gray-100 cursor-pointer flex flex-col overflow-hidden relative">
+                    <!-- Image -->
+                    <div class="aspect-w-1 aspect-h-1 bg-gray-100 relative overflow-hidden">
                         <img
                             :src="product.imageUrl"
                             :alt="product.name"
-                            class="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500"
+                            class="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700 ease-out"
                             loading="lazy"
                         >
-                    </div>
-                    <div class="p-6 flex-1 flex flex-col">
-                        <!-- Availability Badge -->
-                        <div class="mb-2">
+
+                        <!-- Badges -->
+                        <div class="absolute top-3 right-3 flex flex-col gap-2">
                             <template x-if="product.status === 'available'">
-                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                <span class="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-bold bg-green-500/90 text-white backdrop-blur-md shadow-sm">
                                     موجود
                                 </span>
                             </template>
                             <template x-if="product.status !== 'available'">
-                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                                <span class="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-bold bg-red-500/90 text-white backdrop-blur-md shadow-sm">
                                     ناموجود
+                                </span>
+                            </template>
+                            <template x-if="product.old_price && parseFloat(product.old_price) > parseFloat(product.price)">
+                                <span class="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-bold bg-red-500 text-white shadow-sm">
+                                    حراج
                                 </span>
                             </template>
                         </div>
 
-                        <h2 class="text-lg font-bold text-gray-900 mb-2 group-hover:text-primary-600 transition-colors" x-text="product.name"></h2>
-                        <div class="mt-auto flex flex-col">
-                            <div class="flex items-center justify-between">
-                                <div class="flex flex-col">
-                                    <!-- Old Price -->
-                                    <template x-if="product.old_price && parseFloat(product.old_price) > parseFloat(product.price)">
-                                        <span class="text-sm text-gray-400 line-through decoration-red-400" x-text="new Intl.NumberFormat('fa-IR').format(product.old_price) + ' تومان'"></span>
-                                    </template>
-                                    <!-- Current Price -->
-                                    <span class="text-xl font-black text-primary-600" x-text="new Intl.NumberFormat('fa-IR').format(product.price) + ' تومان'"></span>
-                                </div>
-                            </div>
+                        <!-- Quick Actions Overlay -->
+                        <div class="absolute bottom-3 left-3 right-3 flex items-center gap-2 opacity-0 group-hover:opacity-100 translate-y-4 group-hover:translate-y-0 transition-all duration-300">
+                            <button @click.stop="showReviews(product.id)" class="flex-1 py-2 px-4 rounded-xl bg-white/90 backdrop-blur-md text-gray-700 text-xs font-bold shadow-lg hover:bg-primary-600 hover:text-white transition-colors">
+                                نظرات
+                            </button>
                         </div>
-                        <button
-                            @click="showReviews(product.id)"
-                            class="mt-4 w-full py-2 px-4 rounded-xl bg-gray-50 text-gray-600 hover:bg-primary-50 hover:text-primary-600 font-medium text-sm transition-colors border border-gray-200 hover:border-primary-100"
-                        >
-                            مشاهده و ثبت نظرات
-                        </button>
+                    </div>
+
+                    <!-- Content -->
+                    <div class="p-5 pt-4 flex-1 flex flex-col">
+                        <h2 class="text-lg font-bold text-gray-900 mb-2 truncate group-hover:text-primary-600 transition-colors" x-text="product.name"></h2>
+
+                        <div class="mt-auto flex flex-col">
+                            <div class="flex items-center gap-2">
+                                <!-- Current Price -->
+                                <span class="text-lg font-black text-gray-900" x-text="new Intl.NumberFormat('fa-IR').format(product.price)"></span>
+                                <span class="text-xs text-gray-500 font-medium">تومان</span>
+                            </div>
+                            <!-- Old Price -->
+                            <template x-if="product.old_price && parseFloat(product.old_price) > parseFloat(product.price)">
+                                <div class="flex items-center gap-1 text-gray-400 text-sm">
+                                    <span class="line-through decoration-red-400/50" x-text="new Intl.NumberFormat('fa-IR').format(product.old_price)"></span>
+                                </div>
+                            </template>
+                        </div>
                     </div>
                 </article>
             </template>

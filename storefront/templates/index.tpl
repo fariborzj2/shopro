@@ -137,54 +137,60 @@
                 <template x-for="product in filteredProducts" :key="product.id">
                     <article
                         @click="selectProduct(product)"
-                        class="group bg-white rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 cursor-pointer flex flex-col overflow-hidden"
+                        class="group bg-white rounded-2xl shadow-card hover:shadow-lg transition-all duration-300 border border-gray-100 cursor-pointer flex flex-col overflow-hidden relative"
                     >
                         <!-- Image -->
-                        <div class="aspect-w-4 aspect-h-3 bg-gray-200 relative overflow-hidden">
+                        <div class="aspect-w-1 aspect-h-1 bg-gray-100 relative overflow-hidden">
                             <img
                                 :src="product.imageUrl"
                                 :alt="product.name"
-                                class="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500"
+                                class="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700 ease-out"
                                 loading="lazy"
                             >
-                            <!-- Overlay -->
-                            <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-10 transition-opacity"></div>
-                        </div>
 
-                        <!-- Content -->
-                        <div class="p-5 flex-1 flex flex-col">
-                            <!-- Availability Badge -->
-                            <div class="mb-2">
+                            <!-- Badges (Absolute Top) -->
+                            <div class="absolute top-3 right-3 flex flex-col gap-2">
                                 <template x-if="product.status === 'available'">
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                    <span class="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-bold bg-green-500/90 text-white backdrop-blur-md shadow-sm">
                                         موجود
                                     </span>
                                 </template>
                                 <template x-if="product.status !== 'available'">
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                                    <span class="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-bold bg-red-500/90 text-white backdrop-blur-md shadow-sm">
                                         ناموجود
+                                    </span>
+                                </template>
+                                <template x-if="product.old_price && parseFloat(product.old_price) > parseFloat(product.price)">
+                                    <span class="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-bold bg-red-500 text-white shadow-sm">
+                                        حراج
                                     </span>
                                 </template>
                             </div>
 
-                            <h3 class="text-lg font-bold text-gray-900 mb-2 group-hover:text-primary-600 transition-colors" x-text="product.name"></h3>
-                            <p class="text-sm text-gray-500 line-clamp-2 mb-4 flex-grow" x-text="product.description || 'توضیحات محصول...'"></p>
+                            <!-- Quick Add Overlay (Bottom Right) -->
+                            <div class="absolute bottom-3 left-3 opacity-0 group-hover:opacity-100 translate-y-4 group-hover:translate-y-0 transition-all duration-300">
+                                <button class="p-3 rounded-xl bg-white text-primary-600 shadow-lg hover:bg-primary-600 hover:text-white transition-colors">
+                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                                </button>
+                            </div>
+                        </div>
 
-                            <div class="flex flex-col mt-auto pt-4 border-t border-gray-100">
-                                <div class="flex items-center justify-between">
-                                    <div class="flex flex-col">
-                                        <!-- Old Price -->
-                                        <template x-if="product.old_price && parseFloat(product.old_price) > parseFloat(product.price)">
-                                            <span class="text-sm text-gray-400 line-through decoration-red-400" x-text="new Intl.NumberFormat('fa-IR').format(product.old_price) + ' تومان'"></span>
-                                        </template>
-                                        <!-- Current Price -->
-                                        <span class="text-lg font-black text-primary-600" x-text="new Intl.NumberFormat('fa-IR').format(product.price) + ' تومان'"></span>
-                                    </div>
+                        <!-- Content -->
+                        <div class="p-5 pt-4 flex-1 flex flex-col">
+                            <h3 class="text-lg font-bold text-gray-900 mb-2 truncate group-hover:text-primary-600 transition-colors" x-text="product.name"></h3>
 
-                                    <button class="p-2 rounded-full bg-gray-50 text-gray-400 group-hover:bg-primary-50 group-hover:text-primary-600 transition-colors">
-                                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
-                                    </button>
+                            <div class="mt-auto flex flex-col">
+                                <div class="flex items-center gap-2">
+                                    <!-- Current Price -->
+                                    <span class="text-lg font-black text-gray-900" x-text="new Intl.NumberFormat('fa-IR').format(product.price)"></span>
+                                    <span class="text-xs text-gray-500 font-medium">تومان</span>
                                 </div>
+                                <!-- Old Price -->
+                                <template x-if="product.old_price && parseFloat(product.old_price) > parseFloat(product.price)">
+                                    <div class="flex items-center gap-1 text-gray-400 text-sm">
+                                        <span class="line-through decoration-red-400/50" x-text="new Intl.NumberFormat('fa-IR').format(product.old_price)"></span>
+                                    </div>
+                                </template>
                             </div>
                         </div>
                     </article>
