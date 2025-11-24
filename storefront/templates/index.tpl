@@ -198,6 +198,121 @@
         </div>
     </section>
 
+    <!-- Testimonials Section -->
+    <section class="py-16 bg-white relative overflow-hidden">
+        <!-- Decoration -->
+        <div class="absolute top-0 right-0 w-64 h-64 bg-primary-100 rounded-bl-full opacity-30 z-0"></div>
+        <div class="absolute bottom-0 left-0 w-48 h-48 bg-purple-100 rounded-tr-full opacity-30 z-0"></div>
+
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="text-center mb-12">
+                <h2 class="text-base text-primary-600 font-semibold tracking-wide uppercase">نظرات مشتریان</h2>
+                <p class="mt-2 text-3xl leading-8 font-extrabold tracking-tight text-gray-900 sm:text-4xl">
+                    آنچه دیگران درباره ما می‌گویند
+                </p>
+            </div>
+
+            <div
+                x-data="{
+                    activeSlide: 0,
+                    slides: [],
+                    init() {
+                        this.slides = this.$store.appStore.reviews;
+                        if (this.slides.length > 0) {
+                            setInterval(() => {
+                                this.next();
+                            }, 5000);
+                        }
+                    },
+                    next() {
+                        this.activeSlide = (this.activeSlide + 1) % this.slides.length;
+                    },
+                    prev() {
+                        this.activeSlide = (this.activeSlide - 1 + this.slides.length) % this.slides.length;
+                    }
+                }"
+                class="relative max-w-4xl mx-auto"
+                x-show="slides.length > 0"
+                x-cloak
+            >
+                <!-- Slider Container -->
+                <div class="overflow-hidden relative min-h-[300px] flex items-center justify-center">
+                    <template x-for="(review, index) in slides" :key="index">
+                        <div
+                            class="absolute inset-0 transition-all duration-700 ease-in-out transform flex flex-col justify-center items-center px-8 md:px-16"
+                            :class="{
+                                'translate-x-0 opacity-100 z-20': activeSlide === index,
+                                'translate-x-full opacity-0 z-10': activeSlide < index,
+                                '-translate-x-full opacity-0 z-10': activeSlide > index
+                            }"
+                        >
+                            <!-- Review Card -->
+                            <div class="bg-white/60 backdrop-blur-md border border-white/40 shadow-glass rounded-3xl p-8 md:p-10 w-full text-center relative">
+                                <!-- Quote Icon -->
+                                <div class="absolute -top-6 left-1/2 transform -translate-x-1/2 bg-primary-600 text-white p-3 rounded-full shadow-lg">
+                                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M14.017 21L14.017 18C14.017 16.896 14.321 15.923 14.929 15.081C15.537 14.239 16.413 13.535 17.557 12.969V11.233C16.819 11.233 16.275 11.206 15.925 11.152C15.575 11.098 15.225 10.982 14.875 10.804C14.525 10.626 14.225 10.358 13.975 10C13.725 9.642 13.6 9.176 13.6 8.6C13.6 7.962 13.829 7.424 14.287 6.986C14.745 6.548 15.304 6.329 15.965 6.329C16.626 6.329 17.185 6.548 17.643 6.986C18.101 7.424 18.33 7.962 18.33 8.6C18.33 9.138 18.121 9.666 17.703 10.184C17.285 10.702 16.711 11.176 15.981 11.606C15.823 11.698 15.669 11.776 15.519 11.84C15.369 11.904 15.219 11.946 15.069 11.966L15.069 12.352C15.069 13.118 14.685 13.898 13.917 14.692C13.149 15.486 12.333 16.038 11.469 16.348L11.469 21H14.017ZM6.54902 21L6.54902 18C6.54902 16.896 6.85302 15.923 7.46102 15.081C8.06902 14.239 8.94502 13.535 10.089 12.969V11.233C9.35102 11.233 8.80702 11.206 8.45702 11.152C8.10702 11.098 7.75702 10.982 7.40702 10.804C7.05702 10.626 6.75702 10.358 6.50702 10C6.25702 9.642 6.13202 9.176 6.13202 8.6C6.13202 7.962 6.36102 7.424 6.81902 6.986C7.27702 6.548 7.83602 6.329 8.49702 6.329C9.15802 6.329 9.71702 6.548 10.175 6.986C10.633 7.424 10.862 7.962 10.862 8.6C10.862 9.138 10.653 9.666 10.235 10.184C9.81702 10.702 9.24302 11.176 8.51302 11.606C8.35502 11.698 8.20102 11.776 8.05102 11.84C7.90102 11.904 7.75102 11.946 7.60102 11.966L7.60102 12.352C7.60102 13.118 7.21702 13.898 6.44902 14.692C5.68102 15.486 4.86502 16.038 4.00102 16.348L4.00102 21H6.54902Z" /></svg>
+                                </div>
+
+                                <p class="text-xl md:text-2xl font-medium text-gray-800 leading-relaxed mb-6 mt-4">
+                                    "<span x-text="review.comment"></span>"
+                                </p>
+
+                                <div class="flex flex-col items-center">
+                                    <!-- Stars -->
+                                    <div class="flex items-center space-x-1 space-x-reverse mb-2">
+                                        <template x-for="i in 5">
+                                            <svg
+                                                class="w-5 h-5"
+                                                :class="i <= review.rating ? 'text-yellow-400' : 'text-gray-300'"
+                                                fill="currentColor"
+                                                viewBox="0 0 20 20"
+                                            >
+                                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                                            </svg>
+                                        </template>
+                                    </div>
+
+                                    <h4 class="font-bold text-gray-900" x-text="review.userName"></h4>
+                                    <span class="text-sm text-gray-500 mt-1" x-text="review.date"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </template>
+                </div>
+
+                <!-- Navigation Buttons -->
+                <button
+                    @click="next()"
+                    class="absolute left-0 top-1/2 transform -translate-y-1/2 -ml-4 md:-ml-12 p-3 rounded-full bg-white shadow-lg text-gray-600 hover:text-primary-600 focus:outline-none transition-transform hover:scale-110"
+                >
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                </button>
+                <button
+                    @click="prev()"
+                    class="absolute right-0 top-1/2 transform -translate-y-1/2 -mr-4 md:-mr-12 p-3 rounded-full bg-white shadow-lg text-gray-600 hover:text-primary-600 focus:outline-none transition-transform hover:scale-110"
+                >
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                </button>
+
+                <!-- Indicators -->
+                <div class="flex justify-center mt-8 space-x-2 space-x-reverse">
+                    <template x-for="(review, index) in slides" :key="index">
+                        <button
+                            @click="activeSlide = index"
+                            class="w-3 h-3 rounded-full transition-colors duration-300"
+                            :class="activeSlide === index ? 'bg-primary-600' : 'bg-gray-300 hover:bg-gray-400'"
+                        ></button>
+                    </template>
+                </div>
+            </div>
+
+            <!-- Empty State for Reviews -->
+            <div x-show="!$store.appStore.reviews.length" x-cloak class="text-center py-12">
+                <p class="text-gray-500">هنوز نظری ثبت نشده است.</p>
+            </div>
+        </div>
+    </section>
+
     <!-- Purchase Modal -->
     <div
         x-show="isModalOpen"
@@ -356,6 +471,13 @@
 <!-- Alpine.js Store Logic -->
 <script>
 function store(data) {
+    // Add data to a global store to be accessible by nested components
+    if (!Alpine.store('appStore')) {
+        Alpine.store('appStore', {
+            reviews: data.reviews || []
+        });
+    }
+
     return {
         categories: [],
         products: [],
@@ -369,6 +491,8 @@ function store(data) {
             this.categories = data.categories || [];
             this.products = data.products || [];
             this.isUserLoggedIn = data.isUserLoggedIn || false;
+            // Also update the store just in case
+            Alpine.store('appStore').reviews = data.reviews || [];
         },
         get filteredProducts() {
             if (this.activeCategory === 'all') return this.products;
