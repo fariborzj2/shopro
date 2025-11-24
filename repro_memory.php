@@ -20,4 +20,4 @@ try {
     echo "Error: " . $e->getMessage() . "\n";
     echo "Memory Usage: " . memory_get_peak_usage(true) . "\n";
 }
-ob_end_clean();
+echo ob_get_clean();
