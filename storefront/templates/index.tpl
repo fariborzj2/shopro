@@ -237,7 +237,10 @@
                                         <span class="text-lg font-black text-primary-600" x-text="new Intl.NumberFormat('fa-IR').format(product.price) + ' تومان'"></span>
                                     </div>
 
-                                    <button class="p-2 rounded-full bg-gray-50 text-gray-400 group-hover:bg-primary-50 group-hover:text-primary-600 transition-colors">
+                                    <button
+                                        class="p-2 rounded-full bg-gray-50 text-gray-400 group-hover:bg-primary-50 group-hover:text-primary-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                                        :disabled="product.status !== 'available'"
+                                    >
                                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
                                     </button>
                                 </div>
@@ -660,6 +663,11 @@ function store(data) {
         },
         setActiveCategory(categoryId) { this.activeCategory = categoryId; },
         selectProduct(product) {
+            if (product.status !== 'available') {
+                alert('این محصول در حال حاضر موجود نیست و امکان خرید آن وجود ندارد.');
+                return;
+            }
+
             if (!this.isUserLoggedIn) {
                 window.dispatchEvent(new CustomEvent('open-auth-modal'));
                 return;

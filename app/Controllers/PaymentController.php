@@ -42,6 +42,13 @@ class PaymentController
             return;
         }
 
+        // Security Check: Ensure the product is available for purchase
+        if ($product->status !== 'available') {
+            http_response_code(400);
+            echo json_encode(['error' => 'این محصول در حال حاضر برای خرید در دسترس نیست.']);
+            return;
+        }
+
         // --- Create Order ---
         $order_id = Order::create([
             'user_id' => $_SESSION['user_id'],
