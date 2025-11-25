@@ -83,6 +83,25 @@ class Product
     }
 
     /**
+     * Find all products that are not drafts.
+     *
+     * @param string|null $orderBy
+     * @return array
+     */
+    public static function findAllPublished($orderBy = null)
+    {
+        $sql = "SELECT * FROM products WHERE status != 'draft'";
+        if ($orderBy) {
+            if (preg_match('/^[a-zA-Z0-9_]+ (ASC|DESC)$/i', $orderBy)) {
+                $sql .= " ORDER BY " . $orderBy;
+            }
+        }
+        $stmt = Database::query($sql);
+        return $stmt->fetchAll(PDO::FETCH_OBJ);
+    }
+
+
+    /**
      * Create a new product.
      *
      * @param array $data

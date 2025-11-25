@@ -29,7 +29,7 @@ class StorefrontController
     public function home()
     {
         $categories = Category::findAllBy('status', 'active', 'position ASC');
-        $products = Product::findAllBy('status', 'available', 'position ASC');
+        $products = Product::findAllPublished('position ASC');
         $latestReviews = Review::findLatestHighRated(6);
         $latestPosts = BlogPost::findAllPublished(4); // Get 4 latest posts
 
@@ -59,10 +59,6 @@ class StorefrontController
                 }
                 if ($p->id % 3 == 0) $badges[] = 'پیشنهاد ویژه';
 
-                // Mock stock status
-                $stockStatus = 'موجود';
-                if ($p->id % 5 == 0) $stockStatus = 'موجودی محدود';
-
                 // Mock sales progress (random 50-95%)
                 $salesProgress = rand(50, 95);
 
@@ -71,7 +67,7 @@ class StorefrontController
                     'name' => $p->name_fa,
                     'price' => (float)$p->price,
                     'old_price' => $p->old_price ? (float)$p->old_price : null,
-                    'status' => $stockStatus,
+                    'status' => $p->status,
                     'category' => $p->category_id,
                     'imageUrl' => $p->image_url ?? 'https://placehold.co/400x400/EEE/31343C?text=No+Image',
                     'description' => isset($p->description) ? $p->description : '',
