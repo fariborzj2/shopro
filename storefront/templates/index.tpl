@@ -128,6 +128,30 @@
         .animation-delay-4000 {
             animation-delay: 4s;
         }
+        .testimonial-slider .swiper-button-next,
+        .testimonial-slider .swiper-button-prev {
+            color: #475569;
+            background-color: white;
+            border-radius: 9999px;
+            width: 48px;
+            height: 48px;
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,.1), 0 4px 6px -4px rgba(0,0,0,.1);
+        }
+        .testimonial-slider .swiper-button-next:after,
+        .testimonial-slider .swiper-button-prev:after {
+            font-size: 24px;
+            font-weight: bold;
+        }
+        .testimonial-slider .swiper-pagination-bullet {
+            width: 10px;
+            height: 10px;
+            background-color: #cbd5e1;
+            opacity: 1;
+        }
+
+        .testimonial-slider .swiper-pagination-bullet-active {
+            background-color: #2563eb;
+        }
     </style>
 
     <!-- 2. Products Section (Professional Card) -->
@@ -320,69 +344,46 @@
             </div>
 
             <div
-                x-data="{
-                    activeSlide: 0,
-                    slides: [],
-                    init() {
-                        this.slides = this.$store.appStore.reviews;
-                        if (this.slides.length > 0) {
-                            setInterval(() => {
-                                this.next();
-                            }, 5000);
-                        }
-                    },
-                    next() {
-                        this.activeSlide = (this.activeSlide + 1) % this.slides.length;
-                    },
-                    prev() {
-                        this.activeSlide = (this.activeSlide - 1 + this.slides.length) % this.slides.length;
-                    }
-                }"
-                class="relative max-w-4xl mx-auto"
-                x-show="slides.length > 0"
+                x-data="{ reviews: $store.appStore.reviews }"
+                x-show="reviews.length > 0"
                 x-cloak
+                class="relative max-w-4xl mx-auto"
+                x-init="initTestimonialSlider()"
             >
-                <!-- Slider Container -->
-                <div class="overflow-hidden relative min-h-[350px] flex items-center justify-center">
-                    <template x-for="(review, index) in slides" :key="index">
-                        <div
-                            class="absolute inset-0 transition-all duration-700 ease-in-out transform flex flex-col justify-center items-center px-4"
-                            :class="{
-                                'translate-x-0 opacity-100 z-20': activeSlide === index,
-                                'translate-x-full opacity-0 z-10': activeSlide < index,
-                                '-translate-x-full opacity-0 z-10': activeSlide > index
-                            }"
-                        >
-                            <!-- Review Card -->
-                            <div class="bg-white rounded-3xl p-8 shadow-xl w-full text-center relative max-w-lg border border-gray-100">
-                                <div class="absolute -top-8 left-1/2 transform -translate-x-1/2">
-                                     <img :src="review.userAvatar" class="w-16 h-16 rounded-full border-4 border-white shadow-md" alt="Avatar">
-                                </div>
-
-                                <div class="mt-8">
-                                    <div class="flex justify-center items-center space-x-1 space-x-reverse mb-4">
-                                        <template x-for="i in 5">
-                                            <svg class="w-5 h-5" :class="i <= review.rating ? 'text-yellow-400' : 'text-gray-300'" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" /></svg>
-                                        </template>
+                <!-- Swiper -->
+                <div class="swiper testimonial-slider">
+                    <div class="swiper-wrapper pb-16">
+                        <!-- Slides -->
+                        <template x-for="review in reviews" :key="review.userName">
+                            <div class="swiper-slide px-4 py-8">
+                                <!-- Review Card -->
+                                <div class="bg-white rounded-3xl p-8 shadow-xl w-full text-center relative max-w-lg border border-gray-100 mx-auto">
+                                    <div class="absolute -top-8 left-1/2 transform -translate-x-1/2">
+                                        <img :src="review.userAvatar" class="w-16 h-16 rounded-full border-4 border-white shadow-md" alt="Avatar">
                                     </div>
-                                    <p class="text-gray-600 leading-relaxed mb-6 italic">
-                                        "<span x-text="review.comment"></span>"
-                                    </p>
-                                    <h4 class="font-bold text-gray-900" x-text="review.userName"></h4>
-                                    <span class="text-xs text-gray-400 mt-1 block" x-text="review.date"></span>
+                                    <div class="mt-8">
+                                        <div class="flex justify-center items-center space-x-1 space-x-reverse mb-4">
+                                            <template x-for="i in 5">
+                                                <svg class="w-5 h-5" :class="i <= review.rating ? 'text-yellow-400' : 'text-gray-300'" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" /></svg>
+                                            </template>
+                                        </div>
+                                        <p class="text-gray-600 leading-relaxed mb-6 italic">
+                                            "<span x-text="review.comment"></span>"
+                                        </p>
+                                        <h4 class="font-bold text-gray-900" x-text="review.userName"></h4>
+                                        <span class="text-xs text-gray-400 mt-1 block" x-text="review.date"></span>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    </template>
+                        </template>
+                    </div>
+                    <!-- Add Pagination -->
+                    <div class="swiper-pagination"></div>
                 </div>
 
                 <!-- Navigation Buttons -->
-                <button @click="next()" class="absolute left-0 top-1/2 transform -translate-y-1/2 -ml-4 md:-ml-12 p-3 rounded-full bg-white shadow-lg text-gray-600 hover:text-primary-600 transition-all hover:scale-110">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
-                </button>
-                <button @click="prev()" class="absolute right-0 top-1/2 transform -translate-y-1/2 -mr-4 md:-mr-12 p-3 rounded-full bg-white shadow-lg text-gray-600 hover:text-primary-600 transition-all hover:scale-110">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
-                </button>
+                <div class="swiper-button-prev p-3 rounded-full bg-white shadow-lg text-gray-600 hover:text-primary-600 transition-all hover:scale-110"></div>
+                <div class="swiper-button-next p-3 rounded-full bg-white shadow-lg text-gray-600 hover:text-primary-600 transition-all hover:scale-110"></div>
 
                 <!-- CTA -->
                 <div class="text-center mt-8">
@@ -618,6 +619,27 @@ function store(data) {
     }
 
     return {
+        initTestimonialSlider() {
+            // Ensure elements are rendered before initializing
+            this.$nextTick(() => {
+                new Swiper('.testimonial-slider', {
+                    loop: true,
+                    autoplay: {
+                        delay: 5000,
+                        disableOnInteraction: false,
+                    },
+                    pagination: {
+                        el: '.swiper-pagination',
+                        clickable: true,
+                    },
+                    navigation: {
+                        nextEl: '.swiper-button-next',
+                        prevEl: '.swiper-button-prev',
+                    },
+                    spaceBetween: 20,
+                });
+            });
+        },
         categories: [],
         products: [],
         activeCategory: 'all',
