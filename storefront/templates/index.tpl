@@ -353,7 +353,7 @@
                 <div class="swiper testimonial-slider">
                     <div class="swiper-wrapper pb-16">
                         <!-- Slides -->
-                        <template x-for="review in $store.appStore.reviews" :key="review.userName">
+                        <template x-for="review in $store.appStore.reviews" :key="review.id">
                             <div class="swiper-slide px-4 py-8">
                                 <!-- Review Card -->
                                 <div class="bg-white rounded-3xl p-8 shadow-xl w-full text-center relative max-w-lg border border-gray-100 mx-auto">
