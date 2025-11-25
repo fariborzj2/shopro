@@ -12,7 +12,7 @@
                 <?= htmlspecialchars($category->name_fa) ?>
             </h1>
             <div class="text-xl text-gray-500 max-w-2xl mx-auto leading-relaxed">
-                <?= htmlspecialchars($category->description) ?>
+                <?= strip_tags_except($category->description) ?>
             </div>
         </div>
 
