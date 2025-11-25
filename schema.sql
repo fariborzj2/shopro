@@ -4,6 +4,7 @@
 DROP TABLE IF EXISTS `transactions`;
 DROP TABLE IF EXISTS `reviews`;
 DROP TABLE IF EXISTS `orders`;
+DROP TABLE IF EXISTS `blog_post_comments`;
 DROP TABLE IF EXISTS `blog_post_tags`;
 DROP TABLE IF EXISTS `blog_post_faq_items`;
 DROP TABLE IF EXISTS `category_custom_field`;
@@ -283,6 +284,20 @@ CREATE TABLE `media_uploads` (
   `uploaded_by_admin_id` INT,
   `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (`uploaded_by_admin_id`) REFERENCES `admins`(`id`) ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Blog Post Comments Table
+CREATE TABLE `blog_post_comments` (
+  `id` INT PRIMARY KEY AUTO_INCREMENT,
+  `post_id` INT NOT NULL,
+  `parent_id` INT DEFAULT NULL,
+  `name` VARCHAR(255) NOT NULL,
+  `email` VARCHAR(255),
+  `comment` TEXT NOT NULL,
+  `status` ENUM('pending', 'approved', 'rejected') NOT NULL DEFAULT 'pending',
+  `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (`post_id`) REFERENCES `blog_posts`(`id`) ON DELETE CASCADE,
+  FOREIGN KEY (`parent_id`) REFERENCES `blog_post_comments`(`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 
