@@ -82,6 +82,7 @@
     <!-- Auth Modal (Standardized for Alpine/Tailwind) -->
     <div
         x-data="authModal()"
+        x-init="init()"
         @open-auth-modal.window="openModal()"
         x-show="isOpen"
         x-cloak
@@ -141,8 +142,7 @@
                                         کد ارسال شده به <span x-text="mobile" class="font-bold text-gray-800"></span> را وارد کنید.
                                     </p>
                                     <form @submit.prevent="verifyOtp()">
-                                        <div class="mb-4">
-                                            <input type="text" x-model="otp" maxlength="6" class="block w-full rounded-lg border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 text-2xl font-bold tracking-[0.5em] text-center py-3 px-4 bg-gray-50" placeholder="------" required>
+                                        <div class="mb-4" id="otp-inputs" dir="ltr">
                                         </div>
                                         <button type="submit" :disabled="isLoading" class="inline-flex w-full justify-center rounded-xl bg-green-600 px-3 py-3 text-sm font-bold text-white shadow-sm hover:bg-green-500 sm:w-full transition-colors disabled:opacity-50">
                                             <span x-show="!isLoading">تایید و ورود</span>
@@ -164,80 +164,117 @@
     </div>
 
 <script>
-function authModal() {
-    return {
-        isOpen: false,
-        step: 'mobile',
-        mobile: '',
-        otp: '',
-        isLoading: false,
-        errorMessage: '',
+    function authModal() {
+        return {
+            isOpen: false,
+            step: 'mobile',
+            mobile: '',
+            otp: '',
+            isLoading: false,
+            errorMessage: '',
+            pincodeInstance: null,
 
-        openModal() { this.isOpen = true; },
-        closeModal() { this.isOpen = false; this.reset(); },
-        reset() {
-            this.step = 'mobile';
-            this.mobile = '';
-            this.otp = '';
-            this.isLoading = false;
-            this.errorMessage = '';
-        },
-        currentTitle() {
-            return this.step === 'mobile' ? 'ورود به حساب کاربری' : 'تایید شماره موبایل';
-        },
-        sendOtp() {
-            this.isLoading = true;
-            this.errorMessage = '';
-            fetch('/api/auth/send-otp', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                },
-                body: JSON.stringify({ mobile: this.mobile })
-            })
-            .then(res => res.json().then(data => ({ status: res.status, body: data })))
-            .then(({ status, body }) => {
-                if (status === 200) {
-                    this.step = 'otp';
-                    if (body.new_csrf_token) {
-                        document.querySelector('meta[name="csrf-token"]').setAttribute('content', body.new_csrf_token);
+            init() {
+                this.$watch('step', (newState) => {
+                    if (newState === 'otp') {
+                        this.$nextTick(() => {
+                            this.initPincode();
+                        });
                     }
-                } else {
-                    this.errorMessage = body.error || 'خطا در ارسال کد.';
+                });
+            },
+
+            initPincode() {
+                const otpContainer = document.getElementById('otp-inputs');
+                if (otpContainer) {
+                    // Clear previous instance if exists
+                    otpContainer.innerHTML = '';
+                    this.pincodeInstance = new pinCode(otpContainer, {
+                        fields: 6,
+                        autofocus: true,
+                        hideinput: false,
+                        reset: false,
+                        complete: (pincode) => {
+                            this.otp = pincode;
+                            this.verifyOtp();
+                        }
+                    });
                 }
-            })
-            .catch(() => { this.errorMessage = 'خطای ارتباط با سرور.'; })
-            .finally(() => { this.isLoading = false; });
-        },
-        verifyOtp() {
-            this.isLoading = true;
-            this.errorMessage = '';
-            fetch('/api/auth/verify-otp', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                },
-                body: JSON.stringify({ mobile: this.mobile, otp: this.otp })
-            })
-            .then(res => res.json().then(data => ({ status: res.status, body: data })))
-            .then(({ status, body }) => {
-                if (status === 200) {
-                    window.location.reload();
-                } else {
-                    this.errorMessage = body.error || 'کد نامعتبر است.';
+            },
+
+            openModal() { this.isOpen = true; },
+            closeModal() { this.isOpen = false; this.reset(); },
+            reset() {
+                this.step = 'mobile';
+                this.mobile = '';
+                this.otp = '';
+                this.isLoading = false;
+                this.errorMessage = '';
+                if (this.pincodeInstance) {
+                    this.pincodeInstance.reset();
                 }
-            })
-            .catch(() => { this.errorMessage = 'خطای ارتباط با سرور.'; })
-            .finally(() => { this.isLoading = false; });
+            },
+            currentTitle() {
+                return this.step === 'mobile' ? 'ورود به حساب کاربری' : 'تایید شماره موبایل';
+            },
+            sendOtp() {
+                this.isLoading = true;
+                this.errorMessage = '';
+                fetch('/api/auth/send-otp', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                    },
+                    body: JSON.stringify({ mobile: this.mobile })
+                })
+                .then(res => res.json().then(data => ({ status: res.status, body: data })))
+                .then(({ status, body }) => {
+                    if (status === 200) {
+                        this.step = 'otp';
+                        if (body.new_csrf_token) {
+                            document.querySelector('meta[name="csrf-token"]').setAttribute('content', body.new_csrf_token);
+                        }
+                    } else {
+                        this.errorMessage = body.error || 'خطا در ارسال کد.';
+                    }
+                })
+                .catch(() => { this.errorMessage = 'خطای ارتباط با سرور.'; })
+                .finally(() => { this.isLoading = false; });
+            },
+            verifyOtp() {
+                this.isLoading = true;
+                this.errorMessage = '';
+                fetch('/api/auth/verify-otp', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                    },
+                    body: JSON.stringify({ mobile: this.mobile, otp: this.otp })
+                })
+                .then(res => res.json().then(data => ({ status: res.status, body: data })))
+                .then(({ status, body }) => {
+                    if (status === 200) {
+                        window.location.reload();
+                    } else {
+                        this.errorMessage = body.error || 'کد نامعتبر است.';
+                        if (this.pincodeInstance) {
+                            this.pincodeInstance.reset();
+                        }
+                    }
+                })
+                .catch(() => { this.errorMessage = 'خطای ارتباط با سرور.'; })
+                .finally(() => { this.isLoading = false; });
+            }
         }
     }
-}
 </script>
 
 <!-- SwiperJS -->
 <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+<script src="/js/pincode.js"></script>
+<script src="/js/error-modal.js" defer></script>
 
 <?php
 // Since this is a .tpl file, we can't use the `partial()` helper directly.
