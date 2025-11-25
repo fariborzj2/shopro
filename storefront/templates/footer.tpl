@@ -277,10 +277,8 @@
 <script src="/js/error-modal.js" defer></script>
 
 <?php
-// Since this is a .tpl file, we can't use the `partial()` helper directly.
-// We need to include the file with a relative path.
-$style = 'storefront';
-include __DIR__ . '/../../views/partials/_error_modal.php';
+    $style = 'storefront';
+    include __DIR__ . '/../../views/partials/_error_modal.php';
 ?>
 
 
