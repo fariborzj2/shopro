@@ -73,6 +73,7 @@
 
     <!-- Alpine.js -->
     <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+    <script src="/js/error-modal.js" defer></script>
 
     <!-- Custom Jalali Datepicker -->
     <link rel="stylesheet" href="/css/jalali-datepicker.css">
@@ -160,5 +161,7 @@
         </div>
 
     </div>
+
+    <?php partial('_error_modal'); ?>
 </body>
 </html>
