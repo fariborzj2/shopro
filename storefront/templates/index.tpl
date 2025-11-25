@@ -344,8 +344,7 @@
             </div>
 
             <div
-                x-data="{ reviews: $store.appStore.reviews }"
-                x-show="reviews.length > 0"
+                x-show="$store.appStore.reviews && $store.appStore.reviews.length > 0"
                 x-cloak
                 class="relative max-w-4xl mx-auto"
                 x-init="initTestimonialSlider()"
@@ -354,7 +353,7 @@
                 <div class="swiper testimonial-slider">
                     <div class="swiper-wrapper pb-16">
                         <!-- Slides -->
-                        <template x-for="review in reviews" :key="review.userName">
+                        <template x-for="review in $store.appStore.reviews" :key="review.userName">
                             <div class="swiper-slide px-4 py-8">
                                 <!-- Review Card -->
                                 <div class="bg-white rounded-3xl p-8 shadow-xl w-full text-center relative max-w-lg border border-gray-100 mx-auto">
