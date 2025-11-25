@@ -630,6 +630,8 @@ function store(data) {
             this.categories = data.categories || [];
             this.products = data.products || [];
             this.isUserLoggedIn = data.isUserLoggedIn || false;
+            // Also update the store just in case
+            Alpine.store('appStore').reviews = data.reviews || [];
         },
         get filteredProducts() {
             if (this.activeCategory === 'all') return this.products;
