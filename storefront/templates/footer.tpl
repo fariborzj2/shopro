@@ -239,8 +239,6 @@ function authModal() {
 <!-- SwiperJS -->
 <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
 
-<script src="/js/error-modal.js" defer></script>
-
 <?php
 // Since this is a .tpl file, we can't use the `partial()` helper directly.
 // We need to include the file with a relative path.
