@@ -18,10 +18,6 @@ set_include_path(get_include_path() . PATH_SEPARATOR . PROJECT_ROOT . '/storefro
 // Set the default timezone to Tehran
 date_default_timezone_set('Asia/Tehran');
 
-// Show all errors for development
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
-
 // ----------------------------
 // Auto Loader 
 // ----------------------------
@@ -41,6 +37,18 @@ spl_autoload_register(function ($class) {
         require $file;
     }
 });
+
+// ----------------------------
+// Error & Exception Handling
+// ----------------------------
+// Define a global debug mode flag. In a real application, this would come from an environment file.
+define('DEBUG_MODE', true);
+error_reporting(E_ALL);
+ini_set('display_errors', DEBUG_MODE ? 1 : 0);
+ini_set('display_startup_errors', DEBUG_MODE ? 1 : 0);
+
+App\Core\ErrorHandler::register();
+
 
 // ----------------------------
 // Load global helpers (first)
@@ -117,9 +125,7 @@ if (strpos($uri, '/admin') === 0 && strpos($uri, '/admin/login') === false) {
         }
 
         if (!$hasAccess) {
-            http_response_code(403);
-            echo "<h1>403 Forbidden</h1><p>شما مجوز دسترسی به این صفحه را ندارید.</p><a href='/admin'>بازگشت به داشبورد</a>";
-            exit();
+            return \App\Core\ErrorHandler::renderHttpError(403, 'دسترسی غیرمجاز', 'شما مجوز دسترسی به این صفحه را ندارید.');
         }
     }
 }
@@ -129,35 +135,15 @@ if (strpos($uri, '/admin') === 0 && strpos($uri, '/admin/login') === false) {
 // ----------------------------
 if (Request::method() === 'POST') {
     if (!verify_csrf_token()) {
-        http_response_code(403);
-        echo "<h1>403 Forbidden</h1><p>Invalid CSRF token.</p>";
-        exit();
+        return \App\Core\ErrorHandler::renderHttpError(403, 'نشست نامعتبر', 'نشست شما منقضی شده یا درخواست نامعتبر است. لطفاً صفحه را رفرش کرده و دوباره تلاش کنید.');
     }
 }
 
 // ----------------------------
 // Router Execution
 // ----------------------------
-try {
-    $uri = Request::uri();
-    $method = Request::method();
+$uri = Request::uri();
+$method = Request::method();
 
-    Router::load(PROJECT_ROOT . '/app/routes.php')
-        ->dispatch($uri, $method);
-
-} catch (RouteNotFoundException $e) {
-
-    http_response_code(404);
-    return view('error', 'errors/404', [
-        'title' => '404 - صفحه یافت نشد',
-        'message' => $e->getMessage()
-    ]);
-
-} catch (Exception $e) {
-
-    http_response_code(500);
-    return view('error', 'errors/500', [
-        'title' => '500 - خطای سرور',
-        'message' => $e->getMessage()
-    ]);
-}
+Router::load(PROJECT_ROOT . '/app/routes.php')
+    ->dispatch($uri, $method);
