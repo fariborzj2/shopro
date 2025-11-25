@@ -6,18 +6,8 @@
     x-init="init()"
     class="flex-grow"
 >
-    <!-- Hero Section -->
+    <!-- 1. Hero Section -->
     <section class="relative bg-white overflow-hidden">
-        <!-- Background Gradient -->
-        <div class="absolute inset-0 bg-gradient-to-br from-primary-50 via-white to-gray-50 z-0"></div>
-
-        <!-- Animated Shapes -->
-        <div class="absolute inset-0 overflow-hidden pointer-events-none z-0">
-            <div class="absolute -top-24 -right-24 w-96 h-96 bg-primary-200 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob"></div>
-            <div class="absolute top-32 -left-24 w-96 h-96 bg-purple-200 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-2000"></div>
-            <div class="absolute -bottom-32 right-1/4 w-96 h-96 bg-pink-200 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-4000"></div>
-        </div>
-
         <div class="max-w-7xl mx-auto">
             <div class="relative z-10 pb-8 sm:pb-16 md:pb-20 lg:max-w-2xl lg:w-full lg:pb-28 xl:pb-32 pt-12">
 
@@ -31,14 +21,14 @@
                             جدیدترین محصولات دیجیتال و لوازم جانبی را با بهترین قیمت و گارانتی معتبر از فروشگاه مدرن بخواهید. تجربه خریدی سریع، امن و لذت‌بخش.
                         </p>
                         <div class="mt-8 sm:mt-10 sm:flex sm:justify-center lg:justify-start gap-4">
-                            <div class="rounded-md shadow">
-                                <a href="#products" class="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-bold rounded-2xl text-white bg-primary-600 hover:bg-primary-700 md:py-4 md:text-lg md:px-10 transition-all transform hover:-translate-y-1 hover:shadow-lg shadow-primary-500/30">
+                            <div class="mt-3 sm:mt-0">
+                                <a href="#products" class="w-full flex items-center justify-center px-4 py-2 text-base font-bold rounded-md text-white bg-primary-600 hover:bg-primary-700 md:py-4 md:text-lg md:px-10 transition-all transform hover:-translate-y-1 hover:shadow-lg shadow-primary-500/30">
                                     <svg class="w-5 h-5 ml-2 -mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
                                     شروع خرید
                                 </a>
                             </div>
                             <div class="mt-3 sm:mt-0">
-                                <a href="/page/about-us" class="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-bold rounded-2xl text-primary-700 bg-white hover:bg-gray-50 md:py-4 md:text-lg md:px-10 transition-all border-gray-100 shadow-sm hover:shadow-md">
+                                <a href="/page/about-us" class="w-full flex items-center justify-center px-4 py-2 bg-gray-50 text-base font-bold rounded-md text-primary-700 hover:bg-gray-50 md:py-4 md:text-lg md:px-10 transition-all  transform hover:-translate-y-1 hover:shadow-lg shadow-primary-500/30">
                                     <svg class="w-5 h-5 ml-2 -mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                                     درباره ما
                                 </a>
@@ -69,13 +59,55 @@
         <div class="lg:absolute lg:inset-y-0 lg:left-0 lg:w-1/2">
             <div class="h-56 w-full sm:h-72 md:h-96 lg:w-full lg:h-full relative">
                 <!-- Abstract Shapes Behind Image -->
-                <div class="absolute inset-0 bg-gradient-to-tr from-primary-100/50 to-transparent lg:rounded-tr-[100px] z-0"></div>
                 <img
-                    class="w-full h-full object-cover lg:rounded-tr-[100px] relative z-10 shadow-2xl transform hover:scale-105 transition-transform duration-700 ease-out"
+                    class="w-full h-full object-cover  relative z-10 transform hover:scale-105 transition-transform duration-700 ease-out"
                     src="https://placehold.co/800x800/f8fafc/3b82f6?text=Modern+Store"
                     alt="Store Banner"
-                    style="clip-path: polygon(0 0, 100% 0, 100% 85%, 0% 100%);"
                 >
+            </div>
+        </div>
+    </section>
+
+    <!-- 6. Competitive Advantage -->
+    <section class="py-12 bg-white border-b border-gray-100">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+                <div class="flex items-center gap-4 p-4 rounded-2xl bg-gray-50 hover:bg-primary-50 transition-colors duration-300">
+                    <div class="p-3 bg-white rounded-xl shadow-sm text-primary-600">
+                        <svg class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-gray-900">تحویل فوری</h3>
+                        <p class="text-sm text-gray-500">کمتر از ۲۴ ساعت</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-4 p-4 rounded-2xl bg-gray-50 hover:bg-primary-50 transition-colors duration-300">
+                    <div class="p-3 bg-white rounded-xl shadow-sm text-primary-600">
+                        <svg class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-gray-900">پشتیبانی ۷/۲۴</h3>
+                        <p class="text-sm text-gray-500">همیشه پاسخگو</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-4 p-4 rounded-2xl bg-gray-50 hover:bg-primary-50 transition-colors duration-300">
+                    <div class="p-3 bg-white rounded-xl shadow-sm text-primary-600">
+                        <svg class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-gray-900">بهترین قیمت</h3>
+                        <p class="text-sm text-gray-500">تضمین قیمت بازار</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-4 p-4 rounded-2xl bg-gray-50 hover:bg-primary-50 transition-colors duration-300">
+                    <div class="p-3 bg-white rounded-xl shadow-sm text-primary-600">
+                        <svg class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" /></svg>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-gray-900">پشتیبانی تخصصی</h3>
+                        <p class="text-sm text-gray-500">مشاوره پس از خرید</p>
+                    </div>
+                </div>
             </div>
         </div>
     </section>
@@ -98,6 +130,7 @@
         }
     </style>
 
+    <!-- 2. Products Section (Professional Card) -->
     <!-- Products Section -->
     <section id="products" class="py-16 bg-gray-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -116,7 +149,7 @@
                 <div class="flex space-x-2 space-x-reverse overflow-x-auto pb-2 no-scrollbar">
                     <button
                         @click.prevent="setActiveCategory('all')"
-                        :class="{'bg-primary-600 text-white shadow-lg shadow-primary-500/30': activeCategory === 'all', 'bg-white text-gray-600 hover:bg-gray-100': activeCategory !== 'all'}"
+                        :class="{'bg-primary-600 text-white': activeCategory === 'all', 'bg-white text-gray-600 hover:bg-gray-100': activeCategory !== 'all'}"
                         class="px-6 py-2.5 rounded-full text-sm font-bold transition-all whitespace-nowrap"
                     >
                         همه محصولات
@@ -124,7 +157,7 @@
                     <template x-for="category in categories" :key="category.id">
                         <button
                             @click.prevent="setActiveCategory(category.id)"
-                            :class="{'bg-primary-600 text-white shadow-lg shadow-primary-500/30': activeCategory === category.id, 'bg-white text-gray-600 hover:bg-gray-100': activeCategory !== category.id}"
+                            :class="{'bg-primary-600 text-white': activeCategory === category.id, 'bg-white text-gray-600 hover:bg-gray-100': activeCategory !== category.id}"
                             class="px-6 py-2.5 rounded-full text-sm font-bold transition-all whitespace-nowrap"
                             x-text="category.name"
                         ></button>
@@ -137,7 +170,7 @@
                 <template x-for="product in filteredProducts" :key="product.id">
                     <article
                         @click="selectProduct(product)"
-                        class="group bg-white rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 cursor-pointer flex flex-col overflow-hidden"
+                        class="relative  group bg-white rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 cursor-pointer flex flex-col overflow-hidden"
                     >
                         <!-- Image -->
                         <div class="aspect-w-4 aspect-h-3 bg-gray-200 relative overflow-hidden">
@@ -154,7 +187,7 @@
                         <!-- Content -->
                         <div class="p-5 flex-1 flex flex-col">
                             <!-- Availability Badge -->
-                            <div class="mb-2">
+                            <div class="mb-2 absolute top-3 right-3">
                                 <template x-if="product.status === 'available'">
                                     <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
                                         موجود
@@ -168,7 +201,6 @@
                             </div>
 
                             <h3 class="text-lg font-bold text-gray-900 mb-2 group-hover:text-primary-600 transition-colors" x-text="product.name"></h3>
-                            <p class="text-sm text-gray-500 line-clamp-2 mb-4 flex-grow" x-text="product.description || 'توضیحات محصول...'"></p>
 
                             <div class="flex flex-col mt-auto pt-4 border-t border-gray-100">
                                 <div class="flex items-center justify-between">
@@ -198,17 +230,92 @@
         </div>
     </section>
 
-    <!-- Testimonials Section -->
-    <section class="py-16 bg-white relative overflow-hidden">
-        <!-- Decoration -->
-        <div class="absolute top-0 right-0 w-64 h-64 bg-primary-100 rounded-bl-full opacity-30 z-0"></div>
-        <div class="absolute bottom-0 left-0 w-48 h-48 bg-purple-100 rounded-tr-full opacity-30 z-0"></div>
+    <!-- 7. Why Us Section -->
+    <section class="py-12 bg-white">
+        <div class="max-w-4xl mx-auto px-4 text-center">
+            <h2 class="text-2xl font-bold text-gray-900 mb-4">چرا فروشگاه مدرن؟</h2>
+            <p class="text-gray-600 leading-relaxed text-lg">
+                ما در فروشگاه مدرن متعهد هستیم تا با کیفیت‌ترین محصولات دیجیتال را با ارزان‌ترین قیمت ممکن به دست شما برسانیم. تجربه خریدی بدون دغدغه، پشتیبانی واقعی و ارسال سریع، تفاوت ما با دیگران است.
+            </p>
+        </div>
+    </section>
 
+    <!-- 4. Trust Section -->
+    <section class="py-16 bg-primary-900 text-white relative overflow-hidden">
+        <div class="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]"></div>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+                <div>
+                    <h2 class="text-3xl font-extrabold mb-6">اعتماد شما، سرمایه ماست</h2>
+                    <p class="text-primary-100 text-lg mb-8 leading-relaxed">
+                        با بیش از ۱۰ سال سابقه فعالیت درخشان و داشتن نماد اعتماد الکترونیکی، مفتخریم که توانسته‌ایم رضایت ۹۸٪ مشتریان خود را جلب کنیم. پرداخت امن، ضمانت بازگشت وجه و کالای اصل، حقوق اولیه شماست.
+                    </p>
+                    <div class="flex flex-wrap gap-4">
+                        <div class="bg-white/10 backdrop-blur-sm px-6 py-4 rounded-xl border border-white/20">
+                            <span class="block text-3xl font-bold text-yellow-400">۳۵۰۰+</span>
+                            <span class="text-sm text-gray-300">خرید موفق</span>
+                        </div>
+                        <div class="bg-white/10 backdrop-blur-sm px-6 py-4 rounded-xl border border-white/20">
+                            <span class="block text-3xl font-bold text-yellow-400">۴.۸</span>
+                            <span class="text-sm text-gray-300">امتیاز مشتریان</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="bg-white/5 p-6 rounded-2xl border border-white/10 text-center">
+                        <svg class="w-12 h-12 mx-auto text-green-400 mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                        <h4 class="font-bold">ضمانت اصالت</h4>
+                    </div>
+                    <div class="bg-white/5 p-6 rounded-2xl border border-white/10 text-center">
+                        <svg class="w-12 h-12 mx-auto text-blue-400 mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" /></svg>
+                        <h4 class="font-bold">پرداخت امن</h4>
+                    </div>
+                    <div class="bg-white/5 p-6 rounded-2xl border border-white/10 text-center">
+                        <svg class="w-12 h-12 mx-auto text-yellow-400 mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                        <h4 class="font-bold">ارسال سریع</h4>
+                    </div>
+                    <div class="bg-white/5 p-6 rounded-2xl border border-white/10 text-center">
+                        <svg class="w-12 h-12 mx-auto text-purple-400 mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
+                        <h4 class="font-bold">پشتیبانی</h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 5. Brands Slider -->
+    <section class="py-12 bg-white border-b border-gray-100 overflow-hidden">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <p class="text-center text-gray-500 mb-8 font-medium">همکاری با برترین برندهای جهان</p>
+            <div
+                x-data="{
+                    brands: $store.appStore.brands,
+                    active: 0,
+                    init() {
+                         // Simple auto-scroll logic simulation for Alpine
+                         // In production, CSS infinite scroll is smoother
+                    }
+                }"
+                class="relative"
+            >
+                <div class="flex items-center justify-center gap-8 md:gap-16 flex-wrap opacity-60 grayscale hover:grayscale-0 transition-all duration-500">
+                     <template x-for="brand in brands" :key="brand.name">
+                        <div class="w-24 h-12 flex items-center justify-center hover:scale-110 transition-transform cursor-pointer" :title="brand.name">
+                             <img :src="brand.logo" :alt="brand.name" class="max-h-full max-w-full object-contain">
+                        </div>
+                     </template>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 3. Testimonials Section -->
+    <section class="py-16 bg-gray-50 relative overflow-hidden">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
             <div class="text-center mb-12">
                 <h2 class="text-base text-primary-600 font-semibold tracking-wide uppercase">نظرات مشتریان</h2>
                 <p class="mt-2 text-3xl leading-8 font-extrabold tracking-tight text-gray-900 sm:text-4xl">
-                    آنچه دیگران درباره ما می‌گویند
+                    تجربه خریداران ما
                 </p>
             </div>
 
@@ -236,10 +343,10 @@
                 x-cloak
             >
                 <!-- Slider Container -->
-                <div class="overflow-hidden relative min-h-[300px] flex items-center justify-center">
+                <div class="overflow-hidden relative min-h-[350px] flex items-center justify-center">
                     <template x-for="(review, index) in slides" :key="index">
                         <div
-                            class="absolute inset-0 transition-all duration-700 ease-in-out transform flex flex-col justify-center items-center px-8 md:px-16"
+                            class="absolute inset-0 transition-all duration-700 ease-in-out transform flex flex-col justify-center items-center px-4"
                             :class="{
                                 'translate-x-0 opacity-100 z-20': activeSlide === index,
                                 'translate-x-full opacity-0 z-10': activeSlide < index,
@@ -247,33 +354,22 @@
                             }"
                         >
                             <!-- Review Card -->
-                            <div class="bg-white/60 backdrop-blur-md border border-white/40 shadow-glass rounded-3xl p-8 md:p-10 w-full text-center relative">
-                                <!-- Quote Icon -->
-                                <div class="absolute -top-6 left-1/2 transform -translate-x-1/2 bg-primary-600 text-white p-3 rounded-full shadow-lg">
-                                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M14.017 21L14.017 18C14.017 16.896 14.321 15.923 14.929 15.081C15.537 14.239 16.413 13.535 17.557 12.969V11.233C16.819 11.233 16.275 11.206 15.925 11.152C15.575 11.098 15.225 10.982 14.875 10.804C14.525 10.626 14.225 10.358 13.975 10C13.725 9.642 13.6 9.176 13.6 8.6C13.6 7.962 13.829 7.424 14.287 6.986C14.745 6.548 15.304 6.329 15.965 6.329C16.626 6.329 17.185 6.548 17.643 6.986C18.101 7.424 18.33 7.962 18.33 8.6C18.33 9.138 18.121 9.666 17.703 10.184C17.285 10.702 16.711 11.176 15.981 11.606C15.823 11.698 15.669 11.776 15.519 11.84C15.369 11.904 15.219 11.946 15.069 11.966L15.069 12.352C15.069 13.118 14.685 13.898 13.917 14.692C13.149 15.486 12.333 16.038 11.469 16.348L11.469 21H14.017ZM6.54902 21L6.54902 18C6.54902 16.896 6.85302 15.923 7.46102 15.081C8.06902 14.239 8.94502 13.535 10.089 12.969V11.233C9.35102 11.233 8.80702 11.206 8.45702 11.152C8.10702 11.098 7.75702 10.982 7.40702 10.804C7.05702 10.626 6.75702 10.358 6.50702 10C6.25702 9.642 6.13202 9.176 6.13202 8.6C6.13202 7.962 6.36102 7.424 6.81902 6.986C7.27702 6.548 7.83602 6.329 8.49702 6.329C9.15802 6.329 9.71702 6.548 10.175 6.986C10.633 7.424 10.862 7.962 10.862 8.6C10.862 9.138 10.653 9.666 10.235 10.184C9.81702 10.702 9.24302 11.176 8.51302 11.606C8.35502 11.698 8.20102 11.776 8.05102 11.84C7.90102 11.904 7.75102 11.946 7.60102 11.966L7.60102 12.352C7.60102 13.118 7.21702 13.898 6.44902 14.692C5.68102 15.486 4.86502 16.038 4.00102 16.348L4.00102 21H6.54902Z" /></svg>
+                            <div class="bg-white rounded-3xl p-8 shadow-xl w-full text-center relative max-w-lg border border-gray-100">
+                                <div class="absolute -top-8 left-1/2 transform -translate-x-1/2">
+                                     <img :src="review.userAvatar" class="w-16 h-16 rounded-full border-4 border-white shadow-md" alt="Avatar">
                                 </div>
 
-                                <p class="text-xl md:text-2xl font-medium text-gray-800 leading-relaxed mb-6 mt-4">
-                                    "<span x-text="review.comment"></span>"
-                                </p>
-
-                                <div class="flex flex-col items-center">
-                                    <!-- Stars -->
-                                    <div class="flex items-center space-x-1 space-x-reverse mb-2">
+                                <div class="mt-8">
+                                    <div class="flex justify-center items-center space-x-1 space-x-reverse mb-4">
                                         <template x-for="i in 5">
-                                            <svg
-                                                class="w-5 h-5"
-                                                :class="i <= review.rating ? 'text-yellow-400' : 'text-gray-300'"
-                                                fill="currentColor"
-                                                viewBox="0 0 20 20"
-                                            >
-                                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                                            </svg>
+                                            <svg class="w-5 h-5" :class="i <= review.rating ? 'text-yellow-400' : 'text-gray-300'" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" /></svg>
                                         </template>
                                     </div>
-
+                                    <p class="text-gray-600 leading-relaxed mb-6 italic">
+                                        "<span x-text="review.comment"></span>"
+                                    </p>
                                     <h4 class="font-bold text-gray-900" x-text="review.userName"></h4>
-                                    <span class="text-sm text-gray-500 mt-1" x-text="review.date"></span>
+                                    <span class="text-xs text-gray-400 mt-1 block" x-text="review.date"></span>
                                 </div>
                             </div>
                         </div>
@@ -281,34 +377,70 @@
                 </div>
 
                 <!-- Navigation Buttons -->
-                <button
-                    @click="next()"
-                    class="absolute left-0 top-1/2 transform -translate-y-1/2 -ml-4 md:-ml-12 p-3 rounded-full bg-white shadow-lg text-gray-600 hover:text-primary-600 focus:outline-none transition-transform hover:scale-110"
-                >
+                <button @click="next()" class="absolute left-0 top-1/2 transform -translate-y-1/2 -ml-4 md:-ml-12 p-3 rounded-full bg-white shadow-lg text-gray-600 hover:text-primary-600 transition-all hover:scale-110">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
                 </button>
-                <button
-                    @click="prev()"
-                    class="absolute right-0 top-1/2 transform -translate-y-1/2 -mr-4 md:-mr-12 p-3 rounded-full bg-white shadow-lg text-gray-600 hover:text-primary-600 focus:outline-none transition-transform hover:scale-110"
-                >
+                <button @click="prev()" class="absolute right-0 top-1/2 transform -translate-y-1/2 -mr-4 md:-mr-12 p-3 rounded-full bg-white shadow-lg text-gray-600 hover:text-primary-600 transition-all hover:scale-110">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
                 </button>
 
-                <!-- Indicators -->
-                <div class="flex justify-center mt-8 space-x-2 space-x-reverse">
-                    <template x-for="(review, index) in slides" :key="index">
-                        <button
-                            @click="activeSlide = index"
-                            class="w-3 h-3 rounded-full transition-colors duration-300"
-                            :class="activeSlide === index ? 'bg-primary-600' : 'bg-gray-300 hover:bg-gray-400'"
-                        ></button>
-                    </template>
+                <!-- CTA -->
+                <div class="text-center mt-8">
+                     <a href="#" class="inline-flex items-center text-primary-600 font-bold hover:text-primary-700">
+                         مشاهده تجربه ۳۵۰۰+ خریدار دیگر
+                         <svg class="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg>
+                     </a>
                 </div>
             </div>
 
-            <!-- Empty State for Reviews -->
-            <div x-show="!$store.appStore.reviews.length" x-cloak class="text-center py-12">
+             <div x-show="!$store.appStore.reviews.length" x-cloak class="text-center py-12">
                 <p class="text-gray-500">هنوز نظری ثبت نشده است.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 8. Latest Blog Posts -->
+    <section class="py-16 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-end mb-10">
+                 <div>
+                    <h2 class="text-base text-primary-600 font-semibold tracking-wide uppercase">وبلاگ</h2>
+                    <p class="mt-2 text-3xl leading-8 font-extrabold tracking-tight text-gray-900 sm:text-4xl">
+                        آخرین مطالب خواندنی
+                    </p>
+                 </div>
+                 <a href="/blog" class="hidden sm:inline-flex items-center text-primary-600 font-bold hover:text-primary-700">
+                     مشاهده همه
+                     <svg class="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg>
+                 </a>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8" x-data="{ posts: $store.appStore.blogPosts }">
+                <template x-for="post in posts" :key="post.id">
+                    <a :href="'/blog/' + post.slug" class="group flex flex-col bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-lg transition-all duration-300">
+                        <div class="aspect-w-16 aspect-h-9 bg-gray-200">
+                            <img :src="post.imageUrl" :alt="post.title" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                        </div>
+                        <div class="p-5 flex-1 flex flex-col">
+                            <span class="text-xs text-gray-400 mb-2" x-text="post.date"></span>
+                            <h3 class="text-lg font-bold text-gray-900 mb-2 line-clamp-2 group-hover:text-primary-600 transition-colors" x-text="post.title"></h3>
+                            <p class="text-sm text-gray-500 line-clamp-3 mb-4" x-text="post.excerpt"></p>
+                            <span class="mt-auto text-sm font-bold text-primary-600 inline-flex items-center">
+                                ادامه مطلب
+                                <svg class="w-4 h-4 mr-1 transition-transform group-hover:-translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg>
+                            </span>
+                        </div>
+                    </a>
+                </template>
+                 <div x-show="!posts.length" x-cloak class="col-span-full text-center py-8 text-gray-500">
+                    مطلبی یافت نشد.
+                </div>
+            </div>
+             <div class="mt-8 text-center sm:hidden">
+                 <a href="/blog" class="inline-flex items-center text-primary-600 font-bold hover:text-primary-700">
+                     مشاهده همه مطالب
+                     <svg class="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg>
+                 </a>
             </div>
         </div>
     </section>
@@ -474,8 +606,15 @@ function store(data) {
     // Add data to a global store to be accessible by nested components
     if (!Alpine.store('appStore')) {
         Alpine.store('appStore', {
-            reviews: data.reviews || []
+            reviews: data.reviews || [],
+            brands: data.brands || [],
+            blogPosts: data.blogPosts || []
         });
+    } else {
+        // Update store if already exists (for HMR or subsequent loads)
+        Alpine.store('appStore').reviews = data.reviews || [];
+        Alpine.store('appStore').brands = data.brands || [];
+        Alpine.store('appStore').blogPosts = data.blogPosts || [];
     }
 
     return {
