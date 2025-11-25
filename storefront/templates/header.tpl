@@ -132,6 +132,7 @@
     <link rel="stylesheet" href="/css/pincode.css">
 
     <!-- Alpine.js -->
+    <script src="/js/error-modal.js" defer></script>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 
     <style>
