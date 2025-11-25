@@ -1,0 +1,24 @@
+.pin-container {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+
+.pin-input {
+    width: 45px;
+    height: 50px;
+    text-align: center;
+    font-size: 1.5rem;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    transition: border-color 0.3s;
+}
+
+.pin-input:focus {
+    border-color: #007bff;
+    outline: none;
+}
+
+.pin-input.invalid {
+    border-color: red;
+}
