@@ -128,58 +128,64 @@
 
                     <!-- Modal Body -->
                     <div class="p-6 space-y-4 flex-1">
-                        <!-- Step 1: Mobile -->
-                        <div x-show="step === 'mobile'">
-                            <form @submit.prevent="sendOtp()">
-                                <div class="mb-4">
-                                    <label for="mobile" class="block text-sm font-medium text-gray-700 mb-2 text-right">شماره موبایل خود را وارد کنید</label>
-                                    <input type="tel" x-model="mobile" class="block w-full rounded-lg border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm py-3 px-4 bg-gray-50 text-center text-lg tracking-wider" placeholder="09xxxxxxxxx" required>
-                                </div>
-                                <button type="submit" :disabled="isLoading" class="inline-flex w-full justify-center rounded-xl bg-primary-600 px-3 py-3 text-sm font-bold text-white shadow-sm hover:bg-primary-500 sm:w-full transition-colors disabled:opacity-50">
-                                    <span x-show="!isLoading">ارسال کد تایید</span>
-                                    <span x-show="isLoading">در حال ارسال...</span>
-                                </button>
-                            </form>
-                        </div>
+                        <form @submit.prevent="currentStepAction()">
+                            <!-- Step 1: Mobile -->
+                            <div x-show="step === 'mobile'">
+                                <label for="mobile" class="block text-sm font-medium text-gray-700 mb-2 text-right">شماره موبایل خود را وارد کنید</label>
+                                <input type="tel" x-model="mobile" id="mobile" class="block w-full rounded-lg border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm py-3 px-4 bg-gray-50 text-center text-lg tracking-wider" placeholder="09xxxxxxxxx" required>
+                            </div>
 
-                        <!-- Step 2: OTP -->
-                        <div x-show="step === 'otp'">
-                            <p class="text-sm text-gray-600 mb-4 text-center">
-                                کد تایید ۶ رقمی ارسال شده به شماره <strong x-text="mobile" class="font-bold text-gray-900"></strong> را وارد کنید.
-                            </p>
-                            <form @submit.prevent="verifyOtp()">
-                                <div class="mb-4" id="otp-inputs" dir="ltr">
+                            <!-- Step 2: OTP -->
+                            <div x-show="step === 'otp'">
+                                <p class="text-sm text-gray-600 mb-4 text-center">
+                                    کد تایید ۶ رقمی ارسال شده به شماره <strong x-text="mobile" class="font-bold text-gray-900"></strong> را وارد کنید.
+                                </p>
+                                <div id="otp-inputs" dir="ltr">
                                     <!-- Pincode inputs will be generated here -->
                                 </div>
-                                <button type="submit" :disabled="isLoading" class="inline-flex w-full justify-center rounded-xl bg-green-600 px-3 py-3 text-sm font-bold text-white shadow-sm hover:bg-green-500 sm:w-full transition-colors disabled:opacity-50">
-                                    <span x-show="!isLoading">تایید و ورود</span>
-                                    <span x-show="isLoading">در حال بررسی...</span>
-                                </button>
-                            </form>
-                        </div>
+                                <div class="text-center mt-4">
+                                     <button @click="step = 'mobile'; errorMessage = ''; timer.stop()" type="button" class="text-sm text-gray-500 hover:text-gray-800 transition-colors">
+                                        تغییر شماره
+                                    </button>
+                                </div>
+                            </div>
 
-                        <!-- Error Message -->
-                        <p x-show="errorMessage" x-text="errorMessage" class="mt-4 text-sm text-red-600 text-center bg-red-50 p-3 rounded-lg"></p>
+                            <!-- Error Message -->
+                            <p x-show="errorMessage" x-text="errorMessage" class="mt-4 text-sm text-red-600 text-center bg-red-50 p-3 rounded-lg"></p>
+                        </form>
                     </div>
 
                     <!-- Modal Footer -->
-                    <div class="flex items-center justify-between w-full p-4 border-t border-gray-200 bg-gray-50 rounded-b-2xl">
-                        <div x-show="step === 'otp'">
-                            <button
-                                @click="sendOtp()"
-                                :disabled="timer.isActive"
-                                class="text-sm font-bold transition-colors"
-                                :class="timer.isActive ? 'text-gray-400 cursor-not-allowed' : 'text-primary-600 hover:text-primary-800'"
-                            >
-                                ارسال مجدد کد
+                    <div class="p-4 border-t border-gray-200 bg-gray-50 rounded-b-2xl">
+                        <!-- Step 1 Footer -->
+                        <div x-show="step === 'mobile'">
+                            <button @click="sendOtp()" :disabled="isLoading" class="inline-flex w-full justify-center rounded-xl bg-primary-600 px-3 py-3 text-sm font-bold text-white shadow-sm hover:bg-primary-500 transition-colors disabled:opacity-50">
+                                <span x-show="!isLoading">ارسال کد تایید</span>
+                                <span x-show="isLoading">در حال ارسال...</span>
                             </button>
                         </div>
-                        <div x-show="step === 'otp'">
-                            <span x-show="timer.isActive" x-text="timer.formatTime()" class="text-sm text-gray-600 bg-gray-200 px-2 py-1 rounded-md" dir="ltr"></span>
+
+                        <!-- Step 2 Footer -->
+                        <div x-show="step === 'otp'" class="flex items-center justify-between gap-x-4">
+                            <button
+                                @click="sendOtp()"
+                                :disabled="timer.isActive || isLoading"
+                                class="inline-flex items-center justify-center rounded-xl border border-gray-300 bg-white px-3 py-3 text-sm font-bold text-gray-700 shadow-sm hover:bg-gray-50 transition-colors disabled:opacity-50 flex-1"
+                            >
+                                <span x-show="!timer.isActive">ارسال مجدد</span>
+                                <span x-show="timer.isActive" class="flex items-center">
+                                    <svg class="animate-spin -ml-1 mr-2 h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                    </svg>
+                                    <span x-text="timer.formatTime()" dir="ltr"></span>
+                                </span>
+                            </button>
+                            <button @click="verifyOtp()" :disabled="isLoading" class="inline-flex w-full justify-center rounded-xl bg-green-600 px-3 py-3 text-sm font-bold text-white shadow-sm hover:bg-green-500 transition-colors disabled:opacity-50 flex-1">
+                                <span x-show="!isLoading">تایید و ورود</span>
+                                <span x-show="isLoading">در حال بررسی...</span>
+                            </button>
                         </div>
-                         <button @click="step = 'mobile'; errorMessage = ''; timer.stop()" x-show="step === 'otp'" class="text-center text-sm text-gray-500 hover:text-gray-800 transition-colors">
-                            » تغییر شماره
-                        </button>
                     </div>
                 </div>
             </div>
@@ -276,7 +282,17 @@
             currentTitle() {
                 return this.step === 'mobile' ? 'ورود به حساب کاربری' : 'تایید شماره موبایل';
             },
+            currentStepAction() {
+                if (this.step === 'mobile') {
+                    this.sendOtp();
+                } else if (this.step === 'otp') {
+                    this.verifyOtp();
+                }
+            },
             sendOtp() {
+                // If timer is active, don't resend
+                if (this.timer.isActive) return;
+
                 this.isLoading = true;
                 this.errorMessage = '';
                 fetch('/api/auth/send-otp', {
