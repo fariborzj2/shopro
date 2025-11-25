@@ -115,48 +115,71 @@
                     x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
                     x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
                     @click.outside="closeModal()"
-                    class="relative transform overflow-hidden rounded-2xl bg-white text-right shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-md border border-gray-100"
+                    class="relative transform flex flex-col overflow-hidden rounded-2xl bg-white text-right shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-md border border-gray-100"
                 >
-                    <div class="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
-                        <div class="sm:flex sm:items-start">
-                            <div class="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-right w-full">
-                                <h3 class="text-xl font-bold leading-6 text-gray-900 mb-6" id="modal-title" x-text="currentTitle()"></h3>
+                    <!-- Modal Header -->
+                    <div class="flex items-center justify-between p-4 border-b border-gray-200 bg-gray-50 rounded-t-2xl">
+                        <h3 class="text-lg font-bold text-gray-900" id="modal-title" x-text="currentTitle()"></h3>
+                        <button @click="closeModal()" type="button" class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 inline-flex items-center justify-center">
+                            <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/></svg>
+                            <span class="sr-only">Close modal</span>
+                        </button>
+                    </div>
 
-                                <!-- Step 1: Mobile -->
-                                <div x-show="step === 'mobile'">
-                                    <form @submit.prevent="sendOtp()">
-                                        <div class="mb-4">
-                                            <label for="mobile" class="block text-sm font-medium text-gray-700 mb-1">شماره موبایل</label>
-                                            <input type="tel" x-model="mobile" class="block w-full rounded-lg border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm py-3 px-4 bg-gray-50 text-center text-lg tracking-wider" placeholder="09xxxxxxxxx" required>
-                                        </div>
-                                        <button type="submit" :disabled="isLoading" class="inline-flex w-full justify-center rounded-xl bg-primary-600 px-3 py-3 text-sm font-bold text-white shadow-sm hover:bg-primary-500 sm:w-full transition-colors disabled:opacity-50">
-                                            <span x-show="!isLoading">ارسال کد تایید</span>
-                                            <span x-show="isLoading">در حال ارسال...</span>
-                                        </button>
-                                    </form>
+                    <!-- Modal Body -->
+                    <div class="p-6 space-y-4 flex-1">
+                        <!-- Step 1: Mobile -->
+                        <div x-show="step === 'mobile'">
+                            <form @submit.prevent="sendOtp()">
+                                <div class="mb-4">
+                                    <label for="mobile" class="block text-sm font-medium text-gray-700 mb-2 text-right">شماره موبایل خود را وارد کنید</label>
+                                    <input type="tel" x-model="mobile" class="block w-full rounded-lg border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm py-3 px-4 bg-gray-50 text-center text-lg tracking-wider" placeholder="09xxxxxxxxx" required>
                                 </div>
-
-                                <!-- Step 2: OTP -->
-                                <div x-show="step === 'otp'">
-                                    <p class="text-sm text-gray-500 mb-4 text-center">
-                                        کد ارسال شده به <span x-text="mobile" class="font-bold text-gray-800"></span> را وارد کنید.
-                                    </p>
-                                    <form @submit.prevent="verifyOtp()">
-                                        <div class="mb-4" id="otp-inputs" dir="ltr">
-                                        </div>
-                                        <button type="submit" :disabled="isLoading" class="inline-flex w-full justify-center rounded-xl bg-green-600 px-3 py-3 text-sm font-bold text-white shadow-sm hover:bg-green-500 sm:w-full transition-colors disabled:opacity-50">
-                                            <span x-show="!isLoading">تایید و ورود</span>
-                                            <span x-show="isLoading">در حال بررسی...</span>
-                                        </button>
-                                    </form>
-                                    <button @click="step = 'mobile'; errorMessage = ''" class="mt-4 w-full text-center text-sm text-gray-400 hover:text-gray-600">
-                                        تغییر شماره
-                                    </button>
-                                </div>
-
-                                <p x-show="errorMessage" x-text="errorMessage" class="mt-4 text-sm text-red-600 text-center bg-red-50 p-2 rounded-lg"></p>
-                            </div>
+                                <button type="submit" :disabled="isLoading" class="inline-flex w-full justify-center rounded-xl bg-primary-600 px-3 py-3 text-sm font-bold text-white shadow-sm hover:bg-primary-500 sm:w-full transition-colors disabled:opacity-50">
+                                    <span x-show="!isLoading">ارسال کد تایید</span>
+                                    <span x-show="isLoading">در حال ارسال...</span>
+                                </button>
+                            </form>
                         </div>
+
+                        <!-- Step 2: OTP -->
+                        <div x-show="step === 'otp'">
+                            <p class="text-sm text-gray-600 mb-4 text-center">
+                                کد تایید ۶ رقمی ارسال شده به شماره <strong x-text="mobile" class="font-bold text-gray-900"></strong> را وارد کنید.
+                            </p>
+                            <form @submit.prevent="verifyOtp()">
+                                <div class="mb-4" id="otp-inputs" dir="ltr">
+                                    <!-- Pincode inputs will be generated here -->
+                                </div>
+                                <button type="submit" :disabled="isLoading" class="inline-flex w-full justify-center rounded-xl bg-green-600 px-3 py-3 text-sm font-bold text-white shadow-sm hover:bg-green-500 sm:w-full transition-colors disabled:opacity-50">
+                                    <span x-show="!isLoading">تایید و ورود</span>
+                                    <span x-show="isLoading">در حال بررسی...</span>
+                                </button>
+                            </form>
+                        </div>
+
+                        <!-- Error Message -->
+                        <p x-show="errorMessage" x-text="errorMessage" class="mt-4 text-sm text-red-600 text-center bg-red-50 p-3 rounded-lg"></p>
+                    </div>
+
+                    <!-- Modal Footer -->
+                    <div class="flex items-center justify-between w-full p-4 border-t border-gray-200 bg-gray-50 rounded-b-2xl">
+                        <div x-show="step === 'otp'">
+                            <button
+                                @click="sendOtp()"
+                                :disabled="timer.isActive"
+                                class="text-sm font-bold transition-colors"
+                                :class="timer.isActive ? 'text-gray-400 cursor-not-allowed' : 'text-primary-600 hover:text-primary-800'"
+                            >
+                                ارسال مجدد کد
+                            </button>
+                        </div>
+                        <div x-show="step === 'otp'">
+                            <span x-show="timer.isActive" x-text="timer.formatTime()" class="text-sm text-gray-600 bg-gray-200 px-2 py-1 rounded-md" dir="ltr"></span>
+                        </div>
+                         <button @click="step = 'mobile'; errorMessage = ''; timer.stop()" x-show="step === 'otp'" class="text-center text-sm text-gray-500 hover:text-gray-800 transition-colors">
+                            » تغییر شماره
+                        </button>
                     </div>
                 </div>
             </div>
@@ -164,6 +187,34 @@
     </div>
 
 <script>
+    function otpTimer(durationInSeconds) {
+        return {
+            remaining: durationInSeconds,
+            isActive: false,
+            interval: null,
+            start() {
+                this.remaining = durationInSeconds;
+                this.isActive = true;
+                this.interval = setInterval(() => {
+                    this.remaining--;
+                    if (this.remaining <= 0) {
+                        this.stop();
+                    }
+                }, 1000);
+            },
+            stop() {
+                clearInterval(this.interval);
+                this.isActive = false;
+                this.remaining = 0;
+            },
+            formatTime() {
+                const minutes = Math.floor(this.remaining / 60);
+                const seconds = this.remaining % 60;
+                return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+            }
+        }
+    }
+
     function authModal() {
         return {
             isOpen: false,
@@ -173,6 +224,7 @@
             isLoading: false,
             errorMessage: '',
             pincodeInstance: null,
+            timer: otpTimer(120), // 2 minutes timer
 
             init() {
                 this.$watch('step', (newState) => {
@@ -203,13 +255,20 @@
             },
 
             openModal() { this.isOpen = true; },
-            closeModal() { this.isOpen = false; this.reset(); },
+            closeModal() {
+                this.isOpen = false;
+                // Don't reset if timer is active, so user can see it if they reopen modal
+                if (!this.timer.isActive) {
+                    this.reset();
+                }
+            },
             reset() {
                 this.step = 'mobile';
                 this.mobile = '';
                 this.otp = '';
                 this.isLoading = false;
                 this.errorMessage = '';
+                this.timer.stop();
                 if (this.pincodeInstance) {
                     this.pincodeInstance.reset();
                 }
@@ -232,6 +291,7 @@
                 .then(({ status, body }) => {
                     if (status === 200) {
                         this.step = 'otp';
+                        this.timer.start();
                         if (body.new_csrf_token) {
                             document.querySelector('meta[name="csrf-token"]').setAttribute('content', body.new_csrf_token);
                         }
