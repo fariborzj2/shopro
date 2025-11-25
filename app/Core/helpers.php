@@ -313,3 +313,22 @@ function translate_status_fa($status)
 
     return htmlspecialchars($status);
 }
+
+/**
+ * Strips all HTML tags except for a whitelisted few.
+ * A more secure alternative to echoing raw HTML, but less strict than htmlspecialchars.
+ *
+ * @param string|null $html The HTML string to purify.
+ * @return string The purified HTML string.
+ */
+function strip_tags_except($html)
+{
+    if ($html === null) {
+        return '';
+    }
+    // Define a whitelist of allowed tags.
+    // This provides a basic level of security by allowing simple formatting.
+    // For a production application with complex user HTML, a library like HTML Purifier would be much safer.
+    $allowed_tags = '<p><a><strong><em><ul><ol><li><br><b><i>';
+    return strip_tags($html, $allowed_tags);
+}
