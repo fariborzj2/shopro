@@ -48,13 +48,16 @@ $error_msg = isset($_GET['error_msg']) ? htmlspecialchars($_GET['error_msg']) : 
                     @click="selectProduct(product)"
                     class="relative group bg-white rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 cursor-pointer flex flex-col overflow-hidden"
                 >
-                    <div class="aspect-w-1 aspect-h-1 w-full overflow-hidden bg-gray-200">
+                    <!-- Image -->
+                    <div class="aspect-w-4 aspect-h-3 bg-gray-200 relative overflow-hidden">
                         <img
                             :src="product.imageUrl"
                             :alt="product.name"
                             class="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500"
                             loading="lazy"
                         >
+                        <!-- Overlay -->
+                        <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-10 transition-opacity"></div>
                     </div>
                     <div class="p-6 flex-1 flex flex-col">
                         <!-- Availability Badge -->
@@ -345,54 +348,101 @@ $error_msg = isset($_GET['error_msg']) ? htmlspecialchars($_GET['error_msg']) : 
     </div>
 </main>
 
+<?php include 'partials/_purchase_modal.tpl'; ?>
+
 <!-- Alpine.js Store Logic -->
 <script>
 function store(data) {
+    // Add data to a global store to be accessible by nested components
+    if (!Alpine.store('appStore')) {
+        Alpine.store('appStore', {
+            reviews: data.reviews || [],
+            brands: data.brands || [],
+            blogPosts: data.blogPosts || []
+        });
+    } else {
+        // Update store if already exists (for HMR or subsequent loads)
+        Alpine.store('appStore').reviews = data.reviews || [];
+        Alpine.store('appStore').brands = data.brands || [];
+        Alpine.store('appStore').blogPosts = data.blogPosts || [];
+    }
+
     return {
         products: [],
         isModalOpen: false,
         selectedProduct: null,
-
-        // Form state for review modal
-        formData: { rating: 5, comment: '' },
-        loading: false,
-        message: { type: '', text: '' },
-        errors: {},
+        customFields: [],
+        isModalOpen: false,
+        isUserLoggedIn: false,
 
         init() {
             this.products = data.products || [];
+            this.isUserLoggedIn = data.isUserLoggedIn || false;
         },
-
         selectProduct(product) {
+            if (product.status !== 'available') {
+                alert('این محصول در حال حاضر موجود نیست و امکان خرید آن وجود ندارد.');
+                return;
+            }
+
+            if (!this.isUserLoggedIn) {
+                window.dispatchEvent(new CustomEvent('open-auth-modal'));
+                return;
+            }
+
             this.selectedProduct = product;
             this.isModalOpen = true;
-            // Reset form state when modal opens
-            this.formData = { rating: 5, comment: '' };
-            this.message.text = '';
-            this.errors = {};
-            this.loading = false;
+            this.customFields = [];
+
+            fetch(`/api/product-details/${product.id}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) {
+                        alert(data.error);
+                        this.isModalOpen = false;
+                    } else {
+                        this.customFields = data.custom_fields;
+                    }
+                });
         },
+        submitOrder() {
+            const form = document.getElementById('purchaseForm');
+            const formData = new FormData(form);
 
-        submitReview() {
-            if (!this.selectedProduct) return;
+            const payloadFields = [];
+            this.customFields.forEach(field => {
+                let val = null;
+                if (field.type === 'checkbox') {
+                    const values = formData.getAll(field.name + '[]');
+                    if (values.length) val = values.join(', ');
+                } else {
+                    val = formData.get(field.name);
+                }
 
-            this.loading = true;
-            this.message.text = '';
-            this.errors = {};
+                if (val) {
+                    payloadFields.push({
+                        name: field.name,
+                        label: field.label,
+                        value: val
+                    });
+                }
+            });
 
             const payload = {
                 product_id: this.selectedProduct.id,
-                rating: this.formData.rating,
-                comment: this.formData.comment
+                custom_fields: payloadFields
             };
 
-            const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+            let csrfToken = formData.get('csrf_token');
+            if (!csrfToken) {
+                const metaTag = document.querySelector('meta[name="csrf-token"]');
+                if (metaTag) csrfToken = metaTag.getAttribute('content');
+            }
 
-            fetch('/reviews/store', {
-                method: 'POST',
+            fetch(form.action, {
+                method: form.method,
                 headers: {
                     'Content-Type': 'application/json',
-                    'Accept': 'application/json',
                     'X-CSRF-TOKEN': csrfToken
                 },
                 body: JSON.stringify(payload)
@@ -400,42 +450,18 @@ function store(data) {
             .then(res => res.json().then(data => ({ status: res.status, body: data })))
             .then(({ status, body }) => {
                 if (body.new_csrf_token) {
-                    document.querySelector('meta[name="csrf-token"]').setAttribute('content', body.new_csrf_token);
+                    const metaTag = document.querySelector('meta[name="csrf-token"]');
+                    if (metaTag) metaTag.setAttribute('content', body.new_csrf_token);
                 }
 
-                if (status === 201) { // Created
-                    this.message = { type: 'success', text: body.message };
-
-                    // Add the new review to the product's review list
-                    if (!this.selectedProduct.reviews) {
-                        this.selectedProduct.reviews = [];
-                    }
-
-                    const newReview = {
-                        ...body.review,
-                        user_name: "<?php echo htmlspecialchars($_SESSION['user_name'] ?? 'شما'); ?>",
-                        status: 'pending' // Mark as pending for UI
-                    };
-
-                    this.selectedProduct.reviews.unshift(newReview);
-
-                    this.formData = { rating: 5, comment: '' }; // Reset form
-                } else if (status === 422) { // Validation Error
-                    this.message = { type: 'error', text: body.message };
-                    this.errors = body.errors || {};
-                } else { // Other errors
-                    this.message = { type: 'error', text: body.message || 'یک خطای پیش‌بینی نشده رخ داد.' };
+                if (status === 200 && body.payment_url) {
+                    window.location.href = body.payment_url;
+                } else {
+                    alert('خطا: ' + (body.error || 'امکان اتصال به درگاه پرداخت وجود ندارد.'));
                 }
-            })
-            .catch(() => {
-                this.message = { type: 'error', text: 'خطا در ارتباط با سرور.' };
-            })
-            .finally(() => {
-                this.loading = false;
-                // Hide the message after 5 seconds, but only for success
-                if (this.message.type === 'success') {
-                    setTimeout(() => this.message.text = '', 5000);
-                }
+            }).catch(error => {
+                console.error('Error submitting order:', error);
+                alert('یک خطای پیش‌بینی نشده در هنگام پرداخت رخ داد.');
             });
         }
     }
