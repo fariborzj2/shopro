@@ -1,11 +1,7 @@
 <?php include 'header.tpl'; ?>
 
 <!-- App Container -->
-<main
-    x-data="store(<?php echo htmlspecialchars($store_data, ENT_QUOTES, 'UTF-8'); ?>)"
-    x-init="init()"
-    class="flex-grow"
->
+<main class="flex-grow">
     <!-- 1. Hero Section -->
     <section class="relative bg-white border-b border-gray-100 overflow-hidden">
         <div class="max-w-7xl mx-auto">
