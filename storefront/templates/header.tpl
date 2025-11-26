@@ -145,7 +145,13 @@
         <?php endif; endforeach; ?>
     <?php endif; ?>
 </head>
-<body class="bg-gray-50 text-gray-800 font-sans antialiased min-h-screen flex flex-col">
+<body
+    class="bg-gray-50 text-gray-800 font-sans antialiased min-h-screen flex flex-col"
+    <?php if (isset($store_data)): ?>
+        x-data="store(<?php echo htmlspecialchars($store_data, ENT_QUOTES, 'UTF-8'); ?>)"
+        x-init="init()"
+    <?php endif; ?>
+>
 
     <!-- Header / Navbar -->
     <header class="sticky top-0 z-40 w-full backdrop-blur-md bg-white/70 border-b border-white/50 transition-colors duration-500">

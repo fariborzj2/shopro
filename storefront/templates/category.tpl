@@ -11,11 +11,7 @@ $success_msg = isset($_GET['success_msg']) ? htmlspecialchars($_GET['success_msg
 $error_msg = isset($_GET['error_msg']) ? htmlspecialchars($_GET['error_msg']) : null;
 ?>
 
-<main
-    class="flex-grow bg-gray-50 py-16"
-    x-data="store(<?php echo htmlspecialchars($store_data, ENT_QUOTES, 'UTF-8'); ?>)"
-    x-init="init()"
->
+<main class="flex-grow bg-gray-50 py-16">
     <div class="container">
         <!-- Flash Messages -->
         <?php if ($success_msg): ?>
