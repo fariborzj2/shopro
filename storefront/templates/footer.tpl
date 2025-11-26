@@ -257,6 +257,34 @@
                             this.verifyOtp();
                         }
                     });
+
+                    if ('OTPCredential' in navigator) {
+                        const ac = new AbortController();
+                        navigator.credentials.get({
+                            otp: { transport: ['sms'] },
+                            signal: ac.signal
+                        }).then(otp => {
+                            const otpCode = otp.code;
+                            if (otpCode && this.pincodeInstance) {
+                                const chars = otpCode.split('');
+                                chars.forEach((char, index) => {
+                                    const field = this.pincodeInstance.getField(index);
+                                    if (field) {
+                                        field.value = char;
+                                        this.pincodeInstance.values[index] = char;
+                                    }
+                                });
+
+                                // Check if all fields are filled to trigger complete
+                                if (chars.length === this.pincodeInstance.settings.fields) {
+                                    this.pincodeInstance.settings.complete(otpCode);
+                                }
+                            }
+                        }).catch(err => {
+                            // User aborted, or other error. We can safely ignore.
+                            console.log('WebOTP API failed:', err);
+                        });
+                    }
                 }
             },
 
