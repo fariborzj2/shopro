@@ -14,8 +14,8 @@ class ReviewsController
             redirect_back_with_error('You must be logged in to submit a review.');
         }
 
-        $request = new Request();
-        $data = $request->getBody();
+        // Use $_POST directly for form data
+        $data = $_POST;
 
         // Server-side validation
         $errors = $this->validate($data);
@@ -39,7 +39,9 @@ class ReviewsController
             'status' => 'pending',
         ]);
 
-        redirect_back_with_success('Your review has been submitted for approval.');
+        // Redirect back with a success message
+        $referer = $_SERVER['HTTP_REFERER'] ?? '/';
+        redirect_with_success($referer, 'نظر شما با موفقیت ثبت شد و پس از تایید نمایش داده خواهد شد.');
     }
 
     private function validate($data)
