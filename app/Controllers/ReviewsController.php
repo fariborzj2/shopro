@@ -10,47 +10,57 @@ class ReviewsController
 {
     public function store()
     {
+        header('Content-Type: application/json');
+
         if (!isset($_SESSION['user_id'])) {
-            redirect_back_with_error('You must be logged in to submit a review.');
+            http_response_code(401); // Unauthorized
+            echo json_encode(['status' => 'error', 'message' => 'برای ثبت نظر باید وارد شوید.']);
+            return;
         }
 
-        $request = new Request();
-        $data = $request->getBody();
+        $data = Request::json();
 
         // Server-side validation
         $errors = $this->validate($data);
         if (!empty($errors)) {
-            $_SESSION['errors'] = $errors;
-            $_SESSION['old'] = $data;
-            header('Location: ' . $_SERVER['HTTP_REFERER']);
-            exit();
+            http_response_code(422); // Unprocessable Entity
+            echo json_encode(['status' => 'error', 'message' => 'اطلاعات وارد شده نامعتبر است.', 'errors' => $errors]);
+            return;
         }
 
         // Sanitize data
         $sanitized_data = $this->sanitize($data);
 
-        Review::create([
+        $new_review_id = Review::create([
             'product_id' => $sanitized_data['product_id'],
             'user_id' => $_SESSION['user_id'],
-            'name' => $sanitized_data['name'],
-            'mobile' => $sanitized_data['mobile'],
+            'name' => $_SESSION['user_name'],
+            'mobile' => $_SESSION['user_mobile'],
             'rating' => $sanitized_data['rating'],
             'comment' => $sanitized_data['comment'],
-            'status' => 'pending',
+            'status' => 'pending', // Reviews are pending approval by default
         ]);
 
-        redirect_back_with_success('Your review has been submitted for approval.');
+        // Fetch the newly created review to return it in the response
+        $new_review = Review::find($new_review_id);
+        // We need to add the jdate manually as the model doesn't handle it.
+        $new_review['jdate'] = jdate('j F Y', strtotime($new_review['created_at']));
+
+
+        http_response_code(201); // Created
+        echo json_encode([
+            'status' => 'success',
+            'message' => 'نظر شما با موفقیت ثبت شد و پس از تایید نمایش داده خواهد شد.',
+            'review' => $new_review
+        ]);
     }
 
     private function validate($data)
     {
         $errors = [];
 
-        if (empty($data['name'])) {
-            $errors['name'] = 'Name is required.';
-        }
-        if (empty($data['mobile']) || !preg_match('/^09[0-9]{9}$/', $data['mobile'])) {
-            $errors['mobile'] = 'Invalid mobile number.';
+        if (empty($data['product_id']) || !filter_var($data['product_id'], FILTER_VALIDATE_INT)) {
+            $errors['product_id'] = 'Invalid product specified.';
         }
         if (empty($data['rating']) || !filter_var($data['rating'], FILTER_VALIDATE_INT, ['options' => ['min_range' => 1, 'max_range' => 5]])) {
             $errors['rating'] = 'Rating must be between 1 and 5.';

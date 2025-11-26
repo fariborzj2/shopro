@@ -124,6 +124,10 @@
                                             </div>
                                             <p class="text-gray-600 text-sm leading-relaxed" x-text="review.comment"></p>
 
+                                            <template x-if="review.status === 'pending'">
+                                                <p class="text-xs text-yellow-600 font-semibold mt-2">(در انتظار تایید مدیر)</p>
+                                            </template>
+
                                             <template x-if="review.admin_reply">
                                                 <div class="mt-3 pr-3 border-r-2 border-primary-500 bg-primary-50 p-3 rounded-lg">
                                                     <p class="text-xs font-bold text-primary-800 mb-1">پاسخ مدیر:</p>
@@ -142,37 +146,42 @@
                             <div class="border-t border-gray-100 pt-6">
                                 <?php if (isset($_SESSION['user_id'])): ?>
                                     <h4 class="font-bold text-gray-900 mb-4">ثبت دیدگاه جدید</h4>
-                                    <form action="/reviews/store" method="POST">
-                                        <input type="hidden" name="product_id" :value="selectedProduct?.id">
 
-                                        <div class="grid grid-cols-2 gap-4 mb-4">
-                                            <div>
-                                                <label class="block text-xs font-bold text-gray-500 mb-1">نام</label>
-                                                <input type="text" value="<?= $_SESSION['user_name'] ?? '' ?>" readonly class="block w-full rounded-lg border-gray-200 bg-gray-50 text-gray-500 text-sm">
-                                            </div>
-                                            <div>
-                                                <label class="block text-xs font-bold text-gray-500 mb-1">موبایل</label>
-                                                <input type="text" value="<?= $_SESSION['user_mobile'] ?? '' ?>" readonly class="block w-full rounded-lg border-gray-200 bg-gray-50 text-gray-500 text-sm">
-                                            </div>
+                                    <!-- AJAX Messages -->
+                                    <template x-if="message.text">
+                                        <div :class="{
+                                            'bg-green-100 border-green-500 text-green-700': message.type === 'success',
+                                            'bg-red-100 border-red-500 text-red-700': message.type === 'error'
+                                        }" class="border-l-4 p-3 rounded-lg mb-4 text-sm" role="alert">
+                                            <p x-text="message.text"></p>
                                         </div>
+                                    </template>
 
+                                    <form @submit.prevent="submitReview">
                                         <div class="mb-4">
                                             <label class="block text-sm font-bold text-gray-700 mb-2">امتیاز شما</label>
                                             <div class="flex items-center gap-1 flex-row-reverse justify-end">
                                                 <template x-for="i in 5">
-                                                    <button type="button" @click="rating = i" class="text-2xl transition-colors focus:outline-none transform hover:scale-110" :class="i <= rating ? 'text-yellow-400' : 'text-gray-200'">★</button>
+                                                    <button type="button" @click="formData.rating = i" class="text-2xl transition-colors focus:outline-none transform hover:scale-110" :class="i <= formData.rating ? 'text-yellow-400' : 'text-gray-200'">★</button>
                                                 </template>
                                             </div>
-                                            <input type="hidden" name="rating" x-model="rating" required>
+                                            <template x-if="errors.rating"><p class="text-red-500 text-xs mt-1" x-text="errors.rating"></p></template>
                                         </div>
 
                                         <div class="mb-6">
                                             <label class="block text-sm font-bold text-gray-700 mb-2">دیدگاه</label>
-                                            <textarea name="comment" rows="3" required class="block w-full rounded-xl border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 text-sm p-3" placeholder="نظر خود را بنویسید..."></textarea>
+                                            <textarea x-model="formData.comment" rows="3" required class="block w-full rounded-xl border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 text-sm p-3" placeholder="نظر خود را بنویسید..."></textarea>
+                                            <template x-if="errors.comment"><p class="text-red-500 text-xs mt-1" x-text="errors.comment"></p></template>
                                         </div>
 
-                                        <button type="submit" class="w-full inline-flex justify-center rounded-xl bg-primary-600 px-4 py-3 text-sm font-bold text-white shadow-sm hover:bg-primary-700 transition-colors">
-                                            ثبت نظر
+                                        <button type="submit" :disabled="loading" class="w-full inline-flex justify-center items-center rounded-xl bg-primary-600 px-4 py-3 text-sm font-bold text-white shadow-sm hover:bg-primary-700 transition-colors disabled:opacity-50">
+                                            <span x-show="!loading">ثبت نظر</span>
+                                            <span x-show="loading">
+                                                <svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                                  <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                                  <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                                </svg>
+                                            </span>
                                         </button>
                                     </form>
                                 <?php else: ?>
@@ -198,12 +207,88 @@ function categoryApp() {
         products: <?= json_encode(json_decode($store_data)->products) ?>,
         showModal: false,
         selectedProduct: null,
-        rating: 5,
+
+        // Form state
+        formData: { rating: 5, comment: '' },
+        loading: false,
+        message: { type: '', text: '' },
+        errors: {},
 
         showReviews(productId) {
             this.selectedProduct = this.products.find(p => p.id === productId);
-            this.rating = 5;
+            // Reset form state when modal opens
+            this.formData = { rating: 5, comment: '' };
+            this.message.text = '';
+            this.errors = {};
+            this.loading = false;
             this.showModal = true;
+        },
+
+        submitReview() {
+            if (!this.selectedProduct) return;
+
+            this.loading = true;
+            this.message.text = '';
+            this.errors = {};
+
+            const payload = {
+                product_id: this.selectedProduct.id,
+                rating: this.formData.rating,
+                comment: this.formData.comment
+            };
+
+            const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
+            fetch('/reviews/store', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': csrfToken
+                },
+                body: JSON.stringify(payload)
+            })
+            .then(res => res.json().then(data => ({ status: res.status, body: data })))
+            .then(({ status, body }) => {
+                if (body.new_csrf_token) {
+                    document.querySelector('meta[name="csrf-token"]').setAttribute('content', body.new_csrf_token);
+                }
+
+                if (status === 201) { // Created
+                    this.message = { type: 'success', text: body.message };
+
+                    // Add the new review to the product's review list
+                    if (!this.selectedProduct.reviews) {
+                        this.selectedProduct.reviews = [];
+                    }
+
+                    // Add properties for UI that might be missing from the backend response
+                    const newReview = {
+                        ...body.review,
+                        user_name: "<?= htmlspecialchars($_SESSION['user_name'] ?? 'شما') ?>",
+                        status: 'pending' // Mark as pending for UI
+                    };
+
+                    this.selectedProduct.reviews.unshift(newReview);
+
+                    this.formData = { rating: 5, comment: '' }; // Reset form
+                } else if (status === 422) { // Validation Error
+                    this.message = { type: 'error', text: body.message };
+                    this.errors = body.errors || {};
+                } else { // Other errors
+                    this.message = { type: 'error', text: body.message || 'یک خطای پیش‌بینی نشده رخ داد.' };
+                }
+            })
+            .catch(() => {
+                this.message = { type: 'error', text: 'خطا در ارتباط با سرور.' };
+            })
+            .finally(() => {
+                this.loading = false;
+                // Hide the message after 5 seconds, but only for success
+                if (this.message.type === 'success') {
+                    setTimeout(() => this.message.text = '', 5000);
+                }
+            });
         }
     }
 }
