@@ -5,6 +5,10 @@
 $errors = $_SESSION['errors'] ?? [];
 $old = $_SESSION['old'] ?? [];
 unset($_SESSION['errors'], $_SESSION['old']);
+
+// Get success/error messages from URL
+$success_msg = isset($_GET['success_msg']) ? htmlspecialchars($_GET['success_msg']) : null;
+$error_msg = isset($_GET['error_msg']) ? htmlspecialchars($_GET['error_msg']) : null;
 ?>
 
 <main
@@ -13,6 +17,20 @@ unset($_SESSION['errors'], $_SESSION['old']);
     x-init="init()"
 >
     <div class="container">
+        <!-- Flash Messages -->
+        <?php if ($success_msg): ?>
+            <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 rounded-lg mb-8 shadow-md" role="alert">
+                <p class="font-bold">موفقیت</p>
+                <p><?= $success_msg ?></p>
+            </div>
+        <?php endif; ?>
+        <?php if ($error_msg): ?>
+            <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded-lg mb-8 shadow-md" role="alert">
+                <p class="font-bold">خطا</p>
+                <p><?= $error_msg ?></p>
+            </div>
+        <?php endif; ?>
+
         <!-- Category Header -->
         <div class="text-center mb-16">
             <h1 class="text-4xl md:text-5xl font-black text-gray-900 mb-6 leading-tight">
