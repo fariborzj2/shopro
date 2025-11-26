@@ -36,6 +36,26 @@ class Category
     }
 
     /**
+     * Find a single record by a specific column and value.
+     *
+     * @param string $column
+     * @param mixed $value
+     * @return mixed|false
+     */
+    public static function findBy($column, $value)
+    {
+        // Whitelist columns to prevent SQL injection on column names
+        $allowedColumns = ['id', 'slug', 'status'];
+        if (!in_array($column, $allowedColumns)) {
+            throw new \Exception("Invalid column name provided to findBy.");
+        }
+
+        $sql = "SELECT * FROM categories WHERE {$column} = :value LIMIT 1";
+        $stmt = Database::query($sql, ['value' => $value]);
+        return $stmt->fetch(PDO::FETCH_OBJ);
+    }
+
+    /**
      * Find all records by a specific column and value.
      *
      * @param string $column
