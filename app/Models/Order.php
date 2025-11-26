@@ -196,4 +196,38 @@ class Order
         $stmt = $pdo->prepare($sql);
         return $stmt->execute([':status' => $status, ':id' => $id]);
     }
+
+    /**
+     * Finds the last product a user purchased from a specific category.
+     *
+     * @param int $userId The ID of the user.
+     * @param int $categoryId The ID of the category.
+     * @return object|false The product object if a paid order is found, otherwise false.
+     */
+    public static function findLastPurchaseInCategory(int $userId, int $categoryId)
+    {
+        $pdo = Database::getConnection();
+        $sql = "
+            SELECT
+                p.id,
+                p.name_fa
+            FROM
+                orders o
+            JOIN
+                products p ON o.product_id = p.id
+            WHERE
+                o.user_id = :user_id
+                AND o.category_id = :category_id
+                AND o.payment_status = 'paid'
+            ORDER BY
+                o.order_time DESC
+            LIMIT 1
+        ";
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute([
+            ':user_id' => $userId,
+            ':category_id' => $categoryId
+        ]);
+        return $stmt->fetch(PDO::FETCH_OBJ);
+    }
 }

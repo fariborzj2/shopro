@@ -11,8 +11,10 @@ class Review
     {
         $sql = "INSERT INTO reviews (product_id, user_id, name, mobile, rating, comment, status)
                 VALUES (:product_id, :user_id, :name, :mobile, :rating, :comment, :status)";
-        Database::query($sql, $data);
-        return true;
+        $db = Database::getConnection();
+        $stmt = $db->prepare($sql);
+        $stmt->execute($data);
+        return $db->lastInsertId();
     }
 
     public static function findByProductId($product_id)

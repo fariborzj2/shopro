@@ -5,6 +5,7 @@ namespace App\Controllers;
 use App\Models\FaqItem;
 use App\Models\Page;
 use App\Models\Category;
+use App\Models\Order;
 use App\Models\Product;
 use App\Models\Review;
 use App\Models\Setting;
@@ -159,6 +160,11 @@ class StorefrontController
             $reviews[$product->id] = \App\Models\Review::findByProductId($product->id);
         }
 
+        $lastPurchasedProduct = null;
+        if (isset($_SESSION['user_id'])) {
+            $lastPurchasedProduct = Order::findLastPurchaseInCategory($_SESSION['user_id'], $category->id);
+        }
+
         $store_data = json_encode([
             'category' => [
                 'id' => $category->id,
@@ -185,6 +191,7 @@ class StorefrontController
             'category' => $category,
             'store_data' => $store_data,
             'reviews' => $reviews,
+            'lastPurchasedProduct' => $lastPurchasedProduct,
             'settings' => $this->settings
         ]);
     }
