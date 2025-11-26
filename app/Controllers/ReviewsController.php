@@ -48,6 +48,9 @@ class ReviewsController
     {
         $errors = [];
 
+        if (empty($data['product_id']) || !filter_var($data['product_id'], FILTER_VALIDATE_INT)) {
+            $errors['product_id'] = 'Invalid product specified.';
+        }
         if (empty($data['name'])) {
             $errors['name'] = 'Name is required.';
         }
