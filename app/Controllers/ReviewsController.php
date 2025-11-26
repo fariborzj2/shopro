@@ -32,8 +32,8 @@ class ReviewsController
         Review::create([
             'product_id' => $sanitized_data['product_id'],
             'user_id' => $_SESSION['user_id'],
-            'name' => $sanitized_data['name'],
-            'mobile' => $sanitized_data['mobile'],
+            'name' => $_SESSION['user_name'],      // Get name from session
+            'mobile' => $_SESSION['user_mobile'],  // Get mobile from session
             'rating' => $sanitized_data['rating'],
             'comment' => $sanitized_data['comment'],
             'status' => 'pending',
@@ -50,12 +50,6 @@ class ReviewsController
 
         if (empty($data['product_id']) || !filter_var($data['product_id'], FILTER_VALIDATE_INT)) {
             $errors['product_id'] = 'Invalid product specified.';
-        }
-        if (empty($data['name'])) {
-            $errors['name'] = 'Name is required.';
-        }
-        if (empty($data['mobile']) || !preg_match('/^09[0-9]{9}$/', $data['mobile'])) {
-            $errors['mobile'] = 'Invalid mobile number.';
         }
         if (empty($data['rating']) || !filter_var($data['rating'], FILTER_VALIDATE_INT, ['options' => ['min_range' => 1, 'max_range' => 5]])) {
             $errors['rating'] = 'Rating must be between 1 and 5.';
