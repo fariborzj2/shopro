@@ -10,38 +10,49 @@ class ReviewsController
 {
     public function store()
     {
+        header('Content-Type: application/json');
+
         if (!isset($_SESSION['user_id'])) {
-            redirect_back_with_error('You must be logged in to submit a review.');
+            http_response_code(401); // Unauthorized
+            echo json_encode(['status' => 'error', 'message' => 'برای ثبت نظر باید وارد شوید.']);
+            return;
         }
 
-        // Use $_POST directly for form data
-        $data = $_POST;
+        $data = Request::json();
 
         // Server-side validation
         $errors = $this->validate($data);
         if (!empty($errors)) {
-            $_SESSION['errors'] = $errors;
-            $_SESSION['old'] = $data;
-            header('Location: ' . $_SERVER['HTTP_REFERER']);
-            exit();
+            http_response_code(422); // Unprocessable Entity
+            echo json_encode(['status' => 'error', 'message' => 'اطلاعات وارد شده نامعتبر است.', 'errors' => $errors]);
+            return;
         }
 
         // Sanitize data
         $sanitized_data = $this->sanitize($data);
 
-        Review::create([
+        $new_review_id = Review::create([
             'product_id' => $sanitized_data['product_id'],
             'user_id' => $_SESSION['user_id'],
-            'name' => $_SESSION['user_name'],      // Get name from session
-            'mobile' => $_SESSION['user_mobile'],  // Get mobile from session
+            'name' => $_SESSION['user_name'],
+            'mobile' => $_SESSION['user_mobile'],
             'rating' => $sanitized_data['rating'],
             'comment' => $sanitized_data['comment'],
-            'status' => 'pending',
+            'status' => 'pending', // Reviews are pending approval by default
         ]);
 
-        // Redirect back with a success message
-        $referer = $_SERVER['HTTP_REFERER'] ?? '/';
-        redirect_with_success($referer, 'نظر شما با موفقیت ثبت شد و پس از تایید نمایش داده خواهد شد.');
+        // Fetch the newly created review to return it in the response
+        $new_review = Review::find($new_review_id);
+        // We need to add the jdate manually as the model doesn't handle it.
+        $new_review['jdate'] = jdate('j F Y', strtotime($new_review['created_at']));
+
+
+        http_response_code(201); // Created
+        echo json_encode([
+            'status' => 'success',
+            'message' => 'نظر شما با موفقیت ثبت شد و پس از تایید نمایش داده خواهد شد.',
+            'review' => $new_review
+        ]);
     }
 
     private function validate($data)

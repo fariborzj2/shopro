@@ -116,126 +116,80 @@ $error_msg = isset($_GET['error_msg']) ? htmlspecialchars($_GET['error_msg']) : 
             class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity backdrop-blur-sm"
         ></div>
 
-        <div class="fixed inset-0 z-10 overflow-y-auto">
-            <div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
-                <div
-                    x-show="isModalOpen"
-                    x-transition:enter="ease-out duration-300"
-                    x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-                    x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100"
-                    x-transition:leave="ease-in duration-200"
-                    x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
-                    x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-                    @click.outside="isModalOpen = false"
-                    class="relative transform overflow-hidden rounded-2xl bg-white text-right shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg border border-gray-200"
-                >
-                    <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
-                        <template x-if="selectedProduct">
-                            <div>
-                                <!-- Header -->
-                                <div class="flex items-center justify-between mb-6 pb-4 border-b border-gray-100">
-                                    <h3 class="text-xl font-bold text-gray-900" id="modal-title" x-text="selectedProduct.name"></h3>
-                                    <button @click="isModalOpen = false" class="text-gray-400 hover:text-gray-500">
-                                        <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                                        </svg>
-                                    </button>
-                                </div>
+                        <!-- Content -->
+                        <div class="p-6 overflow-y-auto custom-scrollbar">
+                            <!-- List -->
+                            <div class="space-y-6 mb-8">
+                                <template x-if="selectedProduct?.reviews?.length > 0">
+                                    <template x-for="review in selectedProduct.reviews" :key="review.id">
+                                        <div class="bg-gray-50 rounded-xl p-4 border border-gray-100">
+                                            <div class="flex justify-between items-start mb-2">
+                                                <span class="font-bold text-gray-900" x-text="review.user_name"></span>
+                                                <div class="flex items-center text-yellow-400 text-sm">
+                                                    <span class="font-bold text-gray-900 ml-1" x-text="review.rating"></span>
+                                                    <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                                                </div>
+                                            </div>
+                                            <p class="text-gray-600 text-sm leading-relaxed" x-text="review.comment"></p>
 
-                                <form @submit.prevent="submitOrder" id="purchaseForm" method="POST" action="/api/payment/start">
-                                    <?php echo csrf_field(); ?>
-                                    <input type="hidden" name="product_id" :value="selectedProduct.id">
+                                            <template x-if="review.status === 'pending'">
+                                                <p class="text-xs text-yellow-600 font-semibold mt-2">(در انتظار تایید مدیر)</p>
+                                            </template>
 
-                                    <div class="space-y-5 max-h-[60vh] overflow-y-auto px-1 -mx-1 custom-scrollbar">
-                                        <template x-for="field in customFields" :key="field.id">
-                                            <div>
-                                                <label :for="'field_' + field.id" class="block text-sm font-bold text-gray-700 mb-2">
-                                                    <span x-text="field.label"></span>
-                                                    <span x-show="field.is_required" class="text-red-500">*</span>
-                                                </label>
+                                            <template x-if="review.admin_reply">
+                                                <div class="mt-3 pr-3 border-r-2 border-primary-500 bg-primary-50 p-3 rounded-lg">
+                                                    <p class="text-xs font-bold text-primary-800 mb-1">پاسخ مدیر:</p>
+                                                    <p class="text-sm text-gray-700" x-text="review.admin_reply"></p>
+                                                </div>
+                                            </template>
+                                        </div>
+                                    </template>
+                                </template>
+                                <template x-if="!selectedProduct?.reviews || selectedProduct.reviews.length === 0">
+                                    <p class="text-center text-gray-500 py-4">هنوز نظری برای این محصول ثبت نشده است.</p>
+                                </template>
+                            </div>
 
-                                                <!-- Text/Number/Date -->
-                                                <template x-if="['text', 'number', 'date', 'color'].includes(field.type)">
-                                                    <input
-                                                        :type="field.type"
-                                                        :name="field.name"
-                                                        :id="'field_' + field.id"
-                                                        :placeholder="field.placeholder"
-                                                        :required="field.is_required"
-                                                        class="block w-full rounded-xl border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm py-3 px-4 bg-gray-50"
-                                                    >
-                                                </template>
+                            <!-- Form -->
+                            <div class="border-t border-gray-100 pt-6">
+                                <?php if (isset($_SESSION['user_id'])): ?>
+                                    <h4 class="font-bold text-gray-900 mb-4">ثبت دیدگاه جدید</h4>
 
-                                                <!-- Textarea -->
-                                                <template x-if="field.type === 'textarea'">
-                                                    <textarea
-                                                        :name="field.name"
-                                                        :id="'field_' + field.id"
-                                                        :placeholder="field.placeholder"
-                                                        :required="field.is_required"
-                                                        class="block w-full rounded-xl border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm py-3 px-4 bg-gray-50"
-                                                        rows="3"
-                                                    ></textarea>
-                                                </template>
+                                    <!-- AJAX Messages -->
+                                    <template x-if="message.text">
+                                        <div :class="{
+                                            'bg-green-100 border-green-500 text-green-700': message.type === 'success',
+                                            'bg-red-100 border-red-500 text-red-700': message.type === 'error'
+                                        }" class="border-l-4 p-3 rounded-lg mb-4 text-sm" role="alert">
+                                            <p x-text="message.text"></p>
+                                        </div>
+                                    </template>
 
-                                                <!-- Select -->
-                                                <template x-if="field.type === 'select'">
-                                                    <select
-                                                        :name="field.name"
-                                                        :id="'field_' + field.id"
-                                                        :required="field.is_required"
-                                                        class="block w-full rounded-xl border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm py-3 px-4 bg-gray-50"
-                                                    >
-                                                        <option value="" disabled selected>انتخاب کنید...</option>
-                                                        <template x-for="option in field.options" :key="option.value">
-                                                            <option :value="option.value" x-text="option.label"></option>
-                                                        </template>
-                                                    </select>
-                                                </template>
-
-                                                <!-- Radio -->
-                                                <template x-if="field.type === 'radio'">
-                                                    <div class="space-y-2">
-                                                        <template x-for="option in field.options" :key="option.value">
-                                                            <label class="flex items-center space-x-3 space-x-reverse cursor-pointer">
-                                                                <input
-                                                                    type="radio"
-                                                                    :name="field.name"
-                                                                    :id="'field_' + field.id + '_' + option.value"
-                                                                    :value="option.value"
-                                                                    :required="field.is_required"
-                                                                    class="h-4 w-4 border-gray-300 text-primary-600 focus:ring-primary-500"
-                                                                >
-                                                                <span class="text-sm text-gray-700" x-text="option.label"></span>
-                                                            </label>
-                                                        </template>
-                                                    </div>
-                                                </template>
-
-                                                <!-- Checkbox -->
-                                                <template x-if="field.type === 'checkbox'">
-                                                     <div class="space-y-2">
-                                                        <template x-for="option in field.options" :key="option.value">
-                                                            <label class="flex items-center space-x-3 space-x-reverse cursor-pointer">
-                                                                <input
-                                                                    type="checkbox"
-                                                                    :name="field.name + '[]'"
-                                                                    :id="'field_' + field.id + '_' + option.value"
-                                                                    :value="option.value"
-                                                                    class="h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-500"
-                                                                >
-                                                                <span class="text-sm text-gray-700" x-text="option.label"></span>
-                                                            </label>
-                                                        </template>
-                                                    </div>
+                                    <form @submit.prevent="submitReview">
+                                        <div class="mb-4">
+                                            <label class="block text-sm font-bold text-gray-700 mb-2">امتیاز شما</label>
+                                            <div class="flex items-center gap-1 flex-row-reverse justify-end">
+                                                <template x-for="i in 5">
+                                                    <button type="button" @click="formData.rating = i" class="text-2xl transition-colors focus:outline-none transform hover:scale-110" :class="i <= formData.rating ? 'text-yellow-400' : 'text-gray-200'">★</button>
                                                 </template>
                                             </div>
-                                        </template>
-                                    </div>
+                                            <template x-if="errors.rating"><p class="text-red-500 text-xs mt-1" x-text="errors.rating"></p></template>
+                                        </div>
 
-                                    <div class="mt-8 flex flex-col gap-3">
-                                        <button type="submit" class="w-full inline-flex justify-center rounded-xl border border-transparent bg-primary-600 px-4 py-3 text-base font-bold text-white shadow-sm hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 sm:text-sm transition-colors">
-                                            پرداخت نهایی
+                                        <div class="mb-6">
+                                            <label class="block text-sm font-bold text-gray-700 mb-2">دیدگاه</label>
+                                            <textarea x-model="formData.comment" rows="3" required class="block w-full rounded-xl border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 text-sm p-3" placeholder="نظر خود را بنویسید..."></textarea>
+                                            <template x-if="errors.comment"><p class="text-red-500 text-xs mt-1" x-text="errors.comment"></p></template>
+                                        </div>
+
+                                        <button type="submit" :disabled="loading" class="w-full inline-flex justify-center items-center rounded-xl bg-primary-600 px-4 py-3 text-sm font-bold text-white shadow-sm hover:bg-primary-700 transition-colors disabled:opacity-50">
+                                            <span x-show="!loading">ثبت نظر</span>
+                                            <span x-show="loading">
+                                                <svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                                  <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                                  <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                                </svg>
+                                            </span>
                                         </button>
                                         <button @click="isModalOpen = false" type="button" class="w-full inline-flex justify-center rounded-xl border border-gray-300 bg-white px-4 py-3 text-base font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 sm:text-sm transition-colors">
                                             انصراف
@@ -375,80 +329,43 @@ function store(data) {
     return {
         products: [],
         selectedProduct: null,
-        customFields: [],
-        isModalOpen: false,
-        isUserLoggedIn: false,
 
-        init() {
-            this.products = data.products || [];
-            this.isUserLoggedIn = data.isUserLoggedIn || false;
+        // Form state
+        formData: { rating: 5, comment: '' },
+        loading: false,
+        message: { type: '', text: '' },
+        errors: {},
+
+        showReviews(productId) {
+            this.selectedProduct = this.products.find(p => p.id === productId);
+            // Reset form state when modal opens
+            this.formData = { rating: 5, comment: '' };
+            this.message.text = '';
+            this.errors = {};
+            this.loading = false;
+            this.showModal = true;
         },
 
-        selectProduct(product) {
-            if (product.status !== 'available') {
-                alert('این محصول در حال حاضر موجود نیست و امکان خرید آن وجود ندارد.');
-                return;
-            }
+        submitReview() {
+            if (!this.selectedProduct) return;
 
-            if (!this.isUserLoggedIn) {
-                window.dispatchEvent(new CustomEvent('open-auth-modal'));
-                return;
-            }
-
-            this.selectedProduct = product;
-            this.isModalOpen = true;
-            this.customFields = [];
-
-            fetch(`/api/product-details/${product.id}`)
-                .then(response => response.json())
-                .then(data => {
-                    if (data.error) {
-                        alert(data.error);
-                        this.isModalOpen = false;
-                    } else {
-                        this.customFields = data.custom_fields;
-                    }
-                });
-        },
-
-        submitOrder() {
-            const form = document.getElementById('purchaseForm');
-            const formData = new FormData(form);
-
-            const payloadFields = [];
-            this.customFields.forEach(field => {
-                let val = null;
-                if (field.type === 'checkbox') {
-                    const values = formData.getAll(field.name + '[]');
-                    if (values.length) val = values.join(', ');
-                } else {
-                    val = formData.get(field.name);
-                }
-
-                if (val) {
-                    payloadFields.push({
-                        name: field.name,
-                        label: field.label,
-                        value: val
-                    });
-                }
-            });
+            this.loading = true;
+            this.message.text = '';
+            this.errors = {};
 
             const payload = {
                 product_id: this.selectedProduct.id,
-                custom_fields: payloadFields
+                rating: this.formData.rating,
+                comment: this.formData.comment
             };
 
-            let csrfToken = formData.get('csrf_token');
-             if (!csrfToken) {
-                const metaTag = document.querySelector('meta[name="csrf-token"]');
-                if (metaTag) csrfToken = metaTag.getAttribute('content');
-            }
+            const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
-            fetch(form.action, {
-                method: form.method,
+            fetch('/reviews/store', {
+                method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
+                    'Accept': 'application/json',
                     'X-CSRF-TOKEN': csrfToken
                 },
                 body: JSON.stringify(payload)
@@ -456,18 +373,43 @@ function store(data) {
             .then(res => res.json().then(data => ({ status: res.status, body: data })))
             .then(({ status, body }) => {
                 if (body.new_csrf_token) {
-                    const metaTag = document.querySelector('meta[name="csrf-token"]');
-                    if (metaTag) metaTag.setAttribute('content', body.new_csrf_token);
+                    document.querySelector('meta[name="csrf-token"]').setAttribute('content', body.new_csrf_token);
                 }
 
-                if (status === 200 && body.payment_url) {
-                    window.location.href = body.payment_url;
-                } else {
-                    alert('خطا: ' + (body.error || 'امکان اتصال به درگاه پرداخت وجود ندارد.'));
+                if (status === 201) { // Created
+                    this.message = { type: 'success', text: body.message };
+
+                    // Add the new review to the product's review list
+                    if (!this.selectedProduct.reviews) {
+                        this.selectedProduct.reviews = [];
+                    }
+
+                    // Add properties for UI that might be missing from the backend response
+                    const newReview = {
+                        ...body.review,
+                        user_name: "<?= htmlspecialchars($_SESSION['user_name'] ?? 'شما') ?>",
+                        status: 'pending' // Mark as pending for UI
+                    };
+
+                    this.selectedProduct.reviews.unshift(newReview);
+
+                    this.formData = { rating: 5, comment: '' }; // Reset form
+                } else if (status === 422) { // Validation Error
+                    this.message = { type: 'error', text: body.message };
+                    this.errors = body.errors || {};
+                } else { // Other errors
+                    this.message = { type: 'error', text: body.message || 'یک خطای پیش‌بینی نشده رخ داد.' };
                 }
-            }).catch(error => {
-                console.error('Error submitting order:', error);
-                alert('یک خطای پیش‌بینی نشده در هنگام پرداخت رخ داد.');
+            })
+            .catch(() => {
+                this.message = { type: 'error', text: 'خطا در ارتباط با سرور.' };
+            })
+            .finally(() => {
+                this.loading = false;
+                // Hide the message after 5 seconds, but only for success
+                if (this.message.type === 'success') {
+                    setTimeout(() => this.message.text = '', 5000);
+                }
             });
         }
     }
