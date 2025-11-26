@@ -21,23 +21,23 @@ $error_msg = isset($_GET['error_msg']) ? htmlspecialchars($_GET['error_msg']) : 
         <?php if ($success_msg): ?>
             <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 rounded-lg mb-8 shadow-md" role="alert">
                 <p class="font-bold">موفقیت</p>
-                <p><?= $success_msg ?></p>
+                <p><?php echo $success_msg; ?></p>
             </div>
         <?php endif; ?>
         <?php if ($error_msg): ?>
             <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded-lg mb-8 shadow-md" role="alert">
                 <p class="font-bold">خطا</p>
-                <p><?= $error_msg ?></p>
+                <p><?php echo $error_msg; ?></p>
             </div>
         <?php endif; ?>
 
         <!-- Category Header -->
         <div class="text-center mb-16">
             <h1 class="text-4xl md:text-5xl font-black text-gray-900 mb-6 leading-tight">
-                <?= htmlspecialchars($category->name_fa) ?>
+                <?php echo htmlspecialchars($category->name_fa); ?>
             </h1>
             <div class="text-xl text-gray-500 max-w-2xl mx-auto leading-relaxed">
-                <?= strip_tags_except($category->description) ?>
+                <?php echo strip_tags_except($category->description); ?>
             </div>
         </div>
 
@@ -116,8 +116,21 @@ $error_msg = isset($_GET['error_msg']) ? htmlspecialchars($_GET['error_msg']) : 
             class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity backdrop-blur-sm"
         ></div>
 
-                        <!-- Content -->
-                        <div class="p-6 overflow-y-auto custom-scrollbar">
+        <div class="fixed inset-0 z-10 w-screen overflow-y-auto">
+            <div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
+                <div
+                    x-show="isModalOpen"
+                    @click.away="isModalOpen = false"
+                    x-transition:enter="ease-out duration-300"
+                    x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                    x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100"
+                    x-transition:leave="ease-in duration-200"
+                    x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
+                    x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                    class="relative transform overflow-hidden rounded-2xl bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-2xl glass-panel"
+                >
+                    <div class="p-6">
+                        <div class="overflow-y-auto custom-scrollbar">
                             <!-- List -->
                             <div class="space-y-6 mb-8">
                                 <template x-if="selectedProduct?.reviews?.length > 0">
@@ -182,8 +195,8 @@ $error_msg = isset($_GET['error_msg']) ? htmlspecialchars($_GET['error_msg']) : 
                                             <template x-if="errors.comment"><p class="text-red-500 text-xs mt-1" x-text="errors.comment"></p></template>
                                         </div>
 
-                                        <div class="space-y-3">
-                                            <button type="submit" :disabled="loading" class="w-full inline-flex justify-center items-center rounded-xl bg-primary-600 px-4 py-3 text-sm font-bold text-white shadow-sm hover:bg-primary-700 transition-colors disabled:opacity-50">
+                                        <div class="flex flex-col sm:flex-row-reverse gap-3">
+                                            <button type="submit" :disabled="loading" class="w-full sm:w-auto inline-flex justify-center items-center rounded-xl bg-primary-600 px-4 py-3 text-sm font-bold text-white shadow-sm hover:bg-primary-700 transition-colors disabled:opacity-50">
                                                 <span x-show="!loading">ثبت نظر</span>
                                                 <span x-show="loading">
                                                     <svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
@@ -192,7 +205,7 @@ $error_msg = isset($_GET['error_msg']) ? htmlspecialchars($_GET['error_msg']) : 
                                                     </svg>
                                                 </span>
                                             </button>
-                                            <button @click="isModalOpen = false" type="button" class="w-full inline-flex justify-center rounded-xl border border-gray-300 bg-white px-4 py-3 text-base font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 sm:text-sm transition-colors">
+                                            <button @click="isModalOpen = false" type="button" class="w-full sm:w-auto inline-flex justify-center rounded-xl border border-gray-300 bg-white px-4 py-3 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 transition-colors">
                                                 انصراف
                                             </button>
                                         </div>
@@ -206,6 +219,7 @@ $error_msg = isset($_GET['error_msg']) ? htmlspecialchars($_GET['error_msg']) : 
                                     </div>
                                 <?php endif; ?>
                             </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -241,21 +255,21 @@ $error_msg = isset($_GET['error_msg']) ? htmlspecialchars($_GET['error_msg']) : 
                         <div class="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
                             <div class="flex items-start justify-between">
                                 <div>
-                                    <p class="font-bold text-gray-800"><?= htmlspecialchars($review['name']) ?></p>
+                                    <p class="font-bold text-gray-800"><?php echo htmlspecialchars($review['name']); ?></p>
                                     <p class="text-xs text-gray-400 mt-1">
-                                        در تاریخ <?= jdate('j F Y', strtotime($review['created_at'])) ?>
+                                        در تاریخ <?php echo jdate('j F Y', strtotime($review['created_at'])); ?>
                                     </p>
                                 </div>
                                 <div class="flex items-center text-yellow-400">
-                                    <span class="font-bold text-gray-700 ml-1"><?= htmlspecialchars($review['rating']) ?></span>
+                                    <span class="font-bold text-gray-700 ml-1"><?php echo htmlspecialchars($review['rating']); ?></span>
                                     <svg class="w-5 h-5 fill-current" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
                                 </div>
                             </div>
-                            <p class="text-gray-600 mt-4 leading-relaxed"><?= nl2br(htmlspecialchars($review['comment'])) ?></p>
+                            <p class="text-gray-600 mt-4 leading-relaxed"><?php echo nl2br(htmlspecialchars($review['comment'])); ?></p>
                             <?php if (!empty($review['admin_reply'])): ?>
                                 <div class="mt-4 mr-4 bg-gray-50 border-r-4 border-primary-500 p-4 rounded-lg">
                                     <p class="font-bold text-sm text-primary-700">پاسخ مدیر</p>
-                                    <p class="text-gray-600 mt-2 text-sm leading-relaxed"><?= nl2br(htmlspecialchars($review['admin_reply'])) ?></p>
+                                    <p class="text-gray-600 mt-2 text-sm leading-relaxed"><?php echo nl2br(htmlspecialchars($review['admin_reply'])); ?></p>
                                 </div>
                             <?php endif; ?>
                         </div>
@@ -269,24 +283,24 @@ $error_msg = isset($_GET['error_msg']) ? htmlspecialchars($_GET['error_msg']) : 
                     <?php if ($lastPurchasedProduct): ?>
                         <h3 class="text-lg font-bold text-gray-800 mb-1">ثبت نظر جدید</h3>
                         <p class="text-sm text-gray-500 mb-6">
-                            شما در حال ثبت نظر برای محصول <span class="font-semibold text-primary-600"><?= htmlspecialchars($lastPurchasedProduct->name_fa) ?></span> هستید.
+                            شما در حال ثبت نظر برای محصول <span class="font-semibold text-primary-600"><?php echo htmlspecialchars($lastPurchasedProduct->name_fa); ?></span> هستید.
                         </p>
                         <form action="/reviews/store" method="POST">
                             <?php csrf_field(); ?>
-                            <input type="hidden" name="product_id" value="<?= $lastPurchasedProduct->id ?>">
+                            <input type="hidden" name="product_id" value="<?php echo $lastPurchasedProduct->id; ?>">
 
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                                 <div>
                                     <label for="name" class="block text-sm font-medium text-gray-700 mb-1">نام شما</label>
-                                    <input type="text" id="name" name="name" value="<?= htmlspecialchars($_SESSION['user_name'] ?? '') ?>" readonly class="block w-full rounded-xl border-gray-200 bg-gray-50 text-gray-500 shadow-sm sm:text-sm py-3 px-4">
+                                    <input type="text" id="name" name="name" value="<?php echo htmlspecialchars($_SESSION['user_name'] ?? ''); ?>" readonly class="block w-full rounded-xl border-gray-200 bg-gray-50 text-gray-500 shadow-sm sm:text-sm py-3 px-4">
                                 </div>
                                 <div>
                                     <label for="mobile" class="block text-sm font-medium text-gray-700 mb-1">شماره موبایل</label>
-                                    <input type="text" id="mobile" name="mobile" value="<?= htmlspecialchars($_SESSION['user_mobile'] ?? '') ?>" readonly class="block w-full rounded-xl border-gray-200 bg-gray-50 text-gray-500 shadow-sm sm:text-sm py-3 px-4">
+                                    <input type="text" id="mobile" name="mobile" value="<?php echo htmlspecialchars($_SESSION['user_mobile'] ?? ''); ?>" readonly class="block w-full rounded-xl border-gray-200 bg-gray-50 text-gray-500 shadow-sm sm:text-sm py-3 px-4">
                                 </div>
                             </div>
 
-                            <div class="mb-4" x-data="{ rating: <?= htmlspecialchars($old['rating'] ?? 5) ?> }">
+                            <div class="mb-4" x-data="{ rating: <?php echo htmlspecialchars($old['rating'] ?? 5); ?> }">
                                 <label class="block text-sm font-medium text-gray-700 mb-2">امتیاز شما</label>
                                 <div class="flex items-center gap-1 flex-row-reverse justify-end">
                                     <template x-for="i in 5">
@@ -295,15 +309,15 @@ $error_msg = isset($_GET['error_msg']) ? htmlspecialchars($_GET['error_msg']) : 
                                 </div>
                                 <input type="hidden" name="rating" x-model="rating">
                                 <?php if (isset($errors['rating'])): ?>
-                                    <p class="text-red-500 text-xs mt-1"><?= htmlspecialchars($errors['rating']) ?></p>
+                                    <p class="text-red-500 text-xs mt-1"><?php echo htmlspecialchars($errors['rating']); ?></p>
                                 <?php endif; ?>
                             </div>
 
                             <div class="mb-6">
                                 <label for="comment" class="block text-sm font-medium text-gray-700 mb-1">متن نظر</label>
-                                <textarea id="comment" name="comment" rows="4" required class="block w-full rounded-xl border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm p-4" placeholder="تجربه خود را با ما و دیگران به اشتراک بگذارید..."><?= htmlspecialchars($old['comment'] ?? '') ?></textarea>
+                                <textarea id="comment" name="comment" rows="4" required class="block w-full rounded-xl border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm p-4" placeholder="تجربه خود را با ما و دیگران به اشتراک بگذارید..."><?php echo htmlspecialchars($old['comment'] ?? ''); ?></textarea>
                                 <?php if (isset($errors['comment'])): ?>
-                                    <p class="text-red-500 text-xs mt-1"><?= htmlspecialchars($errors['comment']) ?></p>
+                                    <p class="text-red-500 text-xs mt-1"><?php echo htmlspecialchars($errors['comment']); ?></p>
                                 <?php endif; ?>
                             </div>
 
@@ -336,22 +350,27 @@ $error_msg = isset($_GET['error_msg']) ? htmlspecialchars($_GET['error_msg']) : 
 function store(data) {
     return {
         products: [],
+        isModalOpen: false,
         selectedProduct: null,
 
-        // Form state
+        // Form state for review modal
         formData: { rating: 5, comment: '' },
         loading: false,
         message: { type: '', text: '' },
         errors: {},
 
-        showReviews(productId) {
-            this.selectedProduct = this.products.find(p => p.id === productId);
+        init() {
+            this.products = data.products || [];
+        },
+
+        selectProduct(product) {
+            this.selectedProduct = product;
+            this.isModalOpen = true;
             // Reset form state when modal opens
             this.formData = { rating: 5, comment: '' };
             this.message.text = '';
             this.errors = {};
             this.loading = false;
-            this.showModal = true;
         },
 
         submitReview() {
@@ -392,10 +411,9 @@ function store(data) {
                         this.selectedProduct.reviews = [];
                     }
 
-                    // Add properties for UI that might be missing from the backend response
                     const newReview = {
                         ...body.review,
-                        user_name: "<?= htmlspecialchars($_SESSION['user_name'] ?? 'شما') ?>",
+                        user_name: "<?php echo htmlspecialchars($_SESSION['user_name'] ?? 'شما'); ?>",
                         status: 'pending' // Mark as pending for UI
                     };
 
@@ -429,19 +447,19 @@ function store(data) {
 {
     "@context": "https://schema.org",
     "@type": "CollectionPage",
-    "name": "<?= htmlspecialchars($category->name_fa) ?>",
-    "description": "<?= htmlspecialchars($category->description) ?>",
+    "name": "<?php echo htmlspecialchars($category->name_fa); ?>",
+    "description": "<?php echo htmlspecialchars($category->description); ?>",
     "mainEntity": {
         "@type": "ItemList",
         "itemListElement": [
             <?php foreach (json_decode($store_data)->products as $index => $product) : ?>
             {
                 "@type": "Product",
-                "name": "<?= htmlspecialchars($product->name) ?>",
-                "image": "<?= htmlspecialchars($product->imageUrl) ?>",
+                "name": "<?php echo htmlspecialchars($product->name); ?>",
+                "image": "<?php echo htmlspecialchars($product->imageUrl); ?>",
                 "offers": {
                     "@type": "Offer",
-                    "price": "<?= htmlspecialchars($product->price) ?>",
+                    "price": "<?php echo htmlspecialchars($product->price); ?>",
                     "priceCurrency": "IRR"
                 },
                 "review": [
@@ -451,18 +469,18 @@ function store(data) {
                         "@type": "Review",
                         "reviewRating": {
                             "@type": "Rating",
-                            "ratingValue": "<?= htmlspecialchars($review->rating) ?>"
+                            "ratingValue": "<?php echo htmlspecialchars($review->rating); ?>"
                         },
                         "author": {
                             "@type": "Person",
-                            "name": "<?= htmlspecialchars($review->user_name) ?>"
+                            "name": "<?php echo htmlspecialchars($review->user_name); ?>"
                         },
-                        "reviewBody": "<?= htmlspecialchars($review->comment) ?>"
-                    }<?= $r_index < count($product->reviews) - 1 ? ',' : '' ?>
+                        "reviewBody": "<?php echo htmlspecialchars($review->comment); ?>"
+                    }<?php echo $r_index < count($product->reviews) - 1 ? ',' : ''; ?>
                     <?php endforeach; ?>
                     <?php endif; ?>
                 ]
-            }<?= $index < count(json_decode($store_data)->products) - 1 ? ',' : '' ?>
+            }<?php echo $index < count(json_decode($store_data)->products) - 1 ? ',' : ''; ?>
             <?php endforeach; ?>
         ]
     }
