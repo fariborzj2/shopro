@@ -301,6 +301,70 @@ unset($_SESSION['errors'], $_SESSION['old']);
             </div>
         </div>
     </div>
+
+    <!-- Reviews Section -->
+    <div class="container mt-16">
+        <div class="max-w-4xl mx-auto">
+            <h2 class="text-3xl font-extrabold text-gray-900 text-center mb-10">نظرات کاربران</h2>
+            <div class="bg-white rounded-2xl shadow-lg p-8 border border-gray-100">
+                <?php if (isset($_SESSION['user_id'])): ?>
+                    <?php if ($lastPurchasedProduct): ?>
+                        <h3 class="text-lg font-bold text-gray-800 mb-1">ثبت نظر جدید</h3>
+                        <p class="text-sm text-gray-500 mb-6">
+                            شما در حال ثبت نظر برای محصول <span class="font-semibold text-primary-600"><?= htmlspecialchars($lastPurchasedProduct->name_fa) ?></span> هستید.
+                        </p>
+                        <form action="/reviews/store" method="POST">
+                            <?php csrf_field(); ?>
+                            <input type="hidden" name="product_id" value="<?= $lastPurchasedProduct->id ?>">
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                                <div>
+                                    <label for="name" class="block text-sm font-medium text-gray-700 mb-1">نام شما</label>
+                                    <input type="text" id="name" name="name" value="<?= htmlspecialchars($_SESSION['user_name'] ?? '') ?>" readonly class="block w-full rounded-xl border-gray-200 bg-gray-50 text-gray-500 shadow-sm sm:text-sm py-3 px-4">
+                                </div>
+                                <div>
+                                    <label for="mobile" class="block text-sm font-medium text-gray-700 mb-1">شماره موبایل</label>
+                                    <input type="text" id="mobile" name="mobile" value="<?= htmlspecialchars($_SESSION['user_mobile'] ?? '') ?>" readonly class="block w-full rounded-xl border-gray-200 bg-gray-50 text-gray-500 shadow-sm sm:text-sm py-3 px-4">
+                                </div>
+                            </div>
+
+                            <div class="mb-4" x-data="{ rating: 5 }">
+                                <label class="block text-sm font-medium text-gray-700 mb-2">امتیاز شما</label>
+                                <div class="flex items-center gap-1 flex-row-reverse justify-end">
+                                    <template x-for="i in 5">
+                                        <button type="button" @click="rating = i" class="text-3xl transition-colors duration-150 focus:outline-none transform hover:scale-110" :class="i <= rating ? 'text-yellow-400' : 'text-gray-300'">★</button>
+                                    </template>
+                                </div>
+                                <input type="hidden" name="rating" x-model="rating" required>
+                            </div>
+
+                            <div class="mb-6">
+                                <label for="comment" class="block text-sm font-medium text-gray-700 mb-1">متن نظر</label>
+                                <textarea id="comment" name="comment" rows="4" required class="block w-full rounded-xl border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm p-4" placeholder="تجربه خود را با ما و دیگران به اشتراک بگذارید..."></textarea>
+                            </div>
+
+                            <button type="submit" class="w-full inline-flex justify-center rounded-xl border border-transparent bg-primary-600 px-6 py-3 text-base font-bold text-white shadow-sm hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 transition-all">
+                                ثبت نظر
+                            </button>
+                        </form>
+                    <?php else: ?>
+                        <div class="bg-blue-50 border border-blue-200 rounded-xl p-6 text-center">
+                            <p class="text-blue-800">
+                                شما هنوز محصولی از این دسته‌بندی خریداری نکرده‌اید. پس از خرید، می‌توانید نظر خود را ثبت کنید.
+                            </p>
+                        </div>
+                    <?php endif; ?>
+                <?php else: ?>
+                    <div class="bg-gray-50 border rounded-xl p-6 text-center">
+                        <p class="text-gray-600 mb-4">برای ارسال نظر ابتدا وارد حساب کاربری شوید.</p>
+                        <button @click.prevent="$dispatch('open-auth-modal')" class="font-bold text-primary-600 hover:underline">
+                            ورود یا ثبت‌نام
+                        </button>
+                    </div>
+                <?php endif; ?>
+            </div>
+        </div>
+    </div>
 </main>
 
 <!-- Alpine.js Store Logic -->
