@@ -106,6 +106,7 @@ class AuthController
         // Create user session
         $_SESSION['user_id'] = $user->id;
         $_SESSION['user_mobile'] = $user->mobile;
+        $_SESSION['user_name'] = $user->name;
 
         echo json_encode(['message' => 'ورود با موفقیت انجام شد.']);
     }
@@ -124,6 +125,7 @@ class AuthController
         if (isset($_SESSION['user_id'])) {
             unset($_SESSION['user_id']);
             unset($_SESSION['user_mobile']);
+            unset($_SESSION['user_name']);
             session_destroy();
         }
         header('Location: /');
