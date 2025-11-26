@@ -2,6 +2,7 @@
 
 namespace App\Core;
 
+use App\Core\ErrorHandler;
 use App\Core\Exceptions\RouteNotFoundException;
 use Exception;
 
@@ -56,7 +57,7 @@ class Router
             }
         }
 
-        throw new RouteNotFoundException('No route defined for this URI: ' . htmlspecialchars($uri));
+        return ErrorHandler::renderHttpError(404, 'صفحه یافت نشد', 'متاسفانه صفحه‌ای که به دنبال آن بودید، وجود ندارد.');
     }
 
     protected function callAction($controller, $method, $params = [])
