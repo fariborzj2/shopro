@@ -182,22 +182,30 @@ $error_msg = isset($_GET['error_msg']) ? htmlspecialchars($_GET['error_msg']) : 
                                             <template x-if="errors.comment"><p class="text-red-500 text-xs mt-1" x-text="errors.comment"></p></template>
                                         </div>
 
-                                        <button type="submit" :disabled="loading" class="w-full inline-flex justify-center items-center rounded-xl bg-primary-600 px-4 py-3 text-sm font-bold text-white shadow-sm hover:bg-primary-700 transition-colors disabled:opacity-50">
-                                            <span x-show="!loading">ثبت نظر</span>
-                                            <span x-show="loading">
-                                                <svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                                  <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                                                  <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                                                </svg>
-                                            </span>
-                                        </button>
-                                        <button @click="isModalOpen = false" type="button" class="w-full inline-flex justify-center rounded-xl border border-gray-300 bg-white px-4 py-3 text-base font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 sm:text-sm transition-colors">
-                                            انصراف
+                                        <div class="space-y-3">
+                                            <button type="submit" :disabled="loading" class="w-full inline-flex justify-center items-center rounded-xl bg-primary-600 px-4 py-3 text-sm font-bold text-white shadow-sm hover:bg-primary-700 transition-colors disabled:opacity-50">
+                                                <span x-show="!loading">ثبت نظر</span>
+                                                <span x-show="loading">
+                                                    <svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                                      <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                                      <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                                    </svg>
+                                                </span>
+                                            </button>
+                                            <button @click="isModalOpen = false" type="button" class="w-full inline-flex justify-center rounded-xl border border-gray-300 bg-white px-4 py-3 text-base font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 sm:text-sm transition-colors">
+                                                انصراف
+                                            </button>
+                                        </div>
+                                    </form>
+                                <?php else: ?>
+                                    <div class="bg-gray-50 border rounded-xl p-6 text-center">
+                                        <p class="text-gray-600 mb-4">برای ارسال نظر ابتدا وارد حساب کاربری شوید.</p>
+                                        <button @click.prevent="$dispatch('open-auth-modal')" class="font-bold text-primary-600 hover:underline">
+                                            ورود یا ثبت‌نام
                                         </button>
                                     </div>
-                                </form>
+                                <?php endif; ?>
                             </div>
-                        </template>
                     </div>
                 </div>
             </div>
