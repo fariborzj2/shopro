@@ -16,17 +16,42 @@ class OrdersController
         $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
         $perPage = 15; // Number of items per page
 
+        // Get filters
+        $filters = [
+            'search' => $_GET['search'] ?? '',
+            'payment_status' => $_GET['payment_status'] ?? '',
+            'order_status' => $_GET['order_status'] ?? '',
+        ];
+
         // Fetch paginated orders from the model
-        $data = Order::findAll($page, $perPage);
+        $data = Order::findAll($page, $perPage, $filters);
+
+        // Build base URL for pagination
+        $baseUrl = '/admin/orders';
+        $queryParams = [];
+        if (!empty($filters['search'])) {
+            $queryParams[] = 'search=' . urlencode($filters['search']);
+        }
+        if (!empty($filters['payment_status'])) {
+            $queryParams[] = 'payment_status=' . urlencode($filters['payment_status']);
+        }
+        if (!empty($filters['order_status'])) {
+            $queryParams[] = 'order_status=' . urlencode($filters['order_status']);
+        }
+
+        if (!empty($queryParams)) {
+            $baseUrl .= '?' . implode('&', $queryParams);
+        }
 
         // Create a Paginator instance to generate pagination links
-        $paginator = new Paginator($data['total'], $perPage, $page, '/admin/orders?page=(:num)');
+        $paginator = new Paginator($data['total'], $perPage, $page, $baseUrl);
 
         // Pass the orders and paginator object to the view
         return view('main', 'orders/index', [
             'title' => 'مدیریت سفارشات',
             'orders' => $data['orders'],
-            'paginator' => $paginator
+            'paginator' => $paginator,
+            'filters' => $filters
         ]);
     }
 
