@@ -563,10 +563,12 @@ function store(data) {
                 custom_fields: payloadFields
             };
 
-            let csrfToken = formData.get('csrf_token');
-            if (!csrfToken) {
-                const metaTag = document.querySelector('meta[name="csrf-token"]');
-                if (metaTag) csrfToken = metaTag.getAttribute('content');
+            let csrfToken = '';
+            const metaTag = document.querySelector('meta[name="csrf-token"]');
+            if (metaTag) {
+                csrfToken = metaTag.getAttribute('content');
+            } else {
+                csrfToken = formData.get('csrf_token');
             }
 
             fetch(form.action, {
