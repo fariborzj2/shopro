@@ -5,9 +5,51 @@
             <h1 class="text-xl font-bold text-gray-800 dark:text-white">مدیریت سفارشات</h1>
             <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">لیست تمامی سفارشات ثبت شده در سیستم</p>
         </div>
-        <div class="flex gap-2">
-            <!-- Filters could go here -->
-        </div>
+    </div>
+
+    <!-- Filters -->
+    <div class="px-6 py-4 bg-gray-50 dark:bg-gray-700/30 border-b border-gray-100 dark:border-gray-700">
+        <form action="<?= url('orders') ?>" method="GET" class="flex flex-col md:flex-row gap-4 items-end">
+            <div class="flex-1 w-full md:w-auto">
+                <label for="search" class="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">جستجو</label>
+                <input type="text" name="search" id="search" value="<?= htmlspecialchars($filters['search'] ?? '') ?>"
+                       placeholder="شماره سفارش یا موبایل کاربر..."
+                       class="w-full h-10 px-3 rounded-lg border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-sm focus:border-primary-500 focus:ring-primary-500 dark:focus:border-primary-400 dark:focus:ring-primary-400">
+            </div>
+
+            <div class="w-full md:w-48">
+                <label for="order_status" class="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">وضعیت سفارش</label>
+                <select name="order_status" id="order_status" class="w-full h-10 px-3 rounded-lg border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-sm focus:border-primary-500 focus:ring-primary-500 dark:focus:border-primary-400 dark:focus:ring-primary-400">
+                    <option value="">همه وضعیت‌ها</option>
+                    <option value="pending" <?= ($filters['order_status'] ?? '') === 'pending' ? 'selected' : '' ?>>در انتظار بررسی</option>
+                    <option value="completed" <?= ($filters['order_status'] ?? '') === 'completed' ? 'selected' : '' ?>>تکمیل شده</option>
+                    <option value="cancelled" <?= ($filters['order_status'] ?? '') === 'cancelled' ? 'selected' : '' ?>>لغو شده</option>
+                    <option value="phishing" <?= ($filters['order_status'] ?? '') === 'phishing' ? 'selected' : '' ?>>مشکوک/فیشینگ</option>
+                </select>
+            </div>
+
+            <div class="w-full md:w-48">
+                <label for="payment_status" class="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">وضعیت پرداخت</label>
+                <select name="payment_status" id="payment_status" class="w-full h-10 px-3 rounded-lg border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-sm focus:border-primary-500 focus:ring-primary-500 dark:focus:border-primary-400 dark:focus:ring-primary-400">
+                    <option value="">همه پرداخت‌ها</option>
+                    <option value="paid" <?= ($filters['payment_status'] ?? '') === 'paid' ? 'selected' : '' ?>>پرداخت شده</option>
+                    <option value="unpaid" <?= ($filters['payment_status'] ?? '') === 'unpaid' ? 'selected' : '' ?>>پرداخت نشده</option>
+                    <option value="failed" <?= ($filters['payment_status'] ?? '') === 'failed' ? 'selected' : '' ?>>ناموفق</option>
+                </select>
+            </div>
+
+            <div class="flex gap-2 w-full md:w-auto">
+                <button type="submit" class="h-10 px-4 bg-primary-600 hover:bg-primary-700 text-white text-sm font-medium rounded-lg transition-colors flex items-center justify-center gap-2 flex-1 md:flex-initial">
+                    <?php partial('icon', ['name' => 'search', 'class' => 'w-4 h-4']); ?>
+                    جستجو
+                </button>
+                <?php if (!empty($filters['search']) || !empty($filters['order_status']) || !empty($filters['payment_status'])): ?>
+                    <a href="<?= url('orders') ?>" class="h-10 px-4 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200 text-sm font-medium rounded-lg transition-colors flex items-center justify-center flex-1 md:flex-initial">
+                        حذف فیلترها
+                    </a>
+                <?php endif; ?>
+            </div>
+        </form>
     </div>
 
     <!-- Mobile List View -->
@@ -18,6 +60,7 @@
                     <div>
                         <span class="text-xs font-mono text-gray-500 dark:text-gray-400 block">#<?= htmlspecialchars($order['order_code']) ?></span>
                         <h3 class="text-sm font-bold text-gray-900 dark:text-white mt-1"><?= htmlspecialchars($order['user_name'] ?? 'مهمان') ?></h3>
+                        <span class="text-xs text-gray-500 dark:text-gray-400 block mt-0.5" dir="ltr"><?= htmlspecialchars($order['user_mobile'] ?? '-') ?></span>
                     </div>
                     <?php
                         $status_style = match($order['order_status']) {
@@ -66,6 +109,7 @@
                 <tr class="bg-gray-50 dark:bg-gray-700/50 border-b border-gray-200 dark:border-gray-700">
                     <th class="px-6 py-3 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">کد سفارش</th>
                     <th class="px-6 py-3 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">کاربر</th>
+                    <th class="px-6 py-3 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">شماره موبایل</th>
                     <th class="px-6 py-3 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">مبلغ کل</th>
                     <th class="px-6 py-3 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">زمان ثبت</th>
                     <th class="px-6 py-3 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">وضعیت پرداخت</th>
@@ -81,6 +125,9 @@
                         </td>
                         <td class="px-6 py-4 text-sm font-medium text-gray-900 dark:text-white">
                             <?= htmlspecialchars($order['user_name'] ?? 'مهمان') ?>
+                        </td>
+                        <td class="px-6 py-4 text-sm text-gray-500 dark:text-gray-400" dir="ltr">
+                            <?= htmlspecialchars($order['user_mobile'] ?? '-') ?>
                         </td>
                         <td class="px-6 py-4 text-sm text-gray-900 dark:text-white font-bold">
                             <?= number_format($order['amount']) ?> <span class="font-normal text-xs text-gray-500">تومان</span>

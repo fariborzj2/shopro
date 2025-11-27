@@ -15,14 +15,43 @@ class Order
      * @param int $perPage The number of records to show per page.
      * @return array An array containing the list of orders and total count.
      */
-    public static function findAll(int $page = 1, int $perPage = 15): array
+    public static function findAll(int $page = 1, int $perPage = 15, array $filters = []): array
     {
         $offset = ($page - 1) * $perPage;
         $pdo = Database::getConnection();
 
+        // Build Where Clause
+        $whereClauses = ["1=1"];
+        $params = [];
+
+        if (!empty($filters['search'])) {
+            $whereClauses[] = "(o.order_code LIKE :search_order OR u.mobile LIKE :search_mobile)";
+            $params[':search_order'] = '%' . $filters['search'] . '%';
+            $params[':search_mobile'] = '%' . $filters['search'] . '%';
+        }
+
+        if (!empty($filters['payment_status'])) {
+            $whereClauses[] = "o.payment_status = :payment_status";
+            $params[':payment_status'] = $filters['payment_status'];
+        }
+
+        if (!empty($filters['order_status'])) {
+            $whereClauses[] = "o.order_status = :order_status";
+            $params[':order_status'] = $filters['order_status'];
+        }
+
+        $whereSql = implode(' AND ', $whereClauses);
+
         // Query to get the total count of orders for pagination
-        $totalSql = "SELECT COUNT(id) FROM orders";
-        $totalStmt = $pdo->query($totalSql);
+        // Must join users if searching by mobile
+        $totalSql = "
+            SELECT COUNT(o.id)
+            FROM orders o
+            LEFT JOIN users u ON o.user_id = u.id
+            WHERE $whereSql
+        ";
+        $totalStmt = $pdo->prepare($totalSql);
+        $totalStmt->execute($params);
         $totalOrders = $totalStmt->fetchColumn();
 
         // Query to get the paginated list of orders with user names
@@ -40,16 +69,19 @@ class Order
                 orders o
             LEFT JOIN
                 users u ON o.user_id = u.id
+            WHERE
+                $whereSql
             ORDER BY
                 o.order_time DESC
             LIMIT :limit OFFSET :offset
         ";
 
         $stmt = $pdo->prepare($sql);
-
-        // Bind parameters securely to prevent SQL injection
-        $stmt->bindParam(':limit', $perPage, PDO::PARAM_INT);
-        $stmt->bindParam(':offset', $offset, PDO::PARAM_INT);
+        foreach ($params as $key => $val) {
+            $stmt->bindValue($key, $val);
+        }
+        $stmt->bindValue(':limit', $perPage, PDO::PARAM_INT);
+        $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
         $stmt->execute();
         $orders = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
