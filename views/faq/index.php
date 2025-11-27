@@ -12,8 +12,8 @@ $faq_type_labels = array_column($faq_types, 'label_fa', 'key');
 
         <div class="flex flex-col sm:flex-row items-center gap-4">
             <!-- Filter Form -->
-            <form action="<?= url('/faq') ?>" method="GET" class="flex items-center gap-2">
-                <select name="type" onchange="this.form.submit()" class="bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block px-3 py-1 border border-gray-300 dark:border-gray-600">
+            <form action="<?= url('/faq') ?>" method="GET" class="flex w-full items-center gap-2">
+                <select name="type" onchange="this.form.submit()" class="bg-gray-50 w-full dark:bg-gray-700 text-gray-900 dark:text-white text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block px-3 py-1 border border-gray-300 dark:border-gray-600">
                     <option value="">همه انواع</option>
                     <?php foreach ($faq_types as $type): ?>
                         <option value="<?= $type['key'] ?>" <?= (isset($selected_type) && $selected_type === $type['key']) ? 'selected' : '' ?>>
@@ -23,7 +23,7 @@ $faq_type_labels = array_column($faq_types, 'label_fa', 'key');
                 </select>
             </form>
 
-            <a href="<?= url('faq/create') ?>" class="inline-flex items-center justify-center px-4 py-2 bg-primary-600 text-white text-sm font-medium rounded-lg hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 shadow-sm transition-colors whitespace-nowrap">
+            <a href="<?= url('faq/create') ?>" class="inline-flex w-full items-center justify-center px-4 py-2 bg-primary-600 text-white text-sm font-medium rounded-lg hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 shadow-sm transition-colors whitespace-nowrap">
                 <?php partial('icon', ['name' => 'plus', 'class' => 'w-5 h-5 ml-2']); ?>
                 افزودن سوال جدید
             </a>
