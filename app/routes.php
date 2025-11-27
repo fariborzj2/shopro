@@ -155,6 +155,7 @@ $router->post('/admin/faq/store', 'Admin\FaqController@store');
 $router->get('/admin/faq/edit/{id}', 'Admin\FaqController@edit');
 $router->post('/admin/faq/update/{id}', 'Admin\FaqController@update');
 $router->post('/admin/faq/delete/{id}', 'Admin\FaqController@delete');
+$router->post('/admin/faq/reorder', 'Admin\FaqController@reorder');
 
 // Reviews Management
 $router->get('/admin/reviews', 'Admin\ReviewsController@index');

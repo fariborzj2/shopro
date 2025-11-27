@@ -8,8 +8,9 @@ class FaqController
 {
     public function index()
     {
-        $faq_items = FaqItem::findAll();
-        view('main', 'faq/index', ['items' => $faq_items]);
+        $type = $_GET['type'] ?? null;
+        $faq_items = FaqItem::findAllFiltered($type);
+        view('main', 'faq/index', ['items' => $faq_items, 'selected_type' => $type]);
     }
 
     public function create()
@@ -24,9 +25,10 @@ class FaqController
             'answer' => $_POST['answer'],
             'type' => $_POST['type'],
             'status' => $_POST['status'],
+            'position' => isset($_POST['position']) ? (int)$_POST['position'] : 0,
         ];
         FaqItem::create($data);
-        redirect('/faq');
+        redirect('/admin/faq');
     }
 
     public function edit($id)
@@ -42,14 +44,36 @@ class FaqController
             'answer' => $_POST['answer'],
             'type' => $_POST['type'],
             'status' => $_POST['status'],
+            'position' => isset($_POST['position']) ? (int)$_POST['position'] : 0,
         ];
         FaqItem::update($id, $data);
-        redirect('/faq');
+        redirect('/admin/faq');
     }
 
-    public function destroy($id)
+    public function reorder()
+    {
+        header('Content-Type: application/json');
+
+        $input = json_decode(file_get_contents('php://input'), true);
+        $ids = $input['ids'] ?? [];
+
+        if (empty($ids) || !is_array($ids)) {
+            echo json_encode(['success' => false, 'message' => 'Invalid data.']);
+            http_response_code(400);
+            return;
+        }
+
+        if (FaqItem::updateOrder($ids)) {
+            echo json_encode(['success' => true, 'message' => 'Order updated successfully.']);
+        } else {
+            echo json_encode(['success' => false, 'message' => 'Failed to update order.']);
+            http_response_code(500);
+        }
+    }
+
+    public function delete($id)
     {
         FaqItem::delete($id);
-        redirect('/faq');
+        redirect('/admin/faq');
     }
 }
