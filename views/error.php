@@ -43,11 +43,11 @@ $isDebug = defined('DEBUG_MODE') && DEBUG_MODE === true;
                     <div class="space-y-4">
                         <div>
                             <strong class="block text-gray-700 dark:text-gray-300">پیام:</strong>
-                            <p dir="ltr class="text-left mt-1 p-2 bg-gray-50 dark:bg-gray-700 rounded-md text-sm font-mono"><?= htmlspecialchars($debug_info['message']) ?></p>
+                            <p dir="ltr" class="text-left mt-1 p-2 bg-gray-50 dark:bg-gray-700 rounded-md text-sm font-mono"><?= htmlspecialchars($debug_info['message']) ?></p>
                         </div>
                         <div>
                             <strong class="block text-gray-700 dark:text-gray-300">فایل:</strong>
-                            <p dir="ltr class="text-left mt-1 p-2 bg-gray-50 dark:bg-gray-700 rounded-md text-sm font-mono"><?= htmlspecialchars($debug_info['file']) ?> (خط <?= htmlspecialchars($debug_info['line']) ?>)</p>
+                            <p dir="ltr" class="text-left mt-1 p-2 bg-gray-50 dark:bg-gray-700 rounded-md text-sm font-mono"><?= htmlspecialchars($debug_info['file']) ?> (خط <?= htmlspecialchars($debug_info['line']) ?>)</p>
                         </div>
                         <div>
                             <strong class="block text-gray-700 dark:text-gray-300">Stack Trace:</strong>
