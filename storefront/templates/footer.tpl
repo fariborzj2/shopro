@@ -425,14 +425,42 @@
                 })
                 .then(res => res.json().then(data => ({ status: res.status, body: data })))
                 .then(({ status, body }) => {
+                    // Update CSRF Token
                     if (body.new_csrf_token) {
                          document.querySelector('meta[name="csrf-token"]').setAttribute('content', body.new_csrf_token);
                     }
 
-                    if (status === 200) {
-                        window.location.reload();
+                    // Check response logic
+                    // The backend now returns { status: true/false, user: {...} } or { status: false, message: ... }
+                    // However, we also check HTTP status code as a fallback.
+                    const isSuccess = body.status === true || status === 200;
+
+                    if (isSuccess) {
+                        // Success Logic
+                        // 1. Update Global Store
+                        if (body.user && Alpine.store('auth')) {
+                            Alpine.store('auth').login(body.user);
+                        }
+
+                        // 2. Show Success Toast
+                        window.dispatchEvent(new CustomEvent('show-toast', {
+                            detail: {
+                                message: body.message || 'ورود با موفقیت انجام شد.',
+                                type: 'success'
+                            }
+                        }));
+
+                        // 3. Handle Redirect (if present)
+                        if (body.redirect) {
+                            window.location.href = body.redirect;
+                        } else {
+                            // 4. Close Modal (no refresh)
+                            this.closeModal();
+                        }
+
                     } else {
-                        const msg = body.error || 'کد نامعتبر است.';
+                        // Error Logic
+                        const msg = body.message || body.error || 'کد نامعتبر است.';
                         this.errorMessage = msg;
                         this.isError = true;
 
@@ -447,7 +475,8 @@
                         }
                     }
                 })
-                .catch(() => {
+                .catch((err) => {
+                    console.error(err);
                     const msg = 'خطای ارتباط با سرور.';
                     this.errorMessage = msg;
                     window.dispatchEvent(new CustomEvent('show-toast', { detail: { message: msg, type: 'error' } }));
