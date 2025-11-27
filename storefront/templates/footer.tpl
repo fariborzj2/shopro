@@ -431,9 +431,8 @@
                     }
 
                     // Check response logic
-                    // The backend now returns { status: true/false, user: {...} } or { status: false, message: ... }
-                    // However, we also check HTTP status code as a fallback.
-                    const isSuccess = body.status === true || status === 200;
+                    // Rely STRICTLY on body.status which is now guaranteed by AuthController
+                    const isSuccess = body.status === true;
 
                     if (isSuccess) {
                         // Success Logic
@@ -464,7 +463,7 @@
                         this.errorMessage = msg;
                         this.isError = true;
 
-                        // Show Toast
+                        // Show Toast - explicitly type 'error' for red color
                         window.dispatchEvent(new CustomEvent('show-toast', { detail: { message: msg, type: 'error' } }));
 
                         // Only reset if API says expired or similar fatal error
