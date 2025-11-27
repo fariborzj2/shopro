@@ -64,6 +64,7 @@ class AuthController
         OtpCode::create($mobile, $otp_hash, $expires_at);
 
         echo json_encode([
+            'status' => true,
             'message' => 'کد تایید با موفقیت ارسال شد.',
             'new_csrf_token' => csrf_token()
         ]);
@@ -90,7 +91,8 @@ class AuthController
 
         if (!$this->validateMobile($mobile) || !$otp) {
             echo json_encode([
-                'error' => 'شماره موبایل و کد تایید الزامی است.',
+                'status' => false,
+                'message' => 'شماره موبایل و کد تایید الزامی است.',
                 'new_csrf_token' => csrf_token()
             ]);
             http_response_code(400);
@@ -101,7 +103,8 @@ class AuthController
 
         if (!$otp_record || !password_verify($otp, $otp_record->otp_hash)) {
             echo json_encode([
-                'error' => 'کد تایید نامعتبر است.',
+                'status' => false,
+                'message' => 'کد تایید نامعتبر است.',
                 'new_csrf_token' => csrf_token()
             ]);
             http_response_code(401);
@@ -128,7 +131,13 @@ class AuthController
         $_SESSION['user_name'] = $user->name;
 
         echo json_encode([
+            'status' => true,
             'message' => 'ورود با موفقیت انجام شد.',
+            'user' => [
+                'id' => $user->id,
+                'name' => $user->name,
+                'mobile' => $user->mobile
+            ],
             'new_csrf_token' => csrf_token()
         ]);
     }
