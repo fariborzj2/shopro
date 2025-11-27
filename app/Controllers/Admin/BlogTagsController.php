@@ -51,10 +51,18 @@ class BlogTagsController
         try {
             BlogTag::create($data);
             header('Content-Type: application/json');
-            echo json_encode(['success' => true, 'message' => 'برچسب با موفقیت ایجاد شد.']);
+            echo json_encode([
+                'success' => true,
+                'message' => 'برچسب با موفقیت ایجاد شد.',
+                'new_csrf_token' => $_SESSION['csrf_token'] ?? null
+            ]);
         } catch (\Exception $e) {
             http_response_code(500);
-            echo json_encode(['success' => false, 'message' => 'خطا در ایجاد برچسب: ' . $e->getMessage()]);
+            echo json_encode([
+                'success' => false,
+                'message' => 'خطا در ایجاد برچسب: ' . $e->getMessage(),
+                'new_csrf_token' => $_SESSION['csrf_token'] ?? null
+            ]);
         }
         exit;
     }
@@ -83,10 +91,18 @@ class BlogTagsController
         try {
             BlogTag::update($id, $data);
             header('Content-Type: application/json');
-            echo json_encode(['success' => true, 'message' => 'برچسب با موفقیت به‌روزرسانی شد.']);
+            echo json_encode([
+                'success' => true,
+                'message' => 'برچسب با موفقیت به‌روزرسانی شد.',
+                'new_csrf_token' => $_SESSION['csrf_token'] ?? null
+            ]);
         } catch (\Exception $e) {
             http_response_code(500);
-            echo json_encode(['success' => false, 'message' => 'خطا در به‌روزرسانی برچسب: ' . $e->getMessage()]);
+            echo json_encode([
+                'success' => false,
+                'message' => 'خطا در به‌روزرسانی برچسب: ' . $e->getMessage(),
+                'new_csrf_token' => $_SESSION['csrf_token'] ?? null
+            ]);
         }
         exit;
     }
@@ -96,10 +112,18 @@ class BlogTagsController
         try {
             BlogTag::delete($id);
             header('Content-Type: application/json');
-            echo json_encode(['success' => true, 'message' => 'برچسب حذف شد.']);
+            echo json_encode([
+                'success' => true,
+                'message' => 'برچسب حذف شد.',
+                'new_csrf_token' => $_SESSION['csrf_token'] ?? null
+            ]);
         } catch (\Exception $e) {
             http_response_code(500);
-            echo json_encode(['success' => false, 'message' => 'خطا در حذف برچسب: ' . $e->getMessage()]);
+            echo json_encode([
+                'success' => false,
+                'message' => 'خطا در حذف برچسب: ' . $e->getMessage(),
+                'new_csrf_token' => $_SESSION['csrf_token'] ?? null
+            ]);
         }
         exit;
     }

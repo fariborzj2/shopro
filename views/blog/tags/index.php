@@ -180,6 +180,9 @@ function tagManager() {
             })
             .then(response => response.json())
             .then(data => {
+                if (data.new_csrf_token) {
+                    document.querySelector('meta[name="csrf-token"]').setAttribute('content', data.new_csrf_token);
+                }
                 if (data.success) {
                     this.closeModal();
                     this.refreshTags(); // Reload list
@@ -211,6 +214,9 @@ function tagManager() {
                 return response.json();
             })
             .then(data => {
+                if (data.new_csrf_token) {
+                    document.querySelector('meta[name="csrf-token"]').setAttribute('content', data.new_csrf_token);
+                }
                 if (data.success) {
                     this.refreshTags();
                 } else {
