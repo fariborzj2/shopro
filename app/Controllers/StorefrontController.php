@@ -117,10 +117,11 @@ class StorefrontController
         $template = new Template(__DIR__ . '/../../storefront/templates');
 
         if ($slug === 'faq') {
-            $faqItems = FaqItem::findAll('position ASC');
+            $faq_items_grouped = FaqItem::findAllGroupedByType();
             echo $template->render('faq', [
                 'pageTitle' => 'سوالات متداول',
-                'faqItems' => $faqItems,
+                'faq_items_grouped' => $faq_items_grouped,
+                'faq_types' => get_faq_types(),
                 'settings' => $this->settings
             ]);
             return;

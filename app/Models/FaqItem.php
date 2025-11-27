@@ -36,7 +36,7 @@ class FaqItem
 
     public static function create($data)
     {
-        $sql = "INSERT INTO faq_items (question, answer, status) VALUES (:question, :answer, :status)";
+        $sql = "INSERT INTO faq_items (question, answer, type, status) VALUES (:question, :answer, :type, :status)";
         Database::query($sql, $data);
         return true;
     }
@@ -44,7 +44,7 @@ class FaqItem
     public static function update($id, $data)
     {
         $data['id'] = $id;
-        $sql = "UPDATE faq_items SET question = :question, answer = :answer, status = :status WHERE id = :id";
+        $sql = "UPDATE faq_items SET question = :question, answer = :answer, type = :type, status = :status WHERE id = :id";
         Database::query($sql, $data);
         return true;
     }
@@ -53,5 +53,34 @@ class FaqItem
     {
         Database::query("DELETE FROM faq_items WHERE id = :id", ['id' => $id]);
         return true;
+    }
+
+    public static function findAllGroupedByType()
+    {
+        // This query will fail if the `type` column doesn't exist.
+        // The user has been instructed to run a manual migration.
+        // A try-catch block provides a fallback for environments where the migration hasn't run.
+        try {
+            $stmt = Database::query("SELECT * FROM faq_items WHERE status = 'active' ORDER BY type, position ASC");
+            $items = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (\PDOException $e) {
+            // If the column doesn't exist, fall back to a simple query.
+            if ($e->getCode() === '42S22') { // SQLSTATE for "Column not found"
+                $stmt = Database::query("SELECT * FROM faq_items WHERE status = 'active' ORDER BY position ASC");
+                $items = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                // Assign all to a default type so the storefront doesn't break
+                return ['general_questions' => $items];
+            }
+            // Re-throw other errors
+            throw $e;
+        }
+
+        $grouped = [];
+        foreach ($items as $item) {
+            $type = $item['type'] ?? 'general_questions';
+            $grouped[$type][] = $item;
+        }
+
+        return $grouped;
     }
 }
