@@ -36,7 +36,10 @@ class FaqItem
 
     public static function create($data)
     {
-        $sql = "INSERT INTO faq_items (question, answer, type, status) VALUES (:question, :answer, :type, :status)";
+        $sql = "INSERT INTO faq_items (question, answer, type, status, position) VALUES (:question, :answer, :type, :status, :position)";
+        if (!isset($data['position'])) {
+            $data['position'] = 0;
+        }
         Database::query($sql, $data);
         return true;
     }
@@ -44,7 +47,10 @@ class FaqItem
     public static function update($id, $data)
     {
         $data['id'] = $id;
-        $sql = "UPDATE faq_items SET question = :question, answer = :answer, type = :type, status = :status WHERE id = :id";
+        $sql = "UPDATE faq_items SET question = :question, answer = :answer, type = :type, status = :status, position = :position WHERE id = :id";
+        if (!isset($data['position'])) {
+            $data['position'] = 0;
+        }
         Database::query($sql, $data);
         return true;
     }
@@ -66,5 +72,48 @@ class FaqItem
         }
 
         return $grouped;
+    }
+
+    public static function updateOrder(array $ids)
+    {
+        if (empty($ids)) {
+            return false;
+        }
+
+        $case_sql = "";
+        $params = [];
+        foreach ($ids as $position => $id) {
+            $case_sql .= "WHEN ? THEN ? ";
+            $params[] = (int) $id;
+            $params[] = $position;
+        }
+
+        $id_list = implode(',', array_fill(0, count($ids), '?'));
+
+        $sql = "UPDATE faq_items SET position = CASE id {$case_sql} END WHERE id IN ({$id_list})";
+
+        // Add the IDs for the IN clause to the params array
+        foreach ($ids as $id) {
+            $params[] = (int) $id;
+        }
+
+        Database::query($sql, $params);
+        return true;
+    }
+
+    public static function findAllFiltered($type = null)
+    {
+        $sql = "SELECT * FROM faq_items";
+        $params = [];
+
+        if ($type) {
+            $sql .= " WHERE type = :type";
+            $params['type'] = $type;
+        }
+
+        $sql .= " ORDER BY position ASC";
+
+        $stmt = Database::query($sql, $params);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 }
