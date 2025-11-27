@@ -26,7 +26,7 @@ class FaqController
             'status' => $_POST['status'],
         ];
         FaqItem::create($data);
-        redirect('/admin/faq');
+        redirect('/faq');
     }
 
     public function edit($id)
@@ -44,12 +44,12 @@ class FaqController
             'status' => $_POST['status'],
         ];
         FaqItem::update($id, $data);
-        redirect('/admin/faq');
+        redirect('/faq');
     }
 
     public function destroy($id)
     {
         FaqItem::delete($id);
-        redirect('/admin/faq');
+        redirect('/faq');
     }
 }
