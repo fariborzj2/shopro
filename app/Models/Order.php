@@ -25,8 +25,9 @@ class Order
         $params = [];
 
         if (!empty($filters['search'])) {
-            $whereClauses[] = "(o.order_code LIKE :search OR u.mobile LIKE :search)";
-            $params[':search'] = '%' . $filters['search'] . '%';
+            $whereClauses[] = "(o.order_code LIKE :search_order OR u.mobile LIKE :search_mobile)";
+            $params[':search_order'] = '%' . $filters['search'] . '%';
+            $params[':search_mobile'] = '%' . $filters['search'] . '%';
         }
 
         if (!empty($filters['payment_status'])) {
