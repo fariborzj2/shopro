@@ -3,6 +3,7 @@
 use App\Core\Request;
 
 // app/Core/helpers.php
+require_once __DIR__ . '/faq_helpers.php';
 
 /**
  * Render a view file and return its content as a string.
