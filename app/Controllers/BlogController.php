@@ -122,6 +122,9 @@ class BlogController
                 return;
             }
 
+            // Increment view count
+            BlogPost::incrementViews($post->id);
+
             $faq_ids = BlogPost::getFaqItemsByPostId($post->id);
             $faq_items = !empty($faq_ids) ? FaqItem::findByIds($faq_ids) : [];
 

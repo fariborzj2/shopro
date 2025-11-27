@@ -22,21 +22,36 @@ class BlogPostsController
         $current_page = isset($_GET["page"]) ? (int) $_GET["page"] : 1;
         $offset = ($current_page - 1) * self::ITEMS_PER_PAGE;
 
-        $result = BlogPost::paginatedWithCount(self::ITEMS_PER_PAGE, $offset);
+        $search = $_GET['search'] ?? null;
+        $sort = $_GET['sort'] ?? null;
+        $dir = $_GET['dir'] ?? 'desc';
+
+        $result = BlogPost::paginatedWithCount(self::ITEMS_PER_PAGE, $offset, $search, $sort, $dir);
         $posts = $result["posts"];
         $total_posts = $result["total_count"];
+
+        $url_params = "/admin/blog/posts?";
+        if ($search) $url_params .= "search=" . urlencode($search) . "&";
+        if ($sort) $url_params .= "sort=" . urlencode($sort) . "&";
+        if ($dir) $url_params .= "dir=" . urlencode($dir) . "&";
+
+        // Remove trailing & or ? if empty
+        $url_params = rtrim($url_params, "&?");
 
         $paginator = new Paginator(
             $total_posts,
             self::ITEMS_PER_PAGE,
             $current_page,
-            "/admin/blog/posts"
+            $url_params
         );
 
         return view("main", "blog/posts/index", [
             "title" => "مدیریت نوشته‌ها",
             "posts" => $posts,
             "paginator" => $paginator,
+            "search" => $search,
+            "sort" => $sort,
+            "dir" => $dir
         ]);
     }
 

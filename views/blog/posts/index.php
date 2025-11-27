@@ -1,14 +1,22 @@
 <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700">
     <!-- Header -->
-    <div class="p-6 flex flex-col sm:flex-row sm:justify-between sm:items-center border-b border-gray-100 dark:border-gray-700 gap-4">
+    <div class="p-6 flex flex-col md:flex-row md:justify-between md:items-center border-b border-gray-100 dark:border-gray-700 gap-4">
         <div>
             <h1 class="text-xl font-bold text-gray-800 dark:text-white">مدیریت پست‌های بلاگ</h1>
             <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">لیست مقالات و اخبار منتشر شده</p>
         </div>
-        <a href="<?php echo url('blog/posts/create'); ?>" class="inline-flex items-center justify-center px-4 py-2 bg-primary-600 text-white text-sm font-medium rounded-lg hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 shadow-sm transition-colors">
-            <?php partial('icon', ['name' => 'plus', 'class' => 'w-5 h-5 ml-2']); ?>
-            افزودن پست جدید
-        </a>
+        <div class="flex flex-col sm:flex-row gap-3">
+             <form method="GET" action="/admin/blog/posts" class="relative">
+                <input type="text" name="search" value="<?= htmlspecialchars($search ?? '') ?>" placeholder="جستجو در عنوان..." class="w-full sm:w-64 pl-10 pr-4 py-2 text-sm text-gray-700 bg-gray-50 dark:bg-gray-700/50 dark:text-gray-200 border border-gray-200 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all">
+                <button type="submit" class="absolute left-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 p-1">
+                    <?php partial('icon', ['name' => 'search', 'class' => 'w-4 h-4']); ?>
+                </button>
+            </form>
+            <a href="<?php echo url('blog/posts/create'); ?>" class="inline-flex items-center justify-center px-4 py-2 bg-primary-600 text-white text-sm font-medium rounded-lg hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 shadow-sm transition-colors">
+                <?php partial('icon', ['name' => 'plus', 'class' => 'w-5 h-5 ml-2']); ?>
+                افزودن پست جدید
+            </a>
+        </div>
     </div>
 
     <!-- Mobile List View -->
@@ -38,6 +46,16 @@
                             <?= $status_text ?>
                         </span>
                     </div>
+                    <div class="flex items-center gap-4 mt-3 text-xs text-gray-500 dark:text-gray-400">
+                        <a href="/blog/<?= $post['slug'] ?>" target="_blank" class="flex items-center gap-1 hover:text-primary-600 transition-colors">
+                            <?php partial('icon', ['name' => 'eye', 'class' => 'w-4 h-4']); ?>
+                            <span><?= number_format($post['views_count'] ?? 0) ?></span>
+                        </a>
+                        <div class="flex items-center gap-1">
+                            <?php partial('icon', ['name' => 'chat', 'class' => 'w-4 h-4']); ?>
+                            <span><?= number_format($post['comments_count'] ?? 0) ?></span>
+                        </div>
+                    </div>
                     <div class="flex justify-between items-center mt-3 pt-3 border-t border-gray-100 dark:border-gray-700">
                         <span class="text-xs text-gray-400"><?= \jdate('Y/m/d', strtotime($post['created_at'])) ?></span>
                         <div class="flex items-center gap-3">
@@ -61,6 +79,24 @@
                 <tr class="bg-gray-50 dark:bg-gray-700/50 border-b border-gray-200 dark:border-gray-700">
                     <th class="px-6 py-3 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">عنوان</th>
                     <th class="px-6 py-3 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">دسته‌بندی</th>
+
+                    <th class="px-6 py-3 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider cursor-pointer hover:text-gray-700 dark:hover:text-gray-200">
+                        <a href="/admin/blog/posts?sort=views_count&dir=<?= ($sort === 'views_count' && $dir === 'desc') ? 'asc' : 'desc' ?><?= $search ? '&search=' . urlencode($search) : '' ?>" class="flex items-center gap-1">
+                            تعداد بازدید
+                            <?php if ($sort === 'views_count'): ?>
+                                <?php partial('icon', ['name' => $dir === 'asc' ? 'chevron-up' : 'chevron-down', 'class' => 'w-3 h-3']); ?>
+                            <?php endif; ?>
+                        </a>
+                    </th>
+                    <th class="px-6 py-3 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider cursor-pointer hover:text-gray-700 dark:hover:text-gray-200">
+                        <a href="/admin/blog/posts?sort=comments_count&dir=<?= ($sort === 'comments_count' && $dir === 'desc') ? 'asc' : 'desc' ?><?= $search ? '&search=' . urlencode($search) : '' ?>" class="flex items-center gap-1">
+                            تعداد نظرات
+                            <?php if ($sort === 'comments_count'): ?>
+                                <?php partial('icon', ['name' => $dir === 'asc' ? 'chevron-up' : 'chevron-down', 'class' => 'w-3 h-3']); ?>
+                            <?php endif; ?>
+                        </a>
+                    </th>
+
                     <th class="px-6 py-3 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">وضعیت</th>
                     <th class="px-6 py-3 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">تاریخ انتشار</th>
                     <th class="px-6 py-3 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider text-center">عملیات</th>
@@ -69,7 +105,7 @@
             <tbody class="divide-y divide-gray-100 dark:divide-gray-700 bg-white dark:bg-gray-800">
                 <?php if (empty($posts)): ?>
                     <tr>
-                        <td colspan="5" class="px-6 py-8 text-center text-gray-500 dark:text-gray-400 text-sm">
+                        <td colspan="7" class="px-6 py-8 text-center text-gray-500 dark:text-gray-400 text-sm">
                             هیچ پستی یافت نشد.
                         </td>
                     </tr>
@@ -82,6 +118,17 @@
                             <td class="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">
                                 <?= htmlspecialchars($post['category_name'] ?? '-') ?>
                             </td>
+
+                            <td class="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">
+                                <a href="/blog/<?= $post['slug'] ?>" target="_blank" class="flex items-center gap-1 hover:text-primary-600 transition-colors" title="مشاهده در سایت">
+                                    <?= number_format($post['views_count'] ?? 0) ?>
+                                    <?php partial('icon', ['name' => 'external-link', 'class' => 'w-3 h-3 opacity-50']); ?>
+                                </a>
+                            </td>
+                            <td class="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">
+                                <?= number_format($post['comments_count'] ?? 0) ?>
+                            </td>
+
                             <td class="px-6 py-4 text-sm">
                                  <?php
                                     $status_class = match($post['status']) {

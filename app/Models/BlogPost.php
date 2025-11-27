@@ -13,21 +13,53 @@ class BlogPost
      *
      * @param int $limit
      * @param int $offset
+     * @param string|null $search
+     * @param string|null $sort
+     * @param string|null $dir
      * @return array
      */
-    public static function paginatedWithCount($limit, $offset)
+    public static function paginatedWithCount($limit, $offset, $search = null, $sort = null, $dir = 'desc')
     {
-        $sql = "SELECT SQL_CALC_FOUND_ROWS bp.*, bc.name_fa as category_name, a.name as author_name
+        $params = [];
+        $sql = "SELECT SQL_CALC_FOUND_ROWS bp.*,
+                bc.name_fa as category_name,
+                a.name as author_name,
+                (SELECT COUNT(*) FROM blog_post_comments bpc WHERE bpc.post_id = bp.id) as comments_count
                 FROM blog_posts bp
                 LEFT JOIN blog_categories bc ON bp.category_id = bc.id
-                LEFT JOIN admins a ON bp.author_id = a.id
-                ORDER BY bp.published_at DESC, bp.created_at DESC
-                LIMIT :limit OFFSET :offset";
+                LEFT JOIN admins a ON bp.author_id = a.id";
+
+        if ($search) {
+            $sql .= " WHERE bp.title LIKE :search";
+            $params['search'] = '%' . $search . '%';
+        }
+
+        // Validate direction
+        $dir = strtolower($dir) === 'asc' ? 'ASC' : 'DESC';
+
+        // Sorting logic
+        switch ($sort) {
+            case 'views_count':
+                $sql .= " ORDER BY bp.views_count $dir";
+                break;
+            case 'comments_count':
+                $sql .= " ORDER BY comments_count $dir";
+                break;
+            default:
+                // Default sort: Published At DESC (for list consistency)
+                $sql .= " ORDER BY bp.published_at DESC, bp.created_at DESC";
+                break;
+        }
+
+        $sql .= " LIMIT :limit OFFSET :offset";
 
         $pdo = Database::getConnection();
         $stmt = $pdo->prepare($sql);
         $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
         $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
+        foreach ($params as $key => $value) {
+            $stmt->bindValue(':' . $key, $value);
+        }
         $stmt->execute();
 
         $posts = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -404,5 +436,20 @@ class BlogPost
     {
        $result = self::findAllPublishedWithCount($limit, $offset, $search, $category_id);
        return $result['posts'];
+    }
+
+    /**
+     * Increment the view count for a blog post.
+     *
+     * @param int $id
+     * @return bool
+     */
+    public static function incrementViews($id)
+    {
+        $sql = "UPDATE blog_posts SET views_count = views_count + 1 WHERE id = :id";
+        $pdo = Database::getConnection();
+        $stmt = $pdo->prepare($sql);
+        $stmt->bindValue(':id', $id, PDO::PARAM_INT);
+        return $stmt->execute();
     }
 }
