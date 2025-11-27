@@ -29,7 +29,7 @@ $faq_type_labels = array_column($faq_types, 'label_fa', 'key');
                             <h3 class="text-sm font-bold text-gray-900 dark:text-white line-clamp-2"><?= htmlspecialchars($item['question']) ?></h3>
                              <div class="flex items-center gap-2 mt-1">
                                 <span class="text-xs bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 px-2 py-0.5 rounded">
-                                    <?= htmlspecialchars($faq_type_labels[$item['type']] ?? 'تعیین نشده') ?>
+                                    <?= htmlspecialchars($faq_type_labels[$item['type'] ?? 'general_questions'] ?? 'تعیین نشده') ?>
                                 </span>
                                 <span class="text-xs bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 px-2 py-0.5 rounded">
                                     ترتیب: <?= htmlspecialchars($item['position']) ?>
@@ -81,7 +81,7 @@ $faq_type_labels = array_column($faq_types, 'label_fa', 'key');
                                 <?= htmlspecialchars($item['question']) ?>
                             </td>
                             <td class="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">
-                                <?= htmlspecialchars($faq_type_labels[$item['type']] ?? 'تعیین نشده') ?>
+                                <?= htmlspecialchars($faq_type_labels[$item['type'] ?? 'general_questions'] ?? 'تعیین نشده') ?>
                             </td>
                             <td class="px-6 py-4 text-sm text-center text-gray-500 dark:text-gray-400">
                                 <span class="bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded font-mono text-xs">
