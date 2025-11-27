@@ -52,7 +52,7 @@
         </div>
 
         <!-- Hero Image (Floating) -->
-        <div class="basis-2/4 grow bg-gray-50 hidden lg:flex">
+        <div class="basis-2/4 grow bg-gray-50 hidden overflow-hidden lg:flex">
             <div class="h-56 w-full flex lg:w-full lg:h-full relative">
                 <!-- Abstract Shapes Behind Image -->
                 <img
