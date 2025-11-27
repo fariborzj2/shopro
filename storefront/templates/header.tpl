@@ -139,6 +139,24 @@
         [x-cloak] { display: none !important; }
     </style>
 
+    <script>
+        document.addEventListener('alpine:init', () => {
+            Alpine.store('auth', {
+                user: <?php echo json_encode(isset($_SESSION['user_id']) ? ['id' => $_SESSION['user_id'], 'name' => $_SESSION['user_name'], 'mobile' => $_SESSION['user_mobile']] : null); ?>,
+                check() {
+                    return !!this.user;
+                },
+                login(userData) {
+                    this.user = userData;
+                },
+                logout() {
+                    this.user = null;
+                    window.location.href = '/logout';
+                }
+            });
+        });
+    </script>
+
     <?php if (isset($schema_data)): ?>
         <?php foreach ($schema_data as $schema): if($schema): ?>
             <script type="application/ld+json"><?php echo json_encode($schema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE); ?></script>
@@ -147,10 +165,8 @@
 </head>
 <body
     class="bg-gray-50 text-gray-800 font-sans antialiased min-h-screen flex flex-col"
-    <?php if (isset($store_data)): ?>
-        x-data="store(<?php echo htmlspecialchars($store_data, ENT_QUOTES, 'UTF-8'); ?>)"
-        x-init="init()"
-    <?php endif; ?>
+    x-data="<?php echo isset($store_data) ? "store(" . htmlspecialchars($store_data, ENT_QUOTES, 'UTF-8') . ")" : "{}"; ?>"
+    x-init="init()"
 >
 
     <!-- Header / Navbar -->
@@ -217,20 +233,24 @@
                     <!-- Divider -->
                     <div class="h-6 w-px bg-gray-200 mx-1"></div>
 
-                    <?php if (isset($_SESSION['user_id'])): ?>
-                        <a href="/dashboard/orders" class="flex items-center space-x-2 space-x-reverse bg-primary-50 text-primary-700 hover:bg-primary-100 px-4 py-2.5 rounded-xl text-sm font-bold transition-colors">
-                            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
-                            <span>داشبورد</span>
-                        </a>
-                        <a href="/logout" class="p-2.5 rounded-xl text-red-500 hover:bg-red-50 transition-colors" title="خروج">
-                            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" /></svg>
-                        </a>
-                    <?php else: ?>
+                    <template x-if="$store.auth.check()">
+                        <div class="flex items-center gap-2">
+                            <a href="/dashboard/orders" class="flex items-center space-x-2 space-x-reverse bg-primary-50 text-primary-700 hover:bg-primary-100 px-4 py-2.5 rounded-xl text-sm font-bold transition-colors">
+                                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
+                                <span x-text="$store.auth.user?.name || 'داشبورد'"></span>
+                            </a>
+                            <a href="/logout" @click.prevent="$store.auth.logout()" class="p-2.5 rounded-xl text-red-500 hover:bg-red-50 transition-colors" title="خروج">
+                                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" /></svg>
+                            </a>
+                        </div>
+                    </template>
+
+                    <template x-if="!$store.auth.check()">
                         <button @click.prevent="$dispatch('open-auth-modal')" class="flex items-center space-x-2 space-x-reverse bg-primary-600 text-white hover:bg-primary-700 px-5 py-2.5 rounded-md text-sm font-bold shadow-lg shadow-primary-500/30 transition-all transform hover:-translate-y-0.5">
                             <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" /></svg>
                             <span>ورود / ثبت‌نام</span>
                         </button>
-                    <?php endif; ?>
+                    </template>
                 </div>
 
                 <!-- Mobile Menu Button -->
@@ -279,21 +299,24 @@
                 </a>
 
                 <div class="pt-4 mt-4 border-t border-gray-100">
-                    <?php if (isset($_SESSION['user_id'])): ?>
-                        <a href="/dashboard/orders" class="flex items-center justify-center w-full text-center px-4 py-3 rounded-xl text-base font-bold text-gray-700 bg-gray-50 mb-3">
-                            <svg class="w-5 h-5 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
-                            داشبورد من
-                        </a>
-                        <a href="/logout" class="flex items-center justify-center w-full text-center px-4 py-3 rounded-xl text-base font-bold text-red-600 bg-red-50 hover:bg-red-100">
-                            <svg class="w-5 h-5 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" /></svg>
-                            خروج از حساب
-                        </a>
-                    <?php else: ?>
+                    <template x-if="$store.auth.check()">
+                        <div>
+                            <a href="/dashboard/orders" class="flex items-center justify-center w-full text-center px-4 py-3 rounded-xl text-base font-bold text-gray-700 bg-gray-50 mb-3">
+                                <svg class="w-5 h-5 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
+                                <span x-text="'داشبورد ' + ($store.auth.user?.name || '')"></span>
+                            </a>
+                            <a href="/logout" @click.prevent="$store.auth.logout()" class="flex items-center justify-center w-full text-center px-4 py-3 rounded-xl text-base font-bold text-red-600 bg-red-50 hover:bg-red-100">
+                                <svg class="w-5 h-5 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" /></svg>
+                                خروج از حساب
+                            </a>
+                        </div>
+                    </template>
+                    <template x-if="!$store.auth.check()">
                         <button @click.prevent="$dispatch('open-auth-modal'); mobileMenuOpen = false" class="flex items-center justify-center w-full bg-primary-600 text-white px-4 py-3 rounded-xl text-base font-bold shadow-lg shadow-primary-500/30 hover:bg-primary-700 transition-colors">
                             <svg class="w-6 h-6 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" /></svg>
                             ورود یا ثبت‌نام
                         </button>
-                    <?php endif; ?>
+                    </template>
                 </div>
             </div>
         </div>

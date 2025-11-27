@@ -252,7 +252,10 @@ function store(data) {
                 return;
             }
 
-            if (!this.isUserLoggedIn) {
+            // Check against global Auth store if available, otherwise fallback to local prop (for initial load)
+            const isLoggedIn = (Alpine.store('auth') && Alpine.store('auth').check()) || this.isUserLoggedIn;
+
+            if (!isLoggedIn) {
                 window.dispatchEvent(new CustomEvent('open-auth-modal'));
                 return;
             }
@@ -300,10 +303,12 @@ function store(data) {
                 custom_fields: payloadFields
             };
 
-            let csrfToken = formData.get('csrf_token');
-            if (!csrfToken) {
-                const metaTag = document.querySelector('meta[name="csrf-token"]');
-                if (metaTag) csrfToken = metaTag.getAttribute('content');
+            let csrfToken = '';
+            const metaTag = document.querySelector('meta[name="csrf-token"]');
+            if (metaTag) {
+                csrfToken = metaTag.getAttribute('content');
+            } else {
+                csrfToken = formData.get('csrf_token');
             }
 
             fetch(form.action, {
