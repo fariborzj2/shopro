@@ -38,20 +38,20 @@ $isDebug = defined('DEBUG_MODE') && DEBUG_MODE === true;
             </div>
 
             <?php if ($isDebug && $debug_info): ?>
-                <div class="mt-12 text-left bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 border border-gray-200 dark:border-gray-700">
+                <div class="mt-12 bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 border border-gray-200 dark:border-gray-700">
                     <h3 class="text-xl font-bold mb-4 text-red-500">اطلاعات دیباگ</h3>
                     <div class="space-y-4">
                         <div>
                             <strong class="block text-gray-700 dark:text-gray-300">پیام:</strong>
-                            <p class="mt-1 p-2 bg-gray-50 dark:bg-gray-700 rounded-md text-sm font-mono"><?= htmlspecialchars($debug_info['message']) ?></p>
+                            <p dir="ltr class="text-left mt-1 p-2 bg-gray-50 dark:bg-gray-700 rounded-md text-sm font-mono"><?= htmlspecialchars($debug_info['message']) ?></p>
                         </div>
                         <div>
                             <strong class="block text-gray-700 dark:text-gray-300">فایل:</strong>
-                            <p class="mt-1 p-2 bg-gray-50 dark:bg-gray-700 rounded-md text-sm font-mono"><?= htmlspecialchars($debug_info['file']) ?> (خط <?= htmlspecialchars($debug_info['line']) ?>)</p>
+                            <p dir="ltr class="text-left mt-1 p-2 bg-gray-50 dark:bg-gray-700 rounded-md text-sm font-mono"><?= htmlspecialchars($debug_info['file']) ?> (خط <?= htmlspecialchars($debug_info['line']) ?>)</p>
                         </div>
                         <div>
                             <strong class="block text-gray-700 dark:text-gray-300">Stack Trace:</strong>
-                            <pre class="mt-1 p-3 bg-gray-50 dark:bg-gray-700 rounded-md text-xs font-mono overflow-x-auto custom-scrollbar"><?= htmlspecialchars($debug_info['trace']) ?></pre>
+                            <pre dir="ltr" class="text-left mt-1 p-3 bg-gray-50 dark:bg-gray-700 rounded-md text-xs font-mono overflow-x-auto custom-scrollbar"><?= htmlspecialchars($debug_info['trace']) ?></pre>
                         </div>
                     </div>
                 </div>
