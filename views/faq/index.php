@@ -1,3 +1,7 @@
+<?php
+$faq_types = get_faq_types();
+$faq_type_labels = array_column($faq_types, 'label_fa', 'key');
+?>
 <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700">
     <!-- Header -->
     <div class="p-6 flex flex-col sm:flex-row sm:justify-between sm:items-center border-b border-gray-100 dark:border-gray-700 gap-4">
@@ -24,7 +28,12 @@
                         <div class="flex-1">
                             <h3 class="text-sm font-bold text-gray-900 dark:text-white line-clamp-2"><?= htmlspecialchars($item['question']) ?></h3>
                              <div class="flex items-center gap-2 mt-1">
-                                <span class="text-xs bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 px-2 py-0.5 rounded">ترتیب: <?= htmlspecialchars($item['position']) ?></span>
+                                <span class="text-xs bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 px-2 py-0.5 rounded">
+                                    <?= htmlspecialchars($faq_type_labels[$item['type']] ?? 'تعیین نشده') ?>
+                                </span>
+                                <span class="text-xs bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 px-2 py-0.5 rounded">
+                                    ترتیب: <?= htmlspecialchars($item['position']) ?>
+                                </span>
                                 <?php if ($item['status'] === 'active'): ?>
                                     <span class="text-xs text-emerald-600 dark:text-emerald-400 font-medium">فعال</span>
                                 <?php else: ?>
@@ -52,6 +61,7 @@
             <thead>
                 <tr class="bg-gray-50 dark:bg-gray-700/50 border-b border-gray-200 dark:border-gray-700">
                     <th class="px-6 py-3 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">سوال</th>
+                    <th class="px-6 py-3 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">نوع</th>
                     <th class="px-6 py-3 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider text-center">ترتیب</th>
                     <th class="px-6 py-3 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider text-center">وضعیت</th>
                     <th class="px-6 py-3 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider text-center">عملیات</th>
@@ -60,7 +70,7 @@
             <tbody class="divide-y divide-gray-100 dark:divide-gray-700 bg-white dark:bg-gray-800">
                  <?php if (empty($items)): ?>
                     <tr>
-                        <td colspan="4" class="px-6 py-8 text-center text-gray-500 dark:text-gray-400 text-sm">
+                        <td colspan="5" class="px-6 py-8 text-center text-gray-500 dark:text-gray-400 text-sm">
                             هیچ سوالی یافت نشد.
                         </td>
                     </tr>
@@ -69,6 +79,9 @@
                         <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors group">
                             <td class="px-6 py-4 text-sm font-medium text-gray-900 dark:text-white max-w-md truncate">
                                 <?= htmlspecialchars($item['question']) ?>
+                            </td>
+                            <td class="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">
+                                <?= htmlspecialchars($faq_type_labels[$item['type']] ?? 'تعیین نشده') ?>
                             </td>
                             <td class="px-6 py-4 text-sm text-center text-gray-500 dark:text-gray-400">
                                 <span class="bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded font-mono text-xs">

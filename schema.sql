@@ -210,6 +210,7 @@ CREATE TABLE `faq_items` (
   `id` INT PRIMARY KEY AUTO_INCREMENT,
   `question` VARCHAR(255) NOT NULL,
   `answer` TEXT NOT NULL,
+  `type` VARCHAR(100) NOT NULL DEFAULT 'general_questions',
   `position` INT DEFAULT 0,
   `status` ENUM('active', 'inactive') NOT NULL DEFAULT 'active',
   `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP

@@ -26,6 +26,22 @@ $actionUrl = $isEdit ? url('faq/update/' . $item['id']) : url('faq/store');
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Type -->
+            <div>
+                <label for="type" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">نوع</label>
+                <div class="relative">
+                    <select id="type" name="type" class="w-full appearance-none rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white px-4 py-2.5 pr-10 focus:ring-primary-500 focus:border-primary-500 shadow-sm transition-colors">
+                        <?php foreach (get_faq_types() as $type): ?>
+                            <option value="<?php echo $type['key']; ?>" <?php echo (isset($item['type']) && $item['type'] === $type['key']) ? 'selected' : ''; ?>>
+                                <?php echo $type['label_fa']; ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
+                    <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center px-3 text-gray-500">
+                        <?php partial('icon', ['name' => 'chevron-down', 'class' => 'w-4 h-4']); ?>
+                    </div>
+                </div>
+            </div>
             <!-- Position -->
             <div>
                 <label for="position" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">ترتیب نمایش</label>
