@@ -467,11 +467,22 @@
                         // Show Toast
                         window.dispatchEvent(new CustomEvent('show-toast', { detail: { message: msg, type: 'error' } }));
 
-                        if (this.pincodeInstance) {
-                            this.pincodeInstance.reset();
-                            // Keep focus on the first input
-                             const firstInput = this.pincodeInstance.getField(0);
-                             if (firstInput) firstInput.focus();
+                        // Only reset if API says expired or similar fatal error
+                        // For simple wrong code, we do NOT reset the input, as per requirements.
+                        if (msg.includes('منقضی')) {
+                             if (this.pincodeInstance) {
+                                this.pincodeInstance.reset();
+                                const firstInput = this.pincodeInstance.getField(0);
+                                if (firstInput) firstInput.focus();
+                            }
+                        } else {
+                            // Focus back on first input or let user edit existing?
+                            // User asked: "Field should not be cleared"
+                            // Just ensure focus is somewhere useful or let them correct it.
+                             if (this.pincodeInstance) {
+                                const firstInput = this.pincodeInstance.getField(0);
+                                if (firstInput) firstInput.focus();
+                            }
                         }
                     }
                 })

@@ -252,7 +252,10 @@ function store(data) {
                 return;
             }
 
-            if (!this.isUserLoggedIn) {
+            // Check against global Auth store if available, otherwise fallback to local prop (for initial load)
+            const isLoggedIn = (Alpine.store('auth') && Alpine.store('auth').check()) || this.isUserLoggedIn;
+
+            if (!isLoggedIn) {
                 window.dispatchEvent(new CustomEvent('open-auth-modal'));
                 return;
             }
