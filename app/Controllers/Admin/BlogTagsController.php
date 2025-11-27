@@ -10,7 +10,7 @@ class BlogTagsController
 {
     public function index()
     {
-        $tags = BlogTag::findAll();
+        $tags = BlogTag::findAllWithCount();
         // If it's an AJAX request, return JSON
         if (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest') {
             header('Content-Type: application/json');

@@ -13,6 +13,17 @@ class BlogTag
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    public static function findAllWithCount()
+    {
+        $sql = "SELECT t.*, COUNT(pt.post_id) as posts_count
+                FROM blog_tags t
+                LEFT JOIN blog_post_tags pt ON t.id = pt.tag_id
+                GROUP BY t.id
+                ORDER BY t.name ASC";
+        $stmt = Database::query($sql);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
     public static function find($id)
     {
         $stmt = Database::query("SELECT * FROM blog_tags WHERE id = :id", ['id' => $id]);
