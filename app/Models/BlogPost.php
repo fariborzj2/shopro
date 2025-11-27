@@ -437,4 +437,19 @@ class BlogPost
        $result = self::findAllPublishedWithCount($limit, $offset, $search, $category_id);
        return $result['posts'];
     }
+
+    /**
+     * Increment the view count for a blog post.
+     *
+     * @param int $id
+     * @return bool
+     */
+    public static function incrementViews($id)
+    {
+        $sql = "UPDATE blog_posts SET views_count = views_count + 1 WHERE id = :id";
+        $pdo = Database::getConnection();
+        $stmt = $pdo->prepare($sql);
+        $stmt->bindValue(':id', $id, PDO::PARAM_INT);
+        return $stmt->execute();
+    }
 }
