@@ -165,7 +165,7 @@
                 </div>
 
                 <!-- Desktop Menu -->
-                <nav class="hidden md:flex items-center space-x-6 space-x-reverse">
+                <nav class="hidden lg:flex items-center space-x-6 space-x-reverse">
                     <a href="/" class="group flex items-center space-x-2 space-x-reverse px-4 py-2 rounded-xl text-sm font-bold text-gray-600 hover:text-primary-600 hover:bg-primary-50 transition-all duration-200">
                         <svg class="w-5 h-5 text-gray-400 group-hover:text-primary-500 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" /></svg>
                         <span>خانه</span>
@@ -202,7 +202,7 @@
                 </nav>
 
                 <!-- Actions -->
-                <div class="hidden md:flex items-center gap-3">
+                <div class="hidden lg:flex items-center gap-3">
                     <!-- Search Button (Mock) -->
                     <button class="p-2.5 rounded-xl text-gray-500 hover:bg-gray-100 hover:text-primary-600 transition-colors">
                         <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
@@ -226,7 +226,7 @@
                             <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" /></svg>
                         </a>
                     <?php else: ?>
-                        <button @click.prevent="$dispatch('open-auth-modal')" class="flex items-center space-x-2 space-x-reverse bg-primary-600 text-white hover:bg-primary-700 px-5 py-2.5 rounded-xl text-sm font-bold shadow-lg shadow-primary-500/30 transition-all transform hover:-translate-y-0.5">
+                        <button @click.prevent="$dispatch('open-auth-modal')" class="flex items-center space-x-2 space-x-reverse bg-primary-600 text-white hover:bg-primary-700 px-5 py-2.5 rounded-md text-sm font-bold shadow-lg shadow-primary-500/30 transition-all transform hover:-translate-y-0.5">
                             <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" /></svg>
                             <span>ورود / ثبت‌نام</span>
                         </button>
@@ -234,7 +234,7 @@
                 </div>
 
                 <!-- Mobile Menu Button -->
-                <div class="md:hidden flex items-center gap-2">
+                <div class="lg:hidden flex items-center gap-2">
                     <button @click="toggleTheme()" class="text-gray-400 hover:text-gray-600 p-2 rounded-full">
                          <svg x-show="!darkMode" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
                          <svg x-show="darkMode" x-cloak class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
