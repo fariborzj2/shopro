@@ -79,6 +79,30 @@
         </div>
     </footer>
 
+    <!-- Toast Notification Container -->
+    <div
+        x-data="{ show: false, message: '', type: 'error' }"
+        @show-toast.window="show = true; message = $event.detail.message; type = $event.detail.type || 'error'; setTimeout(() => show = false, 3000)"
+        x-show="show"
+        x-transition:enter="transition ease-out duration-300"
+        x-transition:enter-start="opacity-0 translate-y-2"
+        x-transition:enter-end="opacity-100 translate-y-0"
+        x-transition:leave="transition ease-in duration-200"
+        x-transition:leave-start="opacity-100 translate-y-0"
+        x-transition:leave-end="opacity-0 translate-y-2"
+        class="fixed bottom-6 left-6 z-[60] px-6 py-3 rounded-xl shadow-lg flex items-center gap-3 min-w-[300px]"
+        :class="type === 'success' ? 'bg-green-600 text-white' : 'bg-red-600 text-white'"
+        style="display: none;"
+    >
+        <div x-show="type === 'success'">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+        </div>
+        <div x-show="type === 'error'">
+             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+        </div>
+        <span x-text="message" class="font-medium"></span>
+    </div>
+
     <!-- Auth Modal (Standardized for Alpine/Tailwind) -->
     <div
         x-data="authModal()"
@@ -140,7 +164,7 @@
                                 <p class="text-sm text-gray-600 mb-4 text-center">
                                     کد تایید ۶ رقمی ارسال شده به شماره <strong x-text="mobile" class="font-bold text-gray-900"></strong> را وارد کنید.
                                 </p>
-                                <div id="otp-inputs" dir="ltr">
+                                <div id="otp-inputs" dir="ltr" :class="{ 'otp-error': isError }">
                                     <!-- Pincode inputs will be generated here -->
                                 </div>
                                 <div class="text-center mt-4">
@@ -192,6 +216,19 @@
         </div>
     </div>
 
+<style>
+    /* OTP Error State Styling */
+    .otp-error input {
+        border-color: #ef4444 !important; /* Tailwind red-500 */
+        background-color: #fef2f2 !important; /* Tailwind red-50 */
+        color: #ef4444 !important;
+    }
+    .otp-error input:focus {
+        box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.2) !important;
+        border-color: #ef4444 !important;
+    }
+</style>
+
 <script>
     function otpTimer(durationInSeconds) {
         return {
@@ -230,6 +267,7 @@
             isLoading: false,
             errorMessage: '',
             pincodeInstance: null,
+            isError: false,
             timer: otpTimer(120), // 2 minutes timer
 
             init() {
@@ -257,6 +295,12 @@
                             this.verifyOtp();
                         }
                     });
+
+                    // Clear error when user types
+                    otpContainer.addEventListener('input', () => {
+                         this.isError = false;
+                         this.errorMessage = '';
+                    }, { capture: true });
 
                     if ('OTPCredential' in navigator) {
                         const ac = new AbortController();
@@ -302,6 +346,7 @@
                 this.otp = '';
                 this.isLoading = false;
                 this.errorMessage = '';
+                this.isError = false;
                 this.timer.stop();
                 if (this.pincodeInstance) {
                     this.pincodeInstance.reset();
@@ -323,6 +368,7 @@
 
                 this.isLoading = true;
                 this.errorMessage = '';
+                this.isError = false;
                 fetch('/api/auth/send-otp', {
                     method: 'POST',
                     headers: {
@@ -349,6 +395,7 @@
             verifyOtp() {
                 this.isLoading = true;
                 this.errorMessage = '';
+                this.isError = false;
                 fetch('/api/auth/verify-otp', {
                     method: 'POST',
                     headers: {
@@ -359,16 +406,33 @@
                 })
                 .then(res => res.json().then(data => ({ status: res.status, body: data })))
                 .then(({ status, body }) => {
+                    if (body.new_csrf_token) {
+                         document.querySelector('meta[name="csrf-token"]').setAttribute('content', body.new_csrf_token);
+                    }
+
                     if (status === 200) {
                         window.location.reload();
                     } else {
-                        this.errorMessage = body.error || 'کد نامعتبر است.';
+                        const msg = body.error || 'کد نامعتبر است.';
+                        this.errorMessage = msg;
+                        this.isError = true;
+
+                        // Show Toast
+                        window.dispatchEvent(new CustomEvent('show-toast', { detail: { message: msg, type: 'error' } }));
+
                         if (this.pincodeInstance) {
                             this.pincodeInstance.reset();
+                            // Keep focus on the first input
+                             const firstInput = this.pincodeInstance.getField(0);
+                             if (firstInput) firstInput.focus();
                         }
                     }
                 })
-                .catch(() => { this.errorMessage = 'خطای ارتباط با سرور.'; })
+                .catch(() => {
+                    const msg = 'خطای ارتباط با سرور.';
+                    this.errorMessage = msg;
+                    window.dispatchEvent(new CustomEvent('show-toast', { detail: { message: msg, type: 'error' } }));
+                 })
                 .finally(() => { this.isLoading = false; });
             }
         }
