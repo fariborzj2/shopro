@@ -36,7 +36,7 @@ class FaqItem
 
     public static function create($data)
     {
-        $sql = "INSERT INTO faq_items (question, answer, status) VALUES (:question, :answer, :status)";
+        $sql = "INSERT INTO faq_items (question, answer, type, status) VALUES (:question, :answer, :type, :status)";
         Database::query($sql, $data);
         return true;
     }
@@ -44,7 +44,7 @@ class FaqItem
     public static function update($id, $data)
     {
         $data['id'] = $id;
-        $sql = "UPDATE faq_items SET question = :question, answer = :answer, status = :status WHERE id = :id";
+        $sql = "UPDATE faq_items SET question = :question, answer = :answer, type = :type, status = :status WHERE id = :id";
         Database::query($sql, $data);
         return true;
     }
@@ -53,5 +53,18 @@ class FaqItem
     {
         Database::query("DELETE FROM faq_items WHERE id = :id", ['id' => $id]);
         return true;
+    }
+
+    public static function findAllGroupedByType()
+    {
+        $stmt = Database::query("SELECT * FROM faq_items WHERE status = 'active' ORDER BY type, position ASC");
+        $items = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        $grouped = [];
+        foreach ($items as $item) {
+            $grouped[$item['type']][] = $item;
+        }
+
+        return $grouped;
     }
 }

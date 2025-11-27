@@ -22,6 +22,7 @@ class FaqController
         $data = [
             'question' => $_POST['question'],
             'answer' => $_POST['answer'],
+            'type' => $_POST['type'],
             'status' => $_POST['status'],
         ];
         FaqItem::create($data);
@@ -39,6 +40,7 @@ class FaqController
         $data = [
             'question' => $_POST['question'],
             'answer' => $_POST['answer'],
+            'type' => $_POST['type'],
             'status' => $_POST['status'],
         ];
         FaqItem::update($id, $data);
