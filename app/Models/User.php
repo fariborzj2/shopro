@@ -14,7 +14,14 @@ class User
      */
     public static function all()
     {
-        $stmt = Database::query("SELECT * FROM users ORDER BY created_at DESC");
+        $sql = "
+            SELECT u.*, COUNT(o.id) as orders_count
+            FROM users u
+            LEFT JOIN orders o ON u.id = o.user_id
+            GROUP BY u.id
+            ORDER BY u.created_at DESC
+        ";
+        $stmt = Database::query($sql);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
