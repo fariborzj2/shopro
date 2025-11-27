@@ -12,7 +12,7 @@ $faq_type_labels = array_column($faq_types, 'label_fa', 'key');
 
         <div class="flex flex-col sm:flex-row items-center gap-4">
             <!-- Filter Form -->
-            <form action="<?= url('/admin/faq') ?>" method="GET" class="flex items-center gap-2">
+            <form action="<?= url('/faq') ?>" method="GET" class="flex items-center gap-2">
                 <select name="type" onchange="this.form.submit()" class="bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block p-2 border border-gray-300 dark:border-gray-600">
                     <option value="">همه انواع</option>
                     <?php foreach ($faq_types as $type): ?>
@@ -156,7 +156,10 @@ $faq_type_labels = array_column($faq_types, 'label_fa', 'key');
                 })
                 .then(response => response.json())
                 .then(data => {
-                    if (!data.success) {
+                    if (data.success) {
+                        // Update the CSRF token meta tag for the next request
+                        document.querySelector('meta[name="csrf-token"]').setAttribute('content', data.new_csrf_token);
+                    } else {
                         alert('خطا در ذخیره ترتیب جدید.');
                     }
                 })

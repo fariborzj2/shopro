@@ -28,7 +28,7 @@ class FaqController
             'position' => isset($_POST['position']) ? (int)$_POST['position'] : 0,
         ];
         FaqItem::create($data);
-        redirect('/faq');
+        redirect('/admin/faq');
     }
 
     public function edit($id)
@@ -47,7 +47,7 @@ class FaqController
             'position' => isset($_POST['position']) ? (int)$_POST['position'] : 0,
         ];
         FaqItem::update($id, $data);
-        redirect('/faq');
+        redirect('/admin/faq');
     }
 
     public function reorder()
@@ -64,7 +64,11 @@ class FaqController
         }
 
         if (FaqItem::updateOrder($ids)) {
-            echo json_encode(['success' => true, 'message' => 'Order updated successfully.']);
+            echo json_encode([
+                'success' => true,
+                'message' => 'Order updated successfully.',
+                'new_csrf_token' => $_SESSION['csrf_token']
+            ]);
         } else {
             echo json_encode(['success' => false, 'message' => 'Failed to update order.']);
             http_response_code(500);
@@ -74,6 +78,6 @@ class FaqController
     public function delete($id)
     {
         FaqItem::delete($id);
-        redirect('/faq');
+        redirect('/admin/faq');
     }
 }

@@ -112,7 +112,7 @@ function csrf_field()
  *
  * @return bool
  */
-function verify_csrf_token()
+function verify_csrf_token($rotate = true)
 {
     $token = null;
     if (isset($_POST['csrf_token'])) {
@@ -124,7 +124,9 @@ function verify_csrf_token()
     if ($token && isset($_SESSION['csrf_token']) && hash_equals($_SESSION['csrf_token'], $token)) {
         // Token is valid. For better security, regenerate the token immediately
         // after successful validation. This is the "rotating token" pattern.
-        $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+        if ($rotate) {
+            $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+        }
         return true;
     }
 
