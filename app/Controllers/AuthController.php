@@ -23,6 +23,11 @@ class AuthController
         $data = Request::json();
         $mobile = $data['mobile'] ?? null;
 
+        // Normalize mobile number (convert Persian to English)
+        if ($mobile) {
+            $mobile = convert_persian_numbers($mobile);
+        }
+
         if (!$this->validateMobile($mobile)) {
             echo json_encode(['error' => 'شماره موبایل وارد شده معتبر نیست.']);
             http_response_code(400);
@@ -74,6 +79,14 @@ class AuthController
         $data = Request::json();
         $mobile = $data['mobile'] ?? null;
         $otp = $data['otp'] ?? null;
+
+        // Normalize inputs
+        if ($mobile) {
+            $mobile = convert_persian_numbers($mobile);
+        }
+        if ($otp) {
+            $otp = convert_persian_numbers($otp);
+        }
 
         if (!$this->validateMobile($mobile) || !$otp) {
             echo json_encode([

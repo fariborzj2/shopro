@@ -176,6 +176,9 @@
 
                             <!-- Error Message -->
                             <p x-show="errorMessage" x-text="errorMessage" class="mt-4 text-sm text-red-600 text-center bg-red-50 p-3 rounded-lg"></p>
+
+                            <!-- Hidden Submit Button to support Enter key submission -->
+                            <button type="submit" style="display: none;"></button>
                         </form>
                     </div>
 
@@ -183,7 +186,7 @@
                     <div class="p-4 border-t border-gray-200 bg-gray-50 rounded-b-2xl">
                         <!-- Step 1 Footer -->
                         <div x-show="step === 'mobile'">
-                            <button @click="sendOtp()" :disabled="isLoading" class="inline-flex w-full justify-center rounded-xl bg-primary-600 px-3 py-3 text-sm font-bold text-white shadow-sm hover:bg-primary-500 transition-colors disabled:opacity-50">
+                            <button @click="sendOtp()" :disabled="isLoading" type="button" class="inline-flex w-full justify-center rounded-xl bg-primary-600 px-3 py-3 text-sm font-bold text-white shadow-sm hover:bg-primary-500 transition-colors disabled:opacity-50">
                                 <span x-show="!isLoading">ارسال کد تایید</span>
                                 <span x-show="isLoading">در حال ارسال...</span>
                             </button>
@@ -193,6 +196,7 @@
                         <div x-show="step === 'otp'" class="flex items-center justify-between gap-x-4">
                             <button
                                 @click="sendOtp()"
+                                type="button"
                                 :disabled="timer.isActive || isLoading"
                                 class="inline-flex items-center justify-center rounded-xl border border-gray-300 bg-white px-3 py-3 text-sm font-bold text-gray-700 shadow-sm hover:bg-gray-50 transition-colors disabled:opacity-50 flex-1"
                             >
@@ -205,7 +209,10 @@
                                     <span x-text="timer.formatTime()" dir="ltr"></span>
                                 </span>
                             </button>
-                            <button @click="verifyOtp()" :disabled="isLoading" class="inline-flex w-full justify-center rounded-xl bg-green-600 px-3 py-3 text-sm font-bold text-white shadow-sm hover:bg-green-500 transition-colors disabled:opacity-50 flex-1">
+                            <!-- Use type="button" and explicit click handler OR type="submit" and let form handler do it.
+                                 Here we use type="submit" so it acts as the primary action for the form.
+                             -->
+                            <button formnovalidate @click="verifyOtp()" :disabled="isLoading" type="button" class="inline-flex w-full justify-center rounded-xl bg-green-600 px-3 py-3 text-sm font-bold text-white shadow-sm hover:bg-green-500 transition-colors disabled:opacity-50 flex-1">
                                 <span x-show="!isLoading">تایید و ورود</span>
                                 <span x-show="isLoading">در حال بررسی...</span>
                             </button>
@@ -332,6 +339,15 @@
                 }
             },
 
+            convertPersianToEnglish(str) {
+                if (!str) return str;
+                const persian = ['۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹'];
+                const arabic = ['٠', '١', '٢', '٣', '٤', '٥', '٦', '٧', '٨', '٩'];
+                return str.toString()
+                    .replace(/[۰-۹]/g, d => persian.indexOf(d))
+                    .replace(/[٠-٩]/g, d => arabic.indexOf(d));
+            },
+
             openModal() { this.isOpen = true; },
             closeModal() {
                 this.isOpen = false;
@@ -356,6 +372,7 @@
                 return this.step === 'mobile' ? 'ورود به حساب کاربری' : 'تایید شماره موبایل';
             },
             currentStepAction() {
+                // This is called on form submit (Enter key)
                 if (this.step === 'mobile') {
                     this.sendOtp();
                 } else if (this.step === 'otp') {
@@ -369,13 +386,16 @@
                 this.isLoading = true;
                 this.errorMessage = '';
                 this.isError = false;
+
+                const normalizedMobile = this.convertPersianToEnglish(this.mobile);
+
                 fetch('/api/auth/send-otp', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                         'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
                     },
-                    body: JSON.stringify({ mobile: this.mobile })
+                    body: JSON.stringify({ mobile: normalizedMobile })
                 })
                 .then(res => res.json().then(data => ({ status: res.status, body: data })))
                 .then(({ status, body }) => {
@@ -396,13 +416,17 @@
                 this.isLoading = true;
                 this.errorMessage = '';
                 this.isError = false;
+
+                const normalizedMobile = this.convertPersianToEnglish(this.mobile);
+                const normalizedOtp = this.convertPersianToEnglish(this.otp);
+
                 fetch('/api/auth/verify-otp', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                         'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
                     },
-                    body: JSON.stringify({ mobile: this.mobile, otp: this.otp })
+                    body: JSON.stringify({ mobile: normalizedMobile, otp: normalizedOtp })
                 })
                 .then(res => res.json().then(data => ({ status: res.status, body: data })))
                 .then(({ status, body }) => {
