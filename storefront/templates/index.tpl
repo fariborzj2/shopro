@@ -24,7 +24,7 @@
                                 </a>
                             </div>
                             <div class="mt-3 sm:mt-0">
-                                <a href="/page/about-us" class="w-full flex items-center justify-center px-4 py-2 text-base font-bold rounded-md text-primary-700 bg-gray-50 hover:bg-gray-50 md:py-3 md:text-lg md:px-10 transition-all transform hover:-translate-y-1 shadow-lg shadow-primary-500/10">
+                                <a href="/page/about-us" class="w-full flex items-center justify-center px-4 py-2 text-base font-bold rounded-md text-primary-700 bg-gray-50 hover:bg-gray-50 md:py-3 md:text-lg md:px-10 transition-all transform hover:-translate-y-1 hover:shadow-lg hover:shadow-primary-500/10">
                                     <svg class="w-5 h-5 ml-2 -mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                                     درباره ما
                                 </a>
@@ -53,11 +53,11 @@
 
         <!-- Hero Image (Floating) -->
         <div class="basis-2/4 grow bg-gray-50 hidden overflow-hidden lg:flex">
-            <div class="h-56 w-full flex lg:w-full lg:h-full relative">
+            <div class="w-full p-20 pb-0 md:p-10 md:pb-0 flex justify-center items-end lg:w-full lg:h-full relative">
                 <!-- Abstract Shapes Behind Image -->
                 <img
-                    class="w-full h-auto relative z-10 transform hover:scale-105 transition-transform duration-700 ease-out"
-                    src="https://placehold.co/600x350/f8fafc/3b82f6?text=Modern+Store"
+                    class="max-w-full w-auto h-auto"
+                    src="/images/mobile.png"
                     alt="Store Banner"
                 >
             </div>
