@@ -425,29 +425,68 @@
                 })
                 .then(res => res.json().then(data => ({ status: res.status, body: data })))
                 .then(({ status, body }) => {
+                    // Update CSRF Token
                     if (body.new_csrf_token) {
                          document.querySelector('meta[name="csrf-token"]').setAttribute('content', body.new_csrf_token);
                     }
 
-                    if (status === 200) {
-                        window.location.reload();
+                    // Check response logic
+                    // Rely STRICTLY on body.status which is now guaranteed by AuthController
+                    const isSuccess = body.status === true;
+
+                    if (isSuccess) {
+                        // Success Logic
+                        // 1. Update Global Store
+                        if (body.user && Alpine.store('auth')) {
+                            Alpine.store('auth').login(body.user);
+                        }
+
+                        // 2. Show Success Toast
+                        window.dispatchEvent(new CustomEvent('show-toast', {
+                            detail: {
+                                message: body.message || 'ورود با موفقیت انجام شد.',
+                                type: 'success'
+                            }
+                        }));
+
+                        // 3. Handle Redirect (if present)
+                        if (body.redirect) {
+                            window.location.href = body.redirect;
+                        } else {
+                            // 4. Close Modal (no refresh)
+                            this.closeModal();
+                        }
+
                     } else {
-                        const msg = body.error || 'کد نامعتبر است.';
+                        // Error Logic
+                        const msg = body.message || body.error || 'کد نامعتبر است.';
                         this.errorMessage = msg;
                         this.isError = true;
 
-                        // Show Toast
+                        // Show Toast - explicitly type 'error' for red color
                         window.dispatchEvent(new CustomEvent('show-toast', { detail: { message: msg, type: 'error' } }));
 
-                        if (this.pincodeInstance) {
-                            this.pincodeInstance.reset();
-                            // Keep focus on the first input
-                             const firstInput = this.pincodeInstance.getField(0);
-                             if (firstInput) firstInput.focus();
+                        // Only reset if API says expired or similar fatal error
+                        // For simple wrong code, we do NOT reset the input, as per requirements.
+                        if (msg.includes('منقضی')) {
+                             if (this.pincodeInstance) {
+                                this.pincodeInstance.reset();
+                                const firstInput = this.pincodeInstance.getField(0);
+                                if (firstInput) firstInput.focus();
+                            }
+                        } else {
+                            // Focus back on first input or let user edit existing?
+                            // User asked: "Field should not be cleared"
+                            // Just ensure focus is somewhere useful or let them correct it.
+                             if (this.pincodeInstance) {
+                                const firstInput = this.pincodeInstance.getField(0);
+                                if (firstInput) firstInput.focus();
+                            }
                         }
                     }
                 })
-                .catch(() => {
+                .catch((err) => {
+                    console.error(err);
                     const msg = 'خطای ارتباط با سرور.';
                     this.errorMessage = msg;
                     window.dispatchEvent(new CustomEvent('show-toast', { detail: { message: msg, type: 'error' } }));
