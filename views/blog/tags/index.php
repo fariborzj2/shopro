@@ -27,7 +27,9 @@
                     </span>
                 </div>
                 <div class="flex justify-between items-center mt-3 pt-3 border-t border-gray-100 dark:border-gray-700">
-                    <span class="text-xs text-gray-400"></span>
+                    <span class="text-xs text-gray-500 dark:text-gray-400">
+                        تعداد استفاده: <span x-text="tag.posts_count || 0"></span>
+                    </span>
                     <div class="flex items-center gap-3">
                         <button @click="openModal('edit', tag)" class="text-indigo-600 dark:text-indigo-400 text-sm font-medium">ویرایش</button>
                         <span class="text-gray-300 dark:text-gray-600">|</span>
@@ -48,6 +50,7 @@
             <thead class="bg-gray-50 dark:bg-gray-700/50">
                 <tr>
                     <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">نام</th>
+                    <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">تعداد استفاده</th>
                     <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">وضعیت</th>
                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">عملیات</th>
                 </tr>
@@ -56,6 +59,7 @@
                 <template x-for="tag in tags" :key="tag.id">
                     <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white" x-text="tag.name"></td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400" x-text="tag.posts_count || 0"></td>
                         <td class="px-6 py-4 whitespace-nowrap">
                             <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full"
                                   :class="tag.status === 'active' ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400' : 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300'"
@@ -176,6 +180,9 @@ function tagManager() {
             })
             .then(response => response.json())
             .then(data => {
+                if (data.new_csrf_token) {
+                    document.querySelector('meta[name="csrf-token"]').setAttribute('content', data.new_csrf_token);
+                }
                 if (data.success) {
                     this.closeModal();
                     this.refreshTags(); // Reload list
@@ -207,6 +214,9 @@ function tagManager() {
                 return response.json();
             })
             .then(data => {
+                if (data.new_csrf_token) {
+                    document.querySelector('meta[name="csrf-token"]').setAttribute('content', data.new_csrf_token);
+                }
                 if (data.success) {
                     this.refreshTags();
                 } else {
