@@ -28,7 +28,7 @@ class FaqController
             'position' => isset($_POST['position']) ? (int)$_POST['position'] : 0,
         ];
         FaqItem::create($data);
-        redirect('/admin/faq');
+        redirect('/faq');
     }
 
     public function edit($id)
@@ -47,7 +47,7 @@ class FaqController
             'position' => isset($_POST['position']) ? (int)$_POST['position'] : 0,
         ];
         FaqItem::update($id, $data);
-        redirect('/admin/faq');
+        redirect('/faq');
     }
 
     public function reorder()
@@ -74,6 +74,6 @@ class FaqController
     public function delete($id)
     {
         FaqItem::delete($id);
-        redirect('/admin/faq');
+        redirect('/faq');
     }
 }
