@@ -94,7 +94,7 @@ class StorefrontController
                     'slug' => $post->slug,
                     'excerpt' => mb_substr(strip_tags($post->excerpt), 0, 100) . '...',
                     'imageUrl' => $post->image_url ?? 'https://placehold.co/600x400/EEE/31343C?text=Blog',
-                    'date' => \jdate('j F Y', strtotime($post->published_at))
+                    'date' => !empty($post->published_at) ? \jdate('j F Y', strtotime($post->published_at)) : ''
                 ];
             }, $latestPosts),
             'brands' => $brands,

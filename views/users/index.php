@@ -26,7 +26,13 @@
                         </div>
                         <div class="flex-1 min-w-0">
                             <h3 class="text-sm font-bold text-gray-900 dark:text-white truncate"><?= htmlspecialchars($user['name']) ?></h3>
-                            <p class="text-xs text-gray-500 dark:text-gray-400 font-mono truncate"><?= htmlspecialchars($user['mobile']) ?></p>
+                            <a href="<?= url('orders?search=' . $user['mobile']) ?>" class="text-xs text-primary-600 dark:text-primary-400 hover:text-primary-800 dark:hover:text-primary-300 font-mono truncate transition-colors">
+                                <?= htmlspecialchars($user['mobile']) ?>
+                            </a>
+                        </div>
+                        <div class="text-center px-2">
+                             <span class="block text-xs text-gray-500 dark:text-gray-400">سفارش‌ها</span>
+                             <span class="block text-sm font-bold text-gray-900 dark:text-white"><?= $user['orders_count'] ?? 0 ?></span>
                         </div>
                         <?php
                              $status_style = match($user['status']) {
@@ -71,6 +77,7 @@
                 <tr class="bg-gray-50 dark:bg-gray-700/50 border-b border-gray-200 dark:border-gray-700">
                     <th class="px-6 py-3 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">نام کاربر</th>
                     <th class="px-6 py-3 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">موبایل</th>
+                    <th class="px-6 py-3 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider text-center">تعداد سفارش</th>
                     <th class="px-6 py-3 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">تاریخ عضویت</th>
                     <th class="px-6 py-3 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">وضعیت</th>
                     <th class="px-6 py-3 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider text-center">عملیات</th>
@@ -95,7 +102,12 @@
                                 </div>
                             </td>
                             <td class="px-6 py-4 text-sm text-gray-500 dark:text-gray-400 font-mono">
-                                <?= htmlspecialchars($user['mobile']) ?>
+                                <a href="<?= url('orders?search=' . $user['mobile']) ?>" class="text-primary-600 hover:text-primary-800 dark:text-primary-400 dark:hover:text-primary-300 transition-colors">
+                                    <?= htmlspecialchars($user['mobile']) ?>
+                                </a>
+                            </td>
+                            <td class="px-6 py-4 text-sm text-gray-900 dark:text-white text-center font-bold">
+                                <?= $user['orders_count'] ?? 0 ?>
                             </td>
                             <td class="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">
                                 <?= \jdate('Y/m/d', strtotime($user['created_at'])) ?>
