@@ -4,15 +4,30 @@ $faq_type_labels = array_column($faq_types, 'label_fa', 'key');
 ?>
 <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700">
     <!-- Header -->
-    <div class="p-6 flex flex-col sm:flex-row sm:justify-between sm:items-center border-b border-gray-100 dark:border-gray-700 gap-4">
-        <div>
+    <div class="p-6 flex flex-col md:flex-row md:justify-between md:items-center border-b border-gray-100 dark:border-gray-700 gap-4">
+        <div class="flex-1">
             <h1 class="text-xl font-bold text-gray-800 dark:text-white">مدیریت سوالات متداول</h1>
             <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">سوالات و پاسخ‌های متداولی که در سایت نمایش داده می‌شوند</p>
         </div>
-        <a href="<?= url('faq/create') ?>" class="inline-flex items-center justify-center px-4 py-2 bg-primary-600 text-white text-sm font-medium rounded-lg hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 shadow-sm transition-colors">
-            <?php partial('icon', ['name' => 'plus', 'class' => 'w-5 h-5 ml-2']); ?>
-            افزودن سوال جدید
-        </a>
+
+        <div class="flex flex-col sm:flex-row items-center gap-4">
+            <!-- Filter Form -->
+            <form action="<?= url('/admin/faq') ?>" method="GET" class="flex items-center gap-2">
+                <select name="type" onchange="this.form.submit()" class="bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block p-2 border border-gray-300 dark:border-gray-600">
+                    <option value="">همه انواع</option>
+                    <?php foreach ($faq_types as $type): ?>
+                        <option value="<?= $type['key'] ?>" <?= (isset($selected_type) && $selected_type === $type['key']) ? 'selected' : '' ?>>
+                            <?= $type['label_fa'] ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+            </form>
+
+            <a href="<?= url('faq/create') ?>" class="inline-flex items-center justify-center px-4 py-2 bg-primary-600 text-white text-sm font-medium rounded-lg hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 shadow-sm transition-colors whitespace-nowrap">
+                <?php partial('icon', ['name' => 'plus', 'class' => 'w-5 h-5 ml-2']); ?>
+                افزودن سوال جدید
+            </a>
+        </div>
     </div>
 
     <!-- Mobile List View -->
@@ -60,14 +75,14 @@ $faq_type_labels = array_column($faq_types, 'label_fa', 'key');
         <table class="min-w-full text-right">
             <thead>
                 <tr class="bg-gray-50 dark:bg-gray-700/50 border-b border-gray-200 dark:border-gray-700">
+                    <th class="px-6 py-3 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider w-16 text-center">ترتیب</th>
                     <th class="px-6 py-3 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">سوال</th>
                     <th class="px-6 py-3 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">نوع</th>
-                    <th class="px-6 py-3 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider text-center">ترتیب</th>
                     <th class="px-6 py-3 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider text-center">وضعیت</th>
                     <th class="px-6 py-3 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider text-center">عملیات</th>
                 </tr>
             </thead>
-            <tbody class="divide-y divide-gray-100 dark:divide-gray-700 bg-white dark:bg-gray-800">
+            <tbody id="sortable-table" class="divide-y divide-gray-100 dark:divide-gray-700 bg-white dark:bg-gray-800">
                  <?php if (empty($items)): ?>
                     <tr>
                         <td colspan="5" class="px-6 py-8 text-center text-gray-500 dark:text-gray-400 text-sm">
@@ -76,17 +91,17 @@ $faq_type_labels = array_column($faq_types, 'label_fa', 'key');
                     </tr>
                 <?php else: ?>
                     <?php foreach ($items as $item): ?>
-                        <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors group">
+                        <tr data-id="<?= $item['id'] ?>" class="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors group">
+                            <td class="px-6 py-4 text-sm text-center text-gray-400 font-mono cursor-move group-hover:text-gray-600 dark:group-hover:text-gray-300">
+                                <div class="flex items-center justify-center">
+                                    <svg class="w-4 h-4 text-gray-300 cursor-move" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+                                </div>
+                            </td>
                             <td class="px-6 py-4 text-sm font-medium text-gray-900 dark:text-white max-w-md truncate">
                                 <?= htmlspecialchars($item['question']) ?>
                             </td>
                             <td class="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">
                                 <?= htmlspecialchars($faq_type_labels[$item['type'] ?? 'general_questions'] ?? 'تعیین نشده') ?>
-                            </td>
-                            <td class="px-6 py-4 text-sm text-center text-gray-500 dark:text-gray-400">
-                                <span class="bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded font-mono text-xs">
-                                    <?= htmlspecialchars($item['position']) ?>
-                                </span>
                             </td>
                             <td class="px-6 py-4 text-sm text-center">
                                 <?php if ($item['status'] === 'active'): ?>
@@ -115,3 +130,44 @@ $faq_type_labels = array_column($faq_types, 'label_fa', 'key');
         </table>
     </div>
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
+<script>
+    const sortableTable = document.getElementById('sortable-table');
+    if (sortableTable) {
+        new Sortable(sortableTable, {
+            animation: 150,
+            handle: '.cursor-move',
+            ghostClass: 'bg-indigo-50',
+            onEnd: function (evt) {
+                const rows = Array.from(evt.target.children);
+                const ids = rows.map(row => row.getAttribute('data-id'));
+
+                const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
+                fetch('/admin/faq/reorder', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'X-CSRF-TOKEN': csrfToken
+                    },
+                    body: JSON.stringify({ ids: ids })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Update the CSRF token meta tag for the next request
+                        document.querySelector('meta[name="csrf-token"]').setAttribute('content', data.new_csrf_token);
+                    } else {
+                        alert('خطا در ذخیره ترتیب جدید.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('خطا در برقراری ارتباط با سرور.');
+                });
+            }
+        });
+    }
+</script>
