@@ -1,12 +1,17 @@
-<div class="flex justify-between items-center mb-6">
-    <h1 class="text-2xl font-bold text-gray-800 dark:text-white">مدیریت دسته‌بندی‌های وبلاگ</h1>
-    <a href="<?php echo url('blog/categories/create'); ?>" class="px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-xl transition-colors flex items-center gap-2 shadow-lg shadow-primary-500/30">
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
-        افزودن دسته‌بندی جدید
-    </a>
-</div>
+<div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
 
-<div class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
+    <!-- Header -->
+    <div class="p-6 flex flex-col sm:flex-row sm:justify-between sm:items-center border-b border-gray-100 dark:border-gray-700 gap-4">
+        <div>
+            <h1 class="text-2xl font-bold text-gray-900 dark:text-white">مدیت دسته‌بندی‌های وبلاگ</h1>
+            <p class="text-sm text-gray-500 dark:text-gray-400">لیست و مدیریت دسته‌بندی‌های بلاگ</p>
+        </div>
+        <a href="<?php echo url('blog/categories/create'); ?>" class="inline-flex items-center justify-center px-4 py-2 bg-primary-600 text-white text-sm font-medium rounded-lg hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 shadow-sm transition-colors">
+            <?php partial('icon', ['name' => 'plus', 'class' => 'w-5 h-5 ml-2']); ?>
+           افزودن دسته‌بندی جدید
+        </a>
+    </div>
+    
     <div class="overflow-x-auto">
         <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
             <thead class="bg-gray-50 dark:bg-gray-700/50">
@@ -31,7 +36,10 @@
                             <?= htmlspecialchars($category['parent_name'] ?? '—') ?>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap">
-                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full <?= $category['status'] === 'active' ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400' : 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300' ?>">
+                            <span class="px-2.5 py-0.5 rounded-full text-xs font-medium 
+                            <?= $category['status'] === 'active' ? 
+                            'bg-emerald-50 text-emerald-700 dark:bg-emerald-900/20 dark:text-emerald-400 border border-emerald-100 dark:border-emerald-800' : 
+                            'bg-gray-50 text-gray-700 dark:bg-gray-700 dark:text-gray-300 border border-gray-200 dark:border-gray-600' ?>">
                                 <?= $category['status'] === 'active' ? 'فعال' : 'غیرفعال' ?>
                             </span>
                         </td>
