@@ -452,4 +452,58 @@ class BlogPost
         $stmt->bindValue(':id', $id, PDO::PARAM_INT);
         return $stmt->execute();
     }
+
+    public static function getSearchSuggestions($term, $limit = 5)
+    {
+        $sql = "SELECT title, slug FROM blog_posts
+                WHERE status = 'published'
+                AND (published_at IS NULL OR published_at <= NOW())
+                AND title LIKE :term
+                ORDER BY published_at DESC
+                LIMIT :limit";
+        $pdo = Database::getConnection();
+        $stmt = $pdo->prepare($sql);
+        $stmt->bindValue(':term', '%' . $term . '%');
+        $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public static function getTopAuthors($limit = 5)
+    {
+         $sql = "SELECT a.id, a.name, a.email, COUNT(bp.id) as posts_count
+                 FROM admins a
+                 JOIN blog_posts bp ON a.id = bp.author_id
+                 WHERE bp.status = 'published' AND (bp.published_at IS NULL OR bp.published_at <= NOW())
+                 GROUP BY a.id, a.name, a.email
+                 ORDER BY posts_count DESC
+                 LIMIT :limit";
+
+         $pdo = Database::getConnection();
+         $stmt = $pdo->prepare($sql);
+         $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
+         $stmt->execute();
+         return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public static function getPostsByCategorySlug($slug, $limit = 4)
+    {
+         $sql = "SELECT bp.id, bp.title, bp.slug, bp.excerpt, bp.image_url, bp.published_at, bp.views_count,
+                bc.name_fa as category_name, bc.slug as category_slug, a.name as author_name
+                FROM blog_posts bp
+                JOIN blog_categories bc ON bp.category_id = bc.id
+                LEFT JOIN admins a ON bp.author_id = a.id
+                WHERE bc.slug = :slug
+                AND bp.status = 'published'
+                AND (bp.published_at IS NULL OR bp.published_at <= NOW())
+                ORDER BY bp.published_at DESC
+                LIMIT :limit";
+
+        $pdo = Database::getConnection();
+        $stmt = $pdo->prepare($sql);
+        $stmt->bindValue(':slug', $slug);
+        $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_OBJ);
+    }
 }
