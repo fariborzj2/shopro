@@ -17,16 +17,36 @@ class ProductsController
     public function index()
     {
         $current_page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
-        $total_products = Product::count();
+        $search = isset($_GET['search']) ? trim($_GET['search']) : '';
+        $category_id = isset($_GET['category_id']) ? (int)$_GET['category_id'] : null;
 
-        $paginator = new Paginator($total_products, self::ITEMS_PER_PAGE, $current_page, '/products');
+        $total_products = Product::count($search, $category_id);
 
-        $products = Product::paginated(self::ITEMS_PER_PAGE, $paginator->getOffset());
+        $baseUrl = '/products';
+        $params = [];
+        if (!empty($search)) {
+            $params['search'] = $search;
+        }
+        if (!empty($category_id)) {
+            $params['category_id'] = $category_id;
+        }
+
+        if (!empty($params)) {
+            $baseUrl .= '?' . http_build_query($params);
+        }
+
+        $paginator = new Paginator($total_products, self::ITEMS_PER_PAGE, $current_page, $baseUrl);
+
+        $products = Product::paginated(self::ITEMS_PER_PAGE, $paginator->getOffset(), $search, $category_id);
+        $categories = Category::all();
 
         return view('main', 'products/index', [
             'title' => 'مدیریت محصولات',
             'products' => $products,
-            'paginator' => $paginator
+            'paginator' => $paginator,
+            'search' => $search,
+            'categories' => $categories,
+            'selected_category' => $category_id
         ]);
     }
 
