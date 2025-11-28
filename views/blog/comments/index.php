@@ -186,7 +186,7 @@
 
                                     <span class="w-px h-4 bg-gray-200 dark:bg-gray-700"></span>
 
-                                    <a href="<?php echo url(blog/comments/edit/' . $comment['id']); ?>" class="text-indigo-600 hover:text-indigo-900 dark:text-indigo-400 dark:hover:text-indigo-300 p-1 rounded-md hover:bg-indigo-50 dark:hover:bg-indigo-900/30" title="ویرایش">
+                                    <a href="<?php echo url('blog/comments/edit/' . $comment['id']); ?>" class="text-indigo-600 hover:text-indigo-900 dark:text-indigo-400 dark:hover:text-indigo-300 p-1 rounded-md hover:bg-indigo-50 dark:hover:bg-indigo-900/30" title="ویرایش">
                                         <?php partial('icon', ['name' => 'edit', 'class' => 'w-5 h-5']); ?>
                                     </a>
                                     <form action="<?php echo url('blog/comments/delete/' . $comment['id']); ?>" method="POST" class="inline-block" onsubmit="return confirm('آیا از حذف این نظر مطمئن هستید؟');">
