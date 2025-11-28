@@ -15,9 +15,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?php echo $pageTitle ?? 'فروشگاه مدرن'; ?></title>
+    <title><?php echo htmlspecialchars($pageTitle ?? 'فروشگاه مدرن'); ?></title>
     <meta name="csrf-token" content="<?php echo csrf_token(); ?>">
-    <meta name="description" content="<?php echo $metaDescription ?? 'توضیحات پیش‌فرض سایت'; ?>">
+    <meta name="description" content="<?php echo htmlspecialchars($metaDescription ?? 'توضیحات پیش‌فرض سایت'); ?>">
     <?php if (isset($canonicalUrl)): ?>
         <link rel="canonical" href="<?php echo $canonicalUrl; ?>">
     <?php endif; ?>
