@@ -14,7 +14,7 @@
 </div>
 
 <!-- KPIs Stats Grid -->
-<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+<div class="grid grid-cols-1 grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-6 mb-3 lg:mb-8">
 
     <!-- Card 1: Sales Today -->
     <div class="group relative overflow-hidden bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-card hover:shadow-lg transition-all duration-300 border border-gray-100 dark:border-gray-700">
@@ -31,7 +31,7 @@
         </div>
         <div class="relative z-10">
             <h3 class="text-sm font-medium text-gray-500 dark:text-gray-400">فروش امروز</h3>
-            <p class="mt-1 text-3xl font-bold text-gray-900 dark:text-white tracking-tight">
+            <p class="mt-1 text-xl lg:text-2xl font-bold text-gray-900 dark:text-white tracking-tight">
                 <?= number_format((float)str_replace(',', '', $kpis['sales_today'])) ?>
                 <span class="text-sm font-normal text-gray-400 mr-1">تومان</span>
             </p>
@@ -48,7 +48,7 @@
         </div>
         <div class="relative z-10">
             <h3 class="text-sm font-medium text-gray-500 dark:text-gray-400">سفارشات امروز</h3>
-            <p class="mt-1 text-3xl font-bold text-gray-900 dark:text-white tracking-tight"><?= $kpis['orders_today'] ?></p>
+            <p class="mt-1 text-2xl font-bold text-gray-900 dark:text-white tracking-tight"><?= $kpis['orders_today'] ?></p>
         </div>
     </div>
 
@@ -62,7 +62,7 @@
         </div>
         <div class="relative z-10">
             <h3 class="text-sm font-medium text-gray-500 dark:text-gray-400">کاربران جدید امروز</h3>
-            <p class="mt-1 text-3xl font-bold text-gray-900 dark:text-white tracking-tight"><?= $kpis['new_users_today'] ?></p>
+            <p class="mt-1 text-2xl font-bold text-gray-900 dark:text-white tracking-tight"><?= $kpis['new_users_today'] ?></p>
         </div>
     </div>
 
@@ -82,9 +82,9 @@
 </div>
 
 <!-- Aggregate Reports Cards -->
-<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-    <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-card border border-gray-100 dark:border-gray-700 flex items-center justify-between group hover:border-primary-500 transition-colors cursor-default">
-        <div>
+<div class="grid grid-cols-1 grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-6 mb-6 lg:mb-8">
+    <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-card border border-gray-100 dark:border-gray-700 flex  flex-col lg:flex-row items-start lg:items-center justify-start lg:justify-between group hover:border-primary-500 transition-colors cursor-default">
+        <div class="order-1 lg:order-none mt-2 lg:mt-0">
             <p class="text-sm font-medium text-gray-500 dark:text-gray-400">مجموع کل کاربران</p>
             <p class="mt-1 text-2xl font-bold text-gray-900 dark:text-white"><?= number_format($reports['total_users']) ?></p>
         </div>
@@ -93,10 +93,10 @@
         </div>
     </div>
 
-    <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-card border border-gray-100 dark:border-gray-700 flex items-center justify-between group hover:border-indigo-500 transition-colors cursor-default">
-        <div>
+    <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-card border border-gray-100 dark:border-gray-700 flex  flex-col lg:flex-row items-start lg:items-center justify-start lg:justify-between group hover:border-primary-500 transition-colors cursor-default">
+        <div class="order-1 lg:order-none mt-2 lg:mt-0">
             <p class="text-sm font-medium text-gray-500 dark:text-gray-400">مجموع کل فروش</p>
-            <p class="mt-1 text-2xl font-bold text-gray-900 dark:text-white">
+            <p class="mt-1 text-xl lg:text-2xl font-bold text-gray-900 dark:text-white">
                 <?= number_format($reports['total_sales']) ?>
                 <span class="text-sm font-normal text-gray-400">تومان</span>
             </p>
@@ -106,8 +106,8 @@
         </div>
     </div>
 
-    <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-card border border-gray-100 dark:border-gray-700 flex items-center justify-between group hover:border-emerald-500 transition-colors cursor-default">
-         <div>
+    <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-card border border-gray-100 dark:border-gray-700 flex  flex-col lg:flex-row items-start lg:items-center justify-start lg:justify-between group hover:border-primary-500 transition-colors cursor-default">
+        <div class="order-1 lg:order-none mt-2 lg:mt-0">
             <p class="text-sm font-medium text-gray-500 dark:text-gray-400">سفارشات تکمیل‌شده</p>
             <p class="mt-1 text-2xl font-bold text-gray-900 dark:text-white"><?= number_format($reports['total_completed_orders']) ?></p>
         </div>
@@ -116,8 +116,8 @@
         </div>
     </div>
 
-    <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-card border border-gray-100 dark:border-gray-700 flex items-center justify-between group hover:border-red-500 transition-colors cursor-default">
-        <div>
+    <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-card border border-gray-100 dark:border-gray-700 flex  flex-col lg:flex-row items-start lg:items-center justify-start lg:justify-between group hover:border-primary-500 transition-colors cursor-default">
+        <div class="order-1 lg:order-none mt-2 lg:mt-0">
             <p class="text-sm font-medium text-gray-500 dark:text-gray-400">سفارشات ناموفق امروز</p>
             <p class="mt-1 text-2xl font-bold text-gray-900 dark:text-white"><?= number_format($reports['failed_orders_today']) ?></p>
         </div>
@@ -128,7 +128,7 @@
 </div>
 
 <!-- Charts Grid -->
-<div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8 mb-6 lg:mb-8">
     <!-- Sales Chart -->
     <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-card border border-gray-100 dark:border-gray-700">
         <div class="flex flex-wrap gap-4 justify-between items-center mb-6">
