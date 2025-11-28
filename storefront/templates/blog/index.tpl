@@ -1,168 +1,236 @@
 <?php include __DIR__ . '/../header.tpl'; ?>
 
-<style>
-    /* Slider Enhancements */
-    .hero-slider {
-        position: relative;
-        border-radius: var(--radius-lg);
-        overflow: hidden;
-        margin-bottom: 4rem;
-        box-shadow: var(--shadow-lg);
-    }
-    .swiper-slide { position: relative; aspect-ratio: 21/9; }
-    .swiper-slide img { width: 100%; height: 100%; object-fit: cover; }
-    .slider-caption {
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        padding: 2rem;
-        background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
-        color: white;
-        font-size: 1.5rem;
-        font-weight: 700;
-        text-shadow: 0 2px 4px rgba(0,0,0,0.5);
-    }
+<main class="py-12 bg-gray-50 min-h-screen">
+    <div class="container mx-auto px-4">
 
-    /* Layout */
-    .blog-layout {
-        display: grid;
-        grid-template-columns: 1fr 300px;
-        gap: 3rem;
-    }
-    @media (max-width: 992px) { .blog-layout { grid-template-columns: 1fr; } }
-
-    /* Blog Card */
-    .blog-card {
-        display: flex;
-        flex-direction: column;
-        background: white;
-        border-radius: var(--radius-lg);
-        overflow: hidden;
-        border: 1px solid var(--color-border);
-        transition: var(--transition-smooth);
-        margin-bottom: 2rem;
-    }
-    .blog-card:hover {
-        transform: translateY(-4px);
-        box-shadow: var(--shadow-glass);
-    }
-    .blog-card-body { padding: 2rem; }
-    .blog-title { font-size: 1.5rem; font-weight: 800; margin-bottom: 1rem; line-height: 1.3; }
-    .blog-excerpt { color: var(--color-text-muted); margin-bottom: 1.5rem; line-height: 1.7; }
-
-    /* Pagination */
-    .pagination { display: flex; gap: 0.5rem; justify-content: center; margin-top: 3rem; }
-    .page-link {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        width: 40px;
-        height: 40px;
-        border-radius: 50%;
-        background: white;
-        border: 1px solid var(--color-border);
-        color: var(--color-text-main);
-        font-weight: 600;
-        transition: var(--transition-smooth);
-    }
-    .page-link:hover, .page-item.active .page-link {
-        background: var(--color-primary);
-        color: white;
-        border-color: var(--color-primary);
-    }
-
-    /* Featured Categories */
-    .featured-cats { margin-top: 4rem; padding-top: 3rem; border-top: 1px solid var(--color-border); }
-    .cat-section { margin-bottom: 3rem; }
-    .cat-title { font-size: 1.75rem; font-weight: 800; margin-bottom: 1.5rem; color: var(--color-text-main); }
-    .cat-list { list-style: disc; padding-right: 1.5rem; }
-    .cat-list li { margin-bottom: 0.5rem; }
-    .cat-list a { color: var(--color-text-muted); transition: color 0.2s; }
-    .cat-list a:hover { color: var(--color-primary); }
-</style>
-
-<div class="container" style="padding-block: 3rem;">
-
-    <!-- Slider Section -->
-    <?php if (!empty($slider_posts)): ?>
-        <div id="blog-slider" class="swiper-container hero-slider">
-            <div class="swiper-wrapper">
-                <?php foreach ($slider_posts as $post): ?>
-                    <div class="swiper-slide">
-                        <a href="/blog/<?= $post->slug ?>">
-                            <img src="<?= $post->image_url ?? 'https://placehold.co/1200x500/EEE/31343C?text=No+Image' ?>" alt="<?= htmlspecialchars($post->title) ?>">
-                            <div class="slider-caption"><?= htmlspecialchars($post->title) ?></div>
-                        </a>
+        <!-- Hero Section (Slider) -->
+        <?php if (!empty($slider_posts)): ?>
+            <div class="relative w-full rounded-3xl overflow-hidden shadow-2xl mb-12 group" x-data="heroSlider">
+                <div class="swiper hero-slider h-[300px] md:h-[450px] lg:h-[500px]">
+                    <div class="swiper-wrapper">
+                        <?php foreach ($slider_posts as $post): ?>
+                            <div class="swiper-slide relative">
+                                <a href="/blog/<?= $post->slug ?>" class="block w-full h-full">
+                                    <img src="<?= $post->image_url ?? 'https://placehold.co/1200x500/EEE/31343C?text=No+Image' ?>"
+                                         alt="<?= htmlspecialchars($post->title) ?>"
+                                         class="w-full h-full object-cover transition-transform duration-700 hover:scale-105">
+                                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent flex items-end">
+                                        <div class="p-8 md:p-12 w-full max-w-4xl">
+                                            <div class="flex items-center gap-3 text-white/80 text-sm mb-3">
+                                                <span class="bg-indigo-600 px-3 py-1 rounded-full text-white text-xs font-bold shadow-sm">ویژه</span>
+                                                <span class="flex items-center gap-1">
+                                                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                                    <?= \jdate('d F Y', strtotime($post->published_at)) ?>
+                                                </span>
+                                            </div>
+                                            <h2 class="text-2xl md:text-4xl lg:text-5xl font-black text-white leading-tight mb-2 drop-shadow-lg">
+                                                <?= htmlspecialchars($post->title) ?>
+                                            </h2>
+                                            <p class="text-gray-200 text-sm md:text-lg line-clamp-2 md:line-clamp-1 max-w-2xl drop-shadow-md">
+                                                <?= htmlspecialchars($post->excerpt) ?>
+                                            </p>
+                                        </div>
+                                    </div>
+                                </a>
+                            </div>
+                        <?php endforeach; ?>
                     </div>
-                <?php endforeach; ?>
+                    <!-- Navigation & Pagination -->
+                    <div class="swiper-pagination !bottom-8 !right-8 !w-auto"></div>
+                    <div class="swiper-button-next !text-white !right-auto !left-8 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                    <div class="swiper-button-prev !text-white !right-auto !left-20 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                </div>
             </div>
-            <div class="swiper-pagination"></div>
-        </div>
-    <?php endif; ?>
+        <?php endif; ?>
 
-    <div class="blog-layout">
-        <main>
-            <h1 style="font-size: 2.5rem; font-weight: 900; margin-bottom: 2rem; color: var(--color-text-main);"><?= $pageTitle ?></h1>
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
 
-            <?php foreach ($posts as $post) : ?>
-                <article class="blog-card glass-panel">
-                    <div class="blog-card-body">
-                        <h2 class="blog-title"><a href="/blog/<?= $post->slug ?>"><?= htmlspecialchars($post->title) ?></a></h2>
-                        <p class="blog-excerpt"><?= htmlspecialchars($post->excerpt) ?></p>
-                        <a href="/blog/<?= $post->slug ?>" class="btn btn-primary">ادامه مطلب &rarr;</a>
+            <!-- Main Content -->
+            <div class="lg:col-span-8">
+
+                <!-- Page Title & Filters -->
+                <div class="flex flex-col md:flex-row items-center justify-between mb-8 gap-4">
+                    <h1 class="text-3xl font-extrabold text-gray-900 flex items-center gap-3">
+                        <span class="w-2 h-8 bg-indigo-600 rounded-full"></span>
+                        <?= htmlspecialchars($pageTitle) ?>
+                    </h1>
+
+                    <!-- Optional: Categories/Tags Quick Filter could go here -->
+                </div>
+
+                <!-- Posts Grid -->
+                <?php if (!empty($posts)) : ?>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
+                        <?php foreach ($posts as $post) : ?>
+                            <article class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-lg transition-all duration-300 group flex flex-col h-full">
+                                <a href="/blog/<?= $post->slug ?>" class="relative aspect-w-16 aspect-h-10 bg-gray-200 overflow-hidden block">
+                                    <img src="<?= $post->image_url ?? 'https://placehold.co/600x400/EEE/31343C?text=No+Image' ?>"
+                                         alt="<?= htmlspecialchars($post->title) ?>"
+                                         class="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500">
+                                    <div class="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300"></div>
+                                </a>
+                                <div class="p-6 flex-1 flex flex-col">
+                                    <div class="flex items-center justify-between text-xs text-gray-400 mb-3 font-medium">
+                                        <div class="flex items-center gap-1">
+                                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
+                                            <?= htmlspecialchars($post->author_name) ?>
+                                        </div>
+                                        <div class="flex items-center gap-1">
+                                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+                                            <?= \jdate('d F Y', strtotime($post->published_at)) ?>
+                                        </div>
+                                    </div>
+                                    <h2 class="text-xl font-bold text-gray-800 mb-3 leading-snug group-hover:text-indigo-600 transition-colors">
+                                        <a href="/blog/<?= $post->slug ?>">
+                                            <?= htmlspecialchars($post->title) ?>
+                                        </a>
+                                    </h2>
+                                    <p class="text-gray-500 text-sm leading-relaxed mb-4 line-clamp-3">
+                                        <?= htmlspecialchars($post->excerpt) ?>
+                                    </p>
+                                    <div class="mt-auto pt-4 border-t border-gray-50 flex items-center justify-between">
+                                        <a href="/blog/<?= $post->slug ?>" class="text-indigo-600 font-bold text-sm flex items-center gap-1 hover:gap-2 transition-all">
+                                            ادامه مطلب
+                                            <svg class="w-4 h-4 transform scale-x-[-1]" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
+                                        </a>
+                                        <div class="flex items-center gap-3 text-gray-400 text-xs">
+                                            <span class="flex items-center gap-1" title="بازدید">
+                                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
+                                                <?= number_format($post->views_count) ?>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </article>
+                        <?php endforeach; ?>
                     </div>
-                </article>
-            <?php endforeach; ?>
+                <?php else: ?>
+                    <div class="bg-white rounded-2xl p-12 text-center border border-dashed border-gray-300 mb-12">
+                        <svg class="w-16 h-16 text-gray-300 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" /></svg>
+                        <h3 class="text-lg font-bold text-gray-900 mb-1">مطلبی یافت نشد</h3>
+                        <p class="text-gray-500">محتوایی برای نمایش وجود ندارد.</p>
+                    </div>
+                <?php endif; ?>
 
-            <!-- Pagination -->
-            <?php if ($paginator->total_pages > 1) : ?>
-                <nav aria-label="Page navigation">
-                    <ul class="pagination">
-                        <?php if ($paginator->hasPrev()) : ?>
-                            <li class="page-item"><a class="page-link" href="<?= $paginator->getPrevUrl() ?>">&larr;</a></li>
-                        <?php endif; ?>
+                <!-- Pagination -->
+                <?php if ($paginator->total_pages > 1) : ?>
+                    <nav aria-label="Page navigation" class="flex justify-center mb-12">
+                        <ul class="flex items-center gap-2 bg-white px-4 py-2 rounded-full shadow-sm border border-gray-100">
+                            <?php if ($paginator->hasPrev()) : ?>
+                                <li>
+                                    <a class="w-10 h-10 flex items-center justify-center rounded-full text-gray-500 hover:bg-gray-100 hover:text-indigo-600 transition-colors" href="<?= $paginator->getPrevUrl() ?>">
+                                        <svg class="w-5 h-5 transform scale-x-[-1]" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
+                                    </a>
+                                </li>
+                            <?php endif; ?>
 
-                        <?php for ($i = 1; $i <= $paginator->total_pages; $i++) : ?>
-                            <li class="page-item <?= ($i == $paginator->current_page) ? 'active' : '' ?>">
-                                <a class="page-link" href="<?= $paginator->buildUrl($i) ?>"><?= $i ?></a>
-                            </li>
-                        <?php endfor; ?>
+                            <?php for ($i = 1; $i <= $paginator->total_pages; $i++) : ?>
+                                <li>
+                                    <a class="w-10 h-10 flex items-center justify-center rounded-full text-sm font-bold transition-all <?= ($i == $paginator->current_page) ? 'bg-indigo-600 text-white shadow-md shadow-indigo-200' : 'text-gray-600 hover:bg-gray-100' ?>" href="<?= $paginator->buildUrl($i) ?>">
+                                        <?= $i ?>
+                                    </a>
+                                </li>
+                            <?php endfor; ?>
 
-                        <?php if ($paginator->hasNext()) : ?>
-                            <li class="page-item"><a class="page-link" href="<?= $paginator->getNextUrl() ?>">&rarr;</a></li>
-                        <?php endif; ?>
-                    </ul>
-                </nav>
-            <?php endif; ?>
-        </main>
-
-        <aside>
-            <?php include '_sidebar.tpl'; ?>
-        </aside>
-    </div>
-
-    <!-- Featured Categories Section -->
-    <?php if (!empty($featured_categories)): ?>
-        <section class="featured-cats">
-            <h2 style="text-align: center; margin-bottom: 2rem; font-weight: 800; font-size: 2rem;">دسته‌بندی‌های منتخب</h2>
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem;">
-                <?php foreach ($featured_categories as $category): ?>
-                    <div class="cat-section glass-panel" style="padding: 2rem;">
-                        <h3 class="cat-title">
-                            <a href="/blog/category/<?= $category['slug'] ?>"><?= htmlspecialchars($category['name_fa']) ?></a>
-                        </h3>
-                        <ul class="cat-list">
-                            <?php foreach ($category['posts'] as $post): ?>
-                                <li><a href="/blog/<?= $post->slug ?>"><?= htmlspecialchars($post->title) ?></a></li>
-                            <?php endforeach; ?>
+                            <?php if ($paginator->hasNext()) : ?>
+                                <li>
+                                    <a class="w-10 h-10 flex items-center justify-center rounded-full text-gray-500 hover:bg-gray-100 hover:text-indigo-600 transition-colors" href="<?= $paginator->getNextUrl() ?>">
+                                        <svg class="w-5 h-5 transform scale-x-[-1]" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg>
+                                    </a>
+                                </li>
+                            <?php endif; ?>
                         </ul>
-                    </div>
-                <?php endforeach; ?>
+                    </nav>
+                <?php endif; ?>
+
+                <!-- Featured Categories Section -->
+                <?php if (!empty($featured_categories)): ?>
+                    <section class="mt-16 pt-12 border-t border-gray-200">
+                        <div class="text-center mb-10">
+                            <span class="text-indigo-600 font-bold tracking-wider text-sm uppercase mb-2 block">کشف کنید</span>
+                            <h2 class="text-3xl font-extrabold text-gray-900">دسته‌بندی‌های منتخب</h2>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                            <?php foreach ($featured_categories as $category): ?>
+                                <div class="bg-white rounded-2xl p-8 border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
+                                    <div class="flex items-center justify-between mb-6">
+                                        <h3 class="text-xl font-bold text-gray-900 flex items-center gap-2">
+                                            <span class="w-1.5 h-6 bg-indigo-500 rounded-full"></span>
+                                            <a href="/blog/category/<?= $category['slug'] ?>" class="hover:text-indigo-600 transition-colors">
+                                                <?= htmlspecialchars($category['name_fa']) ?>
+                                            </a>
+                                        </h3>
+                                        <a href="/blog/category/<?= $category['slug'] ?>" class="text-sm font-medium text-indigo-500 hover:text-indigo-700">مشاهده همه</a>
+                                    </div>
+                                    <ul class="space-y-4">
+                                        <?php foreach ($category['posts'] as $cat_post): ?>
+                                            <li class="group">
+                                                <a href="/blog/<?= $cat_post->slug ?>" class="flex items-start gap-3">
+                                                    <svg class="w-5 h-5 text-gray-300 mt-0.5 group-hover:text-indigo-500 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
+                                                    <span class="text-gray-600 group-hover:text-indigo-900 transition-colors leading-relaxed">
+                                                        <?= htmlspecialchars($cat_post->title) ?>
+                                                    </span>
+                                                </a>
+                                            </li>
+                                        <?php endforeach; ?>
+                                    </ul>
+                                </div>
+                            <?php endforeach; ?>
+                        </div>
+                    </section>
+                <?php endif; ?>
+
             </div>
-        </section>
-    <?php endif; ?>
-</div>
+
+            <!-- Sidebar -->
+            <aside class="lg:col-span-4 space-y-8">
+                <?php include __DIR__ . '/_sidebar.tpl'; ?>
+
+                <!-- Extra Sidebar Widget (e.g., Newsletter or Categories List) -->
+                <div class="bg-indigo-600 rounded-2xl p-6 text-white text-center shadow-lg shadow-indigo-500/30">
+                    <h3 class="text-xl font-bold mb-3">عضویت در خبرنامه</h3>
+                    <p class="text-indigo-100 text-sm mb-6 leading-relaxed">برای اطلاع از جدیدترین اخبار و مقالات آموزشی در خبرنامه ما عضو شوید.</p>
+                    <form class="space-y-3" onsubmit="event.preventDefault(); alert('این ویژگی به زودی فعال می‌شود.');">
+                        <input type="email" placeholder="آدرس ایمیل شما" class="w-full rounded-lg border-none bg-white/20 placeholder-white/60 text-white focus:ring-2 focus:ring-white/50 py-3 px-4 text-center backdrop-blur-sm">
+                        <button class="w-full bg-white text-indigo-600 font-bold py-3 rounded-lg hover:bg-indigo-50 transition-colors">عضویت</button>
+                    </form>
+                </div>
+            </aside>
+
+        </div>
+    </div>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+<script>
+    document.addEventListener('alpine:init', () => {
+        Alpine.data('heroSlider', () => ({
+            init() {
+                this.$nextTick(() => {
+                    new Swiper('.hero-slider', {
+                        loop: true,
+                        effect: 'fade',
+                        fadeEffect: { crossFade: true },
+                        autoplay: {
+                            delay: 5000,
+                            disableOnInteraction: false,
+                        },
+                        pagination: {
+                            el: '.swiper-pagination',
+                            clickable: true,
+                            dynamicBullets: true,
+                        },
+                        navigation: {
+                            nextEl: '.swiper-button-next',
+                            prevEl: '.swiper-button-prev',
+                        },
+                    });
+                });
+            }
+        }));
+    });
+</script>
 
 <!-- JSON-LD Schema -->
 <script type="application/ld+json">
@@ -184,26 +252,6 @@
         <?php endforeach; ?>
     ]
 }
-</script>
-
-<link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css" />
-<script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        if (document.getElementById('blog-slider')) {
-            new Swiper('.swiper-container', {
-                loop: true,
-                pagination: {
-                    el: '.swiper-pagination',
-                    clickable: true,
-                },
-                autoplay: {
-                    delay: 5000,
-                    disableOnInteraction: false,
-                },
-            });
-        }
-    });
 </script>
 
 <?php include __DIR__ . '/../footer.tpl'; ?>
