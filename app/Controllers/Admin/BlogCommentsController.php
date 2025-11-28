@@ -18,9 +18,9 @@ class BlogCommentsController
 
         $data = Comment::getPaginatedList($page, 10, $status, $search, $sort, $dir);
 
-        $paginator = new Paginator($data['total'], 10, $page, '/admin/blog/comments');
+        $paginator = new Paginator($data['total'], 10, $page, '/blog/comments');
 
-        view('blog/comments/index', [
+        view('admin/blog/comments/index', [
             'comments' => $data['items'],
             'paginator' => $paginator,
             'search' => $search,
@@ -38,7 +38,7 @@ class BlogCommentsController
             return;
         }
 
-        view('blog/comments/edit', ['comment' => $comment]);
+        view('/blog/comments/edit', ['comment' => $comment]);
     }
 
     public function update($id)
@@ -54,8 +54,6 @@ class BlogCommentsController
         }
 
         $validStatuses = ['pending', 'approved', 'rejected'];
-        $status = $data['status'] ?? 'pending';
-
         if (isset($data['status']) && !in_array($data['status'], $validStatuses)) {
             redirect_back_with_error('وضعیت انتخاب شده نامعتبر است.');
             return;
@@ -65,16 +63,16 @@ class BlogCommentsController
             'name' => $data['name'],
             'email' => $data['email'] ?? null,
             'comment' => $data['comment'],
-            'status' => $status,
+            'status' => $data['status'],
         ]);
 
-        redirect_with_success('/admin/blog/comments', 'نظر با موفقیت ویرایش شد.');
+        redirect_with_success('/blog/comments', 'نظر با موفقیت ویرایش شد.');
     }
 
     public function destroy($id)
     {
         Comment::delete($id);
-        redirect_with_success('/admin/blog/comments', 'نظر با موفقیت حذف شد.');
+        redirect_with_success('/blog/comments', 'نظر با موفقیت حذف شد.');
     }
 
     public function updateStatus($id)
@@ -84,7 +82,7 @@ class BlogCommentsController
 
         if (isset($data['status']) && in_array($data['status'], ['approved', 'rejected', 'pending'])) {
             Comment::updateStatus($id, $data['status']);
-            redirect_with_success('/admin/blog/comments', 'وضعیت نظر تغییر کرد.');
+            redirect_with_success('/blog/comments', 'وضعیت نظر تغییر کرد.');
         } else {
              redirect_back_with_error('وضعیت نامعتبر است.');
         }
