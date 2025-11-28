@@ -12,20 +12,45 @@ class Product
      *
      * @param int $limit
      * @param int $offset
+     * @param string $search
      * @return array
      */
-    public static function paginated($limit, $offset)
+    public static function paginated($limit, $offset, $search = '')
     {
-        $sql = "SELECT p.*, c.name_fa as category_name
+        $sql = "SELECT p.*, c.name_fa as category_name,
+                       (SELECT COALESCE(SUM(quantity), 0)
+                        FROM orders o
+                        WHERE o.product_id = p.id
+                          AND o.payment_status = 'paid'
+                          AND o.order_status NOT IN ('cancelled', 'phishing')) as sales_count,
+                       (SELECT COALESCE(SUM(amount), 0)
+                        FROM orders o
+                        WHERE o.product_id = p.id
+                          AND o.payment_status = 'paid'
+                          AND o.order_status NOT IN ('cancelled', 'phishing')) as total_revenue
                 FROM products p
-                LEFT JOIN categories c ON p.category_id = c.id
-                ORDER BY p.position ASC, p.id DESC
-                LIMIT :limit OFFSET :offset";
+                LEFT JOIN categories c ON p.category_id = c.id";
+
+        $params = [
+            ':limit' => $limit,
+            ':offset' => $offset
+        ];
+
+        if (!empty($search)) {
+            $sql .= " WHERE p.name_fa LIKE :search OR p.name_en LIKE :search";
+            $params[':search'] = "%$search%";
+        }
+
+        $sql .= " ORDER BY p.position ASC, p.id DESC LIMIT :limit OFFSET :offset";
 
         $pdo = Database::getConnection();
         $stmt = $pdo->prepare($sql);
-        $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
-        $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
+
+        foreach ($params as $key => $value) {
+            $type = is_int($value) ? PDO::PARAM_INT : PDO::PARAM_STR;
+            $stmt->bindValue($key, $value, $type);
+        }
+
         $stmt->execute();
 
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -34,11 +59,20 @@ class Product
     /**
      * Get the total count of products.
      *
+     * @param string $search
      * @return int
      */
-    public static function count()
+    public static function count($search = '')
     {
-        $stmt = Database::query("SELECT COUNT(id) FROM products");
+        $sql = "SELECT COUNT(id) FROM products";
+        $params = [];
+
+        if (!empty($search)) {
+            $sql .= " WHERE name_fa LIKE :search OR name_en LIKE :search";
+            $params[':search'] = "%$search%";
+        }
+
+        $stmt = Database::query($sql, $params);
         return (int) $stmt->fetchColumn();
     }
 

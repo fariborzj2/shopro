@@ -17,16 +17,24 @@ class ProductsController
     public function index()
     {
         $current_page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
-        $total_products = Product::count();
+        $search = isset($_GET['search']) ? trim($_GET['search']) : '';
 
-        $paginator = new Paginator($total_products, self::ITEMS_PER_PAGE, $current_page, '/products');
+        $total_products = Product::count($search);
 
-        $products = Product::paginated(self::ITEMS_PER_PAGE, $paginator->getOffset());
+        $baseUrl = '/products';
+        if (!empty($search)) {
+            $baseUrl .= '?search=' . urlencode($search);
+        }
+
+        $paginator = new Paginator($total_products, self::ITEMS_PER_PAGE, $current_page, $baseUrl);
+
+        $products = Product::paginated(self::ITEMS_PER_PAGE, $paginator->getOffset(), $search);
 
         return view('main', 'products/index', [
             'title' => 'مدیریت محصولات',
             'products' => $products,
-            'paginator' => $paginator
+            'paginator' => $paginator,
+            'search' => $search
         ]);
     }
 

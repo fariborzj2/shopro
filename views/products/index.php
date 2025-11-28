@@ -1,14 +1,22 @@
 <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700">
     <!-- Header -->
-    <div class="p-6 flex flex-col sm:flex-row sm:justify-between sm:items-center border-b border-gray-100 dark:border-gray-700 gap-4">
+    <div class="p-6 flex flex-col md:flex-row md:justify-between md:items-center border-b border-gray-100 dark:border-gray-700 gap-4">
         <div>
             <h1 class="text-xl font-bold text-gray-800 dark:text-white">مدیریت محصولات</h1>
             <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">لیست محصولات، قیمت‌ها و موجودی انبار</p>
         </div>
-        <a href="<?php echo url('products/create'); ?>" class="inline-flex items-center justify-center px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 shadow-sm transition-colors">
-            <?php partial('icon', ['name' => 'plus', 'class' => 'w-5 h-5 ml-2']); ?>
-            افزودن محصول جدید
-        </a>
+        <div class="flex flex-col sm:flex-row gap-3">
+            <form method="GET" action="/admin/products" class="relative">
+                <input type="text" name="search" value="<?= htmlspecialchars($search ?? '') ?>" placeholder="جستجو در نام محصول..." class="w-full sm:w-64 pl-10 pr-4 py-2 text-sm text-gray-700 bg-gray-50 dark:bg-gray-700/50 dark:text-gray-200 border border-gray-200 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all">
+                <button type="submit" class="absolute left-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400 p-1">
+                    <?php partial('icon', ['name' => 'search', 'class' => 'w-4 h-4']); ?>
+                </button>
+            </form>
+            <a href="<?php echo url('products/create'); ?>" class="inline-flex items-center justify-center px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 shadow-sm transition-colors">
+                <?php partial('icon', ['name' => 'plus', 'class' => 'w-5 h-5 ml-2']); ?>
+                افزودن محصول جدید
+            </a>
+        </div>
     </div>
 
     <!-- Mobile Cards View (Visible only on small screens) -->
@@ -60,6 +68,7 @@
                     <th class="px-6 py-3 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">نام محصول</th>
                     <th class="px-6 py-3 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">دسته‌بندی</th>
                     <th class="px-6 py-3 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">قیمت</th>
+                    <th class="px-6 py-3 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">تعداد / مبلغ فروش</th>
                     <th class="px-6 py-3 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">وضعیت</th>
                     <th class="px-6 py-3 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider text-center">عملیات</th>
                 </tr>
@@ -83,6 +92,16 @@
                         </td>
                         <td class="px-6 py-4 text-sm text-gray-900 dark:text-white font-bold">
                             <?= number_format($product['price']) ?> <span class="font-normal text-gray-500 text-xs">تومان</span>
+                        </td>
+                        <td class="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">
+                            <div class="flex flex-col">
+                                <span class="text-xs font-semibold text-gray-700 dark:text-gray-300">
+                                    <?= number_format($product['sales_count'] ?? 0) ?> عدد
+                                </span>
+                                <span class="text-xs text-gray-500 dark:text-gray-400">
+                                    <?= number_format($product['total_revenue'] ?? 0) ?> تومان
+                                </span>
+                            </div>
                         </td>
                         <td class="px-6 py-4 text-sm">
                             <?php
