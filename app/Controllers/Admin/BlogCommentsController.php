@@ -20,7 +20,7 @@ class BlogCommentsController
 
         $paginator = new Paginator($data['total'], 10, $page, '/admin/blog/comments');
 
-        view('admin/blog/comments/index', [
+        view('blog/comments/index', [
             'comments' => $data['items'],
             'paginator' => $paginator,
             'search' => $search,
@@ -38,7 +38,7 @@ class BlogCommentsController
             return;
         }
 
-        view('admin/blog/comments/edit', ['comment' => $comment]);
+        view('blog/comments/edit', ['comment' => $comment]);
     }
 
     public function update($id)
@@ -54,6 +54,8 @@ class BlogCommentsController
         }
 
         $validStatuses = ['pending', 'approved', 'rejected'];
+        $status = $data['status'] ?? 'pending';
+
         if (isset($data['status']) && !in_array($data['status'], $validStatuses)) {
             redirect_back_with_error('وضعیت انتخاب شده نامعتبر است.');
             return;
@@ -63,7 +65,7 @@ class BlogCommentsController
             'name' => $data['name'],
             'email' => $data['email'] ?? null,
             'comment' => $data['comment'],
-            'status' => $data['status'],
+            'status' => $status,
         ]);
 
         redirect_with_success('/admin/blog/comments', 'نظر با موفقیت ویرایش شد.');
