@@ -58,7 +58,7 @@ class PaymentController
             'order_status' => 'pending',
             'payment_status' => 'unpaid',
             'custom_fields_data' => $custom_fields,
-            'order_code' => 'ORD-' . time() . rand(100, 999),
+            'order_code' => time() . rand(100, 999),
         ]);
 
         // --- Create Transaction Record ---
