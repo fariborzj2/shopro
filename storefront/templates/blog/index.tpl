@@ -5,71 +5,40 @@
 
         <!-- Hero Section (Slider) -->
         <?php if (!empty($slider_posts)): ?>
-            <div class="w-full mb-16 relative" x-data="heroSlider">
-                <div class="flex items-center justify-between mb-8">
-                    <h2 class="text-2xl font-bold text-gray-800 flex items-center gap-2">
-                        <span class="w-1.5 h-6 bg-indigo-600 rounded-full"></span>
-                        منتخب سردبیر
-                    </h2>
-                    <div class="flex gap-2">
-                         <button class="swiper-button-prev-custom w-10 h-10 rounded-full bg-white border border-gray-200 text-gray-600 hover:bg-indigo-600 hover:text-white flex items-center justify-center transition-all shadow-sm">
-                            <svg class="w-5 h-5 transform rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
-                        </button>
-                        <button class="swiper-button-next-custom w-10 h-10 rounded-full bg-white border border-gray-200 text-gray-600 hover:bg-indigo-600 hover:text-white flex items-center justify-center transition-all shadow-sm">
-                            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
-                        </button>
-                    </div>
-                </div>
-
-                <div class="swiper hero-slider pb-12 px-1">
+            <div class="relative w-full rounded-3xl overflow-hidden shadow-2xl mb-12 group" x-data="heroSlider">
+                <div class="swiper hero-slider h-[300px] md:h-[450px] lg:h-[500px]">
                     <div class="swiper-wrapper">
                         <?php foreach ($slider_posts as $post): ?>
-                            <div class="swiper-slide h-auto">
-                                <article class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-lg transition-all duration-300 group flex flex-col h-full">
-                                    <a href="/blog/<?= $post->slug ?>" class="relative aspect-w-16 aspect-h-10 bg-gray-200 overflow-hidden block">
-                                        <img src="<?= $post->image_url ?? 'https://placehold.co/600x400/EEE/31343C?text=No+Image' ?>"
-                                             alt="<?= htmlspecialchars($post->title) ?>"
-                                             class="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500">
-
-                                        <!-- Badges/Overlays -->
-                                        <div class="absolute top-4 right-4">
-                                            <span class="bg-white/90 backdrop-blur-sm text-indigo-700 text-xs font-bold px-3 py-1 rounded-full shadow-sm border border-white/50">
-                                                ویژه
-                                            </span>
-                                        </div>
-                                    </a>
-                                    <div class="p-5 flex-1 flex flex-col">
-                                        <!-- Date & Views -->
-                                        <div class="flex items-center justify-between text-xs text-gray-400 mb-3">
-                                            <span class="flex items-center gap-1">
-                                                <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
-                                                <?= \jdate('d F Y', strtotime($post->published_at ?? $post->created_at ?? 'now')) ?>
-                                            </span>
-                                            <span class="flex items-center gap-1">
-                                                <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
-                                                <?= number_format($post->views_count ?? 0) ?>
-                                            </span>
-                                        </div>
-
-                                        <h3 class="text-lg font-bold text-gray-800 mb-2 leading-snug group-hover:text-indigo-600 transition-colors line-clamp-2">
-                                            <a href="/blog/<?= $post->slug ?>">
-                                                <?= htmlspecialchars($post->title) ?>
-                                            </a>
-                                        </h3>
-
-                                        <!-- Optional: Author (Small) -->
-                                        <div class="mt-auto pt-4 flex items-center gap-2 border-t border-gray-50">
-                                            <div class="w-6 h-6 rounded-full bg-gray-100 overflow-hidden">
-                                                 <img src="https://ui-avatars.com/api/?name=<?= urlencode($post->author_name ?? 'ادمین') ?>&background=random&color=fff&size=32" alt="" class="w-full h-full object-cover">
+                            <div class="swiper-slide relative">
+                                <a href="/blog/<?= $post->slug ?>" class="block w-full h-full">
+                                    <img src="<?= $post->image_url ?? 'https://placehold.co/1200x500/EEE/31343C?text=No+Image' ?>"
+                                         alt="<?= htmlspecialchars($post->title) ?>"
+                                         class="w-full h-full object-cover transition-transform duration-700 hover:scale-105">
+                                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent flex items-end">
+                                        <div class="p-8 md:p-12 w-full max-w-4xl">
+                                            <div class="flex items-center gap-3 text-white/80 text-sm mb-3">
+                                                <span class="bg-indigo-600 px-3 py-1 rounded-full text-white text-xs font-bold shadow-sm">ویژه</span>
+                                                <span class="flex items-center gap-1">
+                                                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                                    <?= \jdate('d F Y', strtotime($post->published_at)) ?>
+                                                </span>
                                             </div>
-                                            <span class="text-xs text-gray-500 font-medium"><?= htmlspecialchars($post->author_name ?? 'ادمین') ?></span>
+                                            <h2 class="text-2xl md:text-4xl lg:text-5xl font-black text-white leading-tight mb-2 drop-shadow-lg">
+                                                <?= htmlspecialchars($post->title) ?>
+                                            </h2>
+                                            <p class="text-gray-200 text-sm md:text-lg line-clamp-2 md:line-clamp-1 max-w-2xl drop-shadow-md">
+                                                <?= htmlspecialchars($post->excerpt) ?>
+                                            </p>
                                         </div>
                                     </div>
-                                </article>
+                                </a>
                             </div>
                         <?php endforeach; ?>
                     </div>
-                    <div class="swiper-pagination"></div>
+                    <!-- Navigation & Pagination -->
+                    <div class="swiper-pagination !bottom-8 !right-8 !w-auto"></div>
+                    <div class="swiper-button-next !text-white !right-auto !left-8 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                    <div class="swiper-button-prev !text-white !right-auto !left-20 opacity-0 group-hover:opacity-100 transition-opacity"></div>
                 </div>
             </div>
         <?php endif; ?>
