@@ -61,9 +61,9 @@
                     <div class="flex justify-between items-center mt-3 pt-3 border-t border-gray-100 dark:border-gray-700">
                         <span class="text-xs text-gray-400"><?= \jdate('Y/m/d H:i', strtotime($comment['created_at'])) ?></span>
                         <div class="flex items-center gap-3">
-                            <a href="<?php echo url('admin/blog/comments/edit/' . $comment['id']); ?>" class="text-indigo-600 dark:text-indigo-400 text-sm font-medium">مدیریت</a>
+                            <a href="<?php echo url('blog/comments/edit/' . $comment['id']); ?>" class="text-indigo-600 dark:text-indigo-400 text-sm font-medium">مدیریت</a>
                             <span class="text-gray-300 dark:text-gray-600">|</span>
-                             <form action="<?php echo url('admin/blog/comments/delete/' . $comment['id']); ?>" method="POST" class="inline-block" onsubmit="return confirm('آیا از حذف این نظر مطمئن هستید؟');">
+                             <form action="<?php echo url('blog/comments/delete/' . $comment['id']); ?>" method="POST" class="inline-block" onsubmit="return confirm('آیا از حذف این نظر مطمئن هستید؟');">
                                 <?php echo csrf_field(); ?>
                                 <button type="submit" class="text-red-600 dark:text-red-400 text-sm font-medium">حذف</button>
                             </form>
@@ -165,7 +165,7 @@
                                 <div class="flex items-center justify-center gap-3 opacity-0 group-hover:opacity-100 transition-opacity">
                                     <div class="flex gap-1">
                                          <?php if($comment['status'] !== 'approved'): ?>
-                                            <form action="<?php echo url('admin/blog/comments/status/' . $comment['id']); ?>" method="POST" class="inline-block">
+                                            <form action="<?php echo url('blog/comments/status/' . $comment['id']); ?>" method="POST" class="inline-block">
                                                 <?php echo csrf_field(); ?>
                                                 <input type="hidden" name="status" value="approved">
                                                 <button type="submit" class="text-emerald-600 hover:text-emerald-900 dark:text-emerald-400 p-1 rounded-md hover:bg-emerald-50 dark:hover:bg-emerald-900/30" title="تایید">
@@ -174,7 +174,7 @@
                                             </form>
                                         <?php endif; ?>
                                         <?php if($comment['status'] !== 'rejected'): ?>
-                                             <form action="<?php echo url('admin/blog/comments/status/' . $comment['id']); ?>" method="POST" class="inline-block">
+                                             <form action="<?php echo url('blog/comments/status/' . $comment['id']); ?>" method="POST" class="inline-block">
                                                 <?php echo csrf_field(); ?>
                                                 <input type="hidden" name="status" value="rejected">
                                                 <button type="submit" class="text-red-600 hover:text-red-900 dark:text-red-400 p-1 rounded-md hover:bg-red-50 dark:hover:bg-red-900/30" title="رد کردن">
@@ -186,10 +186,10 @@
 
                                     <span class="w-px h-4 bg-gray-200 dark:bg-gray-700"></span>
 
-                                    <a href="<?php echo url('admin/blog/comments/edit/' . $comment['id']); ?>" class="text-indigo-600 hover:text-indigo-900 dark:text-indigo-400 dark:hover:text-indigo-300 p-1 rounded-md hover:bg-indigo-50 dark:hover:bg-indigo-900/30" title="ویرایش">
+                                    <a href="<?php echo url(blog/comments/edit/' . $comment['id']); ?>" class="text-indigo-600 hover:text-indigo-900 dark:text-indigo-400 dark:hover:text-indigo-300 p-1 rounded-md hover:bg-indigo-50 dark:hover:bg-indigo-900/30" title="ویرایش">
                                         <?php partial('icon', ['name' => 'edit', 'class' => 'w-5 h-5']); ?>
                                     </a>
-                                    <form action="<?php echo url('admin/blog/comments/delete/' . $comment['id']); ?>" method="POST" class="inline-block" onsubmit="return confirm('آیا از حذف این نظر مطمئن هستید؟');">
+                                    <form action="<?php echo url('blog/comments/delete/' . $comment['id']); ?>" method="POST" class="inline-block" onsubmit="return confirm('آیا از حذف این نظر مطمئن هستید؟');">
                                         <?php echo csrf_field(); ?>
                                         <button type="submit" class="text-gray-400 hover:text-red-600 dark:text-gray-500 dark:hover:text-red-400 p-1 rounded-md hover:bg-red-50 dark:hover:bg-red-900/30 transition-colors" title="حذف">
                                             <?php partial('icon', ['name' => 'trash', 'class' => 'w-5 h-5']); ?>
