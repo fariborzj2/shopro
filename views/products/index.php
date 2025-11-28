@@ -60,6 +60,7 @@
                     <th class="px-6 py-3 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">نام محصول</th>
                     <th class="px-6 py-3 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">دسته‌بندی</th>
                     <th class="px-6 py-3 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">قیمت</th>
+                    <th class="px-6 py-3 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">تعداد / مبلغ فروش</th>
                     <th class="px-6 py-3 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">وضعیت</th>
                     <th class="px-6 py-3 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider text-center">عملیات</th>
                 </tr>
@@ -83,6 +84,16 @@
                         </td>
                         <td class="px-6 py-4 text-sm text-gray-900 dark:text-white font-bold">
                             <?= number_format($product['price']) ?> <span class="font-normal text-gray-500 text-xs">تومان</span>
+                        </td>
+                        <td class="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">
+                            <div class="flex flex-col">
+                                <span class="text-xs font-semibold text-gray-700 dark:text-gray-300">
+                                    <?= number_format($product['sales_count'] ?? 0) ?> عدد
+                                </span>
+                                <span class="text-xs text-gray-500 dark:text-gray-400">
+                                    <?= number_format($product['total_revenue'] ?? 0) ?> تومان
+                                </span>
+                            </div>
                         </td>
                         <td class="px-6 py-4 text-sm">
                             <?php
