@@ -61,6 +61,10 @@ $menuItems = [
                 'label' => 'تگ‌های مطالب',
                 'url' => '/blog/tags',
             ],
+            [
+                'label' => 'مدیریت نظرات',
+                'url' => '/admin/blog/comments',
+            ],
         ]
     ],
     [
