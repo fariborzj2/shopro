@@ -70,16 +70,20 @@
                                     <div class="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300"></div>
                                 </a>
                                 <div class="p-6 flex-1 flex flex-col">
-                                    <div class="flex items-center justify-between text-xs text-gray-400 mb-3 font-medium">
-                                        <div class="flex items-center gap-1">
-                                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
-                                            <?= htmlspecialchars($post->author_name) ?>
+                                    <!-- Author Info (New Design) -->
+                                    <div class="flex items-center gap-3 mb-4">
+                                        <div class="w-10 h-10 rounded-full bg-gray-200 overflow-hidden flex-shrink-0">
+                                            <!-- Placeholder Avatar -->
+                                            <img src="https://ui-avatars.com/api/?name=<?= urlencode($post->author_name) ?>&background=random&color=fff&size=64"
+                                                 alt="<?= htmlspecialchars($post->author_name) ?>"
+                                                 class="w-full h-full object-cover">
                                         </div>
-                                        <div class="flex items-center gap-1">
-                                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
-                                            <?= \jdate('d F Y', strtotime($post->published_at)) ?>
+                                        <div>
+                                            <p class="text-sm font-bold text-gray-800"><?= htmlspecialchars($post->author_name) ?></p>
+                                            <p class="text-xs text-gray-500"><?= htmlspecialchars($post->author_role ?? 'نویسنده') ?></p>
                                         </div>
                                     </div>
+
                                     <h2 class="text-xl font-bold text-gray-800 mb-3 leading-snug group-hover:text-indigo-600 transition-colors">
                                         <a href="/blog/<?= $post->slug ?>">
                                             <?= htmlspecialchars($post->title) ?>
@@ -88,12 +92,15 @@
                                     <p class="text-gray-500 text-sm leading-relaxed mb-4 line-clamp-3">
                                         <?= htmlspecialchars($post->excerpt) ?>
                                     </p>
-                                    <div class="mt-auto pt-4 border-t border-gray-50 flex items-center justify-between">
-                                        <a href="/blog/<?= $post->slug ?>" class="text-indigo-600 font-bold text-sm flex items-center gap-1 hover:gap-2 transition-all">
-                                            ادامه مطلب
-                                            <svg class="w-4 h-4 transform scale-x-[-1]" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
-                                        </a>
-                                        <div class="flex items-center gap-3 text-gray-400 text-xs">
+
+                                    <div class="mt-auto pt-4 border-t border-gray-50 flex items-center justify-between text-xs text-gray-400">
+                                        <div class="flex items-center gap-4">
+                                            <span class="flex items-center gap-1">
+                                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+                                                <?= \jdate('d F Y', strtotime($post->published_at)) ?>
+                                            </span>
+                                        </div>
+                                        <div class="flex items-center gap-3">
                                             <span class="flex items-center gap-1" title="بازدید">
                                                 <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
                                                 <?= number_format($post->views_count) ?>
