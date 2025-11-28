@@ -335,8 +335,8 @@ class BlogPost
     {
         $params = [];
         // Optimized query to exclude 'content' for listing pages to save memory
-        $sql = "SELECT SQL_CALC_FOUND_ROWS bp.id, bp.title, bp.slug, bp.excerpt, bp.published_at, bp.image_url, bp.views_count,
-                bc.name_fa as category_name, bc.slug as category_slug, a.name as author_name
+        $sql = "SELECT SQL_CALC_FOUND_ROWS bp.id, bp.title, bp.slug, bp.excerpt, bp.published_at, bp.created_at, bp.image_url, bp.views_count,
+                bc.name_fa as category_name, bc.slug as category_slug, a.name as author_name, a.role as author_role
                 FROM blog_posts bp
                 LEFT JOIN blog_categories bc ON bp.category_id = bc.id
                 LEFT JOIN admins a ON bp.author_id = a.id";

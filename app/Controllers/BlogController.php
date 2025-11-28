@@ -222,6 +222,95 @@ class BlogController
         ]);
     }
 
+    public function storeComment()
+    {
+        header('Content-Type: application/json');
+
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+             http_response_code(405);
+             echo json_encode(['success' => false, 'message' => 'Method Not Allowed']);
+             return;
+        }
+
+        $name = trim($_POST['name'] ?? '');
+        $email = trim($_POST['email'] ?? '');
+        $comment = trim($_POST['comment'] ?? '');
+        $captcha = trim($_POST['captcha'] ?? '');
+        $post_id = $_POST['post_id'] ?? null;
+        $parent_id = !empty($_POST['parent_id']) ? $_POST['parent_id'] : null;
+
+        // Basic validation
+        if (empty($name) || empty($comment) || empty($post_id) || empty($captcha)) {
+             echo json_encode([
+                 'success' => false,
+                 'message' => 'لطفا تمام فیلد‌های ضروری را پر کنید.',
+                 'new_csrf_token' => $_SESSION['csrf_token'] ?? ''
+             ]);
+             return;
+        }
+
+        // Captcha validation
+        if (session_status() == PHP_SESSION_NONE) {
+            session_start();
+        }
+
+        $sessionCaptcha = $_SESSION['captcha'] ?? '';
+        $inputCaptcha = convert_persian_numbers($captcha);
+
+        if (empty($sessionCaptcha) || $inputCaptcha != $sessionCaptcha) {
+             echo json_encode([
+                 'success' => false,
+                 'message' => 'کد امنیتی اشتباه است.',
+                 'new_csrf_token' => $_SESSION['csrf_token'] ?? ''
+             ]);
+             return;
+        }
+
+        // Clear captcha after use
+        unset($_SESSION['captcha']);
+
+        // Create comment
+        try {
+            $data = [
+                'post_id' => $post_id,
+                'parent_id' => $parent_id,
+                'name' => $name,
+                'email' => $email,
+                'comment' => $comment,
+                'status' => 'pending' // Pending approval
+            ];
+
+            $commentId = \App\Models\Comment::create($data);
+
+            // Return success with the comment data
+            $newComment = [
+                'id' => $commentId,
+                'post_id' => $post_id,
+                'parent_id' => $parent_id,
+                'name' => htmlspecialchars($name),
+                'email' => htmlspecialchars($email),
+                'comment' => htmlspecialchars($comment),
+                'created_at' => date('Y-m-d H:i:s'),
+                'status' => 'pending',
+                'children' => []
+            ];
+
+            echo json_encode([
+                'success' => true,
+                'comment' => $newComment,
+                'message' => 'نظر شما با موفقیت ثبت شد و پس از تایید نمایش داده خواهد شد.',
+                'new_csrf_token' => $_SESSION['csrf_token'] ?? ''
+            ]);
+
+        } catch (\Exception $e) {
+            echo json_encode([
+                'success' => false,
+                'message' => 'خطا در ثبت نظر.',
+                'new_csrf_token' => $_SESSION['csrf_token'] ?? ''
+            ]);
+        }
+    }
+
     private function _getSidebarData()
     {
         // Most Viewed Posts (e.g., top 5)

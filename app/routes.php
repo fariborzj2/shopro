@@ -15,6 +15,7 @@ $router->get('/blog/tags', 'BlogController@tags');
 $router->get('/blog/tags/{slug}', 'BlogController@showTag');
 $router->get('/blog/category/{slug}', 'BlogController@category');
 $router->get('/blog/{slug}', 'BlogController@show');
+$router->post('/blog/comments/store', 'BlogController@storeComment');
 
 
 // ----------------------------------------------------------------------
