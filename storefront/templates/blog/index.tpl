@@ -54,8 +54,6 @@
                         <span class="w-2 h-8 bg-indigo-600 rounded-full"></span>
                         <?= htmlspecialchars($pageTitle) ?>
                     </h1>
-
-                    <!-- Optional: Categories/Tags Quick Filter could go here -->
                 </div>
 
                 <!-- Posts Grid -->
@@ -70,10 +68,9 @@
                                     <div class="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300"></div>
                                 </a>
                                 <div class="p-6 flex-1 flex flex-col">
-                                    <!-- Author Info (New Design) -->
+                                    <!-- Author Info -->
                                     <div class="flex items-center gap-3 mb-4">
                                         <div class="w-10 h-10 rounded-full bg-gray-200 overflow-hidden flex-shrink-0">
-                                            <!-- Placeholder Avatar -->
                                             <img src="https://ui-avatars.com/api/?name=<?= urlencode($post->author_name) ?>&background=random&color=fff&size=64"
                                                  alt="<?= htmlspecialchars($post->author_name) ?>"
                                                  class="w-full h-full object-cover">
@@ -194,7 +191,7 @@
             <aside class="lg:col-span-4 space-y-8">
                 <?php include __DIR__ . '/_sidebar.tpl'; ?>
 
-                <!-- Extra Sidebar Widget (e.g., Newsletter or Categories List) -->
+                <!-- Extra Sidebar Widget -->
                 <div class="bg-indigo-600 rounded-2xl p-6 text-white text-center shadow-lg shadow-indigo-500/30">
                     <h3 class="text-xl font-bold mb-3">عضویت در خبرنامه</h3>
                     <p class="text-indigo-100 text-sm mb-6 leading-relaxed">برای اطلاع از جدیدترین اخبار و مقالات آموزشی در خبرنامه ما عضو شوید.</p>
@@ -217,11 +214,24 @@
                 this.$nextTick(() => {
                     new Swiper('.hero-slider', {
                         loop: true,
-                        effect: 'fade',
-                        fadeEffect: { crossFade: true },
+                        speed: 500,
+                        spaceBetween: 24, // Gap between slides
+                        slidesPerView: 1, // Default (mobile)
                         autoplay: {
                             delay: 5000,
                             disableOnInteraction: false,
+                        },
+                        breakpoints: {
+                            // Tablet
+                            640: {
+                                slidesPerView: 2,
+                                spaceBetween: 20,
+                            },
+                            // Desktop
+                            1024: {
+                                slidesPerView: 3,
+                                spaceBetween: 24,
+                            }
                         },
                         pagination: {
                             el: '.swiper-pagination',
@@ -229,8 +239,8 @@
                             dynamicBullets: true,
                         },
                         navigation: {
-                            nextEl: '.swiper-button-next',
-                            prevEl: '.swiper-button-prev',
+                            nextEl: '.swiper-button-next-custom',
+                            prevEl: '.swiper-button-prev-custom',
                         },
                     });
                 });
