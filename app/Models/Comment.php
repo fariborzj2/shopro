@@ -19,7 +19,11 @@ class Comment
 
     public static function find($id)
     {
-        $stmt = Database::query("SELECT * FROM blog_post_comments WHERE id = :id", ['id' => $id]);
+        $sql = "SELECT c.*, p.title as post_title, p.slug as post_slug
+                FROM blog_post_comments c
+                JOIN blog_posts p ON c.post_id = p.id
+                WHERE c.id = :id";
+        $stmt = Database::query($sql, ['id' => $id]);
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
@@ -57,10 +61,63 @@ class Comment
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    public static function getPaginatedList($page = 1, $perPage = 10, $status = null, $search = null, $sort = 'created_at', $dir = 'desc')
+    {
+        $offset = ($page - 1) * $perPage;
+        $params = [];
+        $whereClause = "WHERE 1=1";
+
+        if ($status) {
+            $whereClause .= " AND c.status = :status";
+            $params['status'] = $status;
+        }
+
+        if ($search) {
+            $whereClause .= " AND (c.name LIKE :search OR c.email LIKE :search OR c.comment LIKE :search OR p.title LIKE :search)";
+            $params['search'] = "%$search%";
+        }
+
+        // Whitelist sort columns to prevent SQL injection
+        $allowedSorts = ['created_at', 'status', 'name', 'post_title'];
+        if (!in_array($sort, $allowedSorts)) {
+            $sort = 'created_at';
+        }
+        $dir = strtoupper($dir) === 'ASC' ? 'ASC' : 'DESC';
+
+        // Count total for pagination
+        $countSql = "SELECT COUNT(*) FROM blog_post_comments c JOIN blog_posts p ON c.post_id = p.id $whereClause";
+        $total = Database::query($countSql, $params)->fetchColumn();
+
+        // Fetch data
+        $sql = "SELECT c.*, p.title as post_title, p.slug as post_slug
+                FROM blog_post_comments c
+                JOIN blog_posts p ON c.post_id = p.id
+                $whereClause
+                ORDER BY c.$sort $dir
+                LIMIT $perPage OFFSET $offset";
+
+        $stmt = Database::query($sql, $params);
+        $items = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        return [
+            'items' => $items,
+            'total' => $total,
+            'per_page' => $perPage,
+            'current_page' => $page,
+            'total_pages' => ceil($total / $perPage)
+        ];
+    }
+
     public static function update($id, $data)
     {
+        $fields = [];
+        foreach ($data as $key => $value) {
+            $fields[] = "$key = :$key";
+        }
+        $fieldsStr = implode(', ', $fields);
         $data['id'] = $id;
-        $sql = "UPDATE blog_post_comments SET name = :name, email = :email, comment = :comment, status = :status WHERE id = :id";
+
+        $sql = "UPDATE blog_post_comments SET $fieldsStr WHERE id = :id";
         Database::query($sql, $data);
         return true;
     }
@@ -88,5 +145,12 @@ class Comment
             $children = array_merge($children, self::getAllChildren($childId));
         }
         return $children;
+    }
+
+    public static function updateStatus($id, $status)
+    {
+        $sql = "UPDATE blog_post_comments SET status = :status WHERE id = :id";
+        Database::query($sql, ['id' => $id, 'status' => $status]);
+        return true;
     }
 }

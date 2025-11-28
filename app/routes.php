@@ -132,6 +132,13 @@ $router->post('/admin/blog/posts/delete/{id}', 'Admin\BlogPostsController@delete
 $router->post('/admin/blog/posts/delete-image/{id}', 'Admin\BlogPostsController@deleteImage');
 $router->get('/admin/api/tags/search', 'Admin\BlogTagsController@search');
 
+// Blog Comments
+$router->get('/admin/blog/comments', 'Admin\BlogCommentsController@index');
+$router->get('/admin/blog/comments/edit/{id}', 'Admin\BlogCommentsController@edit');
+$router->post('/admin/blog/comments/update/{id}', 'Admin\BlogCommentsController@update');
+$router->post('/admin/blog/comments/delete/{id}', 'Admin\BlogCommentsController@destroy');
+$router->post('/admin/blog/comments/status/{id}', 'Admin\BlogCommentsController@updateStatus');
+
 // Custom Order Fields
 $router->get('/admin/custom-fields', 'Admin\CustomOrderFieldsController@index');
 $router->get('/admin/custom-fields/create', 'Admin\CustomOrderFieldsController@create');
