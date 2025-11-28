@@ -65,17 +65,49 @@ class BlogController
             }
         }
 
+        // Fetch Top Authors
+        $topAuthors = \App\Models\BlogPost::getTopAuthors(4);
+
+        // Fetch Education Posts (Assuming slug 'education' or 'amoozesh' - attempting both fallback)
+        $educationPosts = \App\Models\BlogPost::getPostsByCategorySlug('education', 4);
+        if (empty($educationPosts)) {
+             $educationPosts = \App\Models\BlogPost::getPostsByCategorySlug('amoozesh', 4);
+        }
+
         echo $this->template->render('blog/index', [
-            'pageTitle' => 'بلاگ',
+            'pageTitle' => 'وبلاگ و مقالات آموزشی',
             'posts' => $posts,
             'categories' => $categories,
+            'tags' => \App\Models\BlogTag::findAllWithCount(),
             'paginator' => $paginator,
             'search' => $search,
             'selected_category' => $category_id,
             'sidebar' => $sidebar_data,
             'slider_posts' => $slider_posts,
-            'featured_categories' => $featured_categories
+            'featured_categories' => $featured_categories,
+            'topAuthors' => $topAuthors,
+            'educationPosts' => $educationPosts
         ]);
+    }
+
+    public function search_suggestions()
+    {
+        header('Content-Type: application/json');
+        $term = $_GET['q'] ?? '';
+
+        if (mb_strlen($term) < 2) {
+            echo json_encode([]);
+            exit;
+        }
+
+        try {
+            $suggestions = \App\Models\BlogPost::getSearchSuggestions($term);
+            echo json_encode($suggestions);
+        } catch (\Exception $e) {
+            http_response_code(500);
+            echo json_encode(['error' => 'Server Error']);
+        }
+        exit;
     }
 
     public function category($slug)
