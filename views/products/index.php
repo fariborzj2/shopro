@@ -6,13 +6,23 @@
             <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">لیست محصولات، قیمت‌ها و موجودی انبار</p>
         </div>
         <div class="flex flex-col sm:flex-row gap-3">
-            <form method="GET" action="/admin/products" class="relative">
-                <input type="text" name="search" value="<?= htmlspecialchars($search ?? '') ?>" placeholder="جستجو در نام محصول..." class="w-full sm:w-64 pl-10 pr-4 py-2 text-sm text-gray-700 bg-gray-50 dark:bg-gray-700/50 dark:text-gray-200 border border-gray-200 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all">
-                <button type="submit" class="absolute left-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400 p-1">
-                    <?php partial('icon', ['name' => 'search', 'class' => 'w-4 h-4']); ?>
-                </button>
+            <form method="GET" action="/admin/products" class="flex flex-col sm:flex-row gap-2 relative">
+                <select name="category_id" onchange="this.form.submit()" class="w-full sm:w-48 px-3 py-2 text-sm text-gray-700 bg-gray-50 dark:bg-gray-700/50 dark:text-gray-200 border border-gray-200 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all">
+                    <option value="">همه دسته‌بندی‌ها</option>
+                    <?php foreach ($categories as $category): ?>
+                        <option value="<?= $category['id'] ?>" <?= (isset($selected_category) && $selected_category == $category['id']) ? 'selected' : '' ?>>
+                            <?= htmlspecialchars($category['name_fa']) ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+                <div class="relative w-full sm:w-64">
+                    <input type="text" name="search" value="<?= htmlspecialchars($search ?? '') ?>" placeholder="جستجو در نام محصول..." class="w-full pl-10 pr-4 py-2 text-sm text-gray-700 bg-gray-50 dark:bg-gray-700/50 dark:text-gray-200 border border-gray-200 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all">
+                    <button type="submit" class="absolute left-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400 p-1">
+                        <?php partial('icon', ['name' => 'search', 'class' => 'w-4 h-4']); ?>
+                    </button>
+                </div>
             </form>
-            <a href="<?php echo url('products/create'); ?>" class="inline-flex items-center justify-center px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 shadow-sm transition-colors">
+            <a href="<?php echo url('products/create'); ?>" class="inline-flex items-center justify-center px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 shadow-sm transition-colors whitespace-nowrap">
                 <?php partial('icon', ['name' => 'plus', 'class' => 'w-5 h-5 ml-2']); ?>
                 افزودن محصول جدید
             </a>

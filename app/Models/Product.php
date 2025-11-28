@@ -13,9 +13,10 @@ class Product
      * @param int $limit
      * @param int $offset
      * @param string $search
+     * @param int|null $category_id
      * @return array
      */
-    public static function paginated($limit, $offset, $search = '')
+    public static function paginated($limit, $offset, $search = '', $category_id = null)
     {
         $sql = "SELECT p.*, c.name_fa as category_name,
                        (SELECT COALESCE(SUM(quantity), 0)
@@ -29,7 +30,8 @@ class Product
                           AND o.payment_status = 'paid'
                           AND o.order_status NOT IN ('cancelled', 'phishing')) as total_revenue
                 FROM products p
-                LEFT JOIN categories c ON p.category_id = c.id";
+                LEFT JOIN categories c ON p.category_id = c.id
+                WHERE 1=1";
 
         $params = [
             ':limit' => $limit,
@@ -37,8 +39,13 @@ class Product
         ];
 
         if (!empty($search)) {
-            $sql .= " WHERE p.name_fa LIKE :search OR p.name_en LIKE :search";
+            $sql .= " AND (p.name_fa LIKE :search OR p.name_en LIKE :search)";
             $params[':search'] = "%$search%";
+        }
+
+        if ($category_id !== null && $category_id > 0) {
+            $sql .= " AND p.category_id = :category_id";
+            $params[':category_id'] = $category_id;
         }
 
         $sql .= " ORDER BY p.position ASC, p.id DESC LIMIT :limit OFFSET :offset";
@@ -60,16 +67,22 @@ class Product
      * Get the total count of products.
      *
      * @param string $search
+     * @param int|null $category_id
      * @return int
      */
-    public static function count($search = '')
+    public static function count($search = '', $category_id = null)
     {
-        $sql = "SELECT COUNT(id) FROM products";
+        $sql = "SELECT COUNT(id) FROM products WHERE 1=1";
         $params = [];
 
         if (!empty($search)) {
-            $sql .= " WHERE name_fa LIKE :search OR name_en LIKE :search";
+            $sql .= " AND (name_fa LIKE :search OR name_en LIKE :search)";
             $params[':search'] = "%$search%";
+        }
+
+        if ($category_id !== null && $category_id > 0) {
+            $sql .= " AND category_id = :category_id";
+            $params[':category_id'] = $category_id;
         }
 
         $stmt = Database::query($sql, $params);
