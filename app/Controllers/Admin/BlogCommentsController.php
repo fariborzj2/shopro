@@ -20,7 +20,7 @@ class BlogCommentsController
 
         $paginator = new Paginator($data['total'], 10, $page, '/blog/comments');
 
-        view('admin/blog/comments/index', [
+        view('main', 'blog/comments/index', [
             'comments' => $data['items'],
             'paginator' => $paginator,
             'search' => $search,
@@ -38,7 +38,7 @@ class BlogCommentsController
             return;
         }
 
-        view('/blog/comments/edit', ['comment' => $comment]);
+        view('main', 'blog/comments/edit', ['comment' => $comment]);
     }
 
     public function update($id)
