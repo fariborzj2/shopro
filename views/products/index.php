@@ -10,8 +10,8 @@
                 <select name="category_id" onchange="this.form.submit()" class="w-full sm:w-48 px-3 py-2 text-sm text-gray-700 bg-gray-50 dark:bg-gray-700/50 dark:text-gray-200 border border-gray-200 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all">
                     <option value="">همه دسته‌بندی‌ها</option>
                     <?php foreach ($categories as $category): ?>
-                        <option value="<?= $category['id'] ?>" <?= (isset($selected_category) && $selected_category == $category['id']) ? 'selected' : '' ?>>
-                            <?= htmlspecialchars($category['name_fa']) ?>
+                        <option value="<?= $category->id ?>" <?= (isset($selected_category) && $selected_category == $category->id) ? 'selected' : '' ?>>
+                            <?= htmlspecialchars($category->name_fa) ?>
                         </option>
                     <?php endforeach; ?>
                 </select>
