@@ -16,7 +16,17 @@ class Product
      */
     public static function paginated($limit, $offset)
     {
-        $sql = "SELECT p.*, c.name_fa as category_name
+        $sql = "SELECT p.*, c.name_fa as category_name,
+                       (SELECT COALESCE(SUM(quantity), 0)
+                        FROM orders o
+                        WHERE o.product_id = p.id
+                          AND o.payment_status = 'paid'
+                          AND o.order_status NOT IN ('cancelled', 'phishing')) as sales_count,
+                       (SELECT COALESCE(SUM(amount), 0)
+                        FROM orders o
+                        WHERE o.product_id = p.id
+                          AND o.payment_status = 'paid'
+                          AND o.order_status NOT IN ('cancelled', 'phishing')) as total_revenue
                 FROM products p
                 LEFT JOIN categories c ON p.category_id = c.id
                 ORDER BY p.position ASC, p.id DESC
