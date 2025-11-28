@@ -223,23 +223,18 @@
                                 <?php
                                     $p_status = strtolower($order['payment_status']);
                                     $p_class = 'bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-400';
-                                    $p_dot = 'bg-gray-400';
 
                                     if ($p_status === 'paid') {
                                         $p_class = 'bg-emerald-50 text-emerald-700 border border-emerald-100 dark:bg-emerald-900/20 dark:text-emerald-400 dark:border-emerald-800';
-                                        $p_dot = 'bg-emerald-500';
                                     }
                                     elseif ($p_status === 'failed') {
                                         $p_class = 'bg-red-50 text-red-700 border border-red-100 dark:bg-red-900/20 dark:text-red-400 dark:border-red-800';
-                                        $p_dot = 'bg-red-500';
                                     }
                                     elseif ($p_status === 'unpaid') {
                                         $p_class = 'bg-amber-50 text-amber-700 border border-amber-100 dark:bg-amber-900/20 dark:text-amber-400 dark:border-amber-800';
-                                        $p_dot = 'bg-amber-500';
                                     }
                                 ?>
-                                <span class="px-2.5 py-0.5 inline-flex items-center gap-1.5 text-xs font-medium rounded-full <?= $p_class ?>">
-                                    <span class="w-1.5 h-1.5 rounded-full <?= $p_dot ?>"></span>
+                                <span class="px-2.5 py-0.5 rounded-full text-xs font-mediuml <?= $p_class ?>">
                                     <?= translate_payment_status_fa($order['payment_status']) ?>
                                 </span>
                             </td>
