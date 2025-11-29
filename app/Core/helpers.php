@@ -4,6 +4,8 @@ use App\Core\Request;
 
 // app/Core/helpers.php
 require_once __DIR__ . '/faq_helpers.php';
+// Include theme loader to make load_theme_view available globally
+require_once __DIR__ . '/../../storefront/theme_loader.php';
 
 /**
  * Render a view file and return its content as a string.

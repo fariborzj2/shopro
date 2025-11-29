@@ -101,7 +101,7 @@ class StorefrontController
             'isUserLoggedIn' => isset($_SESSION['user_id'])
         ]);
 
-        $template = new Template(__DIR__ . '/../../storefront/templates');
+        $template = new Template();
         echo $template->render('index', [
             'pageTitle' => $this->settings['site_title'] ?? 'فروشگاه مدرن',
             'store_data' => $store_data,
@@ -114,7 +114,7 @@ class StorefrontController
      */
     public function page($slug)
     {
-        $template = new Template(__DIR__ . '/../../storefront/templates');
+        $template = new Template();
 
         if ($slug === 'faq') {
             $faq_items_grouped = FaqItem::findAllGroupedByType();
@@ -186,7 +186,7 @@ class StorefrontController
             'isUserLoggedIn' => isset($_SESSION['user_id'])
         ]);
 
-        $template = new Template(__DIR__ . '/../../storefront/templates');
+        $template = new Template();
         echo $template->render('category', [
             'pageTitle' => $category->name_fa,
             'category' => $category,

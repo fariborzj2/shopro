@@ -15,7 +15,7 @@ class BlogController
 
     public function __construct()
     {
-        $this->template = new Template(__DIR__ . '/../../storefront/templates');
+        $this->template = new Template();
     }
 
     public function index()
