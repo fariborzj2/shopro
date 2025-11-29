@@ -149,8 +149,8 @@ class BlogController
                     'image' => $post->image_url ? $base_url . $post->image_url : null,
                     'author' => ['@type' => 'Person', 'name' => $post->author_name],
                     'publisher' => ['@type' => 'Organization', 'name' => 'نام سایت شما', 'logo' => ['@type' => 'ImageObject', 'url' => $base_url . '/logo.png']],
-                    'datePublished' => date('c', strtotime($post->published_at)),
-                    'dateModified' => date('c', strtotime($post->updated_at ?? $post->published_at)),
+                    'datePublished' => date('c', strtotime($post->published_at ?? $post->created_at ?? 'now')),
+                    'dateModified' => date('c', strtotime($post->updated_at ?? $post->published_at ?? $post->created_at ?? 'now')),
                     'mainEntityOfPage' => $canonical_url,
                 ],
                 'faq' => !empty($faq_items) ? [

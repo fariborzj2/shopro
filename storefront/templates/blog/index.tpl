@@ -45,14 +45,37 @@
                 </div>
                 
                 <!-- Navigation & Pagination -->
-                <div class="flex items-center justify-between mt-4">
-                    <div class="swiper-pagination"></div>
+                <div class="flex items-center justify-between mt-6 px-2">
+                    <div class="swiper-pagination-custom flex items-center justify-start gap-1 relative !w-auto !static"></div>
                     <div class="flex gap-3 items-center">
-                        <div class="swiper-button-next-custom">بعدی</div>
-                        <div class="swiper-button-prev-custom">قبلی</div>
+                        <div class="swiper-button-prev-custom w-12 h-12 flex items-center justify-center rounded-full bg-white text-gray-700 shadow-lg hover:bg-indigo-600 hover:text-white hover:scale-105 transition-all duration-300 cursor-pointer group" role="button" aria-label="قبلی">
+                            <svg class="w-6 h-6 transform rtl:rotate-180 group-hover:-translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                            </svg>
+                        </div>
+                        <div class="swiper-button-next-custom w-12 h-12 flex items-center justify-center rounded-full bg-white text-gray-700 shadow-lg hover:bg-indigo-600 hover:text-white hover:scale-105 transition-all duration-300 cursor-pointer group" role="button" aria-label="بعدی">
+                            <svg class="w-6 h-6 transform rtl:rotate-180 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                            </svg>
+                        </div>
                     </div>
                 </div>
             </div>
+
+            <style>
+                .swiper-pagination-custom .swiper-pagination-bullet {
+                    width: 10px;
+                    height: 10px;
+                    background-color: #e2e8f0;
+                    opacity: 1;
+                    transition: all 0.3s ease;
+                    border-radius: 9999px;
+                }
+                .swiper-pagination-custom .swiper-pagination-bullet-active {
+                    background-color: #4f46e5;
+                    width: 30px;
+                }
+            </style>
         <?php endif; ?>
 
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
