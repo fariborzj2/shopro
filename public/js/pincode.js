@@ -84,8 +84,7 @@ class pinCode {
                 // Handle paste/autofill behavior for input event
                 const chars = value.split('');
 
-                // If current index is 0 or close to it, and we have enough char
-s, fill them
+                // If current index is 0 or close to it, and we have enough chars, fill them
                 if (chars.length <= self.settings.fields - index) {
                     let isValid = true;
                     chars.forEach((char, i) => {
@@ -98,8 +97,7 @@ s, fill them
                                 isValid = false;
                             }
                             if (targetIndex < self.settings.fields - 1) {
-                                self.getField(targetIndex + 1).removeAttribute("
-readonly");
+                                self.getField(targetIndex + 1).removeAttribute("readonly");
                             }
                         }
                     });
@@ -132,8 +130,7 @@ readonly");
             if (index < self.settings.fields - 1) {
                 if (self.settings.hideinput) {
                     if (index > 0) {
-                        self.getField(index - 1).value = self.settings.placehold
-er;
+                        self.getField(index - 1).value = self.settings.placeholder;
                     }
 
                     const currentInput = this;
@@ -176,8 +173,7 @@ er;
                 event.stopPropagation();
                 event.preventDefault();
 
-                const clipboardData = (event.clipboardData || window.clipboardDa
-ta).getData("Text").trim();
+                const clipboardData = (event.clipboardData || window.clipboardData).getData("Text").trim();
 
                 if (clipboardData.length === this.settings.fields) {
                     let isValid = true;
