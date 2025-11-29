@@ -47,4 +47,24 @@ class Request
 
         return $data;
     }
+
+    /**
+     * Get the body of the request (JSON or POST data).
+     *
+     * @return array
+     */
+    public static function getBody()
+    {
+        if (self::method() === 'GET') {
+            return [];
+        }
+
+        $contentType = $_SERVER['CONTENT_TYPE'] ?? '';
+
+        if (stripos($contentType, 'application/json') !== false) {
+            return self::json();
+        }
+
+        return $_POST;
+    }
 }

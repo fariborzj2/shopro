@@ -69,4 +69,23 @@
             </div>
         </form>
     </div>
+
+    <!-- Admin Reply Section -->
+    <div class="mt-8 bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 p-6">
+        <h2 class="text-lg font-bold text-gray-800 dark:text-white mb-4">پاسخ به این نظر</h2>
+        <form action="<?php echo url('blog/comments/reply/' . $comment['id']); ?>" method="POST" class="space-y-4">
+            <?php echo csrf_field(); ?>
+            <div>
+                <label for="reply_content" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">متن پاسخ</label>
+                <textarea name="reply_content" id="reply_content" rows="4" required placeholder="پاسخ خود را اینجا بنویسید..."
+                          class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white resize-y"></textarea>
+            </div>
+            <div class="flex justify-end">
+                <button type="submit" class="px-6 py-2 bg-green-600 hover:bg-green-700 text-white font-medium rounded-lg shadow-sm transition-colors focus:ring-2 focus:ring-offset-2 focus:ring-green-500 flex items-center gap-2">
+                    <?php partial('icon', ['name' => 'reply', 'class' => 'w-4 h-4']); ?>
+                    ارسال پاسخ
+                </button>
+            </div>
+        </form>
+    </div>
 </div>
