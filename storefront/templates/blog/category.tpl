@@ -1,59 +1,97 @@
 <?php include __DIR__ . '/../header.tpl'; ?>
 
-<div class="container" style="padding-block: 3rem;">
-    <!-- Category Header -->
-    <header style="text-align: center; margin-bottom: 4rem;">
-        <h1 style="font-size: 2.5rem; font-weight: 900; margin-bottom: 1rem; color: var(--color-text-main);">دسته‌بندی: <?= htmlspecialchars($category->name_fa) ?></h1>
-        <?php if (!empty($category->notes)): ?>
-            <p style="font-size: 1.1rem; color: var(--color-text-muted); max-width: 600px; margin: 0 auto;"><?= htmlspecialchars($category->notes) ?></p>
-        <?php endif; ?>
-    </header>
-
-    <!-- Blog Posts Grid -->
-    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 2rem;">
-        <?php foreach ($posts as $post): ?>
-            <article class="glass-panel" style="display: flex; flex-direction: column; overflow: hidden; border-radius: var(--radius-lg); transition: var(--transition-smooth);">
-                <a href="/blog/<?= $post->slug ?>" style="aspect-ratio: 16/9; overflow: hidden; display: block;">
-                    <img src="<?= htmlspecialchars($post->image_url ?? 'https://placehold.co/600x400/EEE/31343C?text=No+Image') ?>" alt="<?= htmlspecialchars($post->title) ?>" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
-                </a>
-                <div style="padding: 1.5rem; display: flex; flex-direction: column; flex-grow: 1;">
-                    <h2 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 0.75rem;">
-                        <a href="/blog/<?= $post->slug ?>" style="color: var(--color-text-main); transition: color 0.2s;" onmouseover="this.style.color='var(--color-primary)'" onmouseout="this.style.color='var(--color-text-main)'"><?= htmlspecialchars($post->title) ?></a>
-                    </h2>
-                    <p style="color: #64748b; margin-bottom: 1.5rem; line-height: 1.6; flex-grow: 1;"><?= htmlspecialchars($post->excerpt) ?></p>
-                    <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.85rem; color: #94a3b8; border-top: 1px solid var(--color-border); padding-top: 1rem;">
-                        <span><?= htmlspecialchars($post->author_name) ?></span>
-                        <span><?= date('Y/m/d', strtotime($post->published_at)) ?></span>
-                    </div>
-                </div>
-            </article>
-        <?php endforeach; ?>
+<div class="main-content-wrapper">
+    <!-- Hero -->
+    <div class="section pd-td-40 hero">
+        <div class="center">
+            <div class="hero-info text-center max-w600 m-auto relative">
+                <div class="star-amin float-star"></div>
+                <div class="color-bright"><span class="icon-category gr-text font-size-1-5"></span> دسته‌بندی</div>
+                <h1 class="title-size-1">مطالب <span class="gr-text"><?php echo htmlspecialchars($category->name ?? 'دسته‌بندی'); ?></span></h1>
+            </div>
+        </div>
     </div>
 
-    <!-- Pagination -->
-    <div style="margin-top: 4rem;">
-        <?php if ($paginator->total_pages > 1) : ?>
-            <nav style="display: flex; justify-content: center;">
-                <ul class="pagination" style="display: flex; gap: 0.5rem; list-style: none;">
-                    <?php if ($paginator->hasPrev()) : ?>
-                        <li><a class="btn btn-ghost" href="<?= $paginator->getPrevUrl() ?>">&larr; قبلی</a></li>
-                    <?php endif; ?>
+    <!-- Posts Grid -->
+    <div class="section pd-d-40">
+        <div class="center">
+            <?php if (empty($posts)): ?>
+                <div class="text-center py-5">
+                    <p class="font-size-1-5 purple-gray">هیچ مطلبی در این دسته‌بندی یافت نشد.</p>
+                    <a href="/blog" class="btn border mt-20">بازگشت به وبلاگ</a>
+                </div>
+            <?php else: ?>
+                <div class="d-flex-wrap" style="margin: -15px;">
+                    <?php foreach ($posts as $post): ?>
+                        <div class="basis300 grow-1 pd-15">
+                            <div class="bg-white radius-20 overhide shadow-sm hover-up transition">
+                                <a href="/blog/<?php echo $post->slug; ?>" class="d-block relative aspect-video overflow-hidden">
+                                    <img
+                                        src="<?php echo htmlspecialchars($post->image_url ?? '/template-2/images/blog/default.png'); ?>"
+                                        alt="<?php echo htmlspecialchars($post->title); ?>"
+                                        class="w-full h-full object-cover"
+                                    >
+                                </a>
+                                <div class="pd-20">
+                                    <div class="d-flex align-center color-bright font-size-0-9 mb-10">
+                                        <div class="ml-10">
+                                            <i class="icon-calendar-2"></i>
+                                            <time><?php echo jdate('d F Y', strtotime($post->created_at)); ?></time>
+                                        </div>
+                                    </div>
+                                    <h2 class="font-size-1-2 mb-10 ellipsis-y line-clamp-2" style="min-height: 3rem;">
+                                        <a href="/blog/<?php echo $post->slug; ?>" class="color-text font-bold hover-gr-text">
+                                            <?php echo htmlspecialchars($post->title); ?>
+                                        </a>
+                                    </h2>
+                                    <p class="color-bright font-size-1 ellipsis-y line-clamp-3 mb-20 text-justify" style="min-height: 4.5rem;">
+                                        <?php echo htmlspecialchars($post->excerpt); ?>
+                                    </p>
+                                    <div class="d-flex just-between align-center border-t pt-15">
+                                        <a href="/blog/<?php echo $post->slug; ?>" class="btn-sm border purple-gray hover-bg-purple hover-white transition">
+                                            ادامه مطلب <i class="icon-arrow-left font-size-0-8 mr-5"></i>
+                                        </a>
+                                        <div class="color-bright font-size-0-9">
+                                            <i class="icon-eye"></i> <?php echo number_format($post->views_count ?? 0); ?>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
 
-                    <?php for ($i = 1; $i <= $paginator->total_pages; $i++) : ?>
-                        <li>
-                            <a href="<?= $paginator->buildUrl($i) ?>" class="btn <?= ($i == $paginator->current_page) ? 'btn-primary' : 'btn-ghost' ?>" style="width: 40px; height: 40px; padding: 0; display: grid; place-items: center;">
-                                <?= $i ?>
-                            </a>
-                        </li>
-                    <?php endfor; ?>
+                <!-- Pagination -->
+                <?php if (isset($paginator) && $paginator->total_pages > 1): ?>
+                    <div class="d-flex just-center mt-40">
+                        <div class="pagination d-flex align-center">
+                            <?php if ($paginator->current_page > 1): ?>
+                                <a href="<?php echo $paginator->getPrevUrl(); ?>" class="btn border m-5"><i class="icon-arrow-right-1"></i></a>
+                            <?php endif; ?>
 
-                    <?php if ($paginator->hasNext()) : ?>
-                        <li><a class="btn btn-ghost" href="<?= $paginator->getNextUrl() ?>">بعدی &rarr;</a></li>
-                    <?php endif; ?>
-                </ul>
-            </nav>
-        <?php endif; ?>
+                            <span class="m-5 font-bold purple-gray">صفحه <?php echo $paginator->current_page; ?> از <?php echo $paginator->total_pages; ?></span>
+
+                            <?php if ($paginator->current_page < $paginator->total_pages): ?>
+                                <a href="<?php echo $paginator->getNextUrl(); ?>" class="btn border m-5"><i class="icon-arrow-left"></i></a>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+                <?php endif; ?>
+
+            <?php endif; ?>
+        </div>
     </div>
 </div>
+
+<style>
+    .hover-up:hover { transform: translateY(-5px); }
+    .transition { transition: all 0.3s ease; }
+    .aspect-video { aspect-ratio: 16/9; }
+    .w-full { width: 100%; }
+    .h-full { height: 100%; }
+    .object-cover { object-fit: cover; }
+    .shadow-sm { box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05); }
+    .btn-sm { padding: 5px 15px; border-radius: 10px; font-size: 0.9rem; }
+</style>
 
 <?php include __DIR__ . '/../footer.tpl'; ?>
