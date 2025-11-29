@@ -2,14 +2,22 @@
 
 <main class="py-12 bg-gray-50 min-h-screen">
     <div class="container mx-auto px-4">
+        
+        <!-- Page Title & Filters -->
+        <div class="flex flex-col md:flex-row items-center justify-between mb-8 gap-4">
+            <h1 class="text-3xl font-extrabold text-gray-900 flex items-center gap-3">
+                <span class="w-2 h-8 bg-indigo-600 rounded-full"></span>
+                <?= htmlspecialchars($pageTitle) ?>
+            </h1>
+        </div>
 
         <!-- Hero Section (Slider) -->
         <?php if (!empty($slider_posts)): ?>
-            <div class="relative w-full rounded-3xl overflow-hidden shadow-2xl mb-12 group" x-data="heroSlider">
+            <div class="relative w-full mb-12 group" x-data="heroSlider">
                 <div class="swiper hero-slider h-[300px] md:h-[450px] lg:h-[500px]">
                     <div class="swiper-wrapper">
                         <?php foreach ($slider_posts as $post): ?>
-                            <div class="swiper-slide relative">
+                            <div class="swiper-slide rounded-3xl overflow-hidden shadow-md relative">
                                 <a href="/blog/<?= $post->slug ?>" class="block w-full h-full">
                                     <img src="<?= $post->image_url ?? 'https://placehold.co/1200x500/EEE/31343C?text=No+Image' ?>"
                                          alt="<?= htmlspecialchars($post->title) ?>"
@@ -23,22 +31,24 @@
                                                     <?= \jdate('d F Y', strtotime($post->published_at)) ?>
                                                 </span>
                                             </div>
-                                            <h2 class="text-2xl md:text-4xl lg:text-5xl font-black text-white leading-tight mb-2 drop-shadow-lg">
+                                            <h2 class="text-xl md:text-2xl lg:text-3xl font-black text-white leading-tight mb-2 drop-shadow-lg">
                                                 <?= htmlspecialchars($post->title) ?>
                                             </h2>
-                                            <p class="text-gray-200 text-sm md:text-lg line-clamp-2 md:line-clamp-1 max-w-2xl drop-shadow-md">
-                                                <?= htmlspecialchars($post->excerpt) ?>
-                                            </p>
                                         </div>
                                     </div>
                                 </a>
                             </div>
                         <?php endforeach; ?>
                     </div>
-                    <!-- Navigation & Pagination -->
-                    <div class="swiper-pagination !bottom-8 !right-8 !w-auto"></div>
-                    <div class="swiper-button-next !text-white !right-auto !left-8 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                    <div class="swiper-button-prev !text-white !right-auto !left-20 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                </div>
+                
+                <!-- Navigation & Pagination -->
+                <div class="flex items-center justify-between mt-4">
+                    <div class="swiper-pagination relative !w-auto !bottom-0 !right-0"></div>
+                    <div class="flex gap-3 items-center">
+                        <div class="swiper-button-next-custom relative text-lg text-black opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                        <div class="swiper-button-prev-custom relative text-lg text-black opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                    </div>
                 </div>
             </div>
         <?php endif; ?>
@@ -48,13 +58,7 @@
             <!-- Main Content -->
             <div class="lg:col-span-8">
 
-                <!-- Page Title & Filters -->
-                <div class="flex flex-col md:flex-row items-center justify-between mb-8 gap-4">
-                    <h1 class="text-3xl font-extrabold text-gray-900 flex items-center gap-3">
-                        <span class="w-2 h-8 bg-indigo-600 rounded-full"></span>
-                        <?= htmlspecialchars($pageTitle) ?>
-                    </h1>
-                </div>
+
 
                 <!-- Posts Grid -->
                 <?php if (!empty($posts)) : ?>
