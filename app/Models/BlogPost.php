@@ -121,6 +121,214 @@ class BlogPost
     }
 
     /**
+     * Find most viewed posts.
+     *
+     * @param int $limit
+     * @param int|null $days
+     * @return array
+     */
+    public static function findMostViewed($limit = 5, $days = null)
+    {
+        // Select only necessary columns to avoid memory issues with large content
+        $sql = "SELECT id, title, slug, excerpt, published_at, image_url, views_count FROM blog_posts WHERE status = 'published' AND (published_at IS NULL OR published_at <= NOW())";
+
+        if ($days) {
+            $sql .= " AND published_at >= :cutoff_date";
+        }
+
+        $sql .= " ORDER BY views_count DESC LIMIT :limit";
+
+        $pdo = Database::getConnection();
+        $stmt = $pdo->prepare($sql);
+        $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
+        if ($days) {
+            $cutoff_date = date('Y-m-d H:i:s', strtotime("-{$days} days"));
+            $stmt->bindValue(':cutoff_date', $cutoff_date);
+        }
+        $stmt->execute();
+
+        return $stmt->fetchAll(PDO::FETCH_OBJ);
+    }
+
+    /**
+     * Find editor's picks.
+     *
+     * @param int $limit
+     * @return array
+     */
+    public static function findEditorsPicks($limit = 5)
+    {
+        $sql = "SELECT id, title, slug, excerpt, published_at, image_url, is_editors_pick FROM blog_posts WHERE status = 'published' AND is_editors_pick = 1 AND (published_at IS NULL OR published_at <= NOW()) ORDER BY published_at DESC LIMIT :limit";
+        $pdo = Database::getConnection();
+        $stmt = $pdo->prepare($sql);
+        $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
+        $stmt->execute();
+
+        return $stmt->fetchAll(PDO::FETCH_OBJ);
+    }
+
+    /**
+     * Find all published posts.
+     *
+     * @param int $limit
+     * @param int $offset
+     * @param string|null $search
+     * @param int|null $category_id
+     * @return array
+     */
+    public static function findAllPublished($limit = 10, $offset = 0, $search = null, $category_id = null)
+    {
+       $result = self::findAllPublishedWithCount($limit, $offset, $search, $category_id);
+       return $result['posts'];
+    }
+
+    /**
+     * Get top authors based on post count.
+     *
+     * @param int $limit
+     * @return array
+     */
+    public static function getTopAuthors($limit = 5)
+    {
+         $sql = "SELECT a.id, a.name, a.email, COUNT(bp.id) as posts_count
+                 FROM admins a
+                 JOIN blog_posts bp ON a.id = bp.author_id
+                 WHERE bp.status = 'published' AND (bp.published_at IS NULL OR bp.published_at <= NOW())
+                 GROUP BY a.id, a.name, a.email
+                 ORDER BY posts_count DESC
+                 LIMIT :limit";
+
+         $pdo = Database::getConnection();
+         $stmt = $pdo->prepare($sql);
+         $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
+         $stmt->execute();
+         return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    /**
+     * Get posts by category slug.
+     *
+     * @param string $slug
+     * @param int $limit
+     * @return array
+     */
+    public static function getPostsByCategorySlug($slug, $limit = 4)
+    {
+         $sql = "SELECT bp.id, bp.title, bp.slug, bp.excerpt, bp.image_url, bp.published_at, bp.views_count,
+                bc.name_fa as category_name, bc.slug as category_slug, a.name as author_name
+                FROM blog_posts bp
+                JOIN blog_categories bc ON bp.category_id = bc.id
+                LEFT JOIN admins a ON bp.author_id = a.id
+                WHERE bc.slug = :slug
+                AND bp.status = 'published'
+                AND (bp.published_at IS NULL OR bp.published_at <= NOW())
+                ORDER BY bp.published_at DESC
+                LIMIT :limit";
+
+        $pdo = Database::getConnection();
+        $stmt = $pdo->prepare($sql);
+        $stmt->bindValue(':slug', $slug);
+        $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_OBJ);
+    }
+
+    /**
+     * Find related posts.
+     *
+     * @param int $post_id
+     * @param int $limit
+     * @return array
+     */
+    public static function findRelatedPosts($post_id, $limit = 5)
+    {
+        // Optimized to exclude content
+        $sql = "SELECT bp.id, bp.title, bp.slug, bp.excerpt, bp.image_url, bp.published_at, COUNT(bpt.tag_id) as common_tags
+                FROM blog_post_tags bpt
+                JOIN blog_posts bp ON bpt.post_id = bp.id
+                WHERE bpt.tag_id IN (SELECT tag_id FROM blog_post_tags WHERE post_id = :post_id)
+                AND bp.id != :exclude_id
+                GROUP BY bp.id
+                ORDER BY common_tags DESC
+                LIMIT :limit";
+
+        $pdo = Database::getConnection();
+        $stmt = $pdo->prepare($sql);
+        $stmt->bindValue(':post_id', $post_id, PDO::PARAM_INT);
+        $stmt->bindValue(':exclude_id', $post_id, PDO::PARAM_INT);
+        $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
+        $stmt->execute();
+
+        return $stmt->fetchAll(PDO::FETCH_OBJ);
+    }
+
+    /**
+     * Find all published posts with count.
+     *
+     * @param int $limit
+     * @param int $offset
+     * @param string|null $search
+     * @param int|null $category_id
+     * @param int|null $tag_id
+     * @return array
+     */
+    public static function findAllPublishedWithCount($limit, $offset, $search = null, $category_id = null, $tag_id = null)
+    {
+        $params = [];
+        // Optimized query to exclude 'content' for listing pages to save memory
+        $sql = "SELECT SQL_CALC_FOUND_ROWS bp.id, bp.title, bp.slug, bp.excerpt, bp.published_at, bp.created_at, bp.image_url, bp.views_count,
+                bc.name_fa as category_name, bc.slug as category_slug, a.name as author_name, a.role as author_role
+                FROM blog_posts bp
+                LEFT JOIN blog_categories bc ON bp.category_id = bc.id
+                LEFT JOIN admins a ON bp.author_id = a.id";
+        if ($tag_id) {
+            $sql .= " JOIN blog_post_tags bpt ON bp.id = bpt.post_id";
+        }
+        $sql .= " WHERE bp.status = 'published' AND (bp.published_at IS NULL OR bp.published_at <= NOW())";
+
+        if ($search) {
+            // For searching, we still need to check content, but we don't select it
+            $sql .= " AND (bp.title LIKE :search OR bp.content LIKE :search)";
+            $params['search'] = '%' . $search . '%';
+        }
+        if ($category_id) {
+            $sql .= " AND bp.category_id = :category_id";
+            $params['category_id'] = $category_id;
+        }
+        if ($tag_id) {
+            $sql .= " AND bpt.tag_id = :tag_id";
+            $params['tag_id'] = $tag_id;
+        }
+
+        $sql .= " ORDER BY bp.published_at DESC LIMIT :limit OFFSET :offset";
+
+        $pdo = Database::getConnection();
+        $stmt = $pdo->prepare($sql);
+        $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
+        $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
+        foreach ($params as $key => $value) {
+            $stmt->bindValue(':' . $key, $value);
+        }
+        $stmt->execute();
+
+        $posts = $stmt->fetchAll(PDO::FETCH_OBJ);
+        $total_count = (int) $pdo->query("SELECT FOUND_ROWS()")->fetchColumn();
+
+        return ['posts' => $posts, 'total_count' => $total_count];
+    }
+
+    public static function findBySlug($slug)
+    {
+        $sql = "SELECT bp.*, bc.name_fa as category_name, bc.slug as category_slug, a.name as author_name
+                FROM blog_posts bp
+                LEFT JOIN blog_categories bc ON bp.category_id = bc.id
+                LEFT JOIN admins a ON bp.author_id = a.id
+                WHERE bp.slug = :slug AND bp.status = 'published' AND (bp.published_at IS NULL OR bp.published_at <= NOW())";
+        $stmt = Database::query($sql, ['slug' => $slug]);
+        return $stmt->fetch(PDO::FETCH_OBJ);
+    }
+
+    /**
      * Create a new blog post.
      *
      * @param array $data
@@ -320,124 +528,6 @@ class BlogPost
         }
     }
 
-    public static function findBySlug($slug)
-    {
-        $sql = "SELECT bp.*, bc.name_fa as category_name, bc.slug as category_slug, a.name as author_name
-                FROM blog_posts bp
-                LEFT JOIN blog_categories bc ON bp.category_id = bc.id
-                LEFT JOIN admins a ON bp.author_id = a.id
-                WHERE bp.slug = :slug AND bp.status = 'published' AND (bp.published_at IS NULL OR bp.published_at <= NOW())";
-        $stmt = Database::query($sql, ['slug' => $slug]);
-        return $stmt->fetch(PDO::FETCH_OBJ);
-    }
-
-    public static function findAllPublishedWithCount($limit, $offset, $search = null, $category_id = null, $tag_id = null)
-    {
-        $params = [];
-        // Optimized query to exclude 'content' for listing pages to save memory
-        $sql = "SELECT SQL_CALC_FOUND_ROWS bp.id, bp.title, bp.slug, bp.excerpt, bp.published_at, bp.created_at, bp.image_url, bp.views_count,
-                bc.name_fa as category_name, bc.slug as category_slug, a.name as author_name, a.role as author_role
-                FROM blog_posts bp
-                LEFT JOIN blog_categories bc ON bp.category_id = bc.id
-                LEFT JOIN admins a ON bp.author_id = a.id";
-        if ($tag_id) {
-            $sql .= " JOIN blog_post_tags bpt ON bp.id = bpt.post_id";
-        }
-        $sql .= " WHERE bp.status = 'published' AND (bp.published_at IS NULL OR bp.published_at <= NOW())";
-
-        if ($search) {
-            // For searching, we still need to check content, but we don't select it
-            $sql .= " AND (bp.title LIKE :search OR bp.content LIKE :search)";
-            $params['search'] = '%' . $search . '%';
-        }
-        if ($category_id) {
-            $sql .= " AND bp.category_id = :category_id";
-            $params['category_id'] = $category_id;
-        }
-        if ($tag_id) {
-            $sql .= " AND bpt.tag_id = :tag_id";
-            $params['tag_id'] = $tag_id;
-        }
-
-        $sql .= " ORDER BY bp.published_at DESC LIMIT :limit OFFSET :offset";
-
-        $pdo = Database::getConnection();
-        $stmt = $pdo->prepare($sql);
-        $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
-        $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
-        foreach ($params as $key => $value) {
-            $stmt->bindValue(':' . $key, $value);
-        }
-        $stmt->execute();
-
-        $posts = $stmt->fetchAll(PDO::FETCH_OBJ);
-        $total_count = (int) $pdo->query("SELECT FOUND_ROWS()")->fetchColumn();
-
-        return ['posts' => $posts, 'total_count' => $total_count];
-    }
-
-    public static function findRelatedPosts($post_id, $limit = 5)
-    {
-        // Optimized to exclude content
-        $sql = "SELECT bp.id, bp.title, bp.slug, bp.excerpt, bp.image_url, bp.published_at, COUNT(bpt.tag_id) as common_tags
-                FROM blog_post_tags bpt
-                JOIN blog_posts bp ON bpt.post_id = bp.id
-                WHERE bpt.tag_id IN (SELECT tag_id FROM blog_post_tags WHERE post_id = :post_id)
-                AND bp.id != :exclude_id
-                GROUP BY bp.id
-                ORDER BY common_tags DESC
-                LIMIT :limit";
-
-        $pdo = Database::getConnection();
-        $stmt = $pdo->prepare($sql);
-        $stmt->bindValue(':post_id', $post_id, PDO::PARAM_INT);
-        $stmt->bindValue(':exclude_id', $post_id, PDO::PARAM_INT);
-        $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
-        $stmt->execute();
-
-        return $stmt->fetchAll(PDO::FETCH_OBJ);
-    }
-
-    public static function findMostViewed($limit = 5, $days = null)
-    {
-        // Select only necessary columns to avoid memory issues with large content
-        $sql = "SELECT id, title, slug, excerpt, published_at, image_url, views_count FROM blog_posts WHERE status = 'published' AND (published_at IS NULL OR published_at <= NOW())";
-
-        if ($days) {
-            $sql .= " AND published_at >= :cutoff_date";
-        }
-
-        $sql .= " ORDER BY views_count DESC LIMIT :limit";
-
-        $pdo = Database::getConnection();
-        $stmt = $pdo->prepare($sql);
-        $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
-        if ($days) {
-            $cutoff_date = date('Y-m-d H:i:s', strtotime("-{$days} days"));
-            $stmt->bindValue(':cutoff_date', $cutoff_date);
-        }
-        $stmt->execute();
-
-        return $stmt->fetchAll(PDO::FETCH_OBJ);
-    }
-
-    public static function findEditorsPicks($limit = 5)
-    {
-        $sql = "SELECT id, title, slug, excerpt, published_at, image_url, is_editors_pick FROM blog_posts WHERE status = 'published' AND is_editors_pick = 1 AND (published_at IS NULL OR published_at <= NOW()) ORDER BY published_at DESC LIMIT :limit";
-        $pdo = Database::getConnection();
-        $stmt = $pdo->prepare($sql);
-        $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
-        $stmt->execute();
-
-        return $stmt->fetchAll(PDO::FETCH_OBJ);
-    }
-
-    public static function findAllPublished($limit = 10, $offset = 0, $search = null, $category_id = null)
-    {
-       $result = self::findAllPublishedWithCount($limit, $offset, $search, $category_id);
-       return $result['posts'];
-    }
-
     /**
      * Increment the view count for a blog post.
      *
@@ -467,43 +557,5 @@ class BlogPost
         $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    }
-
-    public static function getTopAuthors($limit = 5)
-    {
-         $sql = "SELECT a.id, a.name, a.email, COUNT(bp.id) as posts_count
-                 FROM admins a
-                 JOIN blog_posts bp ON a.id = bp.author_id
-                 WHERE bp.status = 'published' AND (bp.published_at IS NULL OR bp.published_at <= NOW())
-                 GROUP BY a.id, a.name, a.email
-                 ORDER BY posts_count DESC
-                 LIMIT :limit";
-
-         $pdo = Database::getConnection();
-         $stmt = $pdo->prepare($sql);
-         $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
-         $stmt->execute();
-         return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    }
-
-    public static function getPostsByCategorySlug($slug, $limit = 4)
-    {
-         $sql = "SELECT bp.id, bp.title, bp.slug, bp.excerpt, bp.image_url, bp.published_at, bp.views_count,
-                bc.name_fa as category_name, bc.slug as category_slug, a.name as author_name
-                FROM blog_posts bp
-                JOIN blog_categories bc ON bp.category_id = bc.id
-                LEFT JOIN admins a ON bp.author_id = a.id
-                WHERE bc.slug = :slug
-                AND bp.status = 'published'
-                AND (bp.published_at IS NULL OR bp.published_at <= NOW())
-                ORDER BY bp.published_at DESC
-                LIMIT :limit";
-
-        $pdo = Database::getConnection();
-        $stmt = $pdo->prepare($sql);
-        $stmt->bindValue(':slug', $slug);
-        $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
-        $stmt->execute();
-        return $stmt->fetchAll(PDO::FETCH_OBJ);
     }
 }
