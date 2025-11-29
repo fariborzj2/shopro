@@ -165,7 +165,6 @@
 <body
     class="bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-100 font-sans antialiased min-h-screen flex flex-col transition-colors duration-300"
     x-data="<?php echo isset($store_data) ? "store(" . htmlspecialchars($store_data, ENT_QUOTES, 'UTF-8') . ")" : "{}"; ?>"
-    x-init="init()"
 >
 
     <!-- Header / Navbar (Admin Style) -->
