@@ -15,26 +15,37 @@ $error_msg = isset($_GET['error_msg']) ? htmlspecialchars($_GET['error_msg']) : 
     <div class="container">
         <!-- Flash Messages -->
         <?php if ($success_msg): ?>
-            <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 rounded-lg mb-8 shadow-md" role="alert">
-                <p class="font-bold">موفقیت</p>
-                <p><?php echo $success_msg; ?></p>
+            <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 rounded-xl mb-8 shadow-sm flex items-center" role="alert">
+                <svg class="w-6 h-6 ml-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                <div>
+                    <p class="font-bold">موفقیت</p>
+                    <p class="text-sm"><?php echo $success_msg; ?></p>
+                </div>
             </div>
         <?php endif; ?>
         <?php if ($error_msg): ?>
-            <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded-lg mb-8 shadow-md" role="alert">
-                <p class="font-bold">خطا</p>
-                <p><?php echo $error_msg; ?></p>
+            <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded-xl mb-8 shadow-sm flex items-center" role="alert">
+                 <svg class="w-6 h-6 ml-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                <div>
+                    <p class="font-bold">خطا</p>
+                    <p class="text-sm"><?php echo $error_msg; ?></p>
+                </div>
             </div>
         <?php endif; ?>
 
         <!-- Category Header -->
-        <div class="text-center mb-16">
+        <div class="text-center mb-16 relative">
             <h1 class="text-4xl md:text-5xl font-black text-gray-900 mb-6 leading-tight">
-                <?php echo htmlspecialchars($category->name_fa); ?>
+                <span class="bg-clip-text text-transparent bg-gradient-to-r from-gray-900 to-gray-700">
+                    <?php echo htmlspecialchars($category->name_fa); ?>
+                </span>
             </h1>
-            <div class="text-xl text-gray-500 max-w-2xl mx-auto leading-relaxed">
+            <div class="text-xl text-gray-500 max-w-3xl mx-auto leading-relaxed">
                 <?php echo strip_tags_except($category->description); ?>
             </div>
+
+            <!-- Decorative line -->
+            <div class="w-24 h-1 bg-primary-500 mx-auto mt-8 rounded-full opacity-50"></div>
         </div>
 
         <!-- Products Grid -->
@@ -42,64 +53,79 @@ $error_msg = isset($_GET['error_msg']) ? htmlspecialchars($_GET['error_msg']) : 
             <template x-for="product in products" :key="product.id">
                 <article
                     @click="selectProduct(product)"
-                    class="relative group bg-white rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 cursor-pointer flex flex-col overflow-hidden"
+                    class="group bg-white rounded-3xl border border-gray-100 overflow-hidden cursor-pointer transition-all duration-300 hover:shadow-card hover:border-gray-200 flex flex-col h-full relative"
                 >
-                    <!-- Image -->
-                    <div class="aspect-w-4 aspect-h-3 bg-gray-200 relative overflow-hidden">
+                    <!-- Image Container -->
+                    <div class="aspect-w-1 aspect-h-1 bg-gray-100 relative overflow-hidden p-8">
                         <img
                             :src="product.imageUrl"
                             :alt="product.name"
-                            class="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500"
+                            class="w-full h-full object-contain object-center group-hover:scale-110 transition-transform duration-500 mix-blend-multiply"
                             loading="lazy"
                         >
-                        <!-- Overlay -->
-                        <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-10 transition-opacity"></div>
-                    </div>
-                    <div class="p-6 flex-1 flex flex-col">
-                        <!-- Availability Badge -->
-                        <div class="mb-2 absolute top-3 right-3">
-                            <template x-if="product.status === 'available'">
-                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                                    موجود
-                                </span>
-                            </template>
+
+                        <!-- Badges -->
+                        <div class="absolute top-4 right-4 flex flex-col gap-2">
                             <template x-if="product.status !== 'available'">
-                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                                <span class="px-3 py-1 rounded-lg bg-red-50 text-red-600 text-xs font-bold border border-red-100 backdrop-blur-sm">
                                     ناموجود
                                 </span>
                             </template>
+                            <template x-if="product.old_price && parseFloat(product.old_price) > parseFloat(product.price) && product.status === 'available'">
+                                    <span class="px-3 py-1 rounded-lg bg-red-500 text-white text-xs font-bold shadow-lg shadow-red-500/30">
+                                    تخفیف ویژه
+                                </span>
+                            </template>
+                        </div>
+                    </div>
+
+                    <!-- Content -->
+                    <div class="p-6 flex-1 flex flex-col">
+                        <div class="mb-4">
+                            <h3 class="font-bold text-gray-900 text-lg leading-tight mb-2 line-clamp-2 group-hover:text-primary-600 transition-colors" x-text="product.name"></h3>
                         </div>
 
-                        <h2 class="text-lg font-bold text-gray-900 mb-2 group-hover:text-primary-600 transition-colors" x-text="product.name"></h2>
-                        <div class="mt-auto pt-4 border-t border-gray-100">
-                            <div class="flex items-center justify-between">
-                                <div class="flex flex-col">
-                                    <!-- Old Price -->
-                                    <template x-if="product.old_price && parseFloat(product.old_price) > parseFloat(product.price)">
-                                        <span class="text-sm text-gray-400 line-through decoration-red-400" x-text="new Intl.NumberFormat('fa-IR').format(product.old_price) + ' تومان'"></span>
-                                    </template>
-                                    <!-- Current Price -->
-                                    <span class="text-xl font-black text-primary-600" x-text="new Intl.NumberFormat('fa-IR').format(product.price) + ' تومان'"></span>
+                        <div class="mt-auto flex items-end justify-between">
+                            <div class="flex flex-col">
+                                <template x-if="product.old_price && parseFloat(product.old_price) > parseFloat(product.price)">
+                                    <span class="text-sm text-gray-400 line-through mb-1" x-text="new Intl.NumberFormat('fa-IR').format(product.old_price)"></span>
+                                </template>
+                                <div class="flex items-center gap-1">
+                                    <span class="text-xl font-black text-gray-900" x-text="new Intl.NumberFormat('fa-IR').format(product.price)"></span>
+                                    <span class="text-xs text-gray-500 font-bold mb-1">تومان</span>
                                 </div>
-                                <button
-                                    class="p-2 rounded-full bg-gray-50 text-gray-400 group-hover:bg-primary-50 group-hover:text-primary-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                                    :disabled="product.status !== 'available'"
-                                >
-                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
-                                </button>
                             </div>
+
+                            <button
+                                class="w-12 h-12 rounded-2xl flex items-center justify-center transition-all duration-300 transform group-hover:scale-110 shadow-sm"
+                                :class="product.status === 'available' ? 'bg-primary-600 text-white shadow-primary-500/30 hover:bg-primary-700' : 'bg-gray-100 text-gray-400 cursor-not-allowed'"
+                                :disabled="product.status !== 'available'"
+                            >
+                                <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" /></svg>
+                            </button>
                         </div>
                     </div>
                 </article>
             </template>
         </div>
+
+        <!-- Empty State -->
+        <div x-show="products.length === 0" class="text-center py-20" style="display: none;">
+            <div class="bg-white rounded-3xl p-10 max-w-md mx-auto border border-gray-100 shadow-soft">
+                    <svg class="w-16 h-16 text-gray-300 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                <p class="text-gray-500 text-lg font-medium">محصولی در این دسته‌بندی یافت نشد.</p>
+            </div>
+        </div>
     </div>
                                     
 
     <!-- Reviews Section -->
-    <div class="container mt-16">
+    <div class="container mt-24">
         <div class="max-w-4xl mx-auto">
-            <h2 class="text-3xl font-extrabold text-gray-900 text-center mb-10">نظرات کاربران</h2>
+            <div class="flex items-center justify-between mb-10 border-b border-gray-200 pb-4">
+                <h2 class="text-3xl font-black text-gray-900">نظرات کاربران</h2>
+                <span class="text-gray-500 text-sm font-medium">تجربیات خریداران این دسته‌بندی</span>
+            </div>
 
             <!-- Reviews List -->
             <div class="space-y-6 mb-12">
@@ -117,29 +143,42 @@ $error_msg = isset($_GET['error_msg']) ? htmlspecialchars($_GET['error_msg']) : 
                 ?>
 
                 <?php if (empty($all_reviews)): ?>
-                    <div class="bg-white rounded-2xl shadow-lg p-8 border border-gray-100 text-center">
+                    <div class="bg-white rounded-2xl shadow-sm p-8 border border-gray-100 text-center">
+                        <svg class="w-12 h-12 text-gray-300 mx-auto mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" /></svg>
                         <p class="text-gray-500">هنوز هیچ نظری برای محصولات این دسته‌بندی ثبت نشده است. شما اولین نفر باشید!</p>
                     </div>
                 <?php else: ?>
                     <?php foreach ($all_reviews as $review): ?>
-                        <div class="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
-                            <div class="flex items-start justify-between">
-                                <div>
-                                    <p class="font-bold text-gray-800"><?php echo htmlspecialchars($review['name']); ?></p>
-                                    <p class="text-xs text-gray-400 mt-1">
-                                        در تاریخ <?php echo jdate('j F Y', strtotime($review['created_at'])); ?>
-                                    </p>
+                        <div class="bg-white rounded-2xl shadow-sm hover:shadow-md transition-shadow duration-300 p-8 border border-gray-100">
+                            <div class="flex items-start justify-between mb-4">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center font-bold text-gray-500">
+                                        <?php echo mb_substr($review['name'], 0, 1); ?>
+                                    </div>
+                                    <div>
+                                        <p class="font-bold text-gray-900"><?php echo htmlspecialchars($review['name']); ?></p>
+                                        <p class="text-xs text-gray-400 mt-0.5">
+                                            <?php echo jdate('j F Y', strtotime($review['created_at'])); ?>
+                                        </p>
+                                    </div>
                                 </div>
-                                <div class="flex items-center text-yellow-400">
-                                    <span class="font-bold text-gray-700 ml-1"><?php echo htmlspecialchars($review['rating']); ?></span>
-                                    <svg class="w-5 h-5 fill-current" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                                <div class="flex items-center bg-yellow-50 px-2 py-1 rounded-lg border border-yellow-100">
+                                    <span class="font-bold text-yellow-700 ml-1 text-sm"><?php echo htmlspecialchars($review['rating']); ?></span>
+                                    <svg class="w-4 h-4 text-yellow-400 fill-current" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
                                 </div>
                             </div>
-                            <p class="text-gray-600 mt-4 leading-relaxed"><?php echo nl2br(htmlspecialchars($review['comment'])); ?></p>
+
+                            <p class="text-gray-600 leading-relaxed text-base">
+                                <?php echo nl2br(htmlspecialchars($review['comment'])); ?>
+                            </p>
+
                             <?php if (!empty($review['admin_reply'])): ?>
-                                <div class="mt-4 mr-4 bg-gray-50 border-r-4 border-primary-500 p-4 rounded-lg">
-                                    <p class="font-bold text-sm text-primary-700">پاسخ مدیر</p>
-                                    <p class="text-gray-600 mt-2 text-sm leading-relaxed"><?php echo nl2br(htmlspecialchars($review['admin_reply'])); ?></p>
+                                <div class="mt-6 mr-6 bg-gray-50 border-r-2 border-primary-400 p-4 rounded-l-xl">
+                                    <p class="font-bold text-xs text-primary-600 mb-2 flex items-center">
+                                        <svg class="w-4 h-4 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6" /></svg>
+                                        پاسخ فروشگاه
+                                    </p>
+                                    <p class="text-gray-600 text-sm leading-relaxed"><?php echo nl2br(htmlspecialchars($review['admin_reply'])); ?></p>
                                 </div>
                             <?php endif; ?>
                         </div>
@@ -148,68 +187,92 @@ $error_msg = isset($_GET['error_msg']) ? htmlspecialchars($_GET['error_msg']) : 
             </div>
 
             <!-- Review Submission Form -->
-            <div class="bg-white rounded-2xl shadow-lg p-8 border border-gray-100">
-                <?php if (isset($_SESSION['user_id'])): ?>
-                    <?php if ($lastPurchasedProduct): ?>
-                        <h3 class="text-lg font-bold text-gray-800 mb-1">ثبت نظر جدید</h3>
-                        <p class="text-sm text-gray-500 mb-6">
-                            شما در حال ثبت نظر برای محصول <span class="font-semibold text-primary-600"><?php echo htmlspecialchars($lastPurchasedProduct->name_fa); ?></span> هستید.
-                        </p>
-                        <form action="/reviews/store" method="POST">
-                            <?php csrf_field(); ?>
-                            <input type="hidden" name="product_id" value="<?php echo $lastPurchasedProduct->id; ?>">
+            <div class="bg-white rounded-3xl shadow-card p-8 border border-gray-100 overflow-hidden relative">
+                <!-- Background decoration -->
+                <div class="absolute top-0 left-0 w-32 h-32 bg-primary-50 rounded-full mix-blend-multiply filter blur-3xl opacity-50 -translate-x-1/2 -translate-y-1/2"></div>
 
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                                <div>
-                                    <label for="name" class="block text-sm font-medium text-gray-700 mb-1">نام شما</label>
-                                    <input type="text" id="name" name="name" value="<?php echo htmlspecialchars($_SESSION['user_name'] ?? ''); ?>" readonly class="block w-full rounded-xl border-gray-200 bg-gray-50 text-gray-500 shadow-sm sm:text-sm py-3 px-4">
-                                </div>
-                                <div>
-                                    <label for="mobile" class="block text-sm font-medium text-gray-700 mb-1">شماره موبایل</label>
-                                    <input type="text" id="mobile" name="mobile" value="<?php echo htmlspecialchars($_SESSION['user_mobile'] ?? ''); ?>" readonly class="block w-full rounded-xl border-gray-200 bg-gray-50 text-gray-500 shadow-sm sm:text-sm py-3 px-4">
-                                </div>
-                            </div>
-
-                            <div class="mb-4" x-data="{ rating: <?php echo htmlspecialchars($old['rating'] ?? 5); ?> }">
-                                <label class="block text-sm font-medium text-gray-700 mb-2">امتیاز شما</label>
-                                <div class="flex items-center gap-1 flex-row-reverse justify-end">
-                                    <template x-for="i in 5">
-                                        <button type="button" @click="rating = i" class="text-3xl transition-colors duration-150 focus:outline-none transform hover:scale-110" :class="i <= rating ? 'text-yellow-400' : 'text-gray-300'">★</button>
-                                    </template>
-                                </div>
-                                <input type="hidden" name="rating" x-model="rating">
-                                <?php if (isset($errors['rating'])): ?>
-                                    <p class="text-red-500 text-xs mt-1"><?php echo htmlspecialchars($errors['rating']); ?></p>
-                                <?php endif; ?>
-                            </div>
-
-                            <div class="mb-6">
-                                <label for="comment" class="block text-sm font-medium text-gray-700 mb-1">متن نظر</label>
-                                <textarea id="comment" name="comment" rows="4" required class="block w-full rounded-xl border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm p-4" placeholder="تجربه خود را با ما و دیگران به اشتراک بگذارید..."><?php echo htmlspecialchars($old['comment'] ?? ''); ?></textarea>
-                                <?php if (isset($errors['comment'])): ?>
-                                    <p class="text-red-500 text-xs mt-1"><?php echo htmlspecialchars($errors['comment']); ?></p>
-                                <?php endif; ?>
-                            </div>
-
-                            <button type="submit" class="w-full inline-flex justify-center rounded-xl border border-transparent bg-primary-600 px-6 py-3 text-base font-bold text-white shadow-sm hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 transition-all">
-                                ثبت نظر
-                            </button>
-                        </form>
-                    <?php else: ?>
-                        <div class="bg-blue-50 border border-blue-200 rounded-xl p-6 text-center">
-                            <p class="text-blue-800">
-                                شما هنوز محصولی از این دسته‌بندی خریداری نکرده‌اید. پس از خرید، می‌توانید نظر خود را ثبت کنید.
+                <div class="relative z-10">
+                    <?php if (isset($_SESSION['user_id'])): ?>
+                        <?php if ($lastPurchasedProduct): ?>
+                            <h3 class="text-xl font-bold text-gray-900 mb-2">تجربه خود را ثبت کنید</h3>
+                            <p class="text-sm text-gray-500 mb-8 leading-relaxed">
+                                نظر شما درباره محصول <span class="font-bold text-primary-600 px-1 bg-primary-50 rounded"><?php echo htmlspecialchars($lastPurchasedProduct->name_fa); ?></span> به دیگران کمک می‌کند تا انتخاب بهتری داشته باشند.
                             </p>
+
+                            <form action="/reviews/store" method="POST" class="space-y-6">
+                                <?php csrf_field(); ?>
+                                <input type="hidden" name="product_id" value="<?php echo $lastPurchasedProduct->id; ?>">
+
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div>
+                                        <label class="form-label">نام شما</label>
+                                        <input type="text" value="<?php echo htmlspecialchars($_SESSION['user_name'] ?? ''); ?>" readonly class="form-input bg-gray-100 cursor-not-allowed">
+                                    </div>
+                                    <div>
+                                        <label class="form-label">شماره موبایل</label>
+                                        <input type="text" value="<?php echo htmlspecialchars($_SESSION['user_mobile'] ?? ''); ?>" readonly class="form-input bg-gray-100 cursor-not-allowed">
+                                    </div>
+                                </div>
+
+                                <div x-data="{ rating: <?php echo htmlspecialchars($old['rating'] ?? 5); ?> }">
+                                    <label class="form-label mb-3">امتیاز شما</label>
+                                    <div class="flex items-center gap-2 flex-row-reverse justify-end">
+                                        <template x-for="i in 5">
+                                            <button
+                                                type="button"
+                                                @click="rating = i"
+                                                @mouseenter="tempRating = i"
+                                                @mouseleave="tempRating = rating"
+                                                class="text-4xl transition-all duration-200 focus:outline-none transform hover:scale-110"
+                                                :class="i <= rating ? 'text-yellow-400 drop-shadow-sm' : 'text-gray-200'"
+                                            >★</button>
+                                        </template>
+                                    </div>
+                                    <input type="hidden" name="rating" x-model="rating">
+                                    <?php if (isset($errors['rating'])): ?>
+                                        <p class="text-red-500 text-sm mt-2 flex items-center">
+                                            <svg class="w-4 h-4 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                            <?php echo htmlspecialchars($errors['rating']); ?>
+                                        </p>
+                                    <?php endif; ?>
+                                </div>
+
+                                <div>
+                                    <label for="comment" class="form-label">متن نظر</label>
+                                    <textarea id="comment" name="comment" rows="5" required class="form-input" placeholder="نقاط قوت و ضعف محصول را بنویسید..."><?php echo htmlspecialchars($old['comment'] ?? ''); ?></textarea>
+                                    <?php if (isset($errors['comment'])): ?>
+                                        <p class="text-red-500 text-sm mt-2 flex items-center">
+                                            <svg class="w-4 h-4 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                            <?php echo htmlspecialchars($errors['comment']); ?>
+                                        </p>
+                                    <?php endif; ?>
+                                </div>
+
+                                <button type="submit" class="btn btn-primary w-full shadow-xl shadow-primary-500/20">
+                                    ثبت دیدگاه ارزشمند شما
+                                </button>
+                            </form>
+                        <?php else: ?>
+                            <div class="bg-blue-50 border border-blue-100 rounded-2xl p-8 text-center">
+                                <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4 text-blue-600">
+                                    <svg class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" /></svg>
+                                </div>
+                                <h4 class="font-bold text-blue-900 text-lg mb-2">هنوز خریدی انجام نداده‌اید</h4>
+                                <p class="text-blue-700/80 leading-relaxed">
+                                    برای ثبت نظر، ابتدا باید محصولی از این دسته‌بندی خریداری کرده باشید. این کار به اطمینان از واقعی بودن نظرات کمک می‌کند.
+                                </p>
+                            </div>
+                        <?php endif; ?>
+                    <?php else: ?>
+                        <div class="bg-gray-50 border border-gray-100 rounded-2xl p-8 text-center">
+                            <h4 class="font-bold text-gray-900 text-lg mb-4">نظر خود را به اشتراک بگذارید</h4>
+                            <p class="text-gray-500 mb-6">برای ثبت نظر ابتدا وارد حساب کاربری خود شوید.</p>
+                            <button @click.prevent="$dispatch('open-auth-modal')" class="btn btn-secondary">
+                                ورود به حساب کاربری
+                            </button>
                         </div>
                     <?php endif; ?>
-                <?php else: ?>
-                    <div class="bg-gray-50 border rounded-xl p-6 text-center">
-                        <p class="text-gray-600 mb-4">برای ارسال نظر ابتدا وارد حساب کاربری شوید.</p>
-                        <button @click.prevent="$dispatch('open-auth-modal')" class="font-bold text-primary-600 hover:underline">
-                            ورود یا ثبت‌نام
-                        </button>
-                    </div>
-                <?php endif; ?>
+                </div>
             </div>
         </div>
     </div>
