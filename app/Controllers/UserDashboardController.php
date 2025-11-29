@@ -20,7 +20,7 @@ class UserDashboardController
             header('Location: /'); // Redirect home if not logged in
             exit();
         }
-        $this->template = new Template(__DIR__ . '/../../storefront/templates');
+        $this->template = new Template();
     }
 
     public function orders()
