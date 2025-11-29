@@ -105,7 +105,7 @@
                                         <h3 class="font-bold text-gray-800 group-hover:text-indigo-600 transition-colors mb-2 line-clamp-2"><?= htmlspecialchars($related->title) ?></h3>
                                         <div class="mt-auto text-sm text-gray-400 flex items-center gap-1">
                                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                                            <?= \jdate('d F Y', strtotime($related->published_at)) ?>
+                                            <?= \jdate('d F Y', strtotime($related->published_at ?? $related->created_at ?? 'now')) ?>
                                         </div>
                                     </div>
                                 </a>
