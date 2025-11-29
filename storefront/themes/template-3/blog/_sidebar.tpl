@@ -1,0 +1,105 @@
+<div class="bg-white dark:bg-gray-800 rounded-2xl shadow-card border border-gray-100 dark:border-gray-700 p-6 sticky top-24 transition-colors duration-300" x-data="{ activeTab: 'most-commented' }">
+    <!-- Tabs Header -->
+    <nav class="flex border-b border-gray-100 dark:border-gray-700 mb-6 gap-6 relative overflow-x-auto no-scrollbar" aria-label="Sidebar Tabs">
+        <a class="pb-3 font-bold text-sm cursor-pointer transition-all duration-300 relative whitespace-nowrap"
+           :class="{ 'text-primary-600 dark:text-primary-400': activeTab === 'most-commented', 'text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300': activeTab !== 'most-commented' }"
+           @click.prevent="activeTab = 'most-commented'">
+            پربحث‌ترین
+            <span class="absolute bottom-[-1px] right-0 w-full h-0.5 bg-primary-600 dark:bg-primary-400 rounded-t-full transition-transform duration-300"
+                  :class="activeTab === 'most-commented' ? 'scale-x-100' : 'scale-x-0'"></span>
+        </a>
+        <a class="pb-3 font-bold text-sm cursor-pointer transition-all duration-300 relative whitespace-nowrap"
+           :class="{ 'text-primary-600 dark:text-primary-400': activeTab === 'most-viewed', 'text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300': activeTab !== 'most-viewed' }"
+           @click.prevent="activeTab = 'most-viewed'">
+            پربازدیدترین
+            <span class="absolute bottom-[-1px] right-0 w-full h-0.5 bg-primary-600 dark:bg-primary-400 rounded-t-full transition-transform duration-300"
+                  :class="activeTab === 'most-viewed' ? 'scale-x-100' : 'scale-x-0'"></span>
+        </a>
+        <a class="pb-3 font-bold text-sm cursor-pointer transition-all duration-300 relative whitespace-nowrap"
+           :class="{ 'text-primary-600 dark:text-primary-400': activeTab === 'editors-picks', 'text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300': activeTab !== 'editors-picks' }"
+           @click.prevent="activeTab = 'editors-picks'">
+            پیشنهاد سردبیر
+            <span class="absolute bottom-[-1px] right-0 w-full h-0.5 bg-primary-600 dark:bg-primary-400 rounded-t-full transition-transform duration-300"
+                  :class="activeTab === 'editors-picks' ? 'scale-x-100' : 'scale-x-0'"></span>
+        </a>
+    </nav>
+
+    <!-- Tab Contents -->
+    <div class="relative min-h-[200px]">
+        <!-- Most Commented -->
+        <div x-show="activeTab === 'most-commented'"
+             x-transition:enter="transition ease-out duration-200"
+             x-transition:enter-start="opacity-0 translate-y-2"
+             x-transition:enter-end="opacity-100 translate-y-0"
+             class="space-y-4">
+            <?php if (!empty($sidebar['most_commented'])): ?>
+                <?php foreach ($sidebar['most_commented'] as $index => $post): ?>
+                    <a href="/blog/<?= $post->slug ?>" class="flex gap-4 group items-start">
+                        <span class="flex-shrink-0 w-6 h-6 rounded-full bg-primary-50 dark:bg-primary-900/30 text-primary-600 dark:text-primary-400 text-xs font-bold flex items-center justify-center mt-0.5 group-hover:bg-primary-600 group-hover:text-white transition-colors">
+                            <?= $index + 1 ?>
+                        </span>
+                        <h4 class="text-sm font-medium text-gray-700 dark:text-gray-200 leading-relaxed group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
+                            <?= htmlspecialchars($post->title) ?>
+                        </h4>
+                    </a>
+                <?php endforeach; ?>
+            <?php else: ?>
+                <div class="text-center py-8">
+                    <svg class="w-10 h-10 text-gray-300 dark:text-gray-600 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path></svg>
+                    <p class="text-sm text-gray-400 dark:text-gray-500">بدون دیدگاه</p>
+                </div>
+            <?php endif; ?>
+        </div>
+
+        <!-- Most Viewed -->
+        <div x-show="activeTab === 'most-viewed'"
+             x-transition:enter="transition ease-out duration-200"
+             x-transition:enter-start="opacity-0 translate-y-2"
+             x-transition:enter-end="opacity-100 translate-y-0"
+             style="display: none;"
+             class="space-y-4">
+            <?php if (!empty($sidebar['most_viewed'])): ?>
+                <?php foreach ($sidebar['most_viewed'] as $index => $post): ?>
+                    <a href="/blog/<?= $post->slug ?>" class="flex gap-4 group items-start">
+                        <span class="flex-shrink-0 w-6 h-6 rounded-full bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400 text-xs font-bold flex items-center justify-center mt-0.5 group-hover:bg-primary-600 group-hover:text-white transition-colors">
+                            <?= $index + 1 ?>
+                        </span>
+                        <div>
+                            <h4 class="text-sm font-medium text-gray-700 dark:text-gray-200 leading-relaxed group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
+                                <?= htmlspecialchars($post->title) ?>
+                            </h4>
+                            <span class="text-xs text-gray-400 dark:text-gray-500 mt-1 block"><?= number_format($post->views_count ?? 0) ?> بازدید</span>
+                        </div>
+                    </a>
+                <?php endforeach; ?>
+            <?php else: ?>
+                <p class="text-center text-sm text-gray-400 dark:text-gray-500 py-8">موردی یافت نشد.</p>
+            <?php endif; ?>
+        </div>
+
+        <!-- Editor's Picks -->
+        <div x-show="activeTab === 'editors-picks'"
+             x-transition:enter="transition ease-out duration-200"
+             x-transition:enter-start="opacity-0 translate-y-2"
+             x-transition:enter-end="opacity-100 translate-y-0"
+             style="display: none;"
+             class="space-y-4">
+            <?php if (!empty($sidebar['editors_picks'])): ?>
+                <?php foreach ($sidebar['editors_picks'] as $post): ?>
+                    <a href="/blog/<?= $post->slug ?>" class="block group">
+                        <div class="aspect-video bg-gray-100 dark:bg-gray-700 rounded-lg overflow-hidden mb-3">
+                            <img src="<?= $post->image_url ?? 'https://placehold.co/400x300/EEE/31343C?text=Image' ?>"
+                                 class="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500"
+                                 alt="<?= htmlspecialchars($post->title) ?>">
+                        </div>
+                        <h4 class="text-sm font-bold text-gray-800 dark:text-gray-200 leading-relaxed group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
+                            <?= htmlspecialchars($post->title) ?>
+                        </h4>
+                    </a>
+                <?php endforeach; ?>
+            <?php else: ?>
+                <p class="text-center text-sm text-gray-400 dark:text-gray-500 py-8">موردی یافت نشد.</p>
+            <?php endif; ?>
+        </div>
+    </div>
+</div>
