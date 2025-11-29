@@ -504,7 +504,7 @@
 
 <?php
     $style = 'storefront';
-    include __DIR__ . '/../../views/partials/_error_modal.php';
+    include __DIR__ . '/../../../views/partials/_error_modal.php';
 ?>
 
 
