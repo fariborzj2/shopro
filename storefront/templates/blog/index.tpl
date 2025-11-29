@@ -5,10 +5,12 @@
         
         <!-- Page Title & Filters -->
         <div class="flex flex-col md:flex-row items-center justify-between mb-8 gap-4">
-            <h1 class="text-3xl font-extrabold text-gray-900 flex items-center gap-3">
-                <span class="w-2 h-8 bg-indigo-600 rounded-full"></span>
-                <?= htmlspecialchars($pageTitle) ?>
-            </h1>
+            <div>
+                <h1 class="text-3xl font-extrabold text-gray-900 flex items-center gap-3">
+                    <?= htmlspecialchars($pageTitle) ?>
+                </h1>
+                <span>به‌روزترین اخبار و اطلاعات در زمینه تکنولوژ</span>
+            </div>
         </div>
 
         <!-- Hero Section (Slider) -->
@@ -44,10 +46,10 @@
                 
                 <!-- Navigation & Pagination -->
                 <div class="flex items-center justify-between mt-4">
-                    <div class="swiper-pagination relative !w-auto !bottom-0 !right-0"></div>
+                    <div class="swiper-pagination"></div>
                     <div class="flex gap-3 items-center">
-                        <div class="swiper-button-next-custom relative text-lg text-black opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                        <div class="swiper-button-prev-custom relative text-lg text-black opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                        <div class="swiper-button-next-custom">بعدی</div>
+                        <div class="swiper-button-prev-custom">قبلی</div>
                     </div>
                 </div>
             </div>
@@ -238,7 +240,7 @@
                             }
                         },
                         pagination: {
-                            el: '.swiper-pagination',
+                            el: '.swiper-pagination-custom',
                             clickable: true,
                             dynamicBullets: true,
                         },
