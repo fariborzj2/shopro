@@ -1,31 +1,31 @@
-    <!-- Footer -->
-    <footer class="bg-white border-t border-gray-200 mt-auto">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <!-- Footer (Admin Style) -->
+    <footer class="bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 mt-auto transition-colors duration-300">
+        <div class="container mx-auto py-12">
             <div class="grid grid-cols-1 md:grid-cols-4 gap-8 lg:gap-12">
 
                 <!-- Section 1: About Us -->
                 <div class="md:col-span-1">
-                    <h3 class="text-sm font-bold text-gray-900 tracking-wider uppercase mb-4">درباره فروشگاه مدرن</h3>
-                    <p class="text-gray-500 text-sm leading-relaxed text-justify">
+                    <h3 class="text-sm font-bold text-gray-900 dark:text-white tracking-wider uppercase mb-4">درباره فروشگاه مدرن</h3>
+                    <p class="text-gray-500 dark:text-gray-400 text-sm leading-relaxed text-justify">
                         فروشگاه مدرن با هدف ارائه بهترین محصولات دیجیتال و لوازم جانبی با ضمانت اصالت و قیمت مناسب تأسیس شده است. ما متعهد به ارائه خدماتی متمایز و پشتیبانی ۲۴ ساعته هستیم تا تجربه خریدی مطمئن و لذت‌بخش را برای شما رقم بزنیم.
                     </p>
                 </div>
 
                 <!-- Section 2: Links -->
                 <div>
-                    <h3 class="text-sm font-bold text-gray-900 tracking-wider uppercase mb-4">دسترسی سریع</h3>
+                    <h3 class="text-sm font-bold text-gray-900 dark:text-white tracking-wider uppercase mb-4">دسترسی سریع</h3>
                     <ul class="space-y-3">
-                        <li><a href="/page/about-us" class="text-base text-gray-500 hover:text-primary-600 transition-colors">درباره ما</a></li>
-                        <li><a href="/page/terms" class="text-base text-gray-500 hover:text-primary-600 transition-colors">قوانین و مقررات</a></li>
-                        <li><a href="/page/contact-us" class="text-base text-gray-500 hover:text-primary-600 transition-colors">تماس با ما</a></li>
-                        <li><a href="/page/faq" class="text-base text-gray-500 hover:text-primary-600 transition-colors">سوالات متداول</a></li>
+                        <li><a href="/page/about-us" class="text-base text-gray-500 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 transition-colors">درباره ما</a></li>
+                        <li><a href="/page/terms" class="text-base text-gray-500 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 transition-colors">قوانین و مقررات</a></li>
+                        <li><a href="/page/contact-us" class="text-base text-gray-500 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 transition-colors">تماس با ما</a></li>
+                        <li><a href="/page/faq" class="text-base text-gray-500 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 transition-colors">سوالات متداول</a></li>
                     </ul>
                 </div>
 
                 <!-- Section 3: Contact -->
                 <div>
-                    <h3 class="text-sm font-bold text-gray-900 tracking-wider uppercase mb-4">ارتباط با ما</h3>
-                    <div class="space-y-3 text-base text-gray-500">
+                    <h3 class="text-sm font-bold text-gray-900 dark:text-white tracking-wider uppercase mb-4">ارتباط با ما</h3>
+                    <div class="space-y-3 text-base text-gray-500 dark:text-gray-400">
                         <p class="flex items-start">
                             <span class="ml-2">📍</span>
                             <span><?php echo htmlspecialchars($settings['footer_address'] ?? 'تهران، خیابان آزادی، پلاک ۱۲۳'); ?></span>
@@ -36,7 +36,7 @@
                         </p>
                         <p class="flex items-center">
                             <span class="ml-2">📧</span>
-                            <a href="mailto:<?php echo htmlspecialchars($settings['contact_email'] ?? 'info@example.com'); ?>" class="hover:text-primary-600 transition-colors">
+                            <a href="mailto:<?php echo htmlspecialchars($settings['contact_email'] ?? 'info@example.com'); ?>" class="hover:text-primary-600 dark:hover:text-primary-400 transition-colors">
                                 <?php echo htmlspecialchars($settings['contact_email'] ?? 'info@example.com'); ?>
                             </a>
                         </p>
@@ -45,7 +45,7 @@
 
                 <!-- Section 4: Socials -->
                 <div>
-                    <h3 class="text-sm font-bold text-gray-900 tracking-wider uppercase mb-4">شبکه‌های اجتماعی</h3>
+                    <h3 class="text-sm font-bold text-gray-900 dark:text-white tracking-wider uppercase mb-4">شبکه‌های اجتماعی</h3>
                     <div class="flex space-x-4 space-x-reverse">
                         <?php if (!empty($settings['social_instagram'])): ?>
                         <a href="<?php echo htmlspecialchars($settings['social_instagram']); ?>" target="_blank" class="text-gray-400 hover:text-pink-600 transition-colors">
@@ -71,7 +71,7 @@
                 </div>
             </div>
 
-            <div class="mt-12 pt-8 border-t border-gray-100">
+            <div class="mt-12 pt-8 border-t border-gray-100 dark:border-gray-700">
                 <p class="text-base text-gray-400 text-center">
                     &copy; <?php echo jdate('Y'); ?> <?php echo htmlspecialchars($settings['site_title'] ?? 'فروشگاه مدرن'); ?>. تمامی حقوق محفوظ است.
                 </p>
@@ -124,7 +124,7 @@
             x-transition:leave="ease-in duration-200"
             x-transition:leave-start="opacity-100"
             x-transition:leave-end="opacity-0"
-            class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity backdrop-blur-sm"
+            class="fixed inset-0 bg-gray-500/75 dark:bg-gray-900/80 transition-opacity backdrop-blur-sm"
         ></div>
 
         <!-- Modal panel -->
@@ -139,12 +139,12 @@
                     x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
                     x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
                     @click.outside="closeModal()"
-                    class="relative transform flex flex-col overflow-hidden rounded-2xl bg-white text-right shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-md border border-gray-100"
+                    class="relative transform flex flex-col overflow-hidden rounded-2xl bg-white dark:bg-gray-800 text-right shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-md border border-gray-100 dark:border-gray-700"
                 >
                     <!-- Modal Header -->
-                    <div class="flex items-center justify-between p-4 border-b border-gray-200 bg-gray-50 rounded-t-2xl">
-                        <h3 class="text-lg font-bold text-gray-900" id="modal-title" x-text="currentTitle()"></h3>
-                        <button @click="closeModal()" type="button" class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 inline-flex items-center justify-center">
+                    <div class="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50 rounded-t-2xl">
+                        <h3 class="text-lg font-bold text-gray-900 dark:text-white" id="modal-title" x-text="currentTitle()"></h3>
+                        <button @click="closeModal()" type="button" class="text-gray-400 bg-transparent hover:bg-gray-200 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white rounded-lg text-sm w-8 h-8 inline-flex items-center justify-center">
                             <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/></svg>
                             <span class="sr-only">Close modal</span>
                         </button>
@@ -155,31 +155,31 @@
                         <div class="p-6 space-y-4 flex-1">
                                 <!-- Step 1: Mobile -->
                                 <div x-show="step === 'mobile'">
-                                    <label for="mobile" class="block text-sm font-medium text-gray-700 mb-2 text-right">شماره موبایل خود را وارد کنید</label>
-                                    <input type="tel" x-model="mobile" id="mobile" class="block w-full rounded-lg border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm py-3 px-4 bg-gray-50 text-center text-lg tracking-wider" placeholder="09xxxxxxxxx" required>
+                                    <label for="mobile" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 text-right">شماره موبایل خود را وارد کنید</label>
+                                    <input type="tel" x-model="mobile" id="mobile" class="block w-full rounded-xl border-gray-300 dark:border-gray-600 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm py-3 px-4 bg-gray-50 dark:bg-gray-700 text-center text-lg tracking-wider dark:text-white" placeholder="09xxxxxxxxx" required>
                                 </div>
 
                                 <!-- Step 2: OTP -->
                                 <div x-show="step === 'otp'">
-                                    <p class="text-sm text-gray-600 mb-4 text-center">
-                                        کد تایید ۶ رقمی ارسال شده به شماره <strong x-text="mobile" class="font-bold text-gray-900"></strong> را وارد کنید.
+                                    <p class="text-sm text-gray-600 dark:text-gray-400 mb-4 text-center">
+                                        کد تایید ۶ رقمی ارسال شده به شماره <strong x-text="mobile" class="font-bold text-gray-900 dark:text-white"></strong> را وارد کنید.
                                     </p>
                                     <div id="otp-inputs" dir="ltr" :class="{ 'otp-error': isError }">
                                         <!-- Pincode inputs will be generated here -->
                                     </div>
                                     <div class="text-center mt-4">
-                                         <button @click="step = 'mobile'; errorMessage = ''; timer.stop()" type="button" class="text-sm text-gray-500 hover:text-gray-800 transition-colors">
+                                         <button @click="step = 'mobile'; errorMessage = ''; timer.stop()" type="button" class="text-sm text-gray-500 dark:text-gray-400 hover:text-gray-800 dark:hover:text-white transition-colors">
                                             تغییر شماره
                                         </button>
                                     </div>
                                 </div>
 
                                 <!-- Error Message -->
-                                <p x-show="errorMessage" x-text="errorMessage" class="mt-4 text-sm text-red-600 text-center bg-red-50 p-3 rounded-lg"></p>
+                                <p x-show="errorMessage" x-text="errorMessage" class="mt-4 text-sm text-red-600 dark:text-red-400 text-center bg-red-50 dark:bg-red-900/20 p-3 rounded-lg"></p>
                         </div>
 
                         <!-- Modal Footer -->
-                        <div class="p-4 border-t border-gray-200 bg-gray-50 rounded-b-2xl">
+                        <div class="p-4 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50 rounded-b-2xl">
                             <!-- Step 1 Footer -->
                             <div x-show="step === 'mobile'">
                                 <button type="submit" :disabled="isLoading" class="inline-flex w-full justify-center rounded-xl bg-primary-600 px-3 py-3 text-sm font-bold text-white shadow-sm hover:bg-primary-500 transition-colors disabled:opacity-50">
@@ -194,7 +194,7 @@
                                     @click="sendOtp()"
                                     type="button"
                                     :disabled="timer.isActive || isLoading"
-                                    class="inline-flex items-center justify-center rounded-xl border border-gray-300 bg-white px-3 py-3 text-sm font-bold text-gray-700 shadow-sm hover:bg-gray-50 transition-colors disabled:opacity-50 flex-1"
+                                    class="inline-flex items-center justify-center rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-3 text-sm font-bold text-gray-700 dark:text-gray-200 shadow-sm hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors disabled:opacity-50 flex-1"
                                 >
                                     <span x-show="!timer.isActive">ارسال مجدد</span>
                                     <span x-show="timer.isActive" class="flex items-center">
@@ -225,9 +225,20 @@
         background-color: #fef2f2 !important; /* Tailwind red-50 */
         color: #ef4444 !important;
     }
+    .dark .otp-error input {
+        background-color: #7f1d1d !important; /* Tailwind red-900 */
+        color: #fca5a5 !important; /* Tailwind red-300 */
+    }
     .otp-error input:focus {
         box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.2) !important;
         border-color: #ef4444 !important;
+    }
+
+    /* Pincode Dark Mode Override */
+    .dark .pincode-input-container input {
+        background-color: #374151; /* gray-700 */
+        border-color: #4b5563; /* gray-600 */
+        color: white;
     }
 </style>
 
