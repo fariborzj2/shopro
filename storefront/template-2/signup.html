@@ -1,0 +1,166 @@
+@model (string? returnurl, string? message)
+@{
+Layout=null;
+}
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,  initial-scale=1.0">
+    <title>ورود به حساب | تلگرام ۲۴</title>
+    <meta name="description" content="وارد حساب کاربری خود در تلگرام ۲۴ شوید و به امکانات ویژه مانند اشتراک پرمیوم و استارز تلگرام دسترسی پیدا کنید!">
+    <link rel="canonical" href='@ViewData["canonical"]'>
+    <link rel="alternate" hreflang="fa" href="https://telegram24.vip">
+    <meta name="language" content="Persian">
+    <meta name="country" content="iran">
+
+    <meta property="og:locale" content="fa_IR">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="تلگرام بیست و چهار">
+    <meta property="og:url" content="https://telegram24.vip">
+    <meta property="og:image:secure_url" content="https://cdn.telegram24.vip/website/images/meta.jpeg">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="675">
+
+    <meta property="og:title" content="ورود به حساب | تلگرام 24">
+    <meta name="twitter:title" content="ورود به حساب | تلگرام 24">
+
+    <meta property="og:description" content="وارد حساب کاربری خود در تلگرام ۲۴ شوید و به امکانات ویژه مانند اشتراک پرمیوم و استارز تلگرام دسترسی پیدا کنید!">
+    <meta name="twitter:description" content="وارد حساب کاربری خود در تلگرام ۲۴ شوید و به امکانات ویژه مانند اشتراک پرمیوم و استارز تلگرام دسترسی پیدا کنید!">
+
+    <meta name="keywords" content="ورود به تلگرام, حساب کاربری تلگرام, تلگرام پرمیوم, خدمات تلگرام, استارز تلگرام, اشتراک ویژه, قرعه‌کشی تلگرام, تبلیغات تلگرامی, دسترسی به امکانات, تلگرام ۲۴, خدمات آنلاین, ورود سریع, اپلیکیشن تلگرام, تجربه کاربری">
+
+    <!-- favicon -->
+    <link rel="apple-touch-icon" sizes="180x180" href="https://cdn.telegram24.vip/website/images/favicon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="https://cdn.telegram24.vip/website/images/favicon.png">
+    <link rel="icon" type="image/png" sizes="194x194" href="https://cdn.telegram24.vip/website/images/favicon.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="https://cdn.telegram24.vip/website/images/favicon.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="https://cdn.telegram24.vip/website/images/favicon.png">
+
+    <link rel="stylesheet" href="https://cdn.telegram24.vip/website/css/fonts.css">
+    <link rel="stylesheet" href="https://cdn.telegram24.vip/website/css/icon.css">
+    <link rel="stylesheet" href="https://cdn.telegram24.vip/website/css/alert.css">
+    <link rel="stylesheet" href="https://cdn.telegram24.vip/website/css/swiper-bundle.min.css">
+    <link rel="stylesheet" href="https://cdn.telegram24.vip/website/css/grid.css?v=0.0.1">
+    <link rel="stylesheet" href="https://cdn.telegram24.vip/website/css/style.css?v=0.0.4">
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-RRQV8BWSJV"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-RRQV8BWSJV');
+    </script>
+</head>
+<body class="rtl">
+
+<div class="main overhide d-flex-column" style="min-height: 100vh;">
+
+    <div class="login-box d-flex-wrap overhide grow-1">
+
+        <div class="basis400 grow-8 d-flex just-center align-center bg-white pd-lr-30 pd-td-50 relative">
+
+            <div class="grow-1 max-w400">
+
+                <h1 class="gr-text mb-10">ثبت نام</h1>
+                <p class="color-bright line20">ثبت نام سریع و آسان بدون نیاز به احراز هویت</p>
+
+                <form id="singupForm" method="post">
+
+                    <input id="return-url-inp" value="@Model.returnurl" type="hidden" />
+                    @Html.AntiForgeryToken()
+                    <div class="fix-mr5 pd-td-20">
+
+                        <div class="input-item mt-10">
+                            <div class="input-label">موبایل: <span class="red">اجباری</span></div>
+                            <div class="input-text border">
+                                <input type="tel" dir="ltr" id="phone-input" name="phonenumber" autocomplete="off" maxlength="11" minlength="11" class="grow-1 text-right" placeholder="0912 123 45 67" required>
+                                <div class="icon border-right"><i class="icon-mobile-1"></i></div>
+                            </div>
+                            <div class="error-message d-none red"></div>
+                        </div>
+
+                        <div class="input-item mt-10">
+                            <div class="input-label">آیدی تلگرام: <span class="green">اختیاری</span></div>
+                            <div class="input-text border">
+                                <input type="text" dir="ltr" id="telegram-input" name="TelegramUsername" placeholder="@(Html.Raw("@") + "Telegram24")" class="text-right">
+                                <div class="icon border-right"><i class="font-light">@Html.Raw("@")</i></div>
+                            </div>
+                        </div>
+
+                        <div class="input-item mt-10">
+                            <div class="input-label">نام و نام خانوادگی: <span class="green">اختیاری</span></div>
+                            <div class="input-text border">
+                                <input type="text" dir="ltr" id="firstname-input" name="Firstname" placeholder="نام و نام خانوادگی" class="text-right">
+                                <div class="icon border-right"><i class="icon-user-add-1"></i></div>
+                            </div>
+                        </div>
+
+                        <div class="input-item  mt-10">
+                            <div class="input-label">آدرس ایمیل: <span class="green">اختیاری</span></div>
+                            <div class="input-text border">
+                                <input id="email-input" type="email" name="email" dir="ltr" placeholder="ایمیل" class="text-right">
+                                <div class="icon border-right"><i class="icon-sms-1"></i></div>
+                            </div>
+                        </div>
+
+                        <div class="input-item  mt-10">
+                            <div class="input-label">رمز عبور: <span class="red">اجباری</span></div>
+                            <div class="input-text border">
+                                <input type="password" id="password-input" name="password" dir="ltr" autocomplete="off" minlength="6" class="passchek text-right" placeholder="رمز عبور" required>
+                                <div class="icon border-right showpass pointer"><i class="icon-eye-1"></i></div>
+                            </div>
+                            <div class="error-message d-none red"></div>
+                        </div>
+
+                        <div class="mt-20 pd-5">
+                            <button class="btn bg-gr m-5 basis140 width-pre-100 sub-btn" type="submit" disabled>مرحله بعدی</button>
+                        </div>
+
+                    </div>
+
+                </form>
+
+                <div class="text-center mt-20">
+                    <span class="bright">از قبل حساب کاربری دارید?</span>
+                    <a href="/login" class="viulet">وارد شوید</a>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="basis400 grow-1 bg-light-blue d-flex just-center align-center login-slider-box width-pre-100 pd-td-50">
+            <div class=" overhide">
+
+                <div class="img max-w120 m-auto mb-30"><img src="https://cdn.telegram24.vip/website/images/logo.svg" alt=""></div>
+
+                <div class="max-w500 m-auto text-center">
+                    <div class="login-slide pd-lr-30">
+                        <h3 class="font-size-1-2  m-auto">
+                            از اینکه همراه ما هستید خوشحالیم
+                        </h3>
+                        <p class="color-bright line20 mt-10">
+                            به تلگرام ۲۴ خوش آمدید! برای دسترسی به سرویس‌های متنوع ما مانند اشتراک پرمیوم، استارز تلگرام و تبلیغات تلگرامی، وارد حساب کاربری خود شوید.
+                        </p>
+                    </div>
+                </div>
+
+
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+<script src="https://cdn.telegram24.vip/website/js/jquery-3.7.1.js"></script>
+<script src="https://cdn.telegram24.vip/website/js/login.js"></script>
+
+<script type="text/javascript">
+    ["keydown","touchmove","touchstart","mouseover"].forEach(function(v){window.addEventListener(v,function(){if(!window.isGoftinoAdded){window.isGoftinoAdded=1;var i="XFkF4Q",d=document,g=d.createElement("script"),s="https://www.goftino.com/widget/"+i,l=localStorage.getItem("goftino_"+i);g.type="text/javascript",g.async=!0,g.src=l?s+"?o="+l:s;d.getElementsByTagName("head")[0].appendChild(g);}})});
+</script>
+
+</body>
+
+</html>

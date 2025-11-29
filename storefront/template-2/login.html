@@ -1,0 +1,326 @@
+@model (string? returnurl, string? message)
+@{
+Layout=null;
+}
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,  initial-scale=1.0">
+    <title>ورود به حساب | تلگرام ۲۴</title>
+    <meta name="description" content="وارد حساب کاربری خود در تلگرام ۲۴ شوید و به امکانات ویژه مانند اشتراک پرمیوم و استارز تلگرام دسترسی پیدا کنید!">
+    <link rel="canonical" href='@ViewData["canonical"]'>
+    <link rel="alternate" hreflang="fa" href="https://telegram24.vip">
+    <meta name="language" content="Persian">
+    <meta name="country" content="iran">
+
+    <meta property="og:locale" content="fa_IR">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="تلگرام بیست و چهار">
+    <meta property="og:url" content="https://telegram24.vip">
+    <meta property="og:image:secure_url" content="https://cdn.telegram24.vip/website/images/meta.jpeg">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="675">
+
+    <meta property="og:title" content="ورود به حساب | تلگرام 24">
+    <meta name="twitter:title" content="ورود به حساب | تلگرام 24">
+
+    <meta property="og:description" content="وارد حساب کاربری خود در تلگرام ۲۴ شوید و به امکانات ویژه مانند اشتراک پرمیوم و استارز تلگرام دسترسی پیدا کنید!">
+    <meta name="twitter:description" content="وارد حساب کاربری خود در تلگرام ۲۴ شوید و به امکانات ویژه مانند اشتراک پرمیوم و استارز تلگرام دسترسی پیدا کنید!">
+
+    <meta name="keywords" content="ورود به تلگرام, حساب کاربری تلگرام, تلگرام پرمیوم, خدمات تلگرام, استارز تلگرام, اشتراک ویژه, قرعه‌کشی تلگرام, تبلیغات تلگرامی, دسترسی به امکانات, تلگرام ۲۴, خدمات آنلاین, ورود سریع, اپلیکیشن تلگرام, تجربه کاربری">
+
+    <!-- favicon -->
+    <link rel="apple-touch-icon" sizes="180x180" href="https://cdn.telegram24.vip/website/images/favicon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="https://cdn.telegram24.vip/website/images/favicon.png">
+    <link rel="icon" type="image/png" sizes="194x194" href="https://cdn.telegram24.vip/website/images/favicon.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="https://cdn.telegram24.vip/website/images/favicon.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="https://cdn.telegram24.vip/website/images/favicon.png">
+
+    <link rel="stylesheet" href="https://cdn.telegram24.vip/website/css/fonts.css">
+    <link rel="stylesheet" href="https://cdn.telegram24.vip/website/css/icon.css">
+    <link rel="stylesheet" href="https://cdn.telegram24.vip/website/css/alert.css">
+    <link rel="stylesheet" href="https://cdn.telegram24.vip/website/css/swiper-bundle.min.css">
+    <link rel="stylesheet" href="https://cdn.telegram24.vip/website/css/grid.css?v=0.0.1">
+    <link rel="stylesheet" href="https://cdn.telegram24.vip/website/css/style.css?v=0.0.4">
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-RRQV8BWSJV"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-RRQV8BWSJV');
+    </script>
+</head>
+
+<body class="rtl">
+
+<div class="main overhide d-flex-column" style="min-height: 100vh;">
+
+    <div class="login-box d-flex-wrap overhide grow-1">
+
+        <div class="basis400 grow-8 d-flex just-center align-center bg-white pd-lr-30 pd-td-50 relative">
+
+            <div class="grow-1 max-w400">
+
+                <h1 class="gr-text mb-10">ورود به تلگرام 24</h1>
+                <p class="color-bright line20">ثبت نام سریع و آسان بدون نیاز به احراز هویت</p>
+
+                <div class="d-flex border radius-10 pd-5 mt-10">
+                    <div class="login-method active" data-method="loginPass">ورود به رمز</div>
+                    <div class="login-method" data-method="loginCode">ورود با کد</div>
+                </div>
+
+                <form id="loginPass" action="/login" method="post">
+
+                    @Html.AntiForgeryToken()
+                    <input name="returnUrl" value="@Model.returnurl" hidden>
+
+                    <div class="fix-mr5 pd-d-20">
+
+                        <div class="input-item mt-10">
+                            <div class="input-label">موبایل:</div>
+                            <div class="input-text border">
+                                <input type="tel" dir="ltr" name="phonenumber" autocomplete="off" maxlength="11" minlength="11" class="grow-1 text-right" placeholder="0912 123 45 67" required>
+                                <div class="icon border-right"><i class="icon-mobile-1"></i></div>
+                            </div>
+                            <div class="error-message d-none red"></div>
+                        </div>
+
+                        <div class="input-item  mt-10">
+                            <div class="input-label">رمز عبور:</div>
+                            <div class="input-text border">
+                                <input type="password" id="password-input" name="password" dir="ltr" autocomplete="off" minlength="6" class="passchek text-right" placeholder="رمز عبور" required>
+                                <div class="icon border-right showpass pointer"><i class="icon-eye-1"></i></div>
+                            </div>
+                            <div class="error-message d-none red"></div>
+                        </div>
+
+
+                        <div class="mt-20 pd-5">
+                            <button type="submit" class="btn bg-gr m-5 basis140 width-pre-100 sub-btn" disabled>مرحله بعدی</button>
+                        </div>
+
+                    </div>
+
+                </form>
+
+                <form id="loginCode" class="d-none">
+
+                    <div id="token">
+                        @Html.AntiForgeryToken()
+                    </div>
+
+                    <div class="fix-mr5 pd-d-20">
+
+                        <div class="input-item mt-10">
+                            <div class="input-label">موبایل: <span class="red">اجباری</span></div>
+                            <div class="input-text border">
+                                <input type="tel" dir="ltr" id="phone-input" name="phonenumber" autocomplete="off" maxlength="11" minlength="11" class="grow-1 text-right" placeholder="0912 123 45 67" required>
+                                <div class="icon border-right"><i class="icon-mobile-1"></i></div>
+                            </div>
+                            <div class="error-message d-none red"></div>
+                        </div>
+
+                        <div class="mt-20 pd-5">
+                            <button class="btn bg-gr m-5 basis140 width-pre-100 sub-btn" type="button" onclick="SendOtpRequest()" disabled>مرحله بعدی</button>
+                        </div>
+
+                    </div>
+
+                </form>
+
+                <form id="verifyForm" class="d-none" action="/otp-login" method="post">
+
+                    @Html.AntiForgeryToken()
+                    <input name="returnUrl" value="@Model.returnurl" hidden>
+                    <input type="text" id="moblieNum" name="phonenumber" value="09351632292" hidden>
+                    <input type="text" name="code" id="otp-input">
+
+                    <div class="fix-mr5 pd-td-20 text-center">
+
+                        <p class="mb-10">کد پیامک شده به موبایل خود را وارد کنید</p>
+
+                        <div id="pin-box" class="text-center d-flex-wrap just-center" dir="ltr"></div>
+
+                        <div class="d-flex-wrap just-between align-end">
+
+                            <div class="mt-10 viulet pointer" dir="ltr" onclick="loginBack()"><span class="mobnumber">09121234567</span> <i class="icon-edit-2 font-size-1-2"></i></div>
+
+                            <div class="resend-code d-none pointer viulet" onclick="SendOtpRequest()">ارسا مجدد</div>
+
+                            <div class="timer-box">ارسال مجدد تا <span class="red timer">2:00</span></div>
+
+                        </div>
+
+                        <div class="mt-20 pd-5">
+                            <button type="submit" class="btn bg-gr m-5 basis140 width-pre-100 sub-btn" disabled>تایید نهایی</button>
+                        </div>
+
+                    </div>
+
+                </form>
+
+                <div class="text-center mt-20">
+                    <span class="bright">حساب کاربری ندارید؟</span>
+                    <a href="/sign-up" class="viulet">ثبت نام کنید</a>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="basis400 grow-1 bg-light-blue d-flex just-center align-center login-slider-box width-pre-100 pd-td-50">
+            <div class=" overhide">
+
+                <div class="img max-w120 m-auto mb-30"><img src="https://cdn.telegram24.vip/website/images/logo.svg" alt=""></div>
+
+                <div class="max-w500 m-auto text-center">
+                    <div class="login-slide pd-lr-30">
+                        <h3 class="font-size-1-2 m-auto">
+                            از اینکه همراه ما هستید خوشحالیم
+                        </h3>
+                        <p class="color-bright line20 mt-10">
+                            به تلگرام ۲۴ خوش آمدید! برای دسترسی به سرویس‌های متنوع ما مانند اشتراک پرمیوم، استارز تلگرام و تبلیغات تلگرامی، وارد حساب کاربری خود شوید.
+                        </p>
+                        <div class="fix-mr5 mt-20 d-flex just-center">
+                            <a class="btn border" ><i class="ml-10 icon-home-4"></i> بازگشت به خانه</a>
+                        </div>
+                    </div>
+                </div>
+
+
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+<script src="https://cdn.telegram24.vip/website/js/jquery-3.7.1.js"></script>
+<script src="https://cdn.telegram24.vip/website/js/cute-alert.js"></script>
+<script src="https://cdn.telegram24.vip/website/js/pincode.js"></script>
+<script src="https://cdn.telegram24.vip/website/js/login.js"></script>
+
+<script>
+
+    $('.login-method').on('click' , function() {
+        $('.login-method').removeClass('active')
+        $(this).addClass('active');
+        var method = $(this).attr('data-method');
+        $('form').slideUp();
+        $('#' + method).slideDown();
+        clearInterval(timer);
+    });
+
+    var timer;
+    function timdown() {
+        var count = 120;
+        var x = setInterval(function() {
+            var minutes = Math.floor(count / 60);
+            var seconds = count % 60;
+            count--;
+            if (count < 0) {
+                clearInterval(x);
+                $('.timer').text('0:00');
+                $('.timer-box').hide();
+                $('.resend-code').fadeIn();
+                count = 120;
+                return;
+            }
+            $('.timer').text(minutes + ":" + (seconds < 10 ? "0" : "") + seconds);
+        }, 1000);
+        timer = x;
+        $('.resend-code').hide();
+        $('.timer-box').show();
+    }
+
+    $('.resend-code').on('click', function() {
+        SendOtpRequest();
+        $('.timer-box').fadeIn();
+    });
+
+    function loginBack() {
+        clearInterval(timer);
+        $('.timer').text('2:00');
+        $('#loginCode').slideDown();
+        $('#verifyForm').slideUp() ;
+    };
+
+    function SendOtpRequest() {
+        const phoneNumber = document.getElementById('phone-input').value;
+        const forgeryToken = document.querySelector('#token input[name="__RequestVerificationToken"]').value;
+
+        const data = new URLSearchParams();
+        data.append('phoneNumber', phoneNumber);
+        data.append('__RequestVerificationToken', forgeryToken);
+
+        fetch('/otp-request', {
+            method: 'POST',
+            body: data,
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            }
+        })
+            .then(response => {
+                if (response.ok) {
+                    timdown();
+                    $('#loginCode').slideUp();
+                    $('#verifyForm').slideDown();
+                    $('#moblieNum').val(phoneNumber);
+                    $('.mobnumber').text(phoneNumber);
+                } else if (response.status == 404) {
+                    cuteAlert({
+                        type: "error",
+                        title: "پیام سیستم",
+                        message: 'کاربری با این شماره موبایل پیدا نشد',
+                        buttonText: "بستن",
+                    });
+                }
+                else {
+                    cuteAlert({
+                        type: "error",
+                        title: "پیام سیستم",
+                        message: 'ارسال کد با خطا مواجه شد ٬ مجدد امتحان کنید',
+                        buttonText: "بستن",
+                    });
+                    console.log(response);
+                }
+            })
+            .catch(error => {
+                cuteAlert({
+                    type: "error",
+                    title: "پیام سیستم",
+                    message: 'ارسال کد با خطا مواجه شد ٬ مجدد امتحان کنید',
+                    buttonText: "بستن",
+                });
+                console.error('Error occurred:', error);
+            });
+    }
+
+</script>
+
+<script>
+    const verifyMobile = new pinCode(document.getElementById('pin-box'), {
+        fields: 6,
+        placeholder: "•",
+        autofocus: true,
+        hideinput: false,
+        pattern: "^[0-9]*$",
+        copypaste: true,
+        // reset: true,
+        complete: function(pincode) {
+            console.log("PIN code entered:", pincode);
+            $('#otp-input').val(pincode);
+            console.log($('#otp-input').val());
+            console.log($('#moblieNum').val());
+        },
+    });
+
+</script>
+
+<script type="text/javascript">
+    ["keydown","touchmove","touchstart","mouseover"].forEach(function(v){window.addEventListener(v,function(){if(!window.isGoftinoAdded){window.isGoftinoAdded=1;var i="XFkF4Q",d=document,g=d.createElement("script"),s="https://www.goftino.com/widget/"+i,l=localStorage.getItem("goftino_"+i);g.type="text/javascript",g.async=!0,g.src=l?s+"?o="+l:s;d.getElementsByTagName("head")[0].appendChild(g);}})});
+</script>
+</body>
+</html>
