@@ -45,6 +45,20 @@
                     <label for="footer_text" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">متن فوتر</label>
                     <textarea id="footer_text" name="footer_text" rows="3" class="w-full rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white px-4 py-2.5 focus:ring-primary-500 focus:border-primary-500 shadow-sm"><?= htmlspecialchars($settings['footer_text'] ?? '') ?></textarea>
                 </div>
+                <div class="col-span-1 md:col-span-2">
+                    <label for="default_theme" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">قالب پیش‌فرض سایت</label>
+                    <div class="relative">
+                        <select id="default_theme" name="default_theme" class="w-full appearance-none rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white px-4 py-2.5 pr-10 focus:ring-primary-500 focus:border-primary-500 shadow-sm">
+                            <option value="template-1" <?= ($settings['default_theme'] ?? 'template-1') === 'template-1' ? 'selected' : '' ?>>پیش‌فرض (قالب ۱)</option>
+                            <option value="template-2" <?= ($settings['default_theme'] ?? '') === 'template-2' ? 'selected' : '' ?>>تلگرام پرمیوم (قالب ۲)</option>
+                            <option value="template-3" <?= ($settings['default_theme'] ?? '') === 'template-3' ? 'selected' : '' ?>>طرح ادمین (قالب ۳)</option>
+                        </select>
+                        <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center px-3 text-gray-500">
+                            <?php partial('icon', ['name' => 'chevron-down', 'class' => 'w-4 h-4']); ?>
+                        </div>
+                    </div>
+                    <p class="text-xs text-gray-500 mt-1">کاربران جدید این قالب را مشاهده خواهند کرد. کاربران فعلی می‌توانند قالب خود را تغییر دهند.</p>
+                </div>
             </div>
         </div>
 

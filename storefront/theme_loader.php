@@ -1,13 +1,30 @@
 <?php
 // storefront/theme_loader.php
 
-function load_theme_view($relativePath) {
-    // 1. Determine active theme from cookie
-    $theme = $_COOKIE['site_theme'] ?? 'template-1';
-    $allowed_themes = ['template-1', 'template-2'];
+use App\Models\Setting;
 
-    if (!in_array($theme, $allowed_themes)) {
-        $theme = 'template-1';
+function load_theme_view($relativePath) {
+    $allowed_themes = ['template-1', 'template-2', 'template-3'];
+
+    // 1. Determine active theme
+    // Priority: Cookie > Database Setting > Default 'template-1'
+    if (isset($_COOKIE['site_theme']) && in_array($_COOKIE['site_theme'], $allowed_themes)) {
+        $theme = $_COOKIE['site_theme'];
+    } else {
+        // Fetch default from DB
+        try {
+            $settings = Setting::getAll();
+            $default_theme = $settings['default_theme'] ?? 'template-1';
+
+            if (in_array($default_theme, $allowed_themes)) {
+                $theme = $default_theme;
+            } else {
+                $theme = 'template-1';
+            }
+        } catch (Exception $e) {
+            // Fallback in case of DB error
+            $theme = 'template-1';
+        }
     }
 
     // 2. Construct path
@@ -29,15 +46,6 @@ function load_theme_view($relativePath) {
         die("View file not found: " . htmlspecialchars($relativePath));
     }
 
-    // 5. Include the file
-    // Note: We use include inside this function scope.
-    // Variables from the calling scope (Controller) are NOT automatically available here
-    // unless we use 'extract($GLOBALS)' or similar, BUT `include` inside a function
-    // does not inherit variables from the caller of the function.
-    //
-    // HOWEVER, the Proxy files will simply `include` this loader?
-    // No, better to have a helper function that returns the PATH, and the Proxy file includes it.
-    // That way, the inclusion happens in the Proxy file's scope, preserving variable access ($data).
-
+    // 5. Return path
     return $targetPath;
 }
