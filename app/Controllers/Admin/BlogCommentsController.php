@@ -44,7 +44,7 @@ class BlogCommentsController
     public function update($id)
     {
         // Static call as Request methods are static
-        $data = Request::getBody();
+        $data = Request::all();
 
         // Basic validation
         if (empty($data['name']) || empty($data['comment'])) {
@@ -76,7 +76,7 @@ class BlogCommentsController
 
     public function updateStatus($id)
     {
-        $data = Request::getBody();
+        $data = Request::all();
 
         if (isset($data['status']) && in_array($data['status'], ['approved', 'rejected', 'pending'])) {
             Comment::updateStatus($id, $data['status']);
@@ -88,7 +88,7 @@ class BlogCommentsController
 
     public function reply($id)
     {
-        $data = Request::getBody();
+        $data = Request::all();
         $parentComment = Comment::find($id);
 
         if (!$parentComment) {

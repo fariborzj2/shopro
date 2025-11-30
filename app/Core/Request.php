@@ -49,14 +49,14 @@ class Request
     }
 
     /**
-     * Get the body of the request (JSON or POST data).
+     * Get all request data (JSON or POST data).
      *
      * @return array
      */
-    public static function getBody()
+    public static function all()
     {
         if (self::method() === 'GET') {
-            return [];
+            return $_GET; // Return GET params for convenience, though typically used for POST/PUT body
         }
 
         $contentType = $_SERVER['CONTENT_TYPE'] ?? '';
