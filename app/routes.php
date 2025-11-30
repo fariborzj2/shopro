@@ -139,6 +139,7 @@ $router->get('/admin/blog/comments/edit/{id}', 'Admin\BlogCommentsController@edi
 $router->post('/admin/blog/comments/update/{id}', 'Admin\BlogCommentsController@update');
 $router->post('/admin/blog/comments/delete/{id}', 'Admin\BlogCommentsController@destroy');
 $router->post('/admin/blog/comments/status/{id}', 'Admin\BlogCommentsController@updateStatus');
+$router->post('/admin/blog/comments/reply/{id}', 'Admin\BlogCommentsController@reply');
 
 // Custom Order Fields
 $router->get('/admin/custom-fields', 'Admin\CustomOrderFieldsController@index');
