@@ -23,7 +23,6 @@ class AiNewsController
     {
         $settings = AiSetting::getAll();
 
-        // Ensure defaults
         $data = [
             'plugin_enabled' => $settings['plugin_enabled'] ?? 0,
             'start_hour' => $settings['start_hour'] ?? 8,
@@ -35,50 +34,15 @@ class AiNewsController
             'logs' => AiLog::getRecent(20)
         ];
 
-        // We render a view from our plugin directory
-        // Since the core Template engine looks in `views/`, we might need to manually include our view
-        // or convince Template to load from our path.
-        // For simplicity, we will assume standard output buffering or include approach inside a wrapper.
-
-        // Since we are inside the admin panel, we want to extend the main layout.
-        // The standard `view()` helper might not find our file.
-        // We will construct the view path manually.
-
         $viewPath = PROJECT_ROOT . '/app/Plugins/AiNews/Views/settings.php';
 
-        // Hack: We can use the layout `views/layouts/main.php` and inject our content.
-        // But the `view()` helper takes a view name relative to `views/`.
-        // We will assume we can copy our views to `views/admin/ai_news/` OR we just use `include` inside a blank core view.
-        // Let's try to just render the layout and pass the content.
-
-        // Best approach given constraints:
-        // Use `views/layouts/main.php` but capture our plugin view output as `$content`.
-
         ob_start();
+        extract($data); // Ensure variables are available to the view
         include $viewPath;
         $content = ob_get_clean();
 
-        // Now render the main layout with this content
-        // This requires a modification to how we call `view`.
-        // If `view` function strictly expects a file, we are stuck.
-        // Let's look at `app/Core/helpers.php`'s `view` function.
-
-        global $current_view_content; // Hypothetical
-        // Actually, the standard way in this app seems to be `view('admin/dashboard', $data)`.
-
-        // Workaround: We will rely on the `view()` helper if we can register a path,
-        // BUT the prompt says "No modification to backend" (except routes).
-        // So I cannot change `Template.php`.
-
-        // I will use `view('layouts/main', ['content' => $content])`?
-        // Let's check `views/layouts/main.php`.
-        // It likely does `<?php include ... $view ... ?>` or `<?php echo $content ?>`.
-
-        // I'll check `views/layouts/main.php` content in next step.
-        // For now, I'll assume I can output the layout manually.
-
+        // Pass title to layout if needed, though $title is set in view
         include PROJECT_ROOT . '/views/layouts/main.php';
-        // Wait, main.php likely expects variables.
     }
 
     public function saveSettings()
@@ -100,11 +64,6 @@ class AiNewsController
     {
         $pdo = Database::getConnection();
 
-        // Fetch drafts that were likely created by AI (we don't have a specific flag, but we can filter by 'draft')
-        // Ideally we should have added `is_ai_generated` column but schema change on `blog_posts` was not requested/approved explicitly
-        // other than "Full compatibility with posts table".
-        // I'll filter by status='draft' and maybe created_at desc.
-
         $stmt = $pdo->query("
             SELECT * FROM blog_posts
             WHERE status = 'draft'
@@ -117,19 +76,17 @@ class AiNewsController
         $viewPath = PROJECT_ROOT . '/app/Plugins/AiNews/Views/list.php';
 
         ob_start();
+        extract($data);
         include $viewPath;
-        $content = ob_get_clean(); // This variable name matters for main.php?
+        $content = ob_get_clean();
 
-        // Manually render layout
-        // I need to know how main.php renders the inner view.
-        // I'll check main.php in a moment.
         include PROJECT_ROOT . '/views/layouts/main.php';
     }
 
     public function fetch()
     {
         $crawler = new Crawler();
-        $result = $crawler->run(true); // Manual = true
+        $result = $crawler->run(true);
 
         if ($result['status'] === 'success') {
             redirect_with_success('/admin/ai-news/list', "ربات با موفقیت اجرا شد. {$result['created']} پست ایجاد شد.");
