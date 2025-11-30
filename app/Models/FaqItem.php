@@ -40,8 +40,10 @@ class FaqItem
         if (!isset($data['position'])) {
             $data['position'] = 0;
         }
-        Database::query($sql, $data);
-        return true;
+        $pdo = Database::getConnection();
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute($data);
+        return $pdo->lastInsertId();
     }
 
     public static function update($id, $data)
