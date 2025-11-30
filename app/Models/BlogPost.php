@@ -506,4 +506,120 @@ class BlogPost
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_OBJ);
     }
+
+    /**
+     * Get featured posts with smart scoring logic.
+     * 1. Collect posts from recent ranges (7, 14, 30, 90 days).
+     * 2. Fallback to archive if < 3 posts.
+     * 3. Score posts based on freshness, views, and comments.
+     * 4. Return top 3-9 posts.
+     */
+    public static function getSmartFeaturedPosts()
+    {
+        $pdo = Database::getConnection();
+        $ranges = [7, 14, 30, 90];
+        $candidates = [];
+        $foundEnough = false;
+
+        // Step 1: Collection by range
+        foreach ($ranges as $days) {
+            $sql = "SELECT bp.id, bp.title, bp.slug, bp.excerpt, bp.published_at, bp.image_url, bp.views_count,
+                    (SELECT COUNT(*) FROM blog_post_comments bpc WHERE bpc.post_id = bp.id) as comments_count
+                    FROM blog_posts bp
+                    WHERE bp.status = 'published'
+                    AND (bp.published_at IS NULL OR bp.published_at <= NOW())
+                    AND bp.published_at >= DATE_SUB(NOW(), INTERVAL :days DAY)";
+
+            $stmt = $pdo->prepare($sql);
+            $stmt->bindValue(':days', $days, PDO::PARAM_INT);
+            $stmt->execute();
+            $candidates = $stmt->fetchAll(PDO::FETCH_OBJ);
+
+            if (count($candidates) >= 3) {
+                $foundEnough = true;
+                break;
+            }
+        }
+
+        // Step 1b: Fallback if still < 3
+        if (!$foundEnough && count($candidates) < 3) {
+            $needed = 3 - count($candidates);
+
+            // Get IDs to exclude
+            $excludeIds = array_map(function($p) { return $p->id; }, $candidates);
+
+            // Fetch from archive to fill up to 3
+            // We fetch slightly more to allow for valid fallback data, but here we just need to fill the gap
+            // Actually, simplest is to just fetch top 3 latest from ALL time if we failed the 90 day check significantly
+            // But strict adherence to "Add from archive only as much as needed to complete (up to 3)"
+
+            $sql = "SELECT bp.id, bp.title, bp.slug, bp.excerpt, bp.published_at, bp.image_url, bp.views_count,
+                    (SELECT COUNT(*) FROM blog_post_comments bpc WHERE bpc.post_id = bp.id) as comments_count
+                    FROM blog_posts bp
+                    WHERE bp.status = 'published'
+                    AND (bp.published_at IS NULL OR bp.published_at <= NOW())";
+
+            if (!empty($excludeIds)) {
+                $sql .= " AND bp.id NOT IN (" . implode(',', $excludeIds) . ")";
+            }
+
+            $sql .= " ORDER BY bp.published_at DESC LIMIT :limit";
+
+            $stmt = $pdo->prepare($sql);
+            $stmt->bindValue(':limit', $needed, PDO::PARAM_INT);
+            $stmt->execute();
+            $extras = $stmt->fetchAll(PDO::FETCH_OBJ);
+
+            $candidates = array_merge($candidates, $extras);
+        }
+
+        if (empty($candidates)) {
+            return [];
+        }
+
+        // Step 2: Scoring
+        $max_views = 0;
+        $max_comments = 0;
+        $max_days_range = 0;
+        $now = time();
+
+        // Pass 1: Determine max values for normalization and max date range in the set
+        foreach ($candidates as $post) {
+            $max_views = max($max_views, (int)$post->views_count);
+            $max_comments = max($max_comments, (int)$post->comments_count);
+
+            $pDate = strtotime($post->published_at ?? $post->created_at ?? 'now');
+            $diff = $now - $pDate;
+            $daysOld = ceil($diff / (60 * 60 * 24));
+            $max_days_range = max($max_days_range, $daysOld);
+        }
+
+        // Avoid division by zero
+        $max_views = $max_views ?: 1;
+        $max_comments = $max_comments ?: 1;
+        $max_days_range = $max_days_range ?: 1;
+
+        // Pass 2: Calculate scores
+        foreach ($candidates as &$post) {
+            $pDate = strtotime($post->published_at ?? $post->created_at ?? 'now');
+            $daysOld = max(0, ($now - $pDate) / (60 * 60 * 24));
+
+            // freshness_score = 1 - (days_since_publish / max_days_range)
+            // Ensure result is not negative if something weird happens with dates
+            $freshness_score = max(0, 1 - ($daysOld / $max_days_range));
+
+            $normalized_views = ((int)$post->views_count) / $max_views;
+            $normalized_comments = ((int)$post->comments_count) / $max_comments;
+
+            $post->score = (0.5 * $freshness_score) + (0.3 * $normalized_views) + (0.2 * $normalized_comments);
+        }
+
+        // Step 3: Sort by score DESC
+        usort($candidates, function($a, $b) {
+            return $b->score <=> $a->score;
+        });
+
+        // Step 4: Return top 9
+        return array_slice($candidates, 0, 9);
+    }
 }
