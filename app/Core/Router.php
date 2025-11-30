@@ -62,7 +62,12 @@ class Router
 
     protected function callAction($controller, $method, $params = [])
     {
-        $controllerClass = "App\\Controllers\\{$controller}";
+        // Support fully qualified class names (starting with \)
+        if (strpos($controller, '\\') === 0) {
+            $controllerClass = $controller;
+        } else {
+            $controllerClass = "App\\Controllers\\{$controller}";
+        }
 
         if (!class_exists($controllerClass)) {
             throw new Exception("Controller {$controllerClass} does not exist.");
