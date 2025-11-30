@@ -42,13 +42,8 @@ class BlogController
 
         // Slider and featured categories
         $settings = \App\Models\Setting::getAll();
-        $slider_limit = $settings['slider_posts_limit'] ?? 5;
-        $slider_posts = BlogPost::findMostViewed($slider_limit, $settings['slider_time_range'] ?? 40);
-
-        // Fallback: If no most viewed posts found (e.g. no views or old posts), show latest posts
-        if (empty($slider_posts)) {
-            $slider_posts = BlogPost::findAllPublished($slider_limit);
-        }
+        // The new logic (Smart Featured Posts) handles limits (up to 9) and fallback internally.
+        $slider_posts = BlogPost::getSmartFeaturedPosts();
 
         // Sanitize slider posts
         foreach ($slider_posts as &$sp) {
