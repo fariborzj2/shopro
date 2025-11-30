@@ -68,9 +68,25 @@ class Crawler
 
     private function processSitemap($url, &$processed, $maxPosts)
     {
-        $xmlContent = @file_get_contents($url);
+        // Create context to handle User-Agent and SSL
+        $context = stream_context_create([
+            'http' => [
+                'method' => 'GET',
+                'header' => "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36\r\n" .
+                            "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8\r\n",
+                'timeout' => 30
+            ],
+            'ssl' => [
+                'verify_peer' => false,
+                'verify_peer_name' => false,
+            ]
+        ]);
+
+        $xmlContent = @file_get_contents($url, false, $context);
         if (!$xmlContent) {
-            $this->logDetails[] = "Failed to fetch sitemap: $url";
+            $error = error_get_last();
+            $msg = $error['message'] ?? 'Unknown error';
+            $this->logDetails[] = "Failed to fetch sitemap: $url (Error: $msg)";
             return;
         }
 
@@ -96,7 +112,7 @@ class Crawler
             $this->fetchedCount++;
 
             // Fetch Article HTML
-            $html = @file_get_contents($link);
+            $html = @file_get_contents($link, false, $context);
             if (!$html) {
                  $this->logDetails[] = "Failed to fetch HTML: $link";
                  continue;

@@ -57,7 +57,10 @@ $title = 'تنظیمات دستیار هوشمند';
                 <!-- Groq Settings -->
                 <div>
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Groq API Key</label>
-                    <input type="password" name="groq_api_key" value="<?php echo htmlspecialchars($data['groq_api_key']); ?>" class="w-full bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white rounded-lg p-2.5" placeholder="gsk_...">
+                    <div class="flex gap-2">
+                        <input type="password" name="groq_api_key" value="<?php echo htmlspecialchars($data['groq_api_key']); ?>" class="flex-1 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white rounded-lg p-2.5" placeholder="gsk_...">
+                        <button type="button" onclick="testConnection()" class="bg-gray-500 hover:bg-gray-600 text-white px-3 rounded-lg text-sm whitespace-nowrap transition-colors">تست اتصال</button>
+                    </div>
                 </div>
 
                 <div>
@@ -130,3 +133,36 @@ $title = 'تنظیمات دستیار هوشمند';
 .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
 .custom-scrollbar::-webkit-scrollbar-thumb { background-color: rgba(156, 163, 175, 0.5); border-radius: 20px; }
 </style>
+
+<script>
+function testConnection() {
+    const btn = document.querySelector('button[onclick="testConnection()"]');
+    const originalText = btn.innerText;
+    btn.innerText = 'در حال بررسی...';
+    btn.disabled = true;
+
+    fetch('/admin/ai-news/test-connection', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === 'success') {
+            alert('اتصال با موفقیت برقرار شد!');
+        } else {
+            alert('خطا در اتصال: ' + data.message);
+        }
+    })
+    .catch(error => {
+        alert('خطای شبکه رخ داد.');
+        console.error(error);
+    })
+    .finally(() => {
+        btn.innerText = originalText;
+        btn.disabled = false;
+    });
+}
+</script>

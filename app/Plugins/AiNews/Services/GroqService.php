@@ -17,6 +17,23 @@ class GroqService
         $this->model = AiSetting::get('groq_model', 'llama3-70b-8192');
     }
 
+    public function test()
+    {
+        if (!$this->apiKey) {
+            return ['status' => 'error', 'message' => 'API Key is missing.'];
+        }
+
+        $payload = [
+            'model' => $this->model,
+            'messages' => [
+                ['role' => 'user', 'content' => 'Say "OK"']
+            ],
+            'max_tokens' => 5
+        ];
+
+        return $this->sendRequest($payload);
+    }
+
     public function process($data)
     {
         if (!$this->apiKey) return null;
@@ -39,6 +56,25 @@ class GroqService
             'response_format' => ['type' => 'json_object']
         ];
 
+        $response = $this->sendRequest($payload);
+
+        if ($response['status'] === 'success') {
+            $json = $response['data'];
+            $content = $json['choices'][0]['message']['content'] ?? null;
+
+            if ($content) {
+                $parsed = json_decode($content, true);
+                if (json_last_error() === JSON_ERROR_NONE) {
+                    return $parsed;
+                }
+            }
+        }
+
+        return null;
+    }
+
+    private function sendRequest($payload)
+    {
         $ch = curl_init($this->endpoint);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_POST, true);
@@ -47,27 +83,24 @@ class GroqService
             'Content-Type: application/json',
             'Authorization: Bearer ' . $this->apiKey
         ]);
+        // Ignore SSL errors for development environments or if cert bundle is missing
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
 
         $response = curl_exec($ch);
         $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        $error = curl_error($ch);
         curl_close($ch);
 
-        if ($httpCode !== 200 || !$response) {
-            // Log error?
-            return null;
+        if ($error) {
+            return ['status' => 'error', 'message' => "Curl Error: $error"];
         }
 
-        $json = json_decode($response, true);
-        $content = $json['choices'][0]['message']['content'] ?? null;
-
-        if ($content) {
-            $parsed = json_decode($content, true);
-            if (json_last_error() === JSON_ERROR_NONE) {
-                return $parsed;
-            }
+        if ($httpCode !== 200) {
+            return ['status' => 'error', 'message' => "API Error (HTTP $httpCode): " . substr($response, 0, 100)];
         }
 
-        return null;
+        return ['status' => 'success', 'data' => json_decode($response, true)];
     }
 
     private function getDefaultPrompt()

@@ -184,6 +184,7 @@ $router->post('/admin/media/delete/{id}', 'Admin\MediaController@delete');
 // ----------------------------------------------------------------------
 $router->get('/admin/ai-news/settings', '\App\Plugins\AiNews\Controllers\AiNewsController@settings');
 $router->post('/admin/ai-news/settings/save', '\App\Plugins\AiNews\Controllers\AiNewsController@saveSettings');
+$router->post('/admin/ai-news/test-connection', '\App\Plugins\AiNews\Controllers\AiNewsController@testConnection');
 $router->get('/admin/ai-news/list', '\App\Plugins\AiNews\Controllers\AiNewsController@list');
 $router->post('/admin/ai-news/fetch', '\App\Plugins\AiNews\Controllers\AiNewsController@fetch');
 $router->post('/admin/ai-news/approve/{id}', '\App\Plugins\AiNews\Controllers\AiNewsController@approve');

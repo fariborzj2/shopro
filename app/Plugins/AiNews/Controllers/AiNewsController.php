@@ -7,6 +7,7 @@ use App\Core\Template;
 use App\Plugins\AiNews\Models\AiSetting;
 use App\Plugins\AiNews\Models\AiLog;
 use App\Plugins\AiNews\Services\Crawler;
+use App\Plugins\AiNews\Services\GroqService;
 use App\Core\Database;
 use PDO;
 
@@ -37,11 +38,10 @@ class AiNewsController
         $viewPath = PROJECT_ROOT . '/app/Plugins/AiNews/Views/settings.php';
 
         ob_start();
-        extract($data); // Ensure variables are available to the view
+        extract($data);
         include $viewPath;
         $content = ob_get_clean();
 
-        // Pass title to layout if needed, though $title is set in view
         include PROJECT_ROOT . '/views/layouts/main.php';
     }
 
@@ -58,6 +58,16 @@ class AiNewsController
         AiSetting::set('prompt_template', $post['prompt_template']);
 
         redirect_with_success('/admin/ai-news/settings', 'تنظیمات با موفقیت ذخیره شد.');
+    }
+
+    public function testConnection()
+    {
+        $groq = new GroqService();
+        $result = $groq->test();
+
+        header('Content-Type: application/json');
+        echo json_encode($result);
+        exit;
     }
 
     public function list()
