@@ -164,32 +164,42 @@ class BlogPostsController
             foreach ($rawTags as $tag) {
                 if (strpos($tag, "new:") === 0) {
                     // Create new tag
-                    $tagName = substr($tag, 4);
-                    $slug = preg_replace(
-                        "/[^a-z0-9-]+/",
-                        "-",
-                        strtolower($tagName)
-                    );
+                    $tagName = trim(substr($tag, 4));
+                    // Generate a proper slug, preserving Persian characters
+                    $slug = trim($tagName);
+                    $slug = str_replace(' ', '-', $slug);
+                    $slug = preg_replace('/[^\p{L}\p{N}\-]+/u', '', $slug); // Remove special chars but keep letters/numbers (unicode)
+                    $slug = preg_replace('/-+/', '-', $slug); // Collapse multiple dashes
+
+                    if (empty($slug)) {
+                         $slug = 'tag-' . time(); // Fallback to avoid empty slug errors
+                    }
+
+                    // Check by name OR slug to avoid duplicates
                     $existing = BlogTag::findBy("name", $tagName);
+                    if (!$existing) {
+                        $existing = BlogTag::findBy("slug", $slug);
+                    }
+
                     if ($existing) {
                         $tagIds[] = $existing->id;
                     } else {
-                        // Create logic in controller or model. Model Create returns bool, need to adjust if we want ID.
-                        // But Model Create doesn't return ID in current implementation.
-                        // Let's use direct creation to get ID or update Model.
-                        // Assuming BlogTag::create just does insert.
-                        // I'll implement a helper here or assume standard behavior.
-                        // Since BlogTag::create returns true, I need to fetch it back or use PDO lastInsertId if inside the model.
-                        // Let's check BlogTag::create implementation again.
-                        // It uses Database::query.
-                        BlogTag::create([
-                            "name" => $tagName,
-                            "slug" => $slug,
-                            "status" => "active",
-                        ]);
-                        $newTag = BlogTag::findBy("name", $tagName);
-                        if ($newTag) {
-                            $tagIds[] = $newTag->id;
+                        try {
+                            BlogTag::create([
+                                "name" => $tagName,
+                                "slug" => $slug,
+                                "status" => "active",
+                            ]);
+                            $newTag = BlogTag::findBy("slug", $slug);
+                            if ($newTag) {
+                                $tagIds[] = $newTag->id;
+                            }
+                        } catch (\PDOException $e) {
+                            // If race condition or still duplicate, try to find again
+                            $existingAgain = BlogTag::findBy("slug", $slug);
+                            if ($existingAgain) {
+                                $tagIds[] = $existingAgain->id;
+                            }
                         }
                     }
                 } else {
@@ -375,20 +385,41 @@ class BlogPostsController
         $tagIds = [];
         foreach ($rawTags as $tag) {
             if (strpos($tag, "new:") === 0) {
-                $tagName = substr($tag, 4);
-                $slug = $tagName; // Use name as slug per requirements
+                $tagName = trim(substr($tag, 4));
+                // Generate a proper slug, preserving Persian characters
+                $slug = trim($tagName);
+                $slug = str_replace(' ', '-', $slug);
+                $slug = preg_replace('/[^\p{L}\p{N}\-]+/u', '', $slug); // Remove special chars but keep letters/numbers (unicode)
+                $slug = preg_replace('/-+/', '-', $slug); // Collapse multiple dashes
+
+                if (empty($slug)) {
+                    $slug = 'tag-' . time(); // Fallback
+                }
+
+                // Check by name OR slug
                 $existing = BlogTag::findBy("name", $tagName);
+                if (!$existing) {
+                    $existing = BlogTag::findBy("slug", $slug);
+                }
+
                 if ($existing) {
                     $tagIds[] = $existing->id;
                 } else {
-                    BlogTag::create([
-                        "name" => $tagName,
-                        "slug" => $slug,
-                        "status" => "active",
-                    ]);
-                    $newTag = BlogTag::findBy("name", $tagName);
-                    if ($newTag) {
-                        $tagIds[] = $newTag->id;
+                    try {
+                        BlogTag::create([
+                            "name" => $tagName,
+                            "slug" => $slug,
+                            "status" => "active",
+                        ]);
+                        $newTag = BlogTag::findBy("slug", $slug);
+                        if ($newTag) {
+                            $tagIds[] = $newTag->id;
+                        }
+                    } catch (\PDOException $e) {
+                         $existingAgain = BlogTag::findBy("slug", $slug);
+                         if ($existingAgain) {
+                             $tagIds[] = $existingAgain->id;
+                         }
                     }
                 }
             } else {

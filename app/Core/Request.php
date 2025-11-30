@@ -47,4 +47,24 @@ class Request
 
         return $data;
     }
+
+    /**
+     * Get all request data (JSON or POST data).
+     *
+     * @return array
+     */
+    public static function all()
+    {
+        if (self::method() === 'GET') {
+            return $_GET; // Return GET params for convenience, though typically used for POST/PUT body
+        }
+
+        $contentType = $_SERVER['CONTENT_TYPE'] ?? '';
+
+        if (stripos($contentType, 'application/json') !== false) {
+            return self::json();
+        }
+
+        return $_POST;
+    }
 }

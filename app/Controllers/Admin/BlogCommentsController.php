@@ -43,12 +43,11 @@ class BlogCommentsController
 
     public function update($id)
     {
-        $request = new Request();
-        $data = $request->getBody();
+        // Static call as Request methods are static
+        $data = Request::all();
 
         // Basic validation
         if (empty($data['name']) || empty($data['comment'])) {
-             // In a real app, handle validation errors better (with session flashing)
             redirect_back_with_error('نام و متن نظر الزامی است.');
             return;
         }
@@ -77,8 +76,7 @@ class BlogCommentsController
 
     public function updateStatus($id)
     {
-        $request = new Request();
-        $data = $request->getBody();
+        $data = Request::all();
 
         if (isset($data['status']) && in_array($data['status'], ['approved', 'rejected', 'pending'])) {
             Comment::updateStatus($id, $data['status']);
@@ -86,5 +84,38 @@ class BlogCommentsController
         } else {
              redirect_back_with_error('وضعیت نامعتبر است.');
         }
+    }
+
+    public function reply($id)
+    {
+        $data = Request::all();
+        $parentComment = Comment::find($id);
+
+        if (!$parentComment) {
+            redirect_back_with_error('نظر والد یافت نشد.');
+            return;
+        }
+
+        if (empty($data['reply_content'])) {
+            redirect_back_with_error('متن پاسخ نمی‌تواند خالی باشد.');
+            return;
+        }
+
+        // Create the reply
+        Comment::create([
+            'post_id' => $parentComment['post_id'],
+            'parent_id' => $id,
+            'name' => $_SESSION['admin_name'] ?? 'مدیر سایت', // Use admin name from session
+            'email' => $_SESSION['admin_email'] ?? 'admin@example.com',
+            'comment' => $data['reply_content'],
+            'status' => 'approved' // Admin replies are auto-approved
+        ]);
+
+        // If the parent comment was pending, approve it too (optional workflow preference)
+        if ($parentComment['status'] === 'pending') {
+            Comment::updateStatus($id, 'approved');
+        }
+
+        redirect_with_success('/blog/comments', 'پاسخ شما با موفقیت ثبت شد.');
     }
 }

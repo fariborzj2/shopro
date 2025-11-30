@@ -166,7 +166,6 @@
 <body
     class="bg-gray-50 text-gray-800 font-sans antialiased min-h-screen flex flex-col"
     x-data="<?php echo isset($store_data) ? "store(" . htmlspecialchars($store_data, ENT_QUOTES, 'UTF-8') . ")" : "{}"; ?>"
-    x-init="init()"
 >
 
     <!-- Header / Navbar -->
