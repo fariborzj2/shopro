@@ -153,14 +153,15 @@ class Crawler
             }
 
             // Post-Process Internal Links
-            $finalContent = $linker->injectLinks($aiResult['content']);
+            $finalContent = $linker->injectLinks($aiResult['content'] ?? '');
 
             // Save to DB
             if ($this->savePost($aiResult, $finalContent, $extracted['image_url'])) {
                 $this->markAsProcessed($link);
                 $processed++;
                 $this->createdCount++;
-                $this->logDetails[] = "Created: " . $aiResult['title'];
+                $title = $aiResult['title'] ?? 'Untitled';
+                $this->logDetails[] = "Created: " . $title;
             }
         }
     }
@@ -267,7 +268,13 @@ class Crawler
         $catId = AiSetting::get('default_category_id', 1);
         $authorId = AiSetting::get('default_author_id', 1);
 
-        $slug = $this->slugify($aiData['title']);
+        $title = $aiData['title'] ?? 'Untitled Draft';
+        $excerpt = $aiData['excerpt'] ?? '';
+        $metaTitle = $aiData['meta_title'] ?? $title;
+        $metaDesc = $aiData['meta_description'] ?? $excerpt;
+        $tags = $aiData['tags'] ?? [];
+
+        $slug = $this->slugify($title);
 
         // Ensure slug uniqueness
         $stmt = $this->pdo->prepare("SELECT COUNT(*) FROM blog_posts WHERE slug = :slug");
@@ -290,13 +297,13 @@ class Crawler
         return $stmt->execute([
             'cat' => $catId,
             'auth' => $authorId,
-            'title' => $aiData['title'],
+            'title' => $title,
             'slug' => $slug,
             'content' => $content,
-            'excerpt' => $aiData['excerpt'],
-            'm_title' => $aiData['meta_title'],
-            'm_desc' => $aiData['meta_description'],
-            'tags' => json_encode($aiData['tags'], JSON_UNESCAPED_UNICODE),
+            'excerpt' => $excerpt,
+            'm_title' => $metaTitle,
+            'm_desc' => $metaDesc,
+            'tags' => json_encode($tags, JSON_UNESCAPED_UNICODE),
             'img' => $imageUrl
         ]);
     }
