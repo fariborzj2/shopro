@@ -7,6 +7,8 @@ use App\Plugins\AiNews\Models\AiLog;
 use App\Models\BlogPost;
 use App\Models\Admin;
 use App\Core\Database;
+use DOMDocument;
+use DOMXPath;
 
 class Crawler
 {
@@ -54,6 +56,7 @@ class Crawler
             foreach ($sitemaps as $sitemapUrl) {
                 if ($processed >= $maxPosts) break;
 
+                // Recursively collect up to 2x maxPosts to filter
                 $this->processSitemap($sitemapUrl, $processed, $maxPosts);
             }
 
@@ -66,56 +69,22 @@ class Crawler
         }
     }
 
+    /**
+     * Main entry point for processing a sitemap URL.
+     * Manages the loop of fetching content and calling AI.
+     */
     private function processSitemap($url, &$processed, $maxPosts)
     {
-        $xmlContent = $this->fetchUrl($url);
+        // Collect URLs (handling nested sitemaps recursively)
+        $urls = $this->collectUrls($url);
 
-        if (!$xmlContent) {
-            $this->logDetails[] = "Failed to fetch sitemap: $url (Check Logs)";
-            return;
-        }
-
-        $xml = @simplexml_load_string($xmlContent);
-        if (!$xml) {
-            $this->logDetails[] = "Invalid XML in sitemap: $url";
+        if (empty($urls)) {
+            $this->logDetails[] = "No URLs found in source: $url";
             return;
         }
 
         $groq = new GroqService();
         $linker = new Linker();
-
-        // Standardize URLs extraction to support both XML Sitemaps and RSS Feeds
-        $urls = [];
-
-        // 1. Check for Standard Sitemap (<url><loc>)
-        if (isset($xml->url)) {
-            foreach ($xml->url as $urlNode) {
-                if (isset($urlNode->loc)) {
-                    $urls[] = (string)$urlNode->loc;
-                }
-            }
-        }
-        // 2. Check for RSS Feed (<item><link>)
-        elseif (isset($xml->channel->item)) {
-            foreach ($xml->channel->item as $item) {
-                if (isset($item->link)) {
-                    $urls[] = (string)$item->link;
-                }
-            }
-        }
-        // 3. Fallback: Check for Atom (<entry><link href="...">)
-        elseif (isset($xml->entry)) {
-            foreach ($xml->entry as $entry) {
-                if (isset($entry->link) && isset($entry->link['href'])) {
-                    $urls[] = (string)$entry->link['href'];
-                }
-            }
-        }
-
-        if (empty($urls)) {
-            $this->logDetails[] = "No URLs found in sitemap/feed: $url";
-            return;
-        }
 
         foreach ($urls as $link) {
             if ($processed >= $maxPosts) break;
@@ -139,7 +108,7 @@ class Crawler
             // Extract Content
             $extracted = $this->extractContent($html);
             if (!$extracted) {
-                $this->markAsProcessed($link); // Mark as processed to skip retry if extraction failed due to format
+                // Do NOT mark as processed if extraction fails (per requirement), so it retries later.
                 $this->logDetails[] = "Content extraction failed (too short/invalid): $link";
                 continue;
             }
@@ -166,28 +135,123 @@ class Crawler
         }
     }
 
+    /**
+     * Universal Feed Parser & Collector
+     * Recursively collects article URLs from XML Sitemaps, Sitemap Indices, RSS, and Atom.
+     */
+    private function collectUrls($url, $depth = 0)
+    {
+        if ($depth > 2) return []; // Prevent deep recursion
+
+        $content = $this->fetchUrl($url);
+        if (!$content) return [];
+
+        // Attempt to parse as XML
+        libxml_use_internal_errors(true);
+        $xml = simplexml_load_string($content);
+        $errors = libxml_get_errors();
+        libxml_clear_errors();
+
+        $urls = [];
+
+        if ($xml === false || count($errors) > 0) {
+            // XML Parsing Failed -> Try Regex Fallback if content looks like HTML/Text
+            // Requirement: "fallback URL detection via regex if XML parsing fails"
+            // We search for patterns that look like <loc>...</loc> or <link>...</link> just in case it's strict XML issues.
+            preg_match_all('/<loc>(.*?)<\/loc>/', $content, $matches);
+            if (!empty($matches[1])) {
+                $urls = array_merge($urls, $matches[1]);
+            } else {
+                preg_match_all('/<link>(.*?)<\/link>/', $content, $matches);
+                if (!empty($matches[1])) {
+                    $urls = array_merge($urls, $matches[1]);
+                }
+            }
+            return array_unique($urls);
+        }
+
+        // Detect Feed Type via Root Element or Children
+        $root = $xml->getName();
+
+        // 1. Sitemap Index (<sitemapindex>)
+        if ($root === 'sitemapindex') {
+            if (isset($xml->sitemap)) {
+                foreach ($xml->sitemap as $sitemap) {
+                    $loc = (string)$sitemap->loc;
+                    if ($loc) {
+                        // Recursively fetch nested sitemaps
+                        $nestedUrls = $this->collectUrls($loc, $depth + 1);
+                        $urls = array_merge($urls, $nestedUrls);
+                    }
+                }
+            }
+        }
+        // 2. Standard Sitemap (<urlset>)
+        elseif ($root === 'urlset') {
+            if (isset($xml->url)) {
+                foreach ($xml->url as $urlNode) {
+                    // Support Google News extensions (<news:news>) - typically the URL is still in <loc>
+                    // But <loc> is standard.
+                    if (isset($urlNode->loc)) {
+                        $urls[] = (string)$urlNode->loc;
+                    }
+                }
+            }
+        }
+        // 3. RSS Feed (<rss> or <rdf:RDF>)
+        elseif ($root === 'rss' || strpos($root, 'RDF') !== false) {
+            if (isset($xml->channel->item)) {
+                foreach ($xml->channel->item as $item) {
+                    if (isset($item->link)) {
+                        $urls[] = (string)$item->link;
+                    }
+                }
+            }
+        }
+        // 4. Atom Feed (<feed>)
+        elseif ($root === 'feed') {
+            if (isset($xml->entry)) {
+                foreach ($xml->entry as $entry) {
+                    // Atom links are attributes: <link href="..." />
+                    if (isset($entry->link)) {
+                        // Handle multiple links (rel="alternate", rel="self", etc.)
+                        foreach ($entry->link as $linkNode) {
+                            $attributes = $linkNode->attributes();
+                            $href = (string)$attributes['href'];
+                            $rel = isset($attributes['rel']) ? (string)$attributes['rel'] : 'alternate';
+
+                            // Prefer alternate (content) links, skip 'self' or 'replies'
+                            if ($rel === 'alternate' || empty($rel)) {
+                                $urls[] = $href;
+                                break; // Take the first valid alternate link per entry
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        return array_unique($urls);
+    }
+
     private function fetchUrl($url)
     {
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $url);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+        // Robust SSL settings
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
         curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
+        // Robust Browser Headers
         curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36');
         curl_setopt($ch, CURLOPT_HTTPHEADER, [
-            'Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
+            'Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8',
             'Accept-Language: en-US,en;q=0.9',
             'Cache-Control: no-cache',
-            'Pragma: no-cache',
             'Connection: keep-alive',
-            'Upgrade-Insecure-Requests: 1',
-            'Sec-Fetch-Dest: document',
-            'Sec-Fetch-Mode: navigate',
-            'Sec-Fetch-Site: none',
-            'Sec-Fetch-User: ?1'
+            'Upgrade-Insecure-Requests: 1'
         ]);
-        // Set a timeout
         curl_setopt($ch, CURLOPT_TIMEOUT, 30);
 
         $content = curl_exec($ch);
@@ -223,13 +287,13 @@ class Crawler
 
     private function extractContent($html)
     {
-        // Suppress warnings for malformed HTML
         libxml_use_internal_errors(true);
-        $doc = new \DOMDocument();
-        @$doc->loadHTML($html);
+        $doc = new DOMDocument();
+        // Force UTF-8 encoding
+        @$doc->loadHTML('<?xml encoding="UTF-8">' . $html);
         libxml_clear_errors();
 
-        $xpath = new \DOMXPath($doc);
+        $xpath = new DOMXPath($doc);
 
         // Title
         $titleNodes = $xpath->query('//meta[@property="og:title"]/@content');
@@ -243,12 +307,24 @@ class Crawler
         $imgNodes = $xpath->query('//meta[@property="og:image"]/@content');
         $image = $imgNodes->length > 0 ? $imgNodes->item(0)->nodeValue : '';
 
-        // Content - Naive: grab all <p> tags
-        $paragraphs = $xpath->query('//p');
+        // Content Extraction
+        // Look for common article containers to avoid extracting navigation/footer
         $content = '';
+        $containers = $xpath->query('//article | //div[contains(@class, "post-content")] | //div[contains(@class, "entry-content")] | //div[contains(@class, "article-body")]');
+
+        if ($containers->length > 0) {
+            // Use the first best container
+            $container = $containers->item(0);
+            $paragraphs = $xpath->query('.//p', $container);
+        } else {
+            // Fallback to all paragraphs
+            $paragraphs = $xpath->query('//p');
+        }
+
         foreach ($paragraphs as $p) {
             $text = trim($p->nodeValue);
-            if (strlen($text) > 50) { // Skip navigation/footer noise
+            // Filter noise
+            if (strlen($text) > 50) {
                 $content .= "<p>$text</p>";
             }
         }
@@ -264,7 +340,6 @@ class Crawler
 
     private function savePost($aiData, $content, $imageUrl)
     {
-        // Default category/author
         $catId = AiSetting::get('default_category_id', 1);
         $authorId = AiSetting::get('default_author_id', 1);
 
@@ -276,7 +351,6 @@ class Crawler
 
         $slug = $this->slugify($title);
 
-        // Ensure slug uniqueness
         $stmt = $this->pdo->prepare("SELECT COUNT(*) FROM blog_posts WHERE slug = :slug");
         $stmt->execute(['slug' => $slug]);
         if ($stmt->fetchColumn() > 0) {
