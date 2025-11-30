@@ -63,7 +63,7 @@ $menuItems = [
             ],
             [
                 'label' => 'مدیریت نظرات',
-                'url' => '/admin/blog/comments',
+                'url' => '/blog/comments',
             ],
         ]
     ],
@@ -74,11 +74,11 @@ $menuItems = [
         'children' => [
             [
                 'label' => 'تنظیمات پلاگین',
-                'url' => '/admin/ai-news/settings',
+                'url' => '/ai-news/settings',
             ],
             [
                 'label' => 'لیست مطالب هوشمند',
-                'url' => '/admin/ai-news/list',
+                'url' => '/ai-news/list',
             ],
         ]
     ],
