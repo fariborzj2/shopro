@@ -18,7 +18,7 @@ class BlogCommentsController
 
         $data = Comment::getPaginatedList($page, 10, $status, $search, $sort, $dir);
 
-        $paginator = new Paginator($data['total'], 10, $page, '/blog/comments');
+        $paginator = new Paginator($data['total'], 10, $page, '/admin/blog/comments');
 
         view('main', 'blog/comments/index', [
             'comments' => $data['items'],
@@ -65,13 +65,13 @@ class BlogCommentsController
             'status' => $data['status'],
         ]);
 
-        redirect_with_success('/blog/comments', 'نظر با موفقیت ویرایش شد.');
+        redirect_with_success('/admin/blog/comments', 'نظر با موفقیت ویرایش شد.');
     }
 
     public function destroy($id)
     {
         Comment::delete($id);
-        redirect_with_success('/blog/comments', 'نظر با موفقیت حذف شد.');
+        redirect_with_success('/admin/blog/comments', 'نظر با موفقیت حذف شد.');
     }
 
     public function updateStatus($id)
@@ -80,7 +80,7 @@ class BlogCommentsController
 
         if (isset($data['status']) && in_array($data['status'], ['approved', 'rejected', 'pending'])) {
             Comment::updateStatus($id, $data['status']);
-            redirect_with_success('/blog/comments', 'وضعیت نظر تغییر کرد.');
+            redirect_with_success('/admin/blog/comments', 'وضعیت نظر تغییر کرد.');
         } else {
              redirect_back_with_error('وضعیت نامعتبر است.');
         }
@@ -116,6 +116,6 @@ class BlogCommentsController
             Comment::updateStatus($id, 'approved');
         }
 
-        redirect_with_success('/blog/comments', 'پاسخ شما با موفقیت ثبت شد.');
+        redirect_with_success('/admin/blog/comments', 'پاسخ شما با موفقیت ثبت شد.');
     }
 }
