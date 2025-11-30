@@ -42,7 +42,14 @@ class BlogController
 
         // Slider and featured categories
         $settings = \App\Models\Setting::getAll();
-        $slider_posts = BlogPost::findMostViewed($settings['slider_posts_limit'] ?? 5, $settings['slider_time_range'] ?? 40);
+        $slider_limit = $settings['slider_posts_limit'] ?? 5;
+        $slider_posts = BlogPost::findMostViewed($slider_limit, $settings['slider_time_range'] ?? 40);
+
+        // Fallback: If no most viewed posts found (e.g. no views or old posts), show latest posts
+        if (empty($slider_posts)) {
+            $slider_posts = BlogPost::findAllPublished($slider_limit);
+        }
+
         // Sanitize slider posts
         foreach ($slider_posts as &$sp) {
             $sp = $this->sanitizePost($sp);
