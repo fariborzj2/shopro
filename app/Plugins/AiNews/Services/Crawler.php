@@ -68,25 +68,10 @@ class Crawler
 
     private function processSitemap($url, &$processed, $maxPosts)
     {
-        // Create context to handle User-Agent and SSL
-        $context = stream_context_create([
-            'http' => [
-                'method' => 'GET',
-                'header' => "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36\r\n" .
-                            "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8\r\n",
-                'timeout' => 30
-            ],
-            'ssl' => [
-                'verify_peer' => false,
-                'verify_peer_name' => false,
-            ]
-        ]);
+        $xmlContent = $this->fetchUrl($url);
 
-        $xmlContent = @file_get_contents($url, false, $context);
         if (!$xmlContent) {
-            $error = error_get_last();
-            $msg = $error['message'] ?? 'Unknown error';
-            $this->logDetails[] = "Failed to fetch sitemap: $url (Error: $msg)";
+            $this->logDetails[] = "Failed to fetch sitemap: $url (Check Logs)";
             return;
         }
 
@@ -112,7 +97,7 @@ class Crawler
             $this->fetchedCount++;
 
             // Fetch Article HTML
-            $html = @file_get_contents($link, false, $context);
+            $html = $this->fetchUrl($link);
             if (!$html) {
                  $this->logDetails[] = "Failed to fetch HTML: $link";
                  continue;
@@ -145,6 +130,48 @@ class Crawler
                 $this->logDetails[] = "Created: " . $aiResult['title'];
             }
         }
+    }
+
+    private function fetchUrl($url)
+    {
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
+        curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36');
+        curl_setopt($ch, CURLOPT_HTTPHEADER, [
+            'Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
+            'Accept-Language: en-US,en;q=0.9',
+            'Cache-Control: no-cache',
+            'Pragma: no-cache',
+            'Connection: keep-alive',
+            'Upgrade-Insecure-Requests: 1',
+            'Sec-Fetch-Dest: document',
+            'Sec-Fetch-Mode: navigate',
+            'Sec-Fetch-Site: none',
+            'Sec-Fetch-User: ?1'
+        ]);
+        // Set a timeout
+        curl_setopt($ch, CURLOPT_TIMEOUT, 30);
+
+        $content = curl_exec($ch);
+        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        $error = curl_error($ch);
+        curl_close($ch);
+
+        if ($content === false) {
+             $this->logDetails[] = "Curl Error fetching $url: $error";
+             return null;
+        }
+
+        if ($httpCode >= 400) {
+             $this->logDetails[] = "HTTP Error $httpCode fetching $url";
+             return null;
+        }
+
+        return $content;
     }
 
     private function isProcessed($url)
