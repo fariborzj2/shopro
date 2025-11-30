@@ -16,11 +16,11 @@
                     جدیدترین محصولات دیجیتال و لوازم جانبی را با بهترین قیمت و گارانتی معتبر از فروشگاه مدرن بخواهید. تجربه خریدی سریع، امن و لذت‌بخش.
                 </p>
                 <div class="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
-                    <a href="#products" class="btn btn-primary text-lg px-8 py-4 shadow-xl shadow-primary-500/20 hover:translate-y-[-2px]">
+                    <a href="#products" class="btn btn-primary text-lg rounded-full px-8 py-3 shadow-xl shadow-primary-500/20 hover:translate-y-[-2px]">
                         <svg class="w-6 h-6 ml-2 -mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
                         شروع خرید
                     </a>
-                    <a href="/page/about-us" class="btn btn-secondary text-lg px-8 py-4 bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-200 hover:translate-y-[-2px]">
+                    <a href="/page/about-us" class="btn btn-secondary shadow-none hover:shadow-xl text-lg rounded-full px-8 py-3 bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-200 hover:translate-y-[-2px]">
                         <svg class="w-6 h-6 ml-2 -mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                         درباره ما
                     </a>
@@ -76,11 +76,11 @@
     <!-- 6. Features Section (Cards) -->
     <section class="py-16 bg-gray-50 dark:bg-gray-800/50 border-b border-gray-200 dark:border-gray-800 transition-colors duration-300">
         <div class="container mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div class="grid grid-cols-1 grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 lg:gap-5">
                 <!-- Feature 1 -->
-                <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-card border border-gray-100 dark:border-gray-700 flex items-center gap-4 hover:shadow-lg transition-all duration-300">
-                    <div class="p-4 bg-primary-50 dark:bg-primary-900/30 rounded-xl text-primary-600 dark:text-primary-400">
-                        <svg class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
+                <div class="bg-white dark:bg-gray-800 p-3 rounded-2xl shadow-card border border-gray-100 dark:border-gray-700 flex flex-col md:flex-row items-start md:items-center gap-4 hover:shadow-lg transition-all duration-300">
+                    <div class="p-3 md:p-4 bg-primary-50 dark:bg-primary-900/30 rounded-xl text-primary-600 dark:text-primary-400">
+                        <svg class="w-6 h-6 md:w-8 md:h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
                     </div>
                     <div>
                         <h3 class="font-bold text-gray-900 dark:text-white mb-1">تحویل فوری</h3>
@@ -88,9 +88,9 @@
                     </div>
                 </div>
                 <!-- Feature 2 -->
-                <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-card border border-gray-100 dark:border-gray-700 flex items-center gap-4 hover:shadow-lg transition-all duration-300">
-                    <div class="p-4 bg-primary-50 dark:bg-primary-900/30 rounded-xl text-primary-600 dark:text-primary-400">
-                        <svg class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
+                <div class="bg-white dark:bg-gray-800 p-3 rounded-2xl shadow-card border border-gray-100 dark:border-gray-700 flex flex-col md:flex-row items-start md:items-center gap-4 hover:shadow-lg transition-all duration-300">
+                    <div class="p-3 md:p-4 bg-primary-50 dark:bg-primary-900/30 rounded-xl text-primary-600 dark:text-primary-400">
+                        <svg class="w-6 h-6 md:w-8 md:h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
                     </div>
                     <div>
                         <h3 class="font-bold text-gray-900 dark:text-white mb-1">پشتیبانی ۷/۲۴</h3>
@@ -98,9 +98,9 @@
                     </div>
                 </div>
                 <!-- Feature 3 -->
-                <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-card border border-gray-100 dark:border-gray-700 flex items-center gap-4 hover:shadow-lg transition-all duration-300">
-                    <div class="p-4 bg-primary-50 dark:bg-primary-900/30 rounded-xl text-primary-600 dark:text-primary-400">
-                        <svg class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                <div class="bg-white dark:bg-gray-800 p-3 rounded-2xl shadow-card border border-gray-100 dark:border-gray-700 flex flex-col md:flex-row items-start md:items-center gap-4 hover:shadow-lg transition-all duration-300">
+                    <div class="p-3 md:p-4 bg-primary-50 dark:bg-primary-900/30 rounded-xl text-primary-600 dark:text-primary-400">
+                        <svg class="w-6 h-6 md:w-8 md:h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                     </div>
                     <div>
                         <h3 class="font-bold text-gray-900 dark:text-white mb-1">بهترین قیمت</h3>
@@ -108,9 +108,9 @@
                     </div>
                 </div>
                 <!-- Feature 4 -->
-                <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-card border border-gray-100 dark:border-gray-700 flex items-center gap-4 hover:shadow-lg transition-all duration-300">
-                    <div class="p-4 bg-primary-50 dark:bg-primary-900/30 rounded-xl text-primary-600 dark:text-primary-400">
-                         <svg class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" /></svg>
+                <div class="bg-white dark:bg-gray-800 p-3 rounded-2xl shadow-card border border-gray-100 dark:border-gray-700 flex flex-col md:flex-row items-start md:items-center gap-4 hover:shadow-lg transition-all duration-300">
+                    <div class="p-3 md:p-4 bg-primary-50 dark:bg-primary-900/30 rounded-xl text-primary-600 dark:text-primary-400">
+                         <svg class="w-6 h-6 md:w-8 md:h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" /></svg>
                     </div>
                     <div>
                         <h3 class="font-bold text-gray-900 dark:text-white mb-1">ضمانت بازگشت</h3>
@@ -135,11 +135,11 @@
 
             <!-- Category Tabs (Pills) -->
             <div class="flex justify-center mb-10 overflow-x-auto pb-4 no-scrollbar">
-                <div class="flex space-x-2 space-x-reverse bg-gray-100 dark:bg-gray-800 p-1.5 rounded-2xl">
+                <div class="flex space-x-reverse bg-gray-100 dark:bg-gray-800 p-1.5 rounded-full">
                     <button
                         @click.prevent="setActiveCategory('all')"
                         :class="activeCategory === 'all' ? 'bg-white dark:bg-gray-700 text-primary-600 shadow-sm' : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'"
-                        class="px-6 py-2.5 rounded-xl text-sm font-bold transition-all whitespace-nowrap"
+                        class="px-4 py-2.5 rounded-full text-sm font-bold transition-all whitespace-nowrap"
                     >
                         همه محصولات
                     </button>
@@ -147,7 +147,7 @@
                         <button
                             @click.prevent="setActiveCategory(category.id)"
                             :class="activeCategory === category.id ? 'bg-white dark:bg-gray-700 text-primary-600 shadow-sm' : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'"
-                            class="px-6 py-2.5 rounded-xl text-sm font-bold transition-all whitespace-nowrap"
+                            class="px-4 py-2.5 rounded-full text-sm font-bold transition-all whitespace-nowrap"
                             x-text="category.name"
                         ></button>
                     </template>
@@ -155,14 +155,14 @@
             </div>
 
             <!-- Product Grid -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+            <div class="grid grid-cols-1 grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 lg:gap-5">
                 <template x-for="product in filteredProducts" :key="product.id">
                     <article
                         @click="selectProduct(product)"
-                        class="group bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 overflow-hidden hover:shadow-xl hover:-translate-y-1 transition-all duration-300 cursor-pointer flex flex-col h-full"
+                        class="group bg-white dark:bg-gray-800 p-3 rounded-2xl border border-gray-100 dark:border-gray-700 overflow-hidden hover:shadow-xl hover:-translate-y-1 transition-all duration-300 cursor-pointer flex flex-col h-full"
                     >
                         <!-- Image -->
-                        <div class="relative aspect-[4/3] bg-gray-100 dark:bg-gray-700 overflow-hidden">
+                        <div class="relative aspect-[4/3] bg-gray-100 dark:bg-gray-700 overflow-hidden rounded-xl mb-2">
                             <img
                                 :src="product.imageUrl"
                                 :alt="product.name"
@@ -185,18 +185,18 @@
                         </div>
 
                         <!-- Content -->
-                        <div class="p-5 flex-1 flex flex-col">
-                            <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-2 line-clamp-1 group-hover:text-primary-600 transition-colors" x-text="product.name"></h3>
+                        <div class="flex-1 flex flex-col">
+                            <h3 class="text-sm lg:text-lg font-bold text-gray-800 dark:text-white mb-2 line-clamp-1 group-hover:text-primary-600 transition-colors" x-text="product.name"></h3>
 
                             <div class="mt-auto pt-4 border-t border-gray-100 dark:border-gray-700 flex items-center justify-between">
                                 <div class="flex flex-col">
                                     <template x-if="product.old_price && parseFloat(product.old_price) > parseFloat(product.price)">
                                         <span class="text-xs text-gray-400 line-through decoration-red-400" x-text="new Intl.NumberFormat('fa-IR').format(product.old_price) + ' تومان'"></span>
                                     </template>
-                                    <span class="text-lg font-black text-primary-600" x-text="new Intl.NumberFormat('fa-IR').format(product.price) + ' تومان'"></span>
+                                    <span class="text-md font-bold text-gray-600 dark:text-white" x-text="new Intl.NumberFormat('fa-IR').format(product.price) + ' تومان'"></span>
                                 </div>
 
-                                <button class="w-10 h-10 rounded-xl bg-gray-50 dark:bg-gray-700 text-gray-400 dark:text-gray-300 group-hover:bg-primary-600 group-hover:text-white transition-colors flex items-center justify-center">
+                                <button class="w-10 h-10 rounded-full bg-gray-50 dark:bg-gray-700 text-gray-400 dark:text-gray-300 group-hover:bg-primary-600 group-hover:text-white transition-colors hidden lg:flex items-center justify-center">
                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
                                 </button>
                             </div>
@@ -226,7 +226,7 @@
     <!-- 5. Brands Slider -->
     <section class="py-12 bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 transition-colors duration-300">
         <div class="container mx-auto px-4">
-            <p class="text-center text-sm font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-10">همکاری با برترین برندهای جهان</p>
+            <p class="text-center text-sm font-bold text-gray-400 dark:text-gray-500 uppercase mb-10">همکاری با برترین برندهای جهان</p>
             <div
                 x-data="{ brands: $store.appStore.brands }"
                 class="flex items-center justify-center gap-12 flex-wrap opacity-50 grayscale hover:grayscale-0 transition-all duration-500"
@@ -309,13 +309,13 @@
                  </a>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8" x-data="{ posts: $store.appStore.blogPosts }">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5" x-data="{ posts: $store.appStore.blogPosts }">
                 <template x-for="post in posts" :key="post.id">
-                    <a :href="'/blog/' + post.slug" class="group flex flex-col bg-white dark:bg-gray-800 rounded-2xl shadow-card border border-gray-100 dark:border-gray-700 overflow-hidden hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
-                        <div class="aspect-video bg-gray-200 dark:bg-gray-700 overflow-hidden">
+                    <a :href="'/blog/' + post.slug" class="group p-3 flex flex-col bg-white dark:bg-gray-800 rounded-2xl shadow-card border border-gray-100 dark:border-gray-700 overflow-hidden hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+                        <div class="aspect-video bg-gray-200 dark:bg-gray-700 overflow-hidden rounded-xl">
                             <img :src="post.imageUrl" :alt="post.title" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
                         </div>
-                        <div class="p-6 flex-1 flex flex-col">
+                        <div class=" flex-1 flex flex-col">
                             <span class="text-xs font-bold text-gray-400 dark:text-gray-500 mb-3 block" x-text="post.date"></span>
                             <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-3 line-clamp-2 group-hover:text-primary-600 transition-colors" x-text="post.title"></h3>
                             <p class="text-sm text-gray-500 dark:text-gray-400 line-clamp-3 mb-4 leading-relaxed" x-text="post.excerpt"></p>
