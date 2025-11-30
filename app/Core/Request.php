@@ -67,4 +67,15 @@ class Request
 
         return $_POST;
     }
+
+    /**
+     * Alias for all().
+     * Added for compatibility with legacy calls.
+     *
+     * @return array
+     */
+    public static function getBody()
+    {
+        return self::all();
+    }
 }
