@@ -24,6 +24,9 @@
 
     <!-- Estedad Font Configuration (Same as Admin) -->
     <style>
+        * {
+           letter-spacing: -4%; 
+        }
         @font-face {
             font-family: 'Estedad';
             src: url('/fonts/estedad/Estedad-Regular.woff2') format('woff2');
