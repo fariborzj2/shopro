@@ -63,7 +63,67 @@ $menuItems = [
             ],
             [
                 'label' => 'مدیریت نظرات',
-                'url' => '/admin/blog/comments',
+                'url' => '/blog/comments',
+            ],
+        ]
+    ],
+    [
+        'label' => 'دستیار هوشمند',
+        'icon' => 'ai',
+        'permission' => 'blog', // Using blog permission for now
+        'children' => [
+            [
+                'label' => 'تنظیمات پلاگین',
+                'url' => '/ai-news/settings',
+            ],
+            [
+                'label' => 'لیست مطالب هوشمند',
+                'url' => '/ai-news/list',
+            ],
+        ]
+    ],
+    [
+        'label' => 'دستیار هوشمند',
+        'icon' => 'ai',
+        'permission' => 'blog', // Using blog permission for now
+        'children' => [
+            [
+                'label' => 'تنظیمات پلاگین',
+                'url' => '/admin/ai-news/settings',
+            ],
+            [
+                'label' => 'لیست مطالب هوشمند',
+                'url' => '/admin/ai-news/list',
+            ],
+        ]
+    ],
+    [
+        'label' => 'دستیار هوشمند',
+        'icon' => 'ai',
+        'permission' => 'blog', // Using blog permission for now
+        'children' => [
+            [
+                'label' => 'تنظیمات پلاگین',
+                'url' => '/admin/ai-news/settings',
+            ],
+            [
+                'label' => 'لیست مطالب هوشمند',
+                'url' => '/admin/ai-news/list',
+            ],
+        ]
+    ],
+    [
+        'label' => 'دستیار هوشمند',
+        'icon' => 'ai',
+        'permission' => 'blog', // Using blog permission for now
+        'children' => [
+            [
+                'label' => 'تنظیمات پلاگین',
+                'url' => '/admin/ai-news/settings',
+            ],
+            [
+                'label' => 'لیست مطالب هوشمند',
+                'url' => '/admin/ai-news/list',
             ],
         ]
     ],
