@@ -84,10 +84,43 @@ class Crawler
         $groq = new GroqService();
         $linker = new Linker();
 
-        foreach ($xml->url as $urlNode) {
+        // Standardize URLs extraction to support both XML Sitemaps and RSS Feeds
+        $urls = [];
+
+        // 1. Check for Standard Sitemap (<url><loc>)
+        if (isset($xml->url)) {
+            foreach ($xml->url as $urlNode) {
+                if (isset($urlNode->loc)) {
+                    $urls[] = (string)$urlNode->loc;
+                }
+            }
+        }
+        // 2. Check for RSS Feed (<item><link>)
+        elseif (isset($xml->channel->item)) {
+            foreach ($xml->channel->item as $item) {
+                if (isset($item->link)) {
+                    $urls[] = (string)$item->link;
+                }
+            }
+        }
+        // 3. Fallback: Check for Atom (<entry><link href="...">)
+        elseif (isset($xml->entry)) {
+            foreach ($xml->entry as $entry) {
+                if (isset($entry->link) && isset($entry->link['href'])) {
+                    $urls[] = (string)$entry->link['href'];
+                }
+            }
+        }
+
+        if (empty($urls)) {
+            $this->logDetails[] = "No URLs found in sitemap/feed: $url";
+            return;
+        }
+
+        foreach ($urls as $link) {
             if ($processed >= $maxPosts) break;
 
-            $link = trim((string) $urlNode->loc);
+            $link = trim($link);
 
             // Deduplication Check
             if ($this->isProcessed($link)) {
