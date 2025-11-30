@@ -185,17 +185,17 @@
                 </div>
 
                 <!-- Desktop Menu -->
-                <nav class="hidden lg:flex items-center space-x-2 space-x-reverse bg-gray-100 dark:bg-gray-800 p-1.5 rounded-2xl">
-                    <a href="/" class="px-5 py-2.5 rounded-xl text-sm font-bold transition-all duration-200 <?php echo ($_SERVER['REQUEST_URI'] == '/') ? 'bg-white dark:bg-gray-700 text-primary-600 shadow-sm' : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-200 dark:hover:bg-gray-700'; ?>">
+                <nav class="hidden lg:flex items-center space-x-2 space-x-reverse bg-gray-100 dark:bg-gray-800 p-1.5 rounded-full">
+                    <a href="/" class="px-5 py-2.5 rounded-full text-sm font-bold transition-all duration-200 <?php echo ($_SERVER['REQUEST_URI'] == '/') ? 'bg-white dark:bg-gray-700 text-primary-600 shadow-sm' : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-200 dark:hover:bg-gray-700'; ?>">
                         خانه
                     </a>
-                    <a href="/#products" class="px-5 py-2.5 rounded-xl text-sm font-bold text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-200 dark:hover:bg-gray-700 transition-all duration-200">
+                    <a href="/#products" class="px-5 py-2.5 rounded-full text-sm font-bold text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-200 dark:hover:bg-gray-700 transition-all duration-200">
                         محصولات
                     </a>
-                    <a href="/blog" class="px-5 py-2.5 rounded-xl text-sm font-bold text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-200 dark:hover:bg-gray-700 transition-all duration-200">
+                    <a href="/blog" class="px-5 py-2.5 rounded-full text-sm font-bold text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-200 dark:hover:bg-gray-700 transition-all duration-200">
                         وبلاگ
                     </a>
-                    <a href="/page/about-us" class="px-5 py-2.5 rounded-xl text-sm font-bold text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-200 dark:hover:bg-gray-700 transition-all duration-200">
+                    <a href="/page/about-us" class="px-5 py-2.5 rounded-full text-sm font-bold text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-200 dark:hover:bg-gray-700 transition-all duration-200">
                         درباره ما
                     </a>
                 </nav>
@@ -203,14 +203,14 @@
                 <!-- Actions -->
                 <div class="hidden lg:flex items-center gap-3">
                     <!-- Theme Toggle -->
-                    <button @click="toggleTheme()" class="p-3 rounded-xl text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-primary-600 transition-colors border border-transparent hover:border-gray-200 dark:hover:border-gray-700">
+                    <button @click="toggleTheme()" class="p-3 rounded-full text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-primary-600 transition-colors border border-transparent hover:border-gray-200 dark:hover:border-gray-700">
                         <svg x-show="!darkMode" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
                         <svg x-show="darkMode" x-cloak class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
                     </button>
 
                     <template x-if="$store.auth.check()">
                         <div class="flex items-center gap-2">
-                            <a href="/dashboard/orders" class="flex items-center space-x-2 space-x-reverse bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-200 hover:border-primary-500 px-4 py-2.5 rounded-xl text-sm font-bold transition-all shadow-sm">
+                            <a href="/dashboard/orders" class="flex items-center space-x-2 space-x-reverse bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-200 hover:border-primary-500 px-4 py-2.5 rounded-full text-sm font-bold transition-all shadow-sm">
                                 <div class="w-6 h-6 rounded-full bg-primary-100 text-primary-600 flex items-center justify-center text-xs">
                                     <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
                                 </div>
@@ -223,7 +223,7 @@
                     </template>
 
                     <template x-if="!$store.auth.check()">
-                        <button @click.prevent="$dispatch('open-auth-modal')" class="btn btn-primary shadow-lg shadow-primary-500/20">
+                        <button @click.prevent="$dispatch('open-auth-modal')" class="btn btn-primary  rounded-full shadow-lg shadow-primary-500/20">
                             <svg class="w-5 h-5 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" /></svg>
                             <span>ورود / ثبت‌نام</span>
                         </button>
@@ -232,7 +232,7 @@
 
                 <!-- Mobile Menu Button -->
                 <div class="lg:hidden flex items-center gap-2">
-                    <button @click="mobileMenuOpen = !mobileMenuOpen" type="button" class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-white p-2 rounded-xl border border-gray-200 dark:border-gray-700">
+                    <button @click="mobileMenuOpen = !mobileMenuOpen" type="button" class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-white p-2 rounded-full border border-gray-200 dark:border-gray-700">
                         <span class="sr-only">باز کردن منو</span>
                         <svg x-show="!mobileMenuOpen" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
@@ -272,18 +272,18 @@
 
                     <template x-if="$store.auth.check()">
                         <div>
-                            <a href="/dashboard/orders" class="flex items-center justify-center w-full text-center px-4 py-3 rounded-xl text-base font-bold text-gray-700 dark:text-gray-200 bg-gray-50 dark:bg-gray-800 mb-3 border border-gray-200 dark:border-gray-700">
+                            <a href="/dashboard/orders" class="flex items-center justify-center w-full text-center px-4 py-3 rounded-full text-base font-bold text-gray-700 dark:text-gray-200 bg-gray-50 dark:bg-gray-800 mb-3 border border-gray-200 dark:border-gray-700">
                                 <svg class="w-5 h-5 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
                                 <span x-text="'داشبورد ' + ($store.auth.user?.name || '')"></span>
                             </a>
-                            <a href="/logout" @click.prevent="$store.auth.logout()" class="flex items-center justify-center w-full text-center px-4 py-3 rounded-xl text-base font-bold text-red-600 bg-red-50 dark:bg-red-900/20 hover:bg-red-100 dark:hover:bg-red-900/40">
+                            <a href="/logout" @click.prevent="$store.auth.logout()" class="flex items-center justify-center w-full text-center px-4 py-3 rounded-full text-base font-bold text-red-600 bg-red-50 dark:bg-red-900/20 hover:bg-red-100 dark:hover:bg-red-900/40">
                                 <svg class="w-5 h-5 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" /></svg>
                                 خروج از حساب
                             </a>
                         </div>
                     </template>
                     <template x-if="!$store.auth.check()">
-                        <button @click.prevent="$dispatch('open-auth-modal'); mobileMenuOpen = false" class="flex items-center justify-center w-full bg-primary-600 text-white px-4 py-3 rounded-xl text-base font-bold shadow-lg shadow-primary-500/30 hover:bg-primary-700 transition-colors">
+                        <button @click.prevent="$dispatch('open-auth-modal'); mobileMenuOpen = false" class="flex items-center justify-center w-full bg-primary-600 text-white px-4 py-3 rounded-full text-base font-bold shadow-lg shadow-primary-500/30 hover:bg-primary-700 transition-colors">
                             <svg class="w-6 h-6 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" /></svg>
                             ورود یا ثبت‌نام
                         </button>
