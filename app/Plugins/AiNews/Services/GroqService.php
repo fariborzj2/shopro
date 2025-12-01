@@ -14,7 +14,7 @@ class GroqService
     {
         $this->apiKey = AiSetting::get('groq_api_key');
         $this->endpoint = AiSetting::get('groq_endpoint', 'https://api.groq.com/openai/v1/chat/completions');
-        $this->model = AiSetting::get('groq_model', 'llama3-70b-8192');
+        $this->model = AiSetting::get('groq_model', 'llama-3.3-70b-versatile');
     }
 
     public function test()
@@ -46,10 +46,15 @@ class GroqService
             $promptTemplate
         );
 
+        $systemPrompt = "You are a specialized Persian AI Assistant, acting as a Senior Content Writer and SEO Expert. " .
+            "Your goal is to generate professional, comprehensive, and engaging content in Persian (Farsi). " .
+            "You strictly adhere to JSON output format and HTML content structure. " .
+            "Do not include conversational fillers. Output ONLY valid JSON.";
+
         $payload = [
             'model' => $this->model,
             'messages' => [
-                ['role' => 'system', 'content' => 'You are a professional news editor. Output strictly in valid JSON format.'],
+                ['role' => 'system', 'content' => $systemPrompt],
                 ['role' => 'user', 'content' => $prompt]
             ],
             'temperature' => 0.7,
@@ -106,26 +111,41 @@ class GroqService
     private function getDefaultPrompt()
     {
         return <<<EOT
-Analyze the following article and rewrite it for a Persian tech news blog.
+Act as a professional content writer and SEO specialist. Rewrite the following news into a comprehensive, engaging blog post in Persian (Farsi).
+
 Source Title: {{title}}
 Source Content: {{content}}
 
 Requirements:
-1. Language: Persian (Farsi).
-2. Create a catchy, click-worthy Title.
-3. Write a summary Excerpt (max 300 chars).
-4. Rewrite the Content to be engaging, SEO-friendly, and informative (min 500 words if possible).
-5. Generate Meta Title and Meta Description.
-6. Extract 5 relevant Tags.
+1. **Role**: You are an expert writer. Do not mention you are an AI. Tone should be professional, informative, and engaging.
+2. **Structure**:
+   - **Title**: Catchy, click-worthy, optimized for SEO.
+   - **Excerpt**: A compelling summary (max 300 chars).
+   - **Content**:
+     - Minimum 600 words.
+     - Use HTML formatting (<h2>, <h3>, <p>, <ul>, <li>, <strong>).
+     - Break text into readable paragraphs.
+     - Include a detailed analysis, context, or elaboration on the news.
+   - **FAQ**: Create a dedicated FAQ section with 3-5 relevant questions and answers based on the text.
+   - **SEO**:
+     - Generate a Meta Title (max 60 chars).
+     - Generate a Meta Description (max 160 chars).
+     - Extract 5-7 relevant Tags (single words or short phrases).
 
-Output Format (JSON strictly):
+3. **Output Format**: Strictly Valid JSON. No markdown code blocks (```json).
+
+JSON Schema:
 {
-  "title": "...",
-  "excerpt": "...",
-  "content": "...",
-  "meta_title": "...",
-  "meta_description": "...",
-  "tags": ["tag1", "tag2", ...]
+  "title": "String",
+  "excerpt": "String",
+  "content": "String (HTML formatted)",
+  "meta_title": "String",
+  "meta_description": "String",
+  "tags": ["String", "String", ...],
+  "faq": [
+    {"question": "String", "answer": "String"},
+    {"question": "String", "answer": "String"}
+  ]
 }
 EOT;
     }

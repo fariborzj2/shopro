@@ -5,6 +5,7 @@ namespace App\Plugins\AiNews\Services;
 use App\Plugins\AiNews\Models\AiSetting;
 use App\Plugins\AiNews\Models\AiLog;
 use App\Models\BlogPost;
+use App\Models\FaqItem; // Import FaqItem
 use App\Core\Database;
 
 class Crawler
@@ -101,10 +102,6 @@ class Crawler
             $extracted = $this->extractor->extract($fetchResult['content']);
             if (!$extracted) {
                 $this->logDetails[] = "Content extraction failed (too short/invalid): $link";
-                // We mark it as failed so we don't retry forever, or maybe we skip adding to DB to retry later?
-                // Requirements say "Never mark a URL as processed if extraction fails" logic was requested in prompt 1,
-                // but usually persistent failure should be marked.
-                // Let's NOT mark it, assuming temporary layout issue or transient failure.
                 continue;
             }
 
@@ -126,7 +123,7 @@ class Crawler
             // Post-Process Internal Links
             $finalContent = $linker->injectLinks($aiResult['content'] ?? '');
 
-            // Save to DB
+            // Save to DB (Now with FAQ support)
             if ($this->savePost($aiResult, $finalContent, $extracted['image_url'])) {
                 $this->markAsProcessed($link, 'success', null, $contentHash);
                 $processed++;
@@ -146,21 +143,17 @@ class Crawler
 
     private function isContentDuplicate($hash)
     {
-        // Check history for content hash
-        // Note: We need to make sure 'content_hash' exists. The migration handles this.
         try {
             $stmt = $this->pdo->prepare("SELECT COUNT(*) FROM ai_news_history WHERE content_hash = :hash");
             $stmt->execute(['hash' => $hash]);
             return $stmt->fetchColumn() > 0;
         } catch (\Exception $e) {
-            return false; // Column might not exist yet if migration failed
+            return false;
         }
     }
 
     private function markAsProcessed($url, $status = 'success', $reason = null, $hash = null)
     {
-        // Upsert logic if URL exists (e.g. previous failure)
-        // For simplicity, we just insert.
         $stmt = $this->pdo->prepare("
             INSERT INTO ai_news_history (source_url, status, reason, content_hash, created_at)
             VALUES (:url, :status, :reason, :hash, NOW())
@@ -187,6 +180,7 @@ class Crawler
         $metaTitle = $aiData['meta_title'] ?? $title;
         $metaDesc = $aiData['meta_description'] ?? $excerpt;
         $tags = $aiData['tags'] ?? [];
+        $faq = $aiData['faq'] ?? [];
 
         $slug = $this->slugify($title);
 
@@ -196,29 +190,71 @@ class Crawler
             $slug .= '-' . time();
         }
 
-        $sql = "INSERT INTO blog_posts (
-            category_id, author_id, title, slug, content, excerpt,
-            status, meta_title, meta_description, meta_keywords,
-            image_url, views_count, is_editors_pick, created_at, updated_at
-        ) VALUES (
-            :cat, :auth, :title, :slug, :content, :excerpt,
-            'draft', :m_title, :m_desc, :tags,
-            :img, 0, 0, NOW(), NOW()
-        )";
+        try {
+            $this->pdo->beginTransaction();
 
-        $stmt = $this->pdo->prepare($sql);
-        return $stmt->execute([
-            'cat' => $catId,
-            'auth' => $authorId,
-            'title' => $title,
-            'slug' => $slug,
-            'content' => $content,
-            'excerpt' => $excerpt,
-            'm_title' => $metaTitle,
-            'm_desc' => $metaDesc,
-            'tags' => json_encode($tags, JSON_UNESCAPED_UNICODE),
-            'img' => $imageUrl
-        ]);
+            $sql = "INSERT INTO blog_posts (
+                category_id, author_id, title, slug, content, excerpt,
+                status, meta_title, meta_description, meta_keywords,
+                image_url, views_count, is_editors_pick, created_at, updated_at
+            ) VALUES (
+                :cat, :auth, :title, :slug, :content, :excerpt,
+                'draft', :m_title, :m_desc, :tags,
+                :img, 0, 0, NOW(), NOW()
+            )";
+
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->execute([
+                'cat' => $catId,
+                'auth' => $authorId,
+                'title' => $title,
+                'slug' => $slug,
+                'content' => $content,
+                'excerpt' => $excerpt,
+                'm_title' => $metaTitle,
+                'm_desc' => $metaDesc,
+                'tags' => json_encode($tags, JSON_UNESCAPED_UNICODE),
+                'img' => $imageUrl
+            ]);
+
+            $postId = $this->pdo->lastInsertId();
+
+            // Handle FAQ items
+            if (!empty($faq) && is_array($faq)) {
+                $faqIds = [];
+                foreach ($faq as $item) {
+                    if (empty($item['question']) || empty($item['answer'])) continue;
+
+                    // Create separate FAQ item
+                    // FaqItem::create now returns the ID
+                    $faqId = FaqItem::create([
+                        'question' => $item['question'],
+                        'answer' => $item['answer'],
+                        'type' => 'blog_faq', // Using a specific type so they can be grouped/filtered if needed
+                        'status' => 'active',
+                        'position' => 0
+                    ]);
+
+                    if ($faqId) {
+                        $faqIds[] = $faqId;
+                    }
+                }
+
+                // Link FAQs to the Post
+                if (!empty($faqIds)) {
+                    BlogPost::syncFaqItems($postId, $faqIds);
+                }
+            }
+
+            $this->pdo->commit();
+            return true;
+
+        } catch (\Exception $e) {
+            $this->pdo->rollBack();
+            // Log inner error?
+            $this->logDetails[] = "Save failed: " . $e->getMessage();
+            return false;
+        }
     }
 
     private function slugify($text)
