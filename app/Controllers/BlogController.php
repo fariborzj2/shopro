@@ -81,6 +81,7 @@ class BlogController
 
     public function category($slug)
     {
+        $slug = urldecode($slug);
         $category = BlogCategory::findBy('slug', $slug);
         if (!$category) {
             http_response_code(404);
@@ -115,6 +116,7 @@ class BlogController
 
     public function show($slug)
     {
+        $slug = urldecode($slug);
         try {
             $post = BlogPost::findBySlug($slug);
             if (!$post) {
@@ -205,6 +207,7 @@ class BlogController
 
     public function showTag($slug)
     {
+        $slug = urldecode($slug);
         $tag = \App\Models\BlogTag::findBy('slug', $slug);
         if (!$tag) {
             http_response_code(404);

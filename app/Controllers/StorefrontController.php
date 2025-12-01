@@ -114,6 +114,7 @@ class StorefrontController
      */
     public function page($slug)
     {
+        $slug = urldecode($slug);
         $template = new Template();
 
         if ($slug === 'faq') {
@@ -147,6 +148,7 @@ class StorefrontController
      */
     public function category($slug)
     {
+        $slug = urldecode($slug);
         $category = Category::findBy('slug', $slug);
 
         if (!$category || $category->status !== 'active') {
