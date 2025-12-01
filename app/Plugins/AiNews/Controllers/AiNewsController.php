@@ -122,4 +122,18 @@ class AiNewsController
 
         redirect_with_success('/admin/ai-news/list', 'پست حذف شد.');
     }
+
+    public function clearHistory()
+    {
+        $pdo = Database::getConnection();
+        $pdo->exec("TRUNCATE TABLE ai_news_history");
+        redirect_with_success('/admin/ai-news/settings', 'تاریخچه لینک‌های پردازش شده پاک شد.');
+    }
+
+    public function clearLogs()
+    {
+        $pdo = Database::getConnection();
+        $pdo->exec("TRUNCATE TABLE ai_news_logs");
+        redirect_with_success('/admin/ai-news/settings', 'لاگ‌های سیستم پاک شد.');
+    }
 }

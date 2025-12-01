@@ -91,7 +91,24 @@ $title = 'تنظیمات دستیار هوشمند';
 
         <!-- Logs Viewer -->
         <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-card p-6 flex flex-col h-full">
-            <h2 class="text-lg font-semibold text-gray-700 dark:text-gray-200 mb-4 border-b dark:border-gray-700 pb-2">آخرین فعالیت‌ها</h2>
+            <div class="flex justify-between items-center mb-4 border-b dark:border-gray-700 pb-2">
+                <h2 class="text-lg font-semibold text-gray-700 dark:text-gray-200">آخرین فعالیت‌ها</h2>
+                <div class="flex gap-2">
+                    <form action="/admin/ai-news/clear-history" method="POST" onsubmit="return confirm('آیا مطمئن هستید؟ تمام تاریخچه لینک‌های پردازش شده حذف می‌شود و ممکن است لینک‌های تکراری دوباره پردازش شوند.');">
+                        <?php csrf_field(); ?>
+                        <button type="submit" class="text-xs text-red-500 hover:text-red-700 transition-colors" title="حذف تاریخچه لینک‌ها">
+                            پاکسازی هیستوری
+                        </button>
+                    </form>
+                    <span class="text-gray-300 dark:text-gray-600">|</span>
+                    <form action="/admin/ai-news/clear-logs" method="POST" onsubmit="return confirm('آیا مطمئن هستید؟ تمام لاگ‌های سیستم حذف می‌شوند.');">
+                        <?php csrf_field(); ?>
+                        <button type="submit" class="text-xs text-red-500 hover:text-red-700 transition-colors" title="حذف تمام لاگ‌ها">
+                            پاکسازی لاگ‌ها
+                        </button>
+                    </form>
+                </div>
+            </div>
 
             <div class="flex-1 overflow-y-auto max-h-[600px] space-y-3 pr-2 custom-scrollbar">
                 <?php if (empty($data['logs'])): ?>
