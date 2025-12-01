@@ -95,7 +95,7 @@
                         </div>
                         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                             <?php foreach ($related_posts as $related) : ?>
-                                <a href="/blog/<?= $related->slug ?>" class="group bg-white dark:bg-gray-800 rounded-2xl shadow-card border border-gray-100 dark:border-gray-700 overflow-hidden hover:shadow-lg transition-all duration-300 flex flex-col h-full">
+                                <a href="/blog/<?= $related->category_slug ?? 'news' ?>/<?= $related->id ?>-<?= $related->slug ?>" class="group bg-white dark:bg-gray-800 rounded-2xl shadow-card border border-gray-100 dark:border-gray-700 overflow-hidden hover:shadow-lg transition-all duration-300 flex flex-col h-full">
                                     <div class="aspect-[16/10] bg-gray-200 dark:bg-gray-700 overflow-hidden">
                                         <img src="<?= $related->image_url ?? 'https://placehold.co/600x400/EEE/31343C?text=Image' ?>"
                                              class="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500"

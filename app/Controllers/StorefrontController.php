@@ -92,6 +92,7 @@ class StorefrontController
                     'id' => $post->id,
                     'title' => $post->title,
                     'slug' => $post->slug,
+                    'category_slug' => $post->category_slug ?? 'news', // Fallback just in case
                     'excerpt' => mb_substr(strip_tags($post->excerpt), 0, 100) . '...',
                     'imageUrl' => $post->image_url ?? 'https://placehold.co/600x400/EEE/31343C?text=Blog',
                     'date' => !empty($post->published_at) ? \jdate('j F Y', strtotime($post->published_at)) : ''

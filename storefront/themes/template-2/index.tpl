@@ -311,7 +311,7 @@
 
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5" x-data="{ posts: $store.appStore.blogPosts }">
                 <template x-for="post in posts" :key="post.id">
-                    <a :href="'/blog/' + post.slug" class="group p-3 flex flex-col bg-white dark:bg-gray-800 rounded-2xl shadow-card border border-gray-100 dark:border-gray-700 overflow-hidden hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+                    <a :href="'/blog/' + post.category_slug + '/' + post.id + '-' + post.slug" class="group p-3 flex flex-col bg-white dark:bg-gray-800 rounded-2xl shadow-card border border-gray-100 dark:border-gray-700 overflow-hidden hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
                         <div class="aspect-video bg-gray-200 dark:bg-gray-700 overflow-hidden rounded-xl">
                             <img :src="post.imageUrl" :alt="post.title" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
                         </div>

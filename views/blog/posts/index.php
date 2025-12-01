@@ -47,7 +47,7 @@
                         </span>
                     </div>
                     <div class="flex items-center gap-4 mt-3 text-xs text-gray-500 dark:text-gray-400">
-                        <a href="/blog/<?= $post['slug'] ?>" target="_blank" class="flex items-center gap-1 hover:text-primary-600 transition-colors">
+                        <a href="/blog/<?= $post['category_slug'] ?? 'news' ?>/<?= $post['id'] ?>-<?= $post['slug'] ?>" target="_blank" class="flex items-center gap-1 hover:text-primary-600 transition-colors">
                             <?php partial('icon', ['name' => 'eye', 'class' => 'w-4 h-4']); ?>
                             <span><?= number_format($post['views_count'] ?? 0) ?></span>
                         </a>
@@ -120,7 +120,7 @@
                             </td>
 
                             <td class="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">
-                                <a href="/blog/<?= $post['slug'] ?>" target="_blank" class="flex items-center gap-1 hover:text-primary-600 transition-colors" title="مشاهده در سایت">
+                                <a href="/blog/<?= $post['category_slug'] ?? 'news' ?>/<?= $post['id'] ?>-<?= $post['slug'] ?>" target="_blank" class="flex items-center gap-1 hover:text-primary-600 transition-colors" title="مشاهده در سایت">
                                     <?= number_format($post['views_count'] ?? 0) ?>
                                     <?php partial('icon', ['name' => 'external-link', 'class' => 'w-3 h-3 opacity-50']); ?>
                                 </a>
