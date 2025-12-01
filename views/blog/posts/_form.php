@@ -230,7 +230,7 @@ if (is_array($post)) {
                 echo isset($post_faq_objects) ? json_encode($post_faq_objects) : '[]';
             ?>,
             addFaq() {
-                this.faqs.push({ id: null, question: '', answer: '' });
+                this.faqs.push({ question: '', answer: '' });
             },
             removeFaq(index) {
                 this.faqs.splice(index, 1);
@@ -251,7 +251,6 @@ if (is_array($post)) {
                             <label class="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">پاسخ</label>
                             <textarea x-model="faq.answer" :name="`post_faqs[${index}][answer]`" rows="2" class="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-sm px-3 py-2" placeholder="پاسخ را وارد کنید..." required></textarea>
                         </div>
-                        <input type="hidden" :name="`post_faqs[${index}][id]`" x-model="faq.id">
                     </div>
                 </div>
             </template>
