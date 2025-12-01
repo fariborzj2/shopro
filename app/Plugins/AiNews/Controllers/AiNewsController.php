@@ -28,6 +28,8 @@ class AiNewsController
             'plugin_enabled' => $settings['plugin_enabled'] ?? 0,
             'start_hour' => $settings['start_hour'] ?? 8,
             'end_hour' => $settings['end_hour'] ?? 21,
+            'execution_interval' => $settings['execution_interval'] ?? 1,
+            'max_posts_per_cycle' => $settings['max_posts_per_cycle'] ?? 5,
             'groq_api_key' => $settings['groq_api_key'] ?? '',
             'groq_model' => $settings['groq_model'] ?? 'llama3-70b-8192',
             'sitemap_urls' => $settings['sitemap_urls'] ?? '',
@@ -52,6 +54,8 @@ class AiNewsController
         AiSetting::set('plugin_enabled', isset($post['plugin_enabled']) ? 1 : 0);
         AiSetting::set('start_hour', $post['start_hour']);
         AiSetting::set('end_hour', $post['end_hour']);
+        AiSetting::set('execution_interval', $post['execution_interval'] ?? 1);
+        AiSetting::set('max_posts_per_cycle', $post['max_posts_per_cycle'] ?? 5);
         AiSetting::set('groq_api_key', $post['groq_api_key']);
         AiSetting::set('groq_model', $post['groq_model']);
         AiSetting::set('sitemap_urls', $post['sitemap_urls']);
