@@ -189,3 +189,5 @@ $router->get('/admin/ai-news/list', '\App\Plugins\AiNews\Controllers\AiNewsContr
 $router->post('/admin/ai-news/fetch', '\App\Plugins\AiNews\Controllers\AiNewsController@fetch');
 $router->post('/admin/ai-news/approve/{id}', '\App\Plugins\AiNews\Controllers\AiNewsController@approve');
 $router->post('/admin/ai-news/delete/{id}', '\App\Plugins\AiNews\Controllers\AiNewsController@delete');
+$router->post('/admin/ai-news/clear-history', '\App\Plugins\AiNews\Controllers\AiNewsController@clearHistory');
+$router->post('/admin/ai-news/clear-logs', '\App\Plugins\AiNews\Controllers\AiNewsController@clearLogs');
