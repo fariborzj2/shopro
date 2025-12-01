@@ -139,20 +139,48 @@ class BlogPostsController
             }))
         ];
 
-        // Handle published_at (Timestamp)
+        // Handle published_at (Jalali Date or Timestamp)
         if (!empty($_POST["published_at"])) {
-            // The custom datepicker sends a timestamp in seconds.
-            $timestamp = (int) $_POST["published_at"];
-            $data["published_at"] = date("Y-m-d H:i:s", $timestamp);
-            // Handle published_at (Timestamp)
-            if (!empty($_POST["published_at"])) {
-                // The custom datepicker sends a timestamp in seconds.
-                $timestamp = (int) $_POST["published_at"];
-                $data["published_at"] = date("Y-m-d H:i:s", $timestamp);
-            }
+            $inputDate = $_POST["published_at"];
 
-            // Image Upload
-            $uploader = new ImageUploader();
+            // Check if it's numeric (Timestamp in milliseconds from JS)
+            if (is_numeric($inputDate)) {
+                // If length > 10, it's likely milliseconds (e.g. 1700000000000)
+                // If length <= 10, it's likely seconds (e.g. 1700000000)
+                // We cast to float first to handle large strings safely
+                $ts = (float) $inputDate;
+                if ($ts > 10000000000) {
+                    $ts = $ts / 1000;
+                }
+                $timestamp = (int) $ts;
+                $data["published_at"] = date("Y-m-d H:i:s", $timestamp);
+            } else {
+                // Expected format from persian-datepicker string: YYYY/MM/DD HH:mm:ss
+                $parts = preg_split("/[\/\-\s:]/", $inputDate);
+                if (count($parts) >= 3) {
+                    $jy = (int) $parts[0];
+                    $jm = (int) $parts[1];
+                    $jd = (int) $parts[2];
+                    $h = isset($parts[3]) ? (int) $parts[3] : 0;
+                    $m = isset($parts[4]) ? (int) $parts[4] : 0;
+                    $s = isset($parts[5]) ? (int) $parts[5] : 0;
+
+                    $gregorian = jalali_to_gregorian($jy, $jm, $jd);
+                    $data["published_at"] = sprintf(
+                        "%04d-%02d-%02d %02d:%02d:%02d",
+                        $gregorian[0],
+                        $gregorian[1],
+                        $gregorian[2],
+                        $h,
+                        $m,
+                        $s
+                    );
+                }
+            }
+        }
+
+        // Image Upload
+        $uploader = new ImageUploader();
             if (
                 isset($_FILES["image"]) &&
                 $_FILES["image"]["error"] === UPLOAD_ERR_OK
@@ -342,29 +370,43 @@ class BlogPostsController
             }))
         ];
 
-        // Handle Jalali Date Conversion for published_at
+        // Handle published_at (Jalali Date or Timestamp)
         if (!empty($_POST["published_at"])) {
-            // Expected format from persian-datepicker: YYYY/MM/DD HH:mm:ss
-            $jalaliDate = $_POST["published_at"];
-            $parts = preg_split("/[\/\-\s:]/", $jalaliDate);
-            if (count($parts) >= 5) {
-                $jy = (int) $parts[0];
-                $jm = (int) $parts[1];
-                $jd = (int) $parts[2];
-                $h = (int) $parts[3];
-                $m = (int) $parts[4];
-                $s = isset($parts[5]) ? (int) $parts[5] : 0;
+            $inputDate = $_POST["published_at"];
 
-                $gregorian = jalali_to_gregorian($jy, $jm, $jd);
-                $data["published_at"] = sprintf(
-                    "%04d-%02d-%02d %02d:%02d:%02d",
-                    $gregorian[0],
-                    $gregorian[1],
-                    $gregorian[2],
-                    $h,
-                    $m,
-                    $s
-                );
+            // Check if it's numeric (Timestamp in milliseconds from JS)
+            if (is_numeric($inputDate)) {
+                // If length > 10, it's likely milliseconds (e.g. 1700000000000)
+                // If length <= 10, it's likely seconds (e.g. 1700000000)
+                // We cast to float first to handle large strings safely
+                $ts = (float) $inputDate;
+                if ($ts > 10000000000) {
+                    $ts = $ts / 1000;
+                }
+                $timestamp = (int) $ts;
+                $data["published_at"] = date("Y-m-d H:i:s", $timestamp);
+            } else {
+                // Expected format from persian-datepicker string: YYYY/MM/DD HH:mm:ss
+                $parts = preg_split("/[\/\-\s:]/", $inputDate);
+                if (count($parts) >= 3) {
+                    $jy = (int) $parts[0];
+                    $jm = (int) $parts[1];
+                    $jd = (int) $parts[2];
+                    $h = isset($parts[3]) ? (int) $parts[3] : 0;
+                    $m = isset($parts[4]) ? (int) $parts[4] : 0;
+                    $s = isset($parts[5]) ? (int) $parts[5] : 0;
+
+                    $gregorian = jalali_to_gregorian($jy, $jm, $jd);
+                    $data["published_at"] = sprintf(
+                        "%04d-%02d-%02d %02d:%02d:%02d",
+                        $gregorian[0],
+                        $gregorian[1],
+                        $gregorian[2],
+                        $h,
+                        $m,
+                        $s
+                    );
+                }
             }
         }
 
