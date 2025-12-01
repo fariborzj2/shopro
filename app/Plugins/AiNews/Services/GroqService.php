@@ -266,7 +266,7 @@ Requirements:
 - Title: Strong H1 in Persian.
 - Slug: English-only, SEO-friendly, hyphenated.
 - Excerpt: Minimum 50 words. Must be an expanded, natural, engaging introduction (NOT a translation).
-- Body: HTML (<p>, <h2>, <ul>) with emphasized <strong> keywords.
+- Body: HTML (<p>, <h2>, <h3>, <h4>, <ul>,<ol>,<table>,<strong>, <blockquote>) with emphasized <strong> keywords.
 - Add an "Expert Analysis" section with insights beyond the source material.
 - Improve and expand the content intellectually — add context, comparisons, explanations, and clarity.
 - SEO: Provide Meta title, Meta description, and exactly 5 SEO-friendly Persian tags.
