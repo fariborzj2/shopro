@@ -21,8 +21,15 @@ class GroqService
 
     public function test()
     {
-        // ... (همان کد قبلی)
-        return ['status' => 'success', 'message' => 'Service Ready'];
+         // Simple connectivity check
+        $payload = [
+            'model' => $this->model,
+            'messages' => [
+                ['role' => 'user', 'content' => 'Say Hello']
+            ],
+            'max_tokens' => 10
+        ];
+        return $this->sendRequest($payload);
     }
 
     public function process($data)
@@ -63,25 +70,56 @@ class GroqService
                 ['role' => 'system', 'content' => $systemPrompt],
                 ['role' => 'user', 'content' => $userPrompt]
             ],
-            'temperature' => 0.6,
+            'temperature' => 0.6, // کمی پایین‌تر برای دقت بیشتر
             'response_format' => ['type' => 'json_object']
         ];
 
         $response = $this->sendRequest($payload);
 
         if ($response['status'] === 'success') {
+            // Check for API Error Response (e.g. Rate Limit, Context Window)
+            if (isset($response['data']['error'])) {
+                return ['error' => 'API Error: ' . ($response['data']['error']['message'] ?? 'Unknown API Error')];
+            }
+
             $content = $response['data']['choices'][0]['message']['content'] ?? null;
             if ($content) {
+                // 4. Sanitize and Validate Response
                 $parsed = json_decode($content, true);
                 if (json_last_error() === JSON_ERROR_NONE) {
+
+                    // VALIDATION 1: No Chinese characters
+                    if (preg_match('/[\p{Han}]/u', $content)) {
+                        return ['error' => 'Validation Error: Chinese characters detected in response'];
+                    }
+
+                    // VALIDATION 2: Enforce English Slug
+                    if (isset($parsed['slug'])) {
+                        $slug = strtolower(trim($parsed['slug']));
+                        $slug = preg_replace('/[^a-z0-9-]/', '-', $slug);
+                        $slug = preg_replace('/-+/', '-', $slug);
+                        $parsed['slug'] = trim($slug, '-');
+                    }
+                    if (empty($parsed['slug'])) {
+                        $parsed['slug'] = 'article-' . time();
+                    }
+
+                    // VALIDATION 3: Content Length
+                    $contentLength = mb_strlen(strip_tags($parsed['content'] ?? ''));
+                    if ($contentLength < 300) {
+                        return ['error' => "Validation Error: Content too short ($contentLength chars)"];
+                    }
+
                     return $parsed;
+                } else {
+                    return ['error' => 'JSON Decode Error: ' . json_last_error_msg()];
                 }
+            } else {
+                return ['error' => 'Empty content received from AI'];
             }
         } else {
-             error_log("AI API Error: " . print_r($response, true));
+             return ['error' => 'Network/CURL Error: ' . ($response['message'] ?? 'Unknown')];
         }
-
-        return null;
     }
 
     /**
@@ -152,7 +190,6 @@ class GroqService
 
     private function sendRequest($payload)
     {
-        // (همان کد قبلی ارسال درخواست به Groq)
         $ch = curl_init($this->endpoint);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_POST, true);
@@ -175,30 +212,37 @@ class GroqService
 
     private function getSystemPrompt()
     {
-        // (همان کد قبلی)
         return <<<EOT
 You are a senior Persian Lead Editor and SEO Specialist.
 Your Goal: Create high-quality, analytical, and engaging Persian (Farsi) articles.
-RULES:
-1. Output in valid JSON only.
-2. Fluent Persian language.
-3. No translations. Rewrite and Expand.
-4. JSON structure: title, slug, excerpt, content, meta_title, meta_description, tags, faq.
+
+CRITICAL RULES:
+1. **Output Format:** Valid JSON only.
+2. **Language:** Fluent, high-level Persian (Farsi) for content. English for slugs.
+3. **Forbidden:** NO Chinese, Japanese, or Korean characters.
+4. **Length:** Content must be comprehensive and detailed (min 1000 words).
+5. **Originality:** No direct translation. Rewrite, expand, and add analysis.
 EOT;
     }
 
-private function getUserPrompt(string $title, string $content, bool $isFullArticle): string
-{
-    // ۱. تمیز کردن ورودی‌ها برای جلوگیری از به هم ریختن پرامپت
-    $safeTitle = json_encode($title, JSON_UNESCAPED_UNICODE);
-    $safeContent = json_encode($content, JSON_UNESCAPED_UNICODE);
+    private function getUserPrompt(string $title, string $content, bool $isFullArticle): string
+    {
+        // Truncate content to avoid Token Limit Errors.
+        // Llama 3.3 has a 128k context window. 60,000 chars is safe (~15k tokens).
+        if (mb_strlen($content) > 60000) {
+            $content = mb_substr($content, 0, 60000) . "... [TRUNCATED]";
+        }
 
-    // ۲. دستورالعمل دقیق بر اساس نوع محتوا
-    $expansionStrategy = $isFullArticle 
-        ? "The input is a full article. Your task is to REWRITE and RESTRUCTURE it to be unique, strictly avoiding plagiarism while maintaining all factual data." 
-        : "The input is a SUMMARY. You must act as an investigative journalist. Use your internal knowledge to EXPAND strictly on the provided topics. Add historical context, future implications, and technical details to reach the word count.";
+        // ۱. تمیز کردن ورودی‌ها برای جلوگیری از به هم ریختن پرامپت
+        $safeTitle = json_encode($title, JSON_UNESCAPED_UNICODE);
+        $safeContent = json_encode($content, JSON_UNESCAPED_UNICODE);
 
-    return <<<EOT
+        // ۲. دستورالعمل دقیق بر اساس نوع محتوا
+        $expansionStrategy = $isFullArticle
+            ? "The input is a full article. Your task is to REWRITE and RESTRUCTURE it to be unique, strictly avoiding plagiarism while maintaining all factual data."
+            : "The input is a SUMMARY. You must act as an investigative journalist. Use your internal knowledge to EXPAND strictly on the provided topics. Add historical context, future implications, and technical details to reach the word count.";
+
+        return <<<EOT
 You are a Senior Editor-in-Chief for a leading Persian news outlet and an SEO Expert.
 Your goal is to transform raw data into a high-ranking, engaging, and comprehensive article in Farsi (Persian).
 
@@ -212,21 +256,22 @@ Your goal is to transform raw data into a high-ranking, engaging, and comprehens
 ---
 ### WRITING INSTRUCTIONS
 1. **Language:** Fluent, formal, and engaging Persian (Farsi). Use "Nim-fasele" (Zero-width non-joiner) correctly.
-2. **Length:** Minimum 1200 words (Strict).
-3. **Structure:**
+2. **Length:** The output must be LONG and DETAILED. Minimum 1200 words. Do not summarize; EXPAND.
+3. **No Chinese:** Strictly forbid the use of any Chinese/Asian characters. If you encounter them in input, ignore them.
+4. **Structure:**
    - **Introduction:** Hook the reader immediately.
    - **Body:** Use logical `<h2>` and `<h3>` headers.
    - **Deep Analysis:** You MUST include a dedicated section titled "تحلیل و بررسی تخصصی" (Expert Analysis) that goes beyond the news.
    - **Conclusion:** Summarize and encourage engagement.
-4. **Formatting:** Return the main content as clean HTML strings (use `<p>`, `<h2>`, `<h3>`, `<ul>`, `<li>`, `<blockquote>`). Do NOT output Markdown in the JSON values.
-5. **Tone:** Professional, objective, yet accessible.
+5. **Formatting:** Return the main content as clean HTML strings (use `<p>`, `<h2>`, `<h3>`, `<ul>`, `<li>`, `<blockquote>`). Do NOT output Markdown in the JSON values.
+6. **Tone:** Professional, objective, yet accessible. High readability.
 
 ---
 ### SEO REQUIREMENTS
-1. **Slug:** English only, URL-friendly, lowercase, hyphen-separated (e.g., `bitcoin-price-analysis`).
+1. **Slug:** STRICTLY ENGLISH. Lowercase, hyphen-separated only (e.g., `bitcoin-price-analysis`). NO Persian characters in slug.
 2. **Meta Title:** Catchy, under 60 chars.
 3. **Meta Description:** Click-worthy summary, under 160 chars.
-4. **Tags:** 5-7 comma-separated keywords.
+4. **Tags:** 5-7 comma-separated keywords (Persian).
 
 ---
 ### OUTPUT FORMAT (STRICT JSON)
@@ -235,7 +280,7 @@ Follow this schema strictly:
 
 {
     "title": "H1 title in Persian",
-    "slug": "english-slug",
+    "slug": "english-slug-only",
     "excerpt": "A short summary (250-350 chars) for the article card.",
     "content": "Full HTML article content here...",
     "meta_title": "SEO Title",
@@ -248,5 +293,5 @@ Follow this schema strictly:
     ]
 }
 EOT;
-}
+    }
 }
