@@ -145,8 +145,14 @@ class BlogPostsController
 
             // Check if it's numeric (Timestamp in milliseconds from JS)
             if (is_numeric($inputDate)) {
-                // Convert milliseconds to seconds
-                $timestamp = (int) $inputDate / 1000;
+                // If length > 10, it's likely milliseconds (e.g. 1700000000000)
+                // If length <= 10, it's likely seconds (e.g. 1700000000)
+                // We cast to float first to handle large strings safely
+                $ts = (float) $inputDate;
+                if ($ts > 10000000000) {
+                    $ts = $ts / 1000;
+                }
+                $timestamp = (int) $ts;
                 $data["published_at"] = date("Y-m-d H:i:s", $timestamp);
             } else {
                 // Expected format from persian-datepicker string: YYYY/MM/DD HH:mm:ss
@@ -370,8 +376,14 @@ class BlogPostsController
 
             // Check if it's numeric (Timestamp in milliseconds from JS)
             if (is_numeric($inputDate)) {
-                // Convert milliseconds to seconds
-                $timestamp = (int) $inputDate / 1000;
+                // If length > 10, it's likely milliseconds (e.g. 1700000000000)
+                // If length <= 10, it's likely seconds (e.g. 1700000000)
+                // We cast to float first to handle large strings safely
+                $ts = (float) $inputDate;
+                if ($ts > 10000000000) {
+                    $ts = $ts / 1000;
+                }
+                $timestamp = (int) $ts;
                 $data["published_at"] = date("Y-m-d H:i:s", $timestamp);
             } else {
                 // Expected format from persian-datepicker string: YYYY/MM/DD HH:mm:ss
