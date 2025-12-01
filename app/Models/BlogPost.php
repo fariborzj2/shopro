@@ -47,7 +47,8 @@ class BlogPost
                 break;
             default:
                 // Default sort: Published At DESC (for list consistency)
-                $sql .= " ORDER BY bp.published_at DESC, bp.created_at DESC";
+                // Use COALESCE to handle NULL published_at by falling back to created_at for sorting purposes
+                $sql .= " ORDER BY COALESCE(bp.published_at, bp.created_at) DESC, bp.id DESC";
                 break;
         }
 
@@ -334,7 +335,8 @@ class BlogPost
             $params['tag_id'] = $tag_id;
         }
 
-        $sql .= " ORDER BY bp.published_at DESC LIMIT :limit OFFSET :offset";
+        // Use COALESCE to ensure posts with NULL published_at (but status='published') appear in correct order based on creation time
+        $sql .= " ORDER BY COALESCE(bp.published_at, bp.created_at) DESC, bp.id DESC LIMIT :limit OFFSET :offset";
 
         $pdo = Database::getConnection();
         $stmt = $pdo->prepare($sql);
