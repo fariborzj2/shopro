@@ -22,6 +22,7 @@ date_default_timezone_set('Asia/Tehran');
 // Auto Loader 
 // ----------------------------
 spl_autoload_register(function ($class) {
+    // 1. Check for standard App namespace
     $prefix = 'App\\';
     $base_dir = __DIR__ . '/../app/';
     $len = strlen($prefix);
@@ -30,6 +31,18 @@ spl_autoload_register(function ($class) {
         return;
     }
 
+    // 2. Special handling for Plugins
+    // App\Plugins\AiNews\Services\Crawler -> app/Plugins/AiNews/Services/Crawler.php
+    if (strpos($class, 'App\\Plugins\\') === 0) {
+        $relative_class = substr($class, $len); // Remove 'App\'
+        $file = $base_dir . str_replace('\\', '/', $relative_class) . '.php';
+        if (file_exists($file)) {
+            require $file;
+            return;
+        }
+    }
+
+    // 3. Standard fallback for other classes
     $relative_class = substr($class, $len);
     $file = $base_dir . str_replace('\\', '/', $relative_class) . '.php';
 
