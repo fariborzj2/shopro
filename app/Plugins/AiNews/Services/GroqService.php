@@ -61,13 +61,36 @@ class GroqService
             'response_format' => ['type' => 'json_object']
         ];
 
-        $response = $this->sendRequest($payload);
+        $maxRetries = 3;
+        $attempt = 0;
+        $response = null;
 
-        if ($response['status'] === 'success') {
-            if (isset($response['data']['error'])) {
-                return ['error' => 'API Error: ' . ($response['data']['error']['message'] ?? 'Unknown')];
+        while ($attempt < $maxRetries) {
+            $response = $this->sendRequest($payload);
+
+            if ($response['status'] === 'success' && isset($response['data']['error'])) {
+                $errorMsg = $response['data']['error']['message'] ?? '';
+                // Check for rate limit error
+                if (stripos($errorMsg, 'rate limit') !== false) {
+                    $attempt++;
+                    $waitTime = 10; // Default wait time
+
+                    // Try to parse wait time from error message "Please try again in X s"
+                    if (preg_match('/try again in (\d+(\.\d+)?)s/', $errorMsg, $matches)) {
+                        $waitTime = ceil((float)$matches[1]);
+                    }
+
+                    if ($attempt < $maxRetries) {
+                        sleep($waitTime + 1); // Add slight buffer
+                        continue;
+                    }
+                }
+                return ['error' => 'API Error: ' . $errorMsg];
             }
+            break;
+        }
 
+        if ($response && $response['status'] === 'success') {
             $rawContent = $response['data']['choices'][0]['message']['content'] ?? null;
             
             if ($rawContent) {
@@ -79,10 +102,8 @@ class GroqService
                 $parsed = json_decode($cleanJson, true);
 
                 if (json_last_error() === JSON_ERROR_NONE) {
-                    // ولیدیشن نهایی
-                    if ($this->hasChineseChars($cleanJson)) {
-                        return ['error' => 'Validation Error: Chinese characters detected'];
-                    }
+                    // Remove Chinese characters instead of failing
+                    $parsed = $this->removeChineseCharsRecursive($parsed);
                     return $this->sanitizeOutput($parsed);
                 } else {
                     return ['error' => 'JSON Decode Error: ' . json_last_error_msg()];
@@ -191,8 +212,17 @@ class GroqService
         return $parsed;
     }
 
-    private function hasChineseChars($text) {
-        return preg_match('/[\p{Han}]/u', $text);
+    private function removeChineseCharsRecursive($data) {
+        if (is_string($data)) {
+            // Remove Han (Chinese) characters
+            return preg_replace('/[\p{Han}]/u', '', $data);
+        }
+        if (is_array($data)) {
+            foreach ($data as $key => $value) {
+                $data[$key] = $this->removeChineseCharsRecursive($value);
+            }
+        }
+        return $data;
     }
 
     private function getSystemPrompt()
