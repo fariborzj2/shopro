@@ -41,6 +41,12 @@ class Crawler
             if ($currentHour < $startHour || $currentHour >= $endHour) {
                 return ['status' => 'skipped', 'message' => "Outside operating hours ($startHour - $endHour)"];
             }
+
+            // Interval Check
+            $interval = (int) AiSetting::get('execution_interval', 1);
+            if (!$this->shouldRun($interval)) {
+                 return ['status' => 'skipped', 'message' => "Skipped due to execution interval ($interval hours)"];
+            }
         }
 
         try {
@@ -67,6 +73,23 @@ class Crawler
             AiLog::log('failed', $this->fetchedCount, $this->createdCount, implode("\n", $this->logDetails), $e->getMessage());
             return ['status' => 'failed', 'error' => $e->getMessage()];
         }
+    }
+
+    private function shouldRun($intervalHours)
+    {
+        // Get the last successful run time
+        $stmt = $this->pdo->prepare("SELECT created_at FROM ai_news_logs WHERE status = 'success' ORDER BY id DESC LIMIT 1");
+        $stmt->execute();
+        $lastRun = $stmt->fetchColumn();
+
+        if (!$lastRun) {
+            return true; // First run
+        }
+
+        $lastRunTime = strtotime($lastRun);
+        $nextRunTime = $lastRunTime + ($intervalHours * 3600);
+
+        return time() >= $nextRunTime;
     }
 
     private function processSource($url, &$processed, $maxPosts)
@@ -115,8 +138,9 @@ class Crawler
             // AI Process
             $aiResult = $groq->process($extracted);
 
-            if (!$aiResult) {
-                $this->logDetails[] = "AI failed for: $link";
+            if (!$aiResult || isset($aiResult['error'])) {
+                $msg = $aiResult['error'] ?? 'Unknown Error';
+                $this->logDetails[] = "AI failed for: $link ($msg)";
                 continue; // Do not mark processed, retry later
             }
 
