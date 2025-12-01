@@ -199,7 +199,7 @@ class Crawler
             // Insert FAQ (Raw SQL for transaction safety)
             if (!empty($faq) && is_array($faq)) {
                 $stmtFaq = $this->pdo->prepare("INSERT INTO faq_items (question, answer, type, status, position, created_at) VALUES (?, ?, 'blog_faq', 'active', 0, NOW())");
-                $stmtPivot = $this->pdo->prepare("INSERT INTO blog_post_faq (post_id, faq_id) VALUES (?, ?)");
+                $stmtPivot = $this->pdo->prepare("INSERT INTO blog_post_faq_items (post_id, faq_item_id) VALUES (?, ?)");
 
                 foreach ($faq as $item) {
                     if (empty($item['question']) || empty($item['answer'])) continue;
