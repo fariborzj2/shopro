@@ -77,7 +77,7 @@
                                             <span><?= htmlspecialchars($faq['question']) ?></span>
                                             <svg class="w-5 h-5 text-gray-400 transform transition-transform duration-200" :class="{'rotate-180': openItem === <?= $index ?>}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                                         </button>
-                                        <div x-show="openItem === <?= $index ?>" x-collapse class="bg-white p-4 text-gray-600 leading-relaxed border-t border-gray-100">
+                                        <div x-show="openItem === <?= $index ?>" class="bg-white p-4 text-gray-600 leading-relaxed border-t border-gray-100">
                                             <?= $faq['answer'] ?>
                                         </div>
                                     </div>
