@@ -77,6 +77,11 @@ class GroqService
         $response = $this->sendRequest($payload);
 
         if ($response['status'] === 'success') {
+            // Check for API Error Response (e.g. Rate Limit, Context Window)
+            if (isset($response['data']['error'])) {
+                return ['error' => 'API Error: ' . ($response['data']['error']['message'] ?? 'Unknown API Error')];
+            }
+
             $content = $response['data']['choices'][0]['message']['content'] ?? null;
             if ($content) {
                 // 4. Sanitize and Validate Response
@@ -84,40 +89,37 @@ class GroqService
                 if (json_last_error() === JSON_ERROR_NONE) {
 
                     // VALIDATION 1: No Chinese characters
-                    // Range \p{Han} covers most Chinese/Kanji
                     if (preg_match('/[\p{Han}]/u', $content)) {
-                        error_log("AI Error: Detected Chinese characters in response. Discarding.");
-                        return null;
+                        return ['error' => 'Validation Error: Chinese characters detected in response'];
                     }
 
                     // VALIDATION 2: Enforce English Slug
                     if (isset($parsed['slug'])) {
-                        // Force lowercase and remove non-alphanumeric chars (except hyphens)
                         $slug = strtolower(trim($parsed['slug']));
                         $slug = preg_replace('/[^a-z0-9-]/', '-', $slug);
-                        $slug = preg_replace('/-+/', '-', $slug); // Remove duplicate hyphens
+                        $slug = preg_replace('/-+/', '-', $slug);
                         $parsed['slug'] = trim($slug, '-');
                     }
-                    // Fallback for empty slug
                     if (empty($parsed['slug'])) {
                         $parsed['slug'] = 'article-' . time();
                     }
 
-                    // VALIDATION 3: Content Length (User: "Not short")
+                    // VALIDATION 3: Content Length
                     $contentLength = mb_strlen(strip_tags($parsed['content'] ?? ''));
                     if ($contentLength < 300) {
-                        error_log("AI Error: Generated content is too short ($contentLength chars). Discarding.");
-                        return null;
+                        return ['error' => "Validation Error: Content too short ($contentLength chars)"];
                     }
 
                     return $parsed;
+                } else {
+                    return ['error' => 'JSON Decode Error: ' . json_last_error_msg()];
                 }
+            } else {
+                return ['error' => 'Empty content received from AI'];
             }
         } else {
-             error_log("AI API Error: " . print_r($response, true));
+             return ['error' => 'Network/CURL Error: ' . ($response['message'] ?? 'Unknown')];
         }
-
-        return null;
     }
 
     /**
@@ -225,6 +227,12 @@ EOT;
 
     private function getUserPrompt(string $title, string $content, bool $isFullArticle): string
     {
+        // Truncate content to avoid Token Limit Errors (Llama 3 context is approx 8k tokens)
+        // 25,000 chars is roughly 5-6k tokens, leaving room for prompt & output.
+        if (mb_strlen($content) > 25000) {
+            $content = mb_substr($content, 0, 25000) . "... [TRUNCATED]";
+        }
+
         // ۱. تمیز کردن ورودی‌ها برای جلوگیری از به هم ریختن پرامپت
         $safeTitle = json_encode($title, JSON_UNESCAPED_UNICODE);
         $safeContent = json_encode($content, JSON_UNESCAPED_UNICODE);

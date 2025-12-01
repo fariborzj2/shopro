@@ -138,8 +138,9 @@ class Crawler
             // AI Process
             $aiResult = $groq->process($extracted);
 
-            if (!$aiResult) {
-                $this->logDetails[] = "AI failed for: $link";
+            if (!$aiResult || isset($aiResult['error'])) {
+                $msg = $aiResult['error'] ?? 'Unknown Error';
+                $this->logDetails[] = "AI failed for: $link ($msg)";
                 continue; // Do not mark processed, retry later
             }
 
