@@ -88,10 +88,7 @@ class BlogPostsController
             $errors[] =
                 "اسلاگ فقط می‌تواند شامل حروف کوچک انگلیسی، اعداد و خط تیره باشد.";
         }
-        if (
-            empty($_POST["category_id"]) ||
-            !BlogCategory::find($_POST["category_id"])
-        ) {
+        if ( empty($_POST["category_id"]) || !BlogCategory::find($_POST["category_id"])) {
             $errors[] = "دسته بندی انتخاب شده معتبر نیست.";
         }
 
@@ -181,71 +178,71 @@ class BlogPostsController
 
         // Image Upload
         $uploader = new ImageUploader();
-            if (
-                isset($_FILES["image"]) &&
-                $_FILES["image"]["error"] === UPLOAD_ERR_OK
-            ) {
-                $data["image_url"] = $uploader->upload(
-                    $_FILES["image"],
-                    "blog/featured"
-                );
-            }
+        if (
+            isset($_FILES["image"]) &&
+            $_FILES["image"]["error"] === UPLOAD_ERR_OK
+        ) {
+            $data["image_url"] = $uploader->upload(
+                $_FILES["image"],
+                "blog/featured"
+            );
+        }
 
-            $post_id = BlogPost::create($data);
+        $post_id = BlogPost::create($data);
 
-            // Sync tags (handle IDs and new Strings)
-            $rawTags = $_POST["tags"] ?? [];
-            $tagIds = [];
-            foreach ($rawTags as $tag) {
-                if (strpos($tag, "new:") === 0) {
-                    // Create new tag
-                    $tagName = trim(substr($tag, 4));
-                    // Generate a proper slug, preserving Persian characters
-                    $slug = trim($tagName);
-                    $slug = str_replace(' ', '-', $slug);
-                    $slug = preg_replace('/[^\p{L}\p{N}\-]+/u', '', $slug); // Remove special chars but keep letters/numbers (unicode)
-                    $slug = preg_replace('/-+/', '-', $slug); // Collapse multiple dashes
+        // Sync tags (handle IDs and new Strings)
+        $rawTags = $_POST["tags"] ?? [];
+        $tagIds = [];
+        foreach ($rawTags as $tag) {
+            if (strpos($tag, "new:") === 0) {
+                // Create new tag
+                $tagName = trim(substr($tag, 4));
+                // Generate a proper slug, preserving Persian characters
+                $slug = trim($tagName);
+                $slug = str_replace(' ', '-', $slug);
+                $slug = preg_replace('/[^\p{L}\p{N}\-]+/u', '', $slug); // Remove special chars but keep letters/numbers (unicode)
+                $slug = preg_replace('/-+/', '-', $slug); // Collapse multiple dashes
 
-                    if (empty($slug)) {
-                         $slug = 'tag-' . time(); // Fallback to avoid empty slug errors
-                    }
+                if (empty($slug)) {
+                     $slug = 'tag-' . time(); // Fallback to avoid empty slug errors
+                }
 
-                    // Check by name OR slug to avoid duplicates
-                    $existing = BlogTag::findBy("name", $tagName);
-                    if (!$existing) {
-                        $existing = BlogTag::findBy("slug", $slug);
-                    }
+                // Check by name OR slug to avoid duplicates
+                $existing = BlogTag::findBy("name", $tagName);
+                if (!$existing) {
+                    $existing = BlogTag::findBy("slug", $slug);
+                }
 
-                    if ($existing) {
-                        $tagIds[] = $existing->id;
-                    } else {
-                        try {
-                            BlogTag::create([
-                                "name" => $tagName,
-                                "slug" => $slug,
-                                "status" => "active",
-                            ]);
-                            $newTag = BlogTag::findBy("slug", $slug);
-                            if ($newTag) {
-                                $tagIds[] = $newTag->id;
-                            }
-                        } catch (\PDOException $e) {
-                            // If race condition or still duplicate, try to find again
-                            $existingAgain = BlogTag::findBy("slug", $slug);
-                            if ($existingAgain) {
-                                $tagIds[] = $existingAgain->id;
-                            }
+                if ($existing) {
+                    $tagIds[] = $existing->id;
+                } else {
+                    try {
+                        BlogTag::create([
+                            "name" => $tagName,
+                            "slug" => $slug,
+                            "status" => "active",
+                        ]);
+                        $newTag = BlogTag::findBy("slug", $slug);
+                        if ($newTag) {
+                            $tagIds[] = $newTag->id;
+                        }
+                    } catch (\PDOException $e) {
+                        // If race condition or still duplicate, try to find again
+                        $existingAgain = BlogTag::findBy("slug", $slug);
+                        if ($existingAgain) {
+                            $tagIds[] = $existingAgain->id;
                         }
                     }
-                } else {
-                    $tagIds[] = (int) $tag;
                 }
+            } else {
+                $tagIds[] = (int) $tag;
             }
-            BlogPost::syncTags($post_id, $tagIds);
-
-            header("Location: /admin/blog/posts");
-            exit();
         }
+        BlogPost::syncTags($post_id, $tagIds);
+
+        header("Location: /admin/blog/posts");
+        exit();
+
     }
     /**
      * Show the form for editing a specific blog post.
