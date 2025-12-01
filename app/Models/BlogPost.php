@@ -113,13 +113,6 @@ class BlogPost
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public static function getFaqItemsByPostId($post_id)
-    {
-        $sql = "SELECT faq_item_id FROM blog_post_faq_items WHERE post_id = :post_id";
-        $stmt = Database::query($sql, ['post_id' => $post_id]);
-        return $stmt->fetchAll(PDO::FETCH_COLUMN);
-    }
-
     /**
      * Create a new blog post.
      *
@@ -155,8 +148,8 @@ class BlogPost
             $published_at = date('Y-m-d H:i:s');
         }
 
-        $sql = "INSERT INTO blog_posts (category_id, author_id, title, slug, content, excerpt, image_url, status, published_at, is_editors_pick, meta_title, meta_description, meta_keywords)
-                VALUES (:category_id, :author_id, :title, :slug, :content, :excerpt, :image_url, :status, :published_at, :is_editors_pick, :meta_title, :meta_description, :meta_keywords)";
+        $sql = "INSERT INTO blog_posts (category_id, author_id, title, slug, content, excerpt, image_url, status, published_at, is_editors_pick, meta_title, meta_description, meta_keywords, faq)
+                VALUES (:category_id, :author_id, :title, :slug, :content, :excerpt, :image_url, :status, :published_at, :is_editors_pick, :meta_title, :meta_description, :meta_keywords, :faq)";
 
         $pdo = Database::getConnection();
         $stmt = $pdo->prepare($sql);
@@ -174,7 +167,8 @@ class BlogPost
             'is_editors_pick' => isset($data['is_editors_pick']) ? 1 : 0,
             'meta_title' => $data['meta_title'] ?? null,
             'meta_description' => $data['meta_description'] ?? null,
-            'meta_keywords' => isset($data['meta_keywords']) ? (is_array($data['meta_keywords']) ? json_encode($data['meta_keywords'], JSON_UNESCAPED_UNICODE) : $data['meta_keywords']) : null
+            'meta_keywords' => isset($data['meta_keywords']) ? (is_array($data['meta_keywords']) ? json_encode($data['meta_keywords'], JSON_UNESCAPED_UNICODE) : $data['meta_keywords']) : null,
+            'faq' => isset($data['faq']) ? (is_array($data['faq']) ? json_encode($data['faq'], JSON_UNESCAPED_UNICODE) : $data['faq']) : null
         ]);
 
         $post_id = $pdo->lastInsertId();
@@ -227,7 +221,7 @@ class BlogPost
         }
 
         $sql = "UPDATE blog_posts
-                SET category_id = :category_id, author_id = :author_id, title = :title, slug = :slug, content = :content, excerpt = :excerpt, status = :status, published_at = :published_at, is_editors_pick = :is_editors_pick, meta_title = :meta_title, meta_description = :meta_description, meta_keywords = :meta_keywords";
+                SET category_id = :category_id, author_id = :author_id, title = :title, slug = :slug, content = :content, excerpt = :excerpt, status = :status, published_at = :published_at, is_editors_pick = :is_editors_pick, meta_title = :meta_title, meta_description = :meta_description, meta_keywords = :meta_keywords, faq = :faq";
 
         $params = [
             'id' => $id,
@@ -242,7 +236,8 @@ class BlogPost
             'is_editors_pick' => isset($data['is_editors_pick']) ? 1 : 0,
             'meta_title' => $data['meta_title'] ?? null,
             'meta_description' => $data['meta_description'] ?? null,
-            'meta_keywords' => isset($data['meta_keywords']) ? (is_array($data['meta_keywords']) ? json_encode($data['meta_keywords'], JSON_UNESCAPED_UNICODE) : $data['meta_keywords']) : null
+            'meta_keywords' => isset($data['meta_keywords']) ? (is_array($data['meta_keywords']) ? json_encode($data['meta_keywords'], JSON_UNESCAPED_UNICODE) : $data['meta_keywords']) : null,
+            'faq' => isset($data['faq']) ? (is_array($data['faq']) ? json_encode($data['faq'], JSON_UNESCAPED_UNICODE) : $data['faq']) : null
         ];
 
         if (array_key_exists('image_url', $data)) {
@@ -294,26 +289,6 @@ class BlogPost
                 $placeholders[] = '(?, ?)';
                 $params[] = $post_id;
                 $params[] = $tag_id;
-            }
-            $sql .= implode(', ', $placeholders);
-            Database::query($sql, $params);
-        }
-    }
-
-    public static function syncFaqItems($post_id, $faq_ids = [])
-    {
-        // First, remove all existing FAQ items for the post
-        Database::query("DELETE FROM blog_post_faq_items WHERE post_id = :post_id", ['post_id' => $post_id]);
-
-        // Then, add the new FAQ items
-        if (!empty($faq_ids)) {
-            $sql = "INSERT INTO blog_post_faq_items (post_id, faq_item_id) VALUES ";
-            $params = [];
-            $placeholders = [];
-            foreach ($faq_ids as $faq_id) {
-                $placeholders[] = '(?, ?)';
-                $params[] = $post_id;
-                $params[] = $faq_id;
             }
             $sql .= implode(', ', $placeholders);
             Database::query($sql, $params);

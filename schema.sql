@@ -6,7 +6,6 @@ DROP TABLE IF EXISTS `reviews`;
 DROP TABLE IF EXISTS `orders`;
 DROP TABLE IF EXISTS `blog_post_comments`;
 DROP TABLE IF EXISTS `blog_post_tags`;
-DROP TABLE IF EXISTS `blog_post_faq_items`;
 DROP TABLE IF EXISTS `category_custom_field`;
 DROP TABLE IF EXISTS `products`;
 DROP TABLE IF EXISTS `blog_posts`;
@@ -138,6 +137,7 @@ CREATE TABLE `blog_posts` (
   `meta_description` TEXT,
   `image_url` VARCHAR(255),
   `meta_keywords` JSON,
+  `faq` JSON DEFAULT NULL,
   `views_count` INT DEFAULT 0,
   `is_editors_pick` BOOLEAN NOT NULL DEFAULT FALSE,
   `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -214,15 +214,6 @@ CREATE TABLE `faq_items` (
   `position` INT DEFAULT 0,
   `status` ENUM('active', 'inactive') NOT NULL DEFAULT 'active',
   `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- Blog Post FAQ Items (Pivot Table)
-CREATE TABLE `blog_post_faq_items` (
-  `post_id` INT NOT NULL,
-  `faq_item_id` INT NOT NULL,
-  PRIMARY KEY (`post_id`, `faq_item_id`),
-  FOREIGN KEY (`post_id`) REFERENCES `blog_posts`(`id`) ON DELETE CASCADE,
-  FOREIGN KEY (`faq_item_id`) REFERENCES `faq_items`(`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Transactions Table
