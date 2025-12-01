@@ -227,10 +227,10 @@ EOT;
 
     private function getUserPrompt(string $title, string $content, bool $isFullArticle): string
     {
-        // Truncate content to avoid Token Limit Errors (Llama 3 context is approx 8k tokens)
-        // 25,000 chars is roughly 5-6k tokens, leaving room for prompt & output.
-        if (mb_strlen($content) > 25000) {
-            $content = mb_substr($content, 0, 25000) . "... [TRUNCATED]";
+        // Truncate content to avoid Token Limit Errors.
+        // Llama 3.3 has a 128k context window. 60,000 chars is safe (~15k tokens).
+        if (mb_strlen($content) > 60000) {
+            $content = mb_substr($content, 0, 60000) . "... [TRUNCATED]";
         }
 
         // ۱. تمیز کردن ورودی‌ها برای جلوگیری از به هم ریختن پرامپت

@@ -31,7 +31,7 @@ class AiNewsController
             'execution_interval' => $settings['execution_interval'] ?? 1,
             'max_posts_per_cycle' => $settings['max_posts_per_cycle'] ?? 5,
             'groq_api_key' => $settings['groq_api_key'] ?? '',
-            'groq_model' => $settings['groq_model'] ?? 'llama3-70b-8192',
+            'groq_model' => $settings['groq_model'] ?? 'llama-3.3-70b-versatile',
             'sitemap_urls' => $settings['sitemap_urls'] ?? '',
             'prompt_template' => $settings['prompt_template'] ?? '',
             'logs' => AiLog::getRecent(20)
