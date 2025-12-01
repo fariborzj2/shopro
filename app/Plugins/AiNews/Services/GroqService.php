@@ -19,48 +19,35 @@ class GroqService
         $this->model = AiSetting::get('groq_model', 'llama-3.3-70b-versatile');
     }
 
-    public function test()
-    {
-         // Simple connectivity check
-        $payload = [
-            'model' => $this->model,
-            'messages' => [
-                ['role' => 'user', 'content' => 'Say Hello']
-            ],
-            'max_tokens' => 10
-        ];
-        return $this->sendRequest($payload);
-    }
-
     public function process($data)
     {
-        if (!$this->apiKey) return null;
+        if (!$this->apiKey) return ['error' => 'API Key missing'];
 
         $url = $data['link'] ?? '';
-        $rssSummary = strip_tags($data['content'] ?? ''); // خلاصه‌ای که خود RSS می‌دهد
         $title = $data['title'] ?? '';
+        $initialContent = strip_tags($data['content'] ?? '');
 
-        // ۱. تلاش برای استخراج متن کامل از لینک
-        $fullContent = $this->fetchUrlContent($url);
-
-        // ۲. استراتژی فال‌بک: اگر متن کامل نتوانستیم بگیریم، از خلاصه استفاده کن
-        // اگر متن استخراج شده کمتر از 500 کاراکتر باشد، احتمالا مسدود شده‌ایم
-        if (strlen($fullContent) < 500) {
-            error_log("Warning: Could not scrape full content for $url. Using RSS summary.");
-            $finalContent = $rssSummary;
-            $isFullArticle = false;
+        // استراتژی: اگر محتوای اولیه کوتاه بود (زیر ۵۰۰ کاراکتر)، خودمان دوباره اسکرپ می‌کنیم
+        if (mb_strlen($initialContent) < 500 && !empty($url)) {
+            $scrapedContent = $this->fetchUrlContent($url);
+            // اگر اسکرپ موفق بود جایگزین کن، وگرنه همان قبلی را نگه دار
+            if (mb_strlen($scrapedContent) > 500) {
+                $finalContent = $scrapedContent;
+                $isFullArticle = true;
+            } else {
+                $finalContent = $initialContent; // چاره‌ای نیست، با همین بساز
+                $isFullArticle = false;
+            }
         } else {
-            $finalContent = $fullContent;
+            $finalContent = $initialContent;
             $isFullArticle = true;
         }
 
-        // اگر حتی خلاصه هم نداشتیم، رد کن
-        if (strlen($finalContent) < 50) {
-            error_log("Error: Content too short/empty for $url");
-            return null;
+        // اگر کلا محتوایی نداریم، بیخیال شو
+        if (mb_strlen($finalContent) < 100) {
+            return ['error' => 'Content too short/empty even after scraping'];
         }
 
-        // ۳. انتخاب پرامپت مناسب (اگر متن کوتاه است، باید به AI بگوییم بیشتر بسط بدهد)
         $systemPrompt = $this->getSystemPrompt();
         $userPrompt = $this->getUserPrompt($title, $finalContent, $isFullArticle);
 
@@ -70,119 +57,101 @@ class GroqService
                 ['role' => 'system', 'content' => $systemPrompt],
                 ['role' => 'user', 'content' => $userPrompt]
             ],
-            'temperature' => 0.6, // کمی پایین‌تر برای دقت بیشتر
+            'temperature' => 0.6,
             'response_format' => ['type' => 'json_object']
         ];
 
         $response = $this->sendRequest($payload);
 
         if ($response['status'] === 'success') {
-            // Check for API Error Response (e.g. Rate Limit, Context Window)
             if (isset($response['data']['error'])) {
-                return ['error' => 'API Error: ' . ($response['data']['error']['message'] ?? 'Unknown API Error')];
+                return ['error' => 'API Error: ' . ($response['data']['error']['message'] ?? 'Unknown')];
             }
 
-            $content = $response['data']['choices'][0]['message']['content'] ?? null;
-            if ($content) {
-                // 4. Sanitize and Validate Response
-                $parsed = json_decode($content, true);
+            $rawContent = $response['data']['choices'][0]['message']['content'] ?? null;
+            
+            if ($rawContent) {
+                // پاکسازی مارک‌داون‌های احتمالی که مدل اضافه می‌کند
+                $cleanJson = preg_replace('/^```json\s*/i', '', $rawContent);
+                $cleanJson = preg_replace('/^```\s*/i', '', $cleanJson);
+                $cleanJson = preg_replace('/\s*```$/', '', $cleanJson);
+
+                $parsed = json_decode($cleanJson, true);
+
                 if (json_last_error() === JSON_ERROR_NONE) {
-
-                    // VALIDATION 1: No Chinese characters
-                    if (preg_match('/[\p{Han}]/u', $content)) {
-                        return ['error' => 'Validation Error: Chinese characters detected in response'];
+                    // ولیدیشن نهایی
+                    if ($this->hasChineseChars($cleanJson)) {
+                        return ['error' => 'Validation Error: Chinese characters detected'];
                     }
-
-                    // VALIDATION 2: Enforce English Slug
-                    if (isset($parsed['slug'])) {
-                        $slug = strtolower(trim($parsed['slug']));
-                        $slug = preg_replace('/[^a-z0-9-]/', '-', $slug);
-                        $slug = preg_replace('/-+/', '-', $slug);
-                        $parsed['slug'] = trim($slug, '-');
-                    }
-                    if (empty($parsed['slug'])) {
-                        $parsed['slug'] = 'article-' . time();
-                    }
-
-                    // VALIDATION 3: Content Length
-                    $contentLength = mb_strlen(strip_tags($parsed['content'] ?? ''));
-                    if ($contentLength < 300) {
-                        return ['error' => "Validation Error: Content too short ($contentLength chars)"];
-                    }
-
-                    return $parsed;
+                    return $this->sanitizeOutput($parsed);
                 } else {
                     return ['error' => 'JSON Decode Error: ' . json_last_error_msg()];
                 }
-            } else {
-                return ['error' => 'Empty content received from AI'];
             }
-        } else {
-             return ['error' => 'Network/CURL Error: ' . ($response['message'] ?? 'Unknown')];
         }
+
+        return ['error' => 'Network Error: ' . ($response['message'] ?? 'Unknown')];
     }
 
-    /**
-     * تابع قدرتمند برای خواندن محتوای سایت‌ها با شبیه‌سازی مرورگر
-     */
     private function fetchUrlContent($url)
     {
         if (empty($url)) return '';
 
+        // لیست User-Agent برای چرخش
+        $userAgents = [
+            'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+            'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36',
+            'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36'
+        ];
+
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $url);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true); // دنبال کردن ریدایرکت‌ها
+        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
         curl_setopt($ch, CURLOPT_MAXREDIRS, 5);
-        curl_setopt($ch, CURLOPT_TIMEOUT, 20); // حداکثر ۲۰ ثانیه تلاش
+        curl_setopt($ch, CURLOPT_TIMEOUT, 30);
+        curl_setopt($ch, CURLOPT_ENCODING, ''); // **مهم: هندل کردن Gzip**
         
-        // **مهم:** هدرهای مرورگر واقعی برای جلوگیری از بلاک شدن
-        curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36');
         curl_setopt($ch, CURLOPT_HTTPHEADER, [
-            'Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
-            'Accept-Language: en-US,en;q=0.5',
-            'Referer: https://www.google.com/'
+            'User-Agent: ' . $userAgents[array_rand($userAgents)],
+            'Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+            'Accept-Language: en-US,en;q=0.9',
+            'Connection: keep-alive',
+            'Upgrade-Insecure-Requests: 1'
         ]);
-        
+
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
 
         $html = curl_exec($ch);
-        $error = curl_error($ch);
+        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
         curl_close($ch);
 
-        if ($error || empty($html)) {
-            return '';
-        }
+        if (!$html || $httpCode >= 400) return '';
 
-        // تمیز کردن HTML و استخراج متن اصلی
-        // استفاده از DOMDocument برای حذف اسکریپت‌ها و استایل‌ها
         $dom = new DOMDocument();
-        libxml_use_internal_errors(true); // مخفی کردن وارنینگ‌های HTML خراب
-        @$dom->loadHTML($html);
+        libxml_use_internal_errors(true);
+        // تبدیل انکدینگ برای جلوگیری از بهم ریختگی حروف
+        @$dom->loadHTML(mb_convert_encoding($html, 'HTML-ENTITIES', 'UTF-8'));
         libxml_clear_errors();
 
         $xpath = new DOMXPath($dom);
 
-        // حذف تگ‌های مزاحم (تبلیغات، منو، اسکریپت)
-        $tagsToRemove = ['script', 'style', 'nav', 'header', 'footer', 'iframe', 'noscript', 'svg'];
+        // حذف تگ‌های مزاحم
+        $tagsToRemove = ['script', 'style', 'nav', 'header', 'footer', 'iframe', 'noscript', 'svg', 'form', 'aside', 'ads'];
         foreach ($tagsToRemove as $tag) {
-            $nodes = $xpath->query("//{$tag}");
-            foreach ($nodes as $node) {
+            foreach ($xpath->query("//{$tag}") as $node) {
                 $node->parentNode->removeChild($node);
             }
         }
 
-        // تلاش برای پیدا کردن تگ Article یا Main که معمولا متن اصلی آنجاست
-        $articleNode = $xpath->query("//article")->item(0);
-        if (!$articleNode) {
-            $articleNode = $xpath->query("//main")->item(0);
-        }
-        
-        // اگر تگ اصلی پیدا شد از آن استفاده کن، وگرنه کل بادی
-        $targetNode = $articleNode ? $articleNode : $dom->getElementsByTagName('body')->item(0);
-
-        if ($targetNode) {
-            return trim(preg_replace('/\s+/', ' ', $targetNode->textContent));
+        // اولویت‌بندی برای یافتن متن اصلی
+        $queries = ["//article", "//main", "//div[contains(@class, 'content')]", "//body"];
+        foreach ($queries as $query) {
+            $node = $xpath->query($query)->item(0);
+            if ($node) {
+                return trim(preg_replace('/\s+/', ' ', $node->textContent));
+            }
         }
 
         return '';
@@ -198,7 +167,7 @@ class GroqService
             'Content-Type: application/json',
             'Authorization: Bearer ' . $this->apiKey
         ]);
-        curl_setopt($ch, CURLOPT_TIMEOUT, 120); 
+        curl_setopt($ch, CURLOPT_TIMEOUT, 120);
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
         
         $response = curl_exec($ch);
@@ -206,91 +175,74 @@ class GroqService
         curl_close($ch);
 
         if ($error) return ['status' => 'error', 'message' => $error];
-        
         return ['status' => 'success', 'data' => json_decode($response, true)];
+    }
+
+    private function sanitizeOutput($parsed)
+    {
+        // اطمینان از اینکه اسلاگ انگلیسی و تمیز است
+        if (isset($parsed['slug'])) {
+            $slug = strtolower(trim($parsed['slug']));
+            $slug = preg_replace('/[^a-z0-9-]/', '-', $slug);
+            $parsed['slug'] = trim(preg_replace('/-+/', '-', $slug), '-');
+        } else {
+            $parsed['slug'] = '';
+        }
+        return $parsed;
+    }
+
+    private function hasChineseChars($text) {
+        return preg_match('/[\p{Han}]/u', $text);
     }
 
     private function getSystemPrompt()
     {
         return <<<EOT
 You are a senior Persian Lead Editor and SEO Specialist.
-Your Goal: Create high-quality, analytical, and engaging Persian (Farsi) articles.
-
+Your Goal: Create high-quality, analytical, and engaging Persian (Farsi) articles based on English sources.
 CRITICAL RULES:
-1. **Output Format:** Valid JSON only.
-2. **Language:** Fluent, high-level Persian (Farsi) for content. English for slugs.
-3. **Forbidden:** NO Chinese, Japanese, or Korean characters.
-4. **Length:** Content must be comprehensive and detailed (min 1000 words).
-5. **Originality:** No direct translation. Rewrite, expand, and add analysis.
+1. Output MUST be valid JSON.
+2. Content language: Persian (Farsi). Slug: English.
+3. NO Chinese/Asian characters allowed.
+4. Do NOT translate word-for-word. Rewrite and expand professionally.
 EOT;
     }
 
-    private function getUserPrompt(string $title, string $content, bool $isFullArticle): string
+    private function getUserPrompt($title, $content, $isFullArticle)
     {
-        // Truncate content to avoid Token Limit Errors.
-        // Llama 3.3 has a 128k context window. 60,000 chars is safe (~15k tokens).
-        if (mb_strlen($content) > 60000) {
-            $content = mb_substr($content, 0, 60000) . "... [TRUNCATED]";
-        }
+        // برش متن برای جلوگیری از خطای توکن
+        if (mb_strlen($content) > 20000) $content = mb_substr($content, 0, 20000);
 
-        // ۱. تمیز کردن ورودی‌ها برای جلوگیری از به هم ریختن پرامپت
+        $strategy = $isFullArticle 
+            ? "Rewrite and restructure this article to be unique and professional." 
+            : "Expand this summary into a full investigative article using your knowledge.";
+
         $safeTitle = json_encode($title, JSON_UNESCAPED_UNICODE);
         $safeContent = json_encode($content, JSON_UNESCAPED_UNICODE);
 
-        // ۲. دستورالعمل دقیق بر اساس نوع محتوا
-        $expansionStrategy = $isFullArticle
-            ? "The input is a full article. Your task is to REWRITE and RESTRUCTURE it to be unique, strictly avoiding plagiarism while maintaining all factual data."
-            : "The input is a SUMMARY. You must act as an investigative journalist. Use your internal knowledge to EXPAND strictly on the provided topics. Add historical context, future implications, and technical details to reach the word count.";
-
         return <<<EOT
-You are a Senior Editor-in-Chief for a leading Persian news outlet and an SEO Expert.
-Your goal is to transform raw data into a high-ranking, engaging, and comprehensive article in Farsi (Persian).
+Task: Create a comprehensive Persian article.
+Input Title: {$safeTitle}
+Input Content: {$safeContent}
+Strategy: {$strategy}
 
----
-### INPUT DATA
-**Title:** {$safeTitle}
-**Source Content:** {$safeContent}
+Requirements:
+- Title: Engaging H1 in Persian.
+- Slug: English, SEO-friendly, hyphenated.
+- Body: HTML format (<p>, <h2>, <ul>). Include an "Expert Analysis" section. Min 1000 words.
+- SEO: Meta title, Meta description, 5 Tags.
+- FAQ: Generate 3 relevant Q&A in Persian.
 
-**Context Mode:** {$expansionStrategy}
-
----
-### WRITING INSTRUCTIONS
-1. **Language:** Fluent, formal, and engaging Persian (Farsi). Use "Nim-fasele" (Zero-width non-joiner) correctly.
-2. **Length:** The output must be LONG and DETAILED. Minimum 1200 words. Do not summarize; EXPAND.
-3. **No Chinese:** Strictly forbid the use of any Chinese/Asian characters. If you encounter them in input, ignore them.
-4. **Structure:**
-   - **Introduction:** Hook the reader immediately.
-   - **Body:** Use logical `<h2>` and `<h3>` headers.
-   - **Deep Analysis:** You MUST include a dedicated section titled "تحلیل و بررسی تخصصی" (Expert Analysis) that goes beyond the news.
-   - **Conclusion:** Summarize and encourage engagement.
-5. **Formatting:** Return the main content as clean HTML strings (use `<p>`, `<h2>`, `<h3>`, `<ul>`, `<li>`, `<blockquote>`). Do NOT output Markdown in the JSON values.
-6. **Tone:** Professional, objective, yet accessible. High readability.
-
----
-### SEO REQUIREMENTS
-1. **Slug:** STRICTLY ENGLISH. Lowercase, hyphen-separated only (e.g., `bitcoin-price-analysis`). NO Persian characters in slug.
-2. **Meta Title:** Catchy, under 60 chars.
-3. **Meta Description:** Click-worthy summary, under 160 chars.
-4. **Tags:** 5-7 comma-separated keywords (Persian).
-
----
-### OUTPUT FORMAT (STRICT JSON)
-You must output ONLY valid JSON. Do not include markdown code blocks (like ```json).
-Follow this schema strictly:
-
+Output JSON Schema:
 {
-    "title": "H1 title in Persian",
-    "slug": "english-slug-only",
-    "excerpt": "A short summary (250-350 chars) for the article card.",
-    "content": "Full HTML article content here...",
-    "meta_title": "SEO Title",
-    "meta_description": "SEO Description",
-    "tags": ["Tag1", "Tag2", "Tag3"],
-    "faq": [
-        {"question": "Q1 in Persian?", "answer": "Short answer 1"},
-        {"question": "Q2 in Persian?", "answer": "Short answer 2"},
-        {"question": "Q3 in Persian?", "answer": "Short answer 3"}
-    ]
+    "title": "string",
+    "slug": "string-english-only",
+    "excerpt": "string",
+    "content": "html_string",
+    "meta_title": "string",
+    "meta_description": "string",
+    "tags": ["string"],
+    "faq": [{"question": "string", "answer": "string"}]
 }
 EOT;
     }
