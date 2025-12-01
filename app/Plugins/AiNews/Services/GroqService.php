@@ -187,50 +187,66 @@ RULES:
 EOT;
     }
 
-    private function getUserPrompt($title, $content, $isFullArticle)
-    {
-        // دستورالعمل پویا: اگر متن کامل نبود، به هوش مصنوعی می‌گوییم بیشتر تحقیق کند
-        $contextInstruction = $isFullArticle 
-            ? "The provided text is the full article source." 
-            : "The provided text is a SUMMARY. You must EXPAND on this significantly using your internal knowledge about this topic.";
-
-        return <<<EOT
-Rewrite the following news into a fully rewritten, engaging, analytical Persian blog post.
-
-Source Title: {{title}}
-Source Content: {{content}}
-
-Requirements:
-1. Length: minimum 700 words.
-2. Structure:
-   - Title: catchy, SEO-optimized.
-   - Slug: English-only, URL-safe, based on the topic (no Persian / no spaces).
-   - Excerpt: minimum 250 characters, maximum ~350 characters.
-   - Content:
-     - HTML formatting (<h2>, <h3>, <p>, <ul>, <li>, <strong>)
-     - Short, information-rich paragraphs
-     - Must include added context, background, comparisons, or implications beyond the source news.
-   - FAQ: 3–5 Q/A
-   - SEO:
-     - Meta Title (≤60 chars)
-     - Meta Description (≤160 chars)
-     - Tags: 5–7 short, relevant tags
-3. Output Format: Strictly valid JSON. No markdown, no comments.
-
-JSON Schema:
+private function getUserPrompt(string $title, string $content, bool $isFullArticle): string
 {
-  "title": "string",
-  "slug": "string (English, URL-safe)",
-  "excerpt": "string",
-  "content": "string (HTML)",
-  "meta_title": "string",
-  "meta_description": "string",
-  "tags": ["string", "string"],
-  "faq": [
-    {"question": "string", "answer": "string"}
-  ]
-}
+    // ۱. تمیز کردن ورودی‌ها برای جلوگیری از به هم ریختن پرامپت
+    $safeTitle = json_encode($title, JSON_UNESCAPED_UNICODE);
+    $safeContent = json_encode($content, JSON_UNESCAPED_UNICODE);
 
+    // ۲. دستورالعمل دقیق بر اساس نوع محتوا
+    $expansionStrategy = $isFullArticle 
+        ? "The input is a full article. Your task is to REWRITE and RESTRUCTURE it to be unique, strictly avoiding plagiarism while maintaining all factual data." 
+        : "The input is a SUMMARY. You must act as an investigative journalist. Use your internal knowledge to EXPAND strictly on the provided topics. Add historical context, future implications, and technical details to reach the word count.";
+
+    return <<<EOT
+You are a Senior Editor-in-Chief for a leading Persian news outlet and an SEO Expert.
+Your goal is to transform raw data into a high-ranking, engaging, and comprehensive article in Farsi (Persian).
+
+---
+### INPUT DATA
+**Title:** {$safeTitle}
+**Source Content:** {$safeContent}
+
+**Context Mode:** {$expansionStrategy}
+
+---
+### WRITING INSTRUCTIONS
+1. **Language:** Fluent, formal, and engaging Persian (Farsi). Use "Nim-fasele" (Zero-width non-joiner) correctly.
+2. **Length:** Minimum 1200 words (Strict).
+3. **Structure:**
+   - **Introduction:** Hook the reader immediately.
+   - **Body:** Use logical `<h2>` and `<h3>` headers.
+   - **Deep Analysis:** You MUST include a dedicated section titled "تحلیل و بررسی تخصصی" (Expert Analysis) that goes beyond the news.
+   - **Conclusion:** Summarize and encourage engagement.
+4. **Formatting:** Return the main content as clean HTML strings (use `<p>`, `<h2>`, `<h3>`, `<ul>`, `<li>`, `<blockquote>`). Do NOT output Markdown in the JSON values.
+5. **Tone:** Professional, objective, yet accessible.
+
+---
+### SEO REQUIREMENTS
+1. **Slug:** English only, URL-friendly, lowercase, hyphen-separated (e.g., `bitcoin-price-analysis`).
+2. **Meta Title:** Catchy, under 60 chars.
+3. **Meta Description:** Click-worthy summary, under 160 chars.
+4. **Tags:** 5-7 comma-separated keywords.
+
+---
+### OUTPUT FORMAT (STRICT JSON)
+You must output ONLY valid JSON. Do not include markdown code blocks (like ```json).
+Follow this schema strictly:
+
+{
+    "title": "H1 title in Persian",
+    "slug": "english-slug",
+    "excerpt": "A short summary (250-350 chars) for the article card.",
+    "content": "Full HTML article content here...",
+    "meta_title": "SEO Title",
+    "meta_description": "SEO Description",
+    "tags": ["Tag1", "Tag2", "Tag3"],
+    "faq": [
+        {"question": "Q1 in Persian?", "answer": "Short answer 1"},
+        {"question": "Q2 in Persian?", "answer": "Short answer 2"},
+        {"question": "Q3 in Persian?", "answer": "Short answer 3"}
+    ]
+}
 EOT;
-    }
+}
 }
