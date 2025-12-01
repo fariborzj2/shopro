@@ -5,7 +5,6 @@ namespace App\Controllers;
 use App\Core\Template;
 use App\Models\BlogPost;
 use App\Models\BlogCategory;
-use App\Models\FaqItem;
 use App\Core\Paginator;
 
 class BlogController
@@ -127,8 +126,14 @@ class BlogController
             // Increment view count
             BlogPost::incrementViews($post->id);
 
-            $faq_ids = BlogPost::getFaqItemsByPostId($post->id);
-            $faq_items = !empty($faq_ids) ? FaqItem::findByIds($faq_ids) : [];
+            // FAQ Items from JSON
+            $faq_items = [];
+            if (!empty($post->faq)) {
+                $faq_items = json_decode($post->faq, true);
+                if (!is_array($faq_items)) {
+                    $faq_items = [];
+                }
+            }
 
             $tags = BlogPost::getTagsByPostId($post->id);
 
@@ -161,10 +166,10 @@ class BlogController
                     'mainEntity' => array_map(function($faq) {
                         return [
                             '@type' => 'Question',
-                            'name' => $faq->question,
+                            'name' => $faq['question'],
                             'acceptedAnswer' => [
                                 '@type' => 'Answer',
-                                'text' => $faq->answer,
+                                'text' => $faq['answer'],
                             ],
                         ];
                     }, $faq_items),

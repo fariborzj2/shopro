@@ -70,15 +70,15 @@
                                 سوالات متداول
                             </h2>
                             <div class="space-y-4" x-data="{ openItem: null }">
-                                <?php foreach ($faq_items as $faq) : ?>
+                                <?php foreach ($faq_items as $index => $faq) : ?>
                                     <div class="border border-gray-200 rounded-xl overflow-hidden transition-colors hover:border-indigo-200">
-                                        <button @click="openItem === <?= $faq->id ?> ? openItem = null : openItem = <?= $faq->id ?>"
+                                        <button @click="openItem === <?= $index ?> ? openItem = null : openItem = <?= $index ?>"
                                                 class="w-full flex justify-between items-center p-4 bg-gray-50/50 hover:bg-gray-50 text-right font-semibold text-gray-800 transition-colors">
-                                            <span><?= htmlspecialchars($faq->question) ?></span>
-                                            <svg class="w-5 h-5 text-gray-400 transform transition-transform duration-200" :class="{'rotate-180': openItem === <?= $faq->id ?>}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                                            <span><?= htmlspecialchars($faq['question']) ?></span>
+                                            <svg class="w-5 h-5 text-gray-400 transform transition-transform duration-200" :class="{'rotate-180': openItem === <?= $index ?>}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                                         </button>
-                                        <div x-show="openItem === <?= $faq->id ?>" x-collapse class="bg-white p-4 text-gray-600 leading-relaxed border-t border-gray-100">
-                                            <?= $faq->answer ?>
+                                        <div x-show="openItem === <?= $index ?>" x-collapse class="bg-white p-4 text-gray-600 leading-relaxed border-t border-gray-100">
+                                            <?= $faq['answer'] ?>
                                         </div>
                                     </div>
                                 <?php endforeach; ?>

@@ -173,11 +173,11 @@ class Crawler
             $sql = "INSERT INTO blog_posts (
                 category_id, author_id, title, slug, content, excerpt,
                 status, meta_title, meta_description, meta_keywords,
-                image_url, views_count, is_editors_pick, created_at, updated_at
+                image_url, views_count, is_editors_pick, created_at, updated_at, faq
             ) VALUES (
                 :cat, :auth, :title, :slug, :content, :excerpt,
                 'draft', :m_title, :m_desc, :tags,
-                :img, 0, 0, NOW(), NOW()
+                :img, 0, 0, NOW(), NOW(), :faq
             )";
 
             $stmt = $this->pdo->prepare($sql);
@@ -191,25 +191,11 @@ class Crawler
                 'm_title' => $aiData['meta_title'] ?? $title,
                 'm_desc' => $aiData['meta_description'] ?? $excerpt,
                 'tags' => json_encode($aiData['tags'] ?? [], JSON_UNESCAPED_UNICODE),
-                'img' => $finalImageUrl
+                'img' => $finalImageUrl,
+                'faq' => json_encode($faq ?? [], JSON_UNESCAPED_UNICODE)
             ]);
 
             $postId = $this->pdo->lastInsertId();
-
-            // Insert FAQ (Raw SQL for transaction safety)
-            if (!empty($faq) && is_array($faq)) {
-                $stmtFaq = $this->pdo->prepare("INSERT INTO faq_items (question, answer, type, status, position, created_at) VALUES (?, ?, 'blog_faq', 'active', 0, NOW())");
-                $stmtPivot = $this->pdo->prepare("INSERT INTO blog_post_faq_items (post_id, faq_item_id) VALUES (?, ?)");
-
-                foreach ($faq as $item) {
-                    if (empty($item['question']) || empty($item['answer'])) continue;
-                    
-                    $stmtFaq->execute([$item['question'], $item['answer']]);
-                    $faqId = $this->pdo->lastInsertId();
-                    
-                    $stmtPivot->execute([$postId, $faqId]);
-                }
-            }
 
             $this->pdo->commit();
             return true;

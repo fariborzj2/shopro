@@ -6,7 +6,6 @@ use App\Models\BlogPost;
 use App\Models\BlogCategory;
 use App\Models\Admin;
 use App\Models\BlogTag;
-use App\Models\FaqItem;
 use App\Core\Paginator;
 use App\Core\ImageUploader;
 
@@ -130,6 +129,14 @@ class BlogPostsController
                 $_POST["meta_description"] ?? ""
             ),
             "meta_keywords" => $_POST["meta_keywords"] ?? null,
+            "faq" => array_map(function($item) {
+                return [
+                    'question' => htmlspecialchars($item['question']),
+                    'answer' => htmlspecialchars($item['answer'])
+                ];
+            }, array_filter($_POST['post_faqs'] ?? [], function($item) {
+                return !empty($item['question']) && !empty($item['answer']);
+            }))
         ];
 
         // Handle published_at (Timestamp)
@@ -208,10 +215,6 @@ class BlogPostsController
             }
             BlogPost::syncTags($post_id, $tagIds);
 
-            // Sync FAQ items
-            $faq_items = $_POST["faq_items"] ?? [];
-            BlogPost::syncFaqItems($post_id, $faq_items);
-
             header("Location: /admin/blog/posts");
             exit();
         }
@@ -233,13 +236,10 @@ class BlogPostsController
         $tags = BlogTag::findAll();
         $post_tags = BlogPost::getTagsByPostId($id);
 
-        $all_faq_items = FaqItem::all();
-        $post_faq_items = BlogPost::getFaqItemsByPostId($id);
-
-        // Fetch full objects for the FAQ tab
+        // Fetch FAQ data from JSON column
         $post_faq_objects = [];
-        if (!empty($post_faq_items)) {
-            $post_faq_objects = FaqItem::findByIds($post_faq_items);
+        if (!empty($post['faq'])) {
+            $post_faq_objects = json_decode($post['faq'], true);
         }
 
         // Convert gregorian published_at to jalali for the view
@@ -258,8 +258,6 @@ class BlogPostsController
             "authors" => $authors,
             "tags" => $tags,
             "post_tags" => $post_tags,
-            "all_faq_items" => $all_faq_items,
-            "post_faq_items" => $post_faq_items,
             "post_faq_objects" => $post_faq_objects,
         ]);
     }
@@ -334,6 +332,14 @@ class BlogPostsController
                 $_POST["meta_description"] ?? ""
             ),
             "meta_keywords" => $_POST["meta_keywords"] ?? null,
+            "faq" => array_map(function($item) {
+                return [
+                    'question' => htmlspecialchars($item['question']),
+                    'answer' => htmlspecialchars($item['answer'])
+                ];
+            }, array_filter($_POST['post_faqs'] ?? [], function($item) {
+                return !empty($item['question']) && !empty($item['answer']);
+            }))
         ];
 
         // Handle Jalali Date Conversion for published_at
@@ -427,43 +433,6 @@ class BlogPostsController
             }
         }
         BlogPost::syncTags($id, $tagIds);
-
-        // Sync FAQ items
-        $post_faqs = $_POST["post_faqs"] ?? [];
-        $faq_ids = [];
-
-        foreach ($post_faqs as $faq_data) {
-            $faq_id = null;
-            if (!empty($faq_data["id"])) {
-                // Update existing
-                $faq_id = $faq_data["id"];
-                FaqItem::update($faq_id, [
-                    "question" => htmlspecialchars($faq_data["question"]),
-                    "answer" => htmlspecialchars($faq_data["answer"]),
-                    "status" => "active",
-                    "position" => 0,
-                ]);
-            } else {
-                // Create new
-                FaqItem::create([
-                    "question" => htmlspecialchars($faq_data["question"]),
-                    "answer" => htmlspecialchars($faq_data["answer"]),
-                    "status" => "active",
-                    "position" => 0,
-                ]);
-                $pdo = \App\Core\Database::getConnection();
-                $faq_id = $pdo->lastInsertId();
-            }
-
-            if ($faq_id) {
-                $faq_ids[] = $faq_id;
-            }
-        }
-
-        $manual_faq_ids = $_POST["faq_items"] ?? [];
-        $all_faq_ids = array_merge($faq_ids, $manual_faq_ids);
-
-        BlogPost::syncFaqItems($id, $all_faq_ids);
 
         header("Location: /admin/blog/posts");
         exit();
