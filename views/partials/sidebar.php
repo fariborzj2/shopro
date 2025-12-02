@@ -118,7 +118,7 @@ $superAdminItems = [
     ],
     [
         'label' => 'مدیریت پلاگین‌ها',
-        'url' => '/admin/plugins',
+        'url' => '/plugins',
         'icon' => 'settings', // Reusing settings icon or a new 'plugin' icon if available
         'permission' => 'super_admin'
     ]
