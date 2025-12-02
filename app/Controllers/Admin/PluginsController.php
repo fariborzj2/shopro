@@ -14,7 +14,7 @@ class PluginsController
         $stmt = $db->query("SELECT * FROM plugins ORDER BY name ASC");
         $plugins = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 
-        view('admin/layouts/main', 'admin/plugins/index', ['plugins' => $plugins]);
+        view('main', 'admin/plugins/index', ['plugins' => $plugins]);
     }
 
     public function upload()
