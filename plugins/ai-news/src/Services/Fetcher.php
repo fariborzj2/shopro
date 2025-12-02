@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Plugins\AiNews\Services;
+namespace Plugins\AiNews\Services;
 
 class Fetcher
 {

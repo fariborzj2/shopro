@@ -185,16 +185,3 @@ $router->post('/admin/plugins/upload', 'Admin\PluginsController@upload');
 $router->post('/admin/plugins/activate/{slug}', 'Admin\PluginsController@activate');
 $router->post('/admin/plugins/deactivate/{slug}', 'Admin\PluginsController@deactivate');
 $router->post('/admin/plugins/delete/{slug}', 'Admin\PluginsController@delete');
-
-// ----------------------------------------------------------------------
-// AI News Plugin Routes
-// ----------------------------------------------------------------------
-$router->get('/admin/ai-news/settings', '\App\Plugins\AiNews\Controllers\AiNewsController@settings');
-$router->post('/admin/ai-news/settings/save', '\App\Plugins\AiNews\Controllers\AiNewsController@saveSettings');
-$router->post('/admin/ai-news/test-connection', '\App\Plugins\AiNews\Controllers\AiNewsController@testConnection');
-$router->get('/admin/ai-news/list', '\App\Plugins\AiNews\Controllers\AiNewsController@list');
-$router->post('/admin/ai-news/fetch', '\App\Plugins\AiNews\Controllers\AiNewsController@fetch');
-$router->post('/admin/ai-news/approve/{id}', '\App\Plugins\AiNews\Controllers\AiNewsController@approve');
-$router->post('/admin/ai-news/delete/{id}', '\App\Plugins\AiNews\Controllers\AiNewsController@delete');
-$router->post('/admin/ai-news/clear-history', '\App\Plugins\AiNews\Controllers\AiNewsController@clearHistory');
-$router->post('/admin/ai-news/clear-logs', '\App\Plugins\AiNews\Controllers\AiNewsController@clearLogs');

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Plugins\AiNews\Models;
+namespace Plugins\AiNews\Models;
 
 use App\Core\Database;
 use PDO;
