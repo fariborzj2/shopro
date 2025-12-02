@@ -7,7 +7,7 @@
 // ----------------------------------------------------------------------
 $router->get('/', 'StorefrontController@home');
 $router->get('/page/{slug}', 'StorefrontController@page');
-$router->get('/{slug}', 'StorefrontController@category');
+$router->get('/category/{slug}', 'StorefrontController@category');
 
 // Blog Routes
 $router->get('/blog', 'BlogController@index');
