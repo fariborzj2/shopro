@@ -228,64 +228,84 @@ class GroqService
 private function getSystemPrompt()
 {
     return <<<EOT
-You are a senior Persian Lead Editor, Content Strategist, and SEO Specialist.
-Your Goal: Produce high-quality, deeply-analytical, well-expanded Persian (Farsi) articles based on English sources.
+You are a highly experienced **Senior Persian Lead Editor and Tech Journalist**.
+Your goal is to transform English source material into high-authority, original, and deeply analytical Persian articles.
 
-CRITICAL RULES:
-1. Output MUST be valid JSON.
-2. All article content MUST be in fluent Persian. Slug MUST be English-only.
-3. DO NOT translate word-for-word. Create original, expanded, high-quality editorial content.
-4. No Chinese/Asian characters allowed.
-5. The writing must be natural, readable, and deeply informative, not a translation.
-6. English technical terms are allowed and should NOT be rewritten in Fingilish. Keep them English.
-7. Important concepts and keywords in the article body MUST be emphasized using <strong>.
-8. Content should always improve the original source — add depth, context, analysis, clarity, and useful expansions.
-9. Excerpt (summary) MUST be minimum 50 words and written as an engaging, human-friendly introduction.
+**CORE DIRECTIVES:**
+1.  **NO TRANSLATION:** Do not translate sentence-by-sentence. Read the source, understand the core concepts, and write a completely new article in fluent, modern Persian (Farsi).
+2.  **AUDIENCE:** Write for a professional audience. The tone should be formal, authoritative, yet engaging (رسمی، تحلیلی و روان).
+3.  **DEPTH:** Do not just summarize. Expand on points using logic, comparisons, pros/cons, and future implications.
+4.  **FORMATTING:**
+    - Use standard Persian punctuation (including correct spacing).
+    - Use <strong> sparingly for impact.
+    - Structure content logically using <h2> for main sections and <h3> for subsections.
+    - Bold all **main SEO keywords** throughout the article for emphasis and clarity.
+    - Never put the main title inside the 'content' field (start with the introduction).
+5.  **RESTRICTIONS:**
+    - Output MUST be a single, valid JSON object.
+    - No conversational filler ("Here is the JSON...").
+    - Use English only for specific technical terms (e.g., PHP, React, SEO) where common in the industry.
+
 EOT;
 }
+
+
 private function getUserPrompt($title, $content, $isFullArticle)
 {
+    // Safety check: Cut at the nearest sentence to avoid broken context
     if (mb_strlen($content) > 20000) {
-        $content = mb_substr($content, 0, 20000);
+        $truncated = mb_substr($content, 0, 20000);
+        $lastPeriod = mb_strrpos($truncated, '.');
+        $content = ($lastPeriod !== false) ? mb_substr($truncated, 0, $lastPeriod + 1) : $truncated;
     }
 
     $strategy = $isFullArticle
-        ? "Rewrite and restructure this article to be unique, analytical, and professionally expanded."
-        : "Expand this summary into a full investigative, context-rich article using your expert editorial knowledge.";
+        ? "Analyze this article deeply. Reconstruct it as a comprehensive 'Definitive Guide' or 'In-depth Analysis' in Persian. Add value beyond the original text."
+        : "Use this summary as a seed. Expand it into a full-blown investigative article. Fill in gaps with expert knowledge/reasoning.";
 
-    $safeTitle = json_encode($title, JSON_UNESCAPED_UNICODE);
-    $safeContent = json_encode($content, JSON_UNESCAPED_UNICODE);
+    // Encoding input to prevent prompt injection or JSON syntax errors in the prompt itself
+    $safeInput = json_encode([
+        'title' => $title,
+        'content' => $content
+    ], JSON_UNESCAPED_UNICODE);
 
     return <<<EOT
-Task: Create a comprehensive, deeply-analytical Persian article with a minimum length of 1000 words.
-Input Title: {$safeTitle}
-Input Content: {$safeContent}
-Strategy: {$strategy}
+**TASK:** Create a premium Persian article based on the provided input.
 
-Requirements:
-- Title: Strong H1 in Persian.
-- Slug: English-only, SEO-friendly, hyphenated.
-- Excerpt: Minimum 50 words. Must be an expanded, natural, engaging introduction (NOT a translation).
-- Body: HTML (<p>, <h2>, <h3>, <h4>, <ul>,<ol>,<table>,<strong>, <blockquote>) with emphasized <strong> keywords.
-- Add an "Expert Analysis" section with insights beyond the source material.
-- Improve and expand the content intellectually — add context, comparisons, explanations, and clarity.
-- SEO: Provide Meta title, Meta description, and exactly 5 SEO-friendly Persian tags.
-- FAQ: Generate exactly 3 useful Q&A in Persian, highly relevant to the topic.
-- English technical terms may appear unchanged (no Fingilish replacement).
-- The full article must read like a professional editorial investigation, not a translated post.
+**STRATEGY:** {$strategy}
 
-Output JSON Schema:
+**INPUT DATA:**
+{$safeInput}
+
+**CONTENT REQUIREMENTS:**
+1.  **Length:** Aim for comprehensive coverage (approx. 1500+ words equivalent depth).
+2.  **Structure:**
+    - **Excerpt:** A captivating lead paragraph (Check-mate intro) that hooks the reader instantly.
+    - **Body:** Properly nested <h2> and <h3> tags. Use bullet points <ul> for readability.
+    - **Keyword Rules:** All primary SEO keywords must be **bolded** consistently.
+    - **Conclusion:** A section titled "جمع‌بندی و نتیجه‌گیری" that synthesizes the insights.
+3.  **SEO:**
+    - **Slug:** English, lowercase, hyphenated, optimized for keywords.
+    - **Tags:** 5 highly relevant Persian tags (singular/plural correct).
+    - **FAQ:** 3 distinct questions that address user intent, not just random facts.
+
+**OUTPUT JSON SCHEMA (Strict):**
+You must output ONLY this JSON structure:
 {
-    "title": "string",
-    "slug": "string-english-only",
-    "excerpt": "string (min 50 words)",
-    "content": "html_string",
-    "meta_title": "string",
-    "meta_description": "string",
-    "tags": ["string"],
-    "faq": [{"question": "string", "answer": "string"}]
+    "title": "string (Persian, no HTML, engaging header, max 60 chars)",
+    "slug": "string (english-slug-format)",
+    "excerpt": "string (HTML allowed, min 100 words, engaging intro)",
+    "content": "string (HTML body string. Start directly with the first paragraph or H2. DO NOT include H1)",
+    "meta_title": "string (SEO optimized, max 60 chars)",
+    "meta_description": "string (SEO optimized, max 160 chars)",
+    "tags": ["string", "string", "string", "string", "string"],
+    "faq": [
+        {"question": "string", "answer": "string"},
+        {"question": "string", "answer": "string"},
+        {"question": "string", "answer": "string"}
+    ]
 }
 EOT;
 }
-
+    
 }
