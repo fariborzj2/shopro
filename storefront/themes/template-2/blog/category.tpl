@@ -20,7 +20,7 @@
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 <?php foreach ($posts as $post) : ?>
                     <article class="bg-white dark:bg-gray-800 rounded-2xl shadow-card border border-gray-100 dark:border-gray-700 overflow-hidden hover:shadow-lg transition-all duration-300 group flex flex-col h-full">
-                        <a href="/blog/<?= $post->slug ?>" class="relative aspect-[16/10] bg-gray-200 dark:bg-gray-700 overflow-hidden block">
+                            <a href="/blog/<?= $post->category_slug ?? 'news' ?>/<?= $post->id ?>-<?= $post->slug ?>" class="relative aspect-[16/10] bg-gray-200 dark:bg-gray-700 overflow-hidden block">
                             <img src="<?= $post->image_url ?? 'https://placehold.co/600x400/EEE/31343C?text=No+Image' ?>"
                                  alt="<?= htmlspecialchars($post->title) ?>"
                                  class="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500">
@@ -41,7 +41,7 @@
                             </div>
 
                             <h2 class="text-xl font-bold text-gray-800 dark:text-white mb-3 leading-snug group-hover:text-primary-600 transition-colors">
-                                <a href="/blog/<?= $post->slug ?>">
+                                    <a href="/blog/<?= $post->category_slug ?? 'news' ?>/<?= $post->id ?>-<?= $post->slug ?>">
                                     <?= htmlspecialchars($post->title) ?>
                                 </a>
                             </h2>

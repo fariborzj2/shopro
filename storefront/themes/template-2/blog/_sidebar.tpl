@@ -34,7 +34,7 @@
              class="space-y-4">
             <?php if (!empty($sidebar['most_commented'])): ?>
                 <?php foreach ($sidebar['most_commented'] as $index => $post): ?>
-                    <a href="/blog/<?= $post->slug ?>" class="flex gap-4 group items-start">
+            <a href="/blog/<?= $post->category_slug ?? 'news' ?>/<?= $post->id ?>-<?= $post->slug ?>" class="flex gap-4 group items-start">
                         <span class="flex-shrink-0 w-6 h-6 rounded-full bg-primary-50 dark:bg-primary-900/30 text-primary-600 dark:text-primary-400 text-xs font-bold flex items-center justify-center mt-0.5 group-hover:bg-primary-600 group-hover:text-white transition-colors">
                             <?= $index + 1 ?>
                         </span>
@@ -60,7 +60,7 @@
              class="space-y-4">
             <?php if (!empty($sidebar['most_viewed'])): ?>
                 <?php foreach ($sidebar['most_viewed'] as $index => $post): ?>
-                    <a href="/blog/<?= $post->slug ?>" class="flex gap-4 group items-start">
+            <a href="/blog/<?= $post->category_slug ?? 'news' ?>/<?= $post->id ?>-<?= $post->slug ?>" class="flex gap-4 group items-start">
                         <span class="flex-shrink-0 w-6 h-6 rounded-full bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400 text-xs font-bold flex items-center justify-center mt-0.5 group-hover:bg-primary-600 group-hover:text-white transition-colors">
                             <?= $index + 1 ?>
                         </span>
@@ -86,7 +86,7 @@
              class="space-y-4">
             <?php if (!empty($sidebar['editors_picks'])): ?>
                 <?php foreach ($sidebar['editors_picks'] as $post): ?>
-                    <a href="/blog/<?= $post->slug ?>" class="block group">
+            <a href="/blog/<?= $post->category_slug ?? 'news' ?>/<?= $post->id ?>-<?= $post->slug ?>" class="block group">
                         <div class="aspect-video bg-gray-100 dark:bg-gray-700 rounded-lg overflow-hidden mb-3">
                             <img src="<?= $post->image_url ?? 'https://placehold.co/400x300/EEE/31343C?text=Image' ?>"
                                  class="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500"

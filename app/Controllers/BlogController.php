@@ -114,16 +114,28 @@ class BlogController
         ]);
     }
 
-    public function show($slug)
+    public function show($category, $slug)
     {
         $slug = urldecode($slug);
-        try {
+        // Extract ID from slug (format: {id}-{slug})
+        if (preg_match('/^(\d+)-/', $slug, $matches)) {
+            $id = (int)$matches[1];
+            $post = BlogPost::findByIdWithCategory($id);
+        } else {
+            // Fallback for old URLs or direct slug access (optional, but good for stability)
             $post = BlogPost::findBySlug($slug);
+        }
+
+        try {
             if (!$post) {
                 http_response_code(404);
                 echo "پست یافت نشد.";
                 return;
             }
+
+            // Canonical check/Verification (Optional: strict check on category and slug structure)
+            // If strictly enforcing structure, we could redirect here if URL doesn't match constructed URL.
+            // For now, we just proceed.
 
             // Increment view count
             BlogPost::incrementViews($post->id);

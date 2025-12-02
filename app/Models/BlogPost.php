@@ -22,7 +22,7 @@ class BlogPost
     {
         $params = [];
         $sql = "SELECT SQL_CALC_FOUND_ROWS bp.*,
-                bc.name_fa as category_name,
+                bc.name_fa as category_name, bc.slug as category_slug,
                 a.name as author_name,
                 (SELECT COUNT(*) FROM blog_post_comments bpc WHERE bpc.post_id = bp.id) as comments_count
                 FROM blog_posts bp
@@ -78,10 +78,11 @@ class BlogPost
      */
     public static function getAllPublished()
     {
-        $sql = "SELECT slug, created_at, updated_at
-                FROM blog_posts
-                WHERE status = 'published'
-                ORDER BY published_at DESC";
+        $sql = "SELECT bp.slug, bp.id, bp.created_at, bp.updated_at, bc.slug as category_slug
+                FROM blog_posts bp
+                LEFT JOIN blog_categories bc ON bp.category_id = bc.id
+                WHERE bp.status = 'published'
+                ORDER BY bp.published_at DESC";
         $stmt = Database::query($sql);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
@@ -96,6 +97,23 @@ class BlogPost
     {
         $stmt = Database::query("SELECT * FROM blog_posts WHERE id = :id", ['id' => $id]);
         return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
+    /**
+     * Find a single blog post by its ID including category info.
+     *
+     * @param int $id
+     * @return mixed
+     */
+    public static function findByIdWithCategory($id)
+    {
+        $sql = "SELECT bp.*, bc.name_fa as category_name, bc.slug as category_slug, a.name as author_name
+                FROM blog_posts bp
+                LEFT JOIN blog_categories bc ON bp.category_id = bc.id
+                LEFT JOIN admins a ON bp.author_id = a.id
+                WHERE bp.id = :id";
+        $stmt = Database::query($sql, ['id' => $id]);
+        return $stmt->fetch(PDO::FETCH_OBJ);
     }
 
     /**
@@ -356,9 +374,10 @@ class BlogPost
     public static function findRelatedPosts($post_id, $limit = 5)
     {
         // Optimized to exclude content
-        $sql = "SELECT bp.id, bp.title, bp.slug, bp.excerpt, bp.image_url, bp.published_at, COUNT(bpt.tag_id) as common_tags
+        $sql = "SELECT bp.id, bp.title, bp.slug, bp.excerpt, bp.image_url, bp.published_at, bc.slug as category_slug, COUNT(bpt.tag_id) as common_tags
                 FROM blog_post_tags bpt
                 JOIN blog_posts bp ON bpt.post_id = bp.id
+                LEFT JOIN blog_categories bc ON bp.category_id = bc.id
                 WHERE bpt.tag_id IN (SELECT tag_id FROM blog_post_tags WHERE post_id = :post_id)
                 AND bp.id != :exclude_id
                 GROUP BY bp.id
@@ -378,13 +397,16 @@ class BlogPost
     public static function findMostViewed($limit = 5, $days = null)
     {
         // Select only necessary columns to avoid memory issues with large content
-        $sql = "SELECT id, title, slug, excerpt, published_at, image_url, views_count FROM blog_posts WHERE status = 'published' AND (published_at IS NULL OR published_at <= NOW())";
+        $sql = "SELECT bp.id, bp.title, bp.slug, bp.excerpt, bp.published_at, bp.image_url, bp.views_count, bc.slug as category_slug
+                FROM blog_posts bp
+                LEFT JOIN blog_categories bc ON bp.category_id = bc.id
+                WHERE bp.status = 'published' AND (bp.published_at IS NULL OR bp.published_at <= NOW())";
 
         if ($days) {
-            $sql .= " AND published_at >= :cutoff_date";
+            $sql .= " AND bp.published_at >= :cutoff_date";
         }
 
-        $sql .= " ORDER BY views_count DESC LIMIT :limit";
+        $sql .= " ORDER BY bp.views_count DESC LIMIT :limit";
 
         $pdo = Database::getConnection();
         $stmt = $pdo->prepare($sql);
@@ -400,7 +422,10 @@ class BlogPost
 
     public static function findEditorsPicks($limit = 5)
     {
-        $sql = "SELECT id, title, slug, excerpt, published_at, image_url, is_editors_pick FROM blog_posts WHERE status = 'published' AND is_editors_pick = 1 AND (published_at IS NULL OR published_at <= NOW()) ORDER BY published_at DESC LIMIT :limit";
+        $sql = "SELECT bp.id, bp.title, bp.slug, bp.excerpt, bp.published_at, bp.image_url, bp.is_editors_pick, bc.slug as category_slug
+                FROM blog_posts bp
+                LEFT JOIN blog_categories bc ON bp.category_id = bc.id
+                WHERE bp.status = 'published' AND bp.is_editors_pick = 1 AND (bp.published_at IS NULL OR bp.published_at <= NOW()) ORDER BY bp.published_at DESC LIMIT :limit";
         $pdo = Database::getConnection();
         $stmt = $pdo->prepare($sql);
         $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
@@ -432,11 +457,13 @@ class BlogPost
 
     public static function getSearchSuggestions($term, $limit = 5)
     {
-        $sql = "SELECT title, slug FROM blog_posts
-                WHERE status = 'published'
-                AND (published_at IS NULL OR published_at <= NOW())
-                AND title LIKE :term
-                ORDER BY published_at DESC
+        $sql = "SELECT bp.title, bp.slug, bc.slug as category_slug
+                FROM blog_posts bp
+                LEFT JOIN blog_categories bc ON bp.category_id = bc.id
+                WHERE bp.status = 'published'
+                AND (bp.published_at IS NULL OR bp.published_at <= NOW())
+                AND bp.title LIKE :term
+                ORDER BY bp.published_at DESC
                 LIMIT :limit";
         $pdo = Database::getConnection();
         $stmt = $pdo->prepare($sql);
@@ -501,8 +528,10 @@ class BlogPost
         // Step 1: Collection by range
         foreach ($ranges as $days) {
             $sql = "SELECT bp.id, bp.title, bp.slug, bp.excerpt, bp.published_at, bp.image_url, bp.views_count,
+                    bc.slug as category_slug,
                     (SELECT COUNT(*) FROM blog_post_comments bpc WHERE bpc.post_id = bp.id) as comments_count
                     FROM blog_posts bp
+                    LEFT JOIN blog_categories bc ON bp.category_id = bc.id
                     WHERE bp.status = 'published'
                     AND (bp.published_at IS NULL OR bp.published_at <= NOW())
                     AND bp.published_at >= DATE_SUB(NOW(), INTERVAL :days DAY)";
@@ -531,8 +560,10 @@ class BlogPost
             // But strict adherence to "Add from archive only as much as needed to complete (up to 3)"
 
             $sql = "SELECT bp.id, bp.title, bp.slug, bp.excerpt, bp.published_at, bp.image_url, bp.views_count,
+                    bc.slug as category_slug,
                     (SELECT COUNT(*) FROM blog_post_comments bpc WHERE bpc.post_id = bp.id) as comments_count
                     FROM blog_posts bp
+                    LEFT JOIN blog_categories bc ON bp.category_id = bc.id
                     WHERE bp.status = 'published'
                     AND (bp.published_at IS NULL OR bp.published_at <= NOW())";
 
