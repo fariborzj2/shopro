@@ -114,7 +114,7 @@ class BlogController
         ]);
     }
 
-    public function show($category, $slug = null)
+    public function show($category = null, $slug = null)
     {
         // Handle route ambiguity: /blog/{slug} vs /blog/{category}/{slug}
         // If $slug is null, it means we came from /blog/{slug}, so $category actually holds the slug.
@@ -393,6 +393,14 @@ class BlogController
 
         // Sanitize Title
         $postObj->title = strip_tags($postObj->title ?? '');
+
+        // Ensure author_name is set
+        $postObj->author_name = $postObj->author_name ?? 'نویسنده ناشناس';
+
+        // Ensure published_at is valid
+        if (empty($postObj->published_at)) {
+            $postObj->published_at = $postObj->created_at ?? date('Y-m-d H:i:s');
+        }
 
         // Sanitize Excerpt
         // Use excerpt if available, otherwise strip content
