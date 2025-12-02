@@ -3,6 +3,7 @@
 namespace Plugins\AiNews;
 
 use App\Core\Router;
+use App\Core\Plugin\Filter;
 
 // Register Routes
 Router::addRoute('GET', '/admin/ai-news/settings', '\Plugins\AiNews\Controllers\AiNewsController@settings');
@@ -14,6 +15,26 @@ Router::addRoute('POST', '/admin/ai-news/approve/{id}', '\Plugins\AiNews\Control
 Router::addRoute('POST', '/admin/ai-news/delete/{id}', '\Plugins\AiNews\Controllers\AiNewsController@delete');
 Router::addRoute('POST', '/admin/ai-news/clear-history', '\Plugins\AiNews\Controllers\AiNewsController@clearHistory');
 Router::addRoute('POST', '/admin/ai-news/clear-logs', '\Plugins\AiNews\Controllers\AiNewsController@clearLogs');
+
+// Register Menu Item
+Filter::add('admin_menu_items', function($items) {
+    $items[] = [
+        'label' => 'دستیار هوشمند',
+        'icon' => 'ai',
+        'permission' => 'blog', // Or specific permission 'ai_news'
+        'children' => [
+            [
+                'label' => 'تنظیمات پلاگین',
+                'url' => '/admin/ai-news/settings',
+            ],
+            [
+                'label' => 'لیست مطالب هوشمند',
+                'url' => '/admin/ai-news/list',
+            ],
+        ]
+    ];
+    return $items;
+});
 
 class Hooks
 {

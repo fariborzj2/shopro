@@ -68,36 +68,6 @@ $menuItems = [
         ]
     ],
     [
-        'label' => 'دستیار هوشمند',
-        'icon' => 'ai',
-        'permission' => 'blog', // Using blog permission for now
-        'children' => [
-            [
-                'label' => 'تنظیمات پلاگین',
-                'url' => '/ai-news/settings',
-            ],
-            [
-                'label' => 'لیست مطالب هوشمند',
-                'url' => '/ai-news/list',
-            ],
-        ]
-    ],
-    [
-        'label' => 'دستیار هوشمند',
-        'icon' => 'ai',
-        'permission' => 'blog', // Using blog permission for now
-        'children' => [
-            [
-                'label' => 'تنظیمات پلاگین',
-                'url' => '/admin/ai-news/settings',
-            ],
-            [
-                'label' => 'لیست مطالب هوشمند',
-                'url' => '/admin/ai-news/list',
-            ],
-        ]
-    ],
-    [
         'label' => 'نظرات',
         'url' => '/reviews',
         'icon' => 'message',
@@ -134,6 +104,9 @@ $menuItems = [
         'permission' => 'settings'
     ],
 ];
+
+// Apply filters to menu items to allow plugins to inject their own
+$menuItems = \App\Core\Plugin\Filter::apply('admin_menu_items', $menuItems);
 
 // Super Admin Items
 $superAdminItems = [
