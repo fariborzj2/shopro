@@ -10,17 +10,17 @@
 
 
 
-/plugins/
-/plugin-name/
-plugin.json
-index.php
-install.php
-uninstall.php
-/hooks/
-/assets/css/
-/assets/js/
-/templates/admin/
-/templates/frontend/
+- /plugins/
+- /plugin-name/
+- plugin.json
+- index.php
+- install.php
+- uninstall.php
+- /hooks/
+- /assets/css/
+- /assets/js/
+- /templates/admin/
+- /templates/frontend/
 
 
 توضیح بده هر فایل چه نقشی دارد و چگونه توسط هسته استفاده می‌شود.
