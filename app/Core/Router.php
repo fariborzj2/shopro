@@ -8,7 +8,7 @@ use Exception;
 
 class Router
 {
-    protected $routes = [
+    protected static $routes = [
         'GET' => [],
         'POST' => []
     ];
@@ -16,23 +16,30 @@ class Router
     public static function load($file)
     {
         $router = new static;
-        require $file;
+        if (file_exists($file)) {
+            require $file;
+        }
         return $router;
     }
 
     public function get($uri, $controllerAction)
     {
-        $this->routes['GET'][$uri] = $controllerAction;
+        self::addRoute('GET', $uri, $controllerAction);
     }
 
     public function post($uri, $controllerAction)
     {
-        $this->routes['POST'][$uri] = $controllerAction;
+        self::addRoute('POST', $uri, $controllerAction);
+    }
+
+    public static function addRoute($method, $uri, $controllerAction)
+    {
+        self::$routes[$method][$uri] = $controllerAction;
     }
 
     public function dispatch($uri, $requestMethod)
     {
-        foreach ($this->routes[$requestMethod] as $route => $action) {
+        foreach (self::$routes[$requestMethod] as $route => $action) {
             // First, check for a direct static match.
             if ($route === $uri) {
                 list($controller, $method) = explode('@', $action);

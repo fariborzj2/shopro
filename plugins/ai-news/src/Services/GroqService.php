@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Plugins\AiNews\Services;
+namespace Plugins\AiNews\Services;
 
-use App\Plugins\AiNews\Models\AiSetting;
+use Plugins\AiNews\Models\AiSetting;
 use DOMDocument;
 use DOMXPath;
 

@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Plugins\AiNews\Controllers;
+namespace Plugins\AiNews\Controllers;
 
 use App\Core\Request;
 use App\Core\Template;
-use App\Plugins\AiNews\Models\AiSetting;
-use App\Plugins\AiNews\Models\AiLog;
-use App\Plugins\AiNews\Services\Crawler;
-use App\Plugins\AiNews\Services\GroqService;
+use Plugins\AiNews\Models\AiSetting;
+use Plugins\AiNews\Models\AiLog;
+use Plugins\AiNews\Services\Crawler;
+use Plugins\AiNews\Services\GroqService;
 use App\Core\Database;
 use PDO;
 
@@ -37,14 +37,7 @@ class AiNewsController
             'logs' => AiLog::getRecent(20)
         ];
 
-        $viewPath = PROJECT_ROOT . '/app/Plugins/AiNews/Views/settings.php';
-
-        ob_start();
-        extract($data);
-        include $viewPath;
-        $content = ob_get_clean();
-
-        include PROJECT_ROOT . '/views/layouts/main.php';
+        view('main', '../plugins/ai-news/views/settings', $data);
     }
 
     public function saveSettings()
@@ -87,14 +80,8 @@ class AiNewsController
         $posts = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
         $data = ['posts' => $posts];
-        $viewPath = PROJECT_ROOT . '/app/Plugins/AiNews/Views/list.php';
 
-        ob_start();
-        extract($data);
-        include $viewPath;
-        $content = ob_get_clean();
-
-        include PROJECT_ROOT . '/views/layouts/main.php';
+        view('main', '../plugins/ai-news/views/list', $data);
     }
 
     public function fetch()
