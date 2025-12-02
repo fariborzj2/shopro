@@ -1,175 +1,243 @@
-📄 پرامپت کامل برای پلاگین‌پذیر کردن CMS (نسخه Markdown)
-می‌خواهم CMS اختصاصی من دارای یک سیستم پلاگین حرفه‌ای، استاندارد، توسعه‌پذیر و آینده‌محور شود.  
-لطفاً یک معماری کامل، کلاس‌ها، ساختار پوشه‌ها، نحوه نصب/حذف، سیستم رویدادها (Hooks)، سیستم Manifest، APIهای موردنیاز و نمونه‌کدهای واقعی ارائه بده.  
-همه توضیحات باید دقیق، کامل، فنی و بدون ابهام باشند.
+# CMS Plugin Architecture Specification
+
+## 1. Overview
+این سند ساختار، استانداردها و الزامات کامل برای طراحی معماری پلاگین‌های CMS جدید شما را تعریف می‌کند. هدف ایجاد یک سیستم پایدار، ایمن، ماژولار و قابل‌گسترش است که توسعه، نصب، انتشار و اجرای پلاگین‌ها را استانداردسازی می‌کند.
 
 ---
 
-# 1) ساختار پوشه اصلی پلاگین
-پوشه اصلی هر پلاگین باید چنین باشد:
+## 2. Plugin Package Format
+### **2.1 فرمت فایل نصبی پلاگین**
+پلاگین‌ها باید در قالب یک فایل ZIP با ساختار مشخص بسته‌بندی شوند:
 
+```
+plugin-name-version.zip
+└── plugin-name/
+        plugin.json
+        index.php
+        install.php
+        uninstall.php
+        assets/
+            css/
+            js/
+            images/
+        src/
+            Controllers/
+            Models/
+            Views/
+        migrations/
+        languages/
+```
 
-
-- /plugins/
-- /plugin-name/
-- plugin.json
-- index.php
-- install.php
-- uninstall.php
-- /hooks/
-- /assets/css/
-- /assets/js/
-- /templates/admin/
-- /templates/frontend/
-
-
-توضیح بده هر فایل چه نقشی دارد و چگونه توسط هسته استفاده می‌شود.
-
----
-
-# 2) طراحی Manifest استاندارد (plugin.json)
-فایل Manifest باید شامل موارد زیر باشد:
-
-- name  
-- slug  
-- description  
-- version  
-- author  
-- entry  
-- hooks (لیست Hook و مسیر فایل اجراکننده)  
-- assets (css, js)  
-- permissions  
-
-یک نمونه plugin.json کاملاً واقعی و قابل اجرا ارائه بده.
-
----
-
-# 3) سیستم Hook و Event Dispatcher
-یک سیستم Hook کامل طراحی کن شامل:
-
-- کلاس PluginManager  
-- register() برای ثبت هوک  
-- trigger() برای اجرا  
-- loadPlugins() برای بارگیری پلاگین‌ها  
-- exception handling  
-- پشتیبانی از پارامترها  
-- پشتیبانی از return chaining  
-
-نمونه کد کامل PHP 8 با Namespace ارائه بده.
-
----
-
-# 4) API رسمی برای پلاگین‌ها
-مجموعه APIهایی طراحی کن که پلاگین‌ها فقط از آن‌ها استفاده کنند:
-
-- db()  
-- cache()  
-- event()  
-- http()  
-- route()  
-- response()  
-- renderTemplate()  
-- config()  
-
-تمام Signatureها را طراحی کن و توضیح بده.
+### **2.2 الزامات فایل plugin.json**
+```json
+{
+  "name": "plugin-name",
+  "slug": "plugin-name",
+  "version": "1.0.0",
+  "description": "Short plugin description.",
+  "author": "Author Name",
+  "website": "https://example.com",
+  "requires": {
+    "php": ">=8.1",
+    "cms": ">=1.0.0",
+    "plugins": {
+        "shop-core": ">=2.0.0"
+    }
+  },
+  "autoload": {
+    "psr-4": {
+      "Vendor\\PluginName\\": "src/"
+    }
+  },
+  "events": {
+    "onActivate": "Vendor\\PluginName\\Hooks::activate",
+    "onDeactivate": "Vendor\\PluginName\\Hooks::deactivate",
+    "onUpdate": "Vendor\\PluginName\\Hooks::update",
+    "onLoad": "Vendor\\PluginName\\Hooks::boot"
+  }
+}
+```
 
 ---
 
-# 5) Hookهای پیشنهادی در هسته CMS
-Hookها باید شامل موارد زیر باشند:
-
-- before_render  
-- after_render  
-- frontend_head  
-- frontend_footer  
-- before_post_create  
-- after_post_create  
-- before_post_update  
-- after_post_update  
-- before_user_register  
-- after_user_register  
-- admin_menu_build  
-- api_before_response  
-- api_after_response  
-
-برای هر کدام توضیح بده چه دیتایی و در چه زمانی منتقل می‌شود.
+## 3. Plugin Lifecycle
+### **3.1 مراحل**
+- **Install:** آپلود یا نصب از مخزن → بررسی نسخه‌ها → ثبت در DB → اجرای migrationها
+- **Activate:** اجرای onActivate → ثبت hookها → لود اتولودر
+- **Update:** اجرای onUpdate($oldVersion, $newVersion) → مایگریشن‌های جدید
+- **Load:** فراخوانی onLoad → در دسترس قرار گرفتن APIها
+- **Deactivate:** حذف hookها → اجرای onDeactivate
+- **Uninstall:** حذف کامل DB و فایل‌ها (اختیاری)
 
 ---
 
-# 6) نصب و حذف پلاگین (Install / Uninstall)
-نیاز دارم:
+## 4. Plugin API
+### **4.1 Hooks (Event System) با اولویت**
+```php
+class Hook {
+    protected static $listeners = [];
 
-- نحوه اجرای install.php  
-- ساخت جدول‌ها  
-- اضافه‌کردن تنظیمات اولیه  
-- migrationها  
-- versioning  
-- پاکسازی کامل در uninstall.php  
-- جلوگیری از خراب شدن Core  
+    public static function add(string $event, callable $callback, int $priority = 10) {
+        self::$listeners[$event][$priority][] = $callback;
+    }
 
-نمونه install.php و uninstall.php کاملاً واقعی ارائه بده.
+    public static function fire(string $event, ...$args) {
+        if (!isset(self::$listeners[$event])) return;
 
----
+        ksort(self::$listeners[$event]); // مرتب‌سازی بر اساس اولویت
 
-# 7) Auto Loader و Booting
-سیستم Loader باید:
+        foreach (self::$listeners[$event] as $priority => $callbacks) {
+            foreach ($callbacks as $callback) {
+                call_user_func_array($callback, $args);
+            }
+        }
+    }
+}
 
-- پوشه plugins را اسکن کند  
-- plugin.json را validate کند  
-- پلاگین‌های خراب را reject کند  
-- Hookها را ثبت کند  
-- entry file را load کند  
-- پلاگین‌ها را ایزوله کند  
+// نمونه
+Hook::add('on_user_login', [AuthPlugin::class, 'log'], 5);
+Hook::add('on_user_login', [MailPlugin::class, 'sendEmail'], 20);
+```
 
-کد کامل Loader را ارائه بده.
+### **4.2 Filters**
+```php
+Filter::add('post_content', function($content) {
+    return $content . "<footer>Powered by plugin</footer>";
+});
+```
 
----
-
-# 8) مدیریت فایل‌های Front-end
-سیستمی ارائه بده که:
-
-- فایل‌های CSS و JS پلاگین از مسیر  
-  `/plugin-assets/{plugin}/{file}`  
-  سرو شوند  
-- در frontend_head و frontend_footer لود شوند  
-
-هسته چگونه assetهای هر پلاگین را register و load کند توضیح بده.
-
----
-
-# 9) Permission System برای پلاگین‌ها
-سیستمی طراحی کن که پلاگین‌ها:
-
-- به فایل‌های هسته دسترسی مستقیم نداشته باشند  
-- کوئری خطرناک مستقیم نزنند  
-- تنظیمات حساس هسته را تغییر ندهند  
-
-کلاس امنیت پلاگین را طراحی کن.
+### **4.3 REST API Support**
+```php
+API::register('GET', '/plugin/data', [PluginController::class, 'index']);
+```
 
 ---
 
-# 10) یک مثال پلاگین واقعی
-یک پلاگین کامل بساز که:
-
-- یک متن به footer اضافه کند  
-- در admin یک منوی جدید ایجاد کند  
-- هنگام ساخت پست، یک log در DB ذخیره کند  
-
-فایل‌های زیر را کامل بنویس:
-
-- plugin.json  
-- index.php  
-- hooks/beforeRender.php  
-- hooks/postCreate.php  
-- install.php  
+## 5. Database Migrations
+```php
+return new class {
+    public function up() {
+        DB::query("CREATE TABLE example (...)");
+    }
+    public function down() {
+        DB::query("DROP TABLE example");
+    }
+};
+```
+جدول migrations در دیتابیس وضعیت اجرا شده‌ها را ذخیره می‌کند تا هنگام Update فقط migrations جدید اجرا شوند.
 
 ---
 
-# 11) تمام کدها باید واقعی باشند
-- PHP 8  
-- OOP  
-- Namespaced  
-- بدون pseudo-code  
-- تست‌شده و اجرایی  
+## 6. Security Requirements
+- Namespace Isolation الزامی است. همه کلاس‌ها باید در Namespace اختصاصی پلاگین باشند.
+- تمام ورودی‌ها sanitize شوند.
+- DI Container دسترسی امن به سرویس‌ها بدهد.
+- جلوگیری از Class Collision و Overwrite فایل‌های هسته.
 
-در پایان، کل معماری به صورت یک راهنمای جامع ارائه شود.
+---
+
+## 7. Plugin Upload System
+- آپلود ZIP در مسیر `/storage/tmp/plugins-upload/`
+- بررسی ساختار ZIP و plugin.json
+- بررسی نسخه CMS و پلاگین‌های پیش‌نیاز
+- استخراج در مسیر موقت و سپس انتقال به `/plugins/`
+- اجرای install.php با try/catch و rollback در صورت خطا
+
+---
+
+## 8. Plugin Validation Rules
+- نام یکتا و مطابق slug
+- ساختار فولدر درست و وجود فایل‌های ضروری
+- JSON معتبر و نسخه سازگار با CMS
+- Namespace کلاس‌ها مطابق convention
+
+---
+
+## 9. Plugin Autoloading
+Composer-style autoloading با PSR-4 بر اساس plugin.json و Namespace اختصاصی هر پلاگین.
+
+---
+
+## 10. Performance Guidelines
+- کش داخلی برای hookها
+- کنترل ترتیب اجرای hookها با priority
+- سیستم مدیریت asset با dependency
+- غیرفعال‌سازی بخش‌های سنگین از پنل
+
+---
+
+## 11. Frontend Integration
+```php
+Assets::registerScript('jquery', 'path/to/jquery.js');
+Assets::addScript('my-plugin-script', 'path/to/app.js', ['jquery']);
+Assets::addStyle('plugin/style.css');
+```
+
+---
+
+## 12. Admin Panel Integration
+- افزودن منو و صفحات تنظیمات
+- ثبت تنظیمات اختصاصی با settings.json
+- ارتباط با سیستم DI برای دسترسی امن به سرویس‌ها
+
+---
+
+## 13. Logging
+هر پلاگین فضای log خود را دارد:
+```
+storage/logs/plugins/plugin-name.log
+```
+
+---
+
+## 14. Recommended Coding Standards
+- PSR-12
+- PascalCase برای کلاس‌ها
+- استفاده از Dependency Injection
+- Namespace اختصاصی بر اساس slug
+
+---
+
+## 15. Example Plugin Structure
+```
+awesome-plugin/
+ ├── plugin.json
+ ├── index.php
+ ├── src/
+ │    ├── Hooks.php
+ │    ├── Controllers/
+ │    └── Models/
+ ├── assets/
+ └── migrations/
+```
+
+---
+
+## 16. Example index.php
+```php
+<?php
+use Vendor\PluginName\Hooks;
+Hooks::boot();
+```
+
+---
+
+## 17. Roadmap for Future Features
+- Marketplace رسمی
+- Webhooks و Notifications
+- UI Builder برای تنظیمات پلاگین
+- Signature Verification برای امنیت بیشتر
+- سیستم پیشرفته Update و Dependency Resolution
+
+---
+
+## 18. Hook System Summary
+ویژگی‌های کلیدی:
+- Priority-based execution
+- Support for dependencies بین پلاگین‌ها
+- Pipeline architecture برای جلوگیری از اثرات جانبی
+- Log و Exception handling کامل
+
+---
+
+## پایان سند
