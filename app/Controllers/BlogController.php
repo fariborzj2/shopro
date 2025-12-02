@@ -114,8 +114,15 @@ class BlogController
         ]);
     }
 
-    public function show($category, $slug)
+    public function show($category, $slug = null)
     {
+        // Handle route ambiguity: /blog/{slug} vs /blog/{category}/{slug}
+        // If $slug is null, it means we came from /blog/{slug}, so $category actually holds the slug.
+        if ($slug === null) {
+            $slug = $category;
+            $category = null;
+        }
+
         $slug = urldecode($slug);
         // Extract ID from slug (format: {id}-{slug})
         if (preg_match('/^(\d+)-/', $slug, $matches)) {
@@ -128,6 +135,12 @@ class BlogController
 
         try {
             if (!$post) {
+                // Check if it matches a category slug (fallback for /blog/news URLs)
+                $categoryObj = BlogCategory::findBy('slug', $slug);
+                if ($categoryObj) {
+                    return $this->category($slug);
+                }
+
                 http_response_code(404);
                 echo "پست یافت نشد.";
                 return;
