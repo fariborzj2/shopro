@@ -69,6 +69,11 @@ App\Core\ErrorHandler::register();
 require PROJECT_ROOT . '/app/Core/helpers.php';
 
 // ----------------------------
+// Initialize Plugins (after core, before routing)
+// ----------------------------
+\App\Core\Plugin\PluginManager::loadActivePlugins();
+
+// ----------------------------
 // Load JDF globally (only once)
 // ----------------------------
 require PROJECT_ROOT . '/app/Core/jdf.php';

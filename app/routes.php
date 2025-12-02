@@ -179,6 +179,13 @@ $router->post('/admin/api/upload-image', 'Admin\ApiController@uploadImage');
 $router->get('/admin/media', 'Admin\MediaController@index');
 $router->post('/admin/media/delete/{id}', 'Admin\MediaController@delete');
 
+// Plugins Management
+$router->get('/admin/plugins', 'Admin\PluginsController@index');
+$router->post('/admin/plugins/upload', 'Admin\PluginsController@upload');
+$router->post('/admin/plugins/activate/{slug}', 'Admin\PluginsController@activate');
+$router->post('/admin/plugins/deactivate/{slug}', 'Admin\PluginsController@deactivate');
+$router->post('/admin/plugins/delete/{slug}', 'Admin\PluginsController@delete');
+
 // ----------------------------------------------------------------------
 // AI News Plugin Routes
 // ----------------------------------------------------------------------
