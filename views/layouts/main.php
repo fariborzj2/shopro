@@ -82,6 +82,8 @@
     <!-- TinyMCE -->
     <script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
 
+     <?php \App\Core\Plugin\Assets::renderStyles(); ?>
+
     <script>
         // Global AJAX setup
         document.addEventListener('alpine:init', () => {
@@ -163,5 +165,7 @@
     </div>
 
     <?php partial('_error_modal'); ?>
+
+     <?php \App\Core\Plugin\Assets::renderScripts(true); ?>
 </body>
 </html>

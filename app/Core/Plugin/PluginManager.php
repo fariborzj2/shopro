@@ -119,6 +119,13 @@ class PluginManager
             }
 
             $slug = $json['slug'];
+
+            // Security: Sanitize slug to prevent directory traversal
+            if (!preg_match('/^[a-z0-9\-_]+$/i', $slug)) {
+                self::rrmdir($extractPath);
+                throw new \Exception("نامک (slug) پلاگین نامعتبر است. فقط حروف، اعداد، خط تیره و خط زیر مجاز هستند.");
+            }
+
             $dest = self::PLUGIN_DIR . '/' . $slug;
 
             // Check if update is needed
