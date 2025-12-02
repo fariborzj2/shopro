@@ -5,7 +5,7 @@
     <header style="text-align: center; margin-bottom: 4rem;">
         <h1 style="font-size: 2.5rem; font-weight: 900; margin-bottom: 1rem; color: var(--color-text-main);">دسته‌بندی: <?= htmlspecialchars($category->name_fa) ?></h1>
         <?php if (!empty($category->notes)): ?>
-            <p style="font-size: 1.1rem; color: var(--color-text-muted); max-width: 600px; margin: 0 auto;"><?= htmlspecialchars($category->notes) ?></p>
+            <p style="font-size: 1.1rem; color: var(--color-text-muted); max-width: 600px; margin: 0 auto;"><?= htmlspecialchars($category->notes ?? '') ?></p>
         <?php endif; ?>
     </header>
 
@@ -22,8 +22,8 @@
                     </h2>
                     <p style="color: #64748b; margin-bottom: 1.5rem; line-height: 1.6; flex-grow: 1;"><?= htmlspecialchars($post->excerpt) ?></p>
                     <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.85rem; color: #94a3b8; border-top: 1px solid var(--color-border); padding-top: 1rem;">
-                        <span><?= htmlspecialchars($post->author_name) ?></span>
-                        <span><?= date('Y/m/d', strtotime($post->published_at)) ?></span>
+                        <span><?= htmlspecialchars($post->author_name ?? 'نویسنده ناشناس') ?></span>
+                        <span><?= date('Y/m/d', strtotime($post->published_at ?? 'now')) ?></span>
                     </div>
                 </div>
             </article>

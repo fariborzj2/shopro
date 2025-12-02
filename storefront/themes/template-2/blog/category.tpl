@@ -10,7 +10,7 @@
             </h1>
             <?php if (!empty($category->notes)): ?>
                 <p class="text-lg text-gray-500 dark:text-gray-400 leading-relaxed">
-                    <?= htmlspecialchars($category->notes) ?>
+                    <?= htmlspecialchars($category->notes ?? '') ?>
                 </p>
             <?php endif; ?>
         </header>

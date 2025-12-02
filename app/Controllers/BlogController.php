@@ -394,6 +394,14 @@ class BlogController
         // Sanitize Title
         $postObj->title = strip_tags($postObj->title ?? '');
 
+        // Ensure author_name is set
+        $postObj->author_name = $postObj->author_name ?? 'نویسنده ناشناس';
+
+        // Ensure published_at is valid
+        if (empty($postObj->published_at)) {
+            $postObj->published_at = $postObj->created_at ?? date('Y-m-d H:i:s');
+        }
+
         // Sanitize Excerpt
         // Use excerpt if available, otherwise strip content
         $rawExcerpt = !empty($postObj->excerpt) ? $postObj->excerpt : ($postObj->content ?? '');
