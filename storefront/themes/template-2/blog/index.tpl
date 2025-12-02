@@ -20,7 +20,7 @@
                     <div class="swiper-wrapper">
                         <?php foreach ($slider_posts as $post): ?>
                             <div class="swiper-slide rounded-3xl overflow-hidden shadow-card border border-gray-100 dark:border-gray-700 relative">
-                                <a href="/blog/<?= $post->slug ?>" class="block w-full h-full">
+                                <a href="/blog/<?= $post->category_slug ?>/<?= $post->id ?>-<?= $post->slug ?>" class="block w-full h-full">
                                     <img src="<?= $post->image_url ?? 'https://placehold.co/1200x500/EEE/31343C?text=No+Image' ?>"
                                          alt="<?= htmlspecialchars($post->title) ?>"
                                          class="w-full h-full object-cover transition-transform duration-700 hover:scale-105">
@@ -91,7 +91,7 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
                         <?php foreach ($posts as $post) : ?>
                             <article class="bg-white dark:bg-gray-800 rounded-2xl shadow-card border border-gray-100 dark:border-gray-700 overflow-hidden hover:shadow-lg transition-all duration-300 group flex flex-col h-full">
-                                <a href="/blog/<?= $post->slug ?>" class="relative aspect-[16/10] bg-gray-200 dark:bg-gray-700 overflow-hidden block">
+                                <a href="/blog/<?= $post->category_slug ?>/<?= $post->id ?>-<?= $post->slug ?>" class="relative aspect-[16/10] bg-gray-200 dark:bg-gray-700 overflow-hidden block">
                                     <img src="<?= $post->image_url ?? 'https://placehold.co/600x400/EEE/31343C?text=No+Image' ?>"
                                          alt="<?= htmlspecialchars($post->title) ?>"
                                          class="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500">
@@ -112,7 +112,7 @@
                                     </div>
 
                                     <h2 class="text-xl font-bold text-gray-800 dark:text-white mb-3 leading-snug group-hover:text-primary-600 transition-colors">
-                                        <a href="/blog/<?= $post->slug ?>">
+                                        <a href="/blog/<?= $post->category_slug ?>/<?= $post->id ?>-<?= $post->slug ?>">
                                             <?= htmlspecialchars($post->title) ?>
                                         </a>
                                     </h2>
@@ -293,7 +293,7 @@
             "headline": "<?= htmlspecialchars($post->title) ?>",
             "alternativeHeadline": "<?= htmlspecialchars($post->excerpt) ?>",
             "image": "<?= $post->image_url ?? '' ?>",
-            "url": "<?php echo (isset($_SERVER['HTTPS']) ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST']; ?>/blog/<?= $post->slug ?>",
+            "url": "<?php echo (isset($_SERVER['HTTPS']) ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST']; ?>/blog/<?= $post->category_slug ?>/<?= $post->id ?>-<?= $post->slug ?>",
             "datePublished": "<?= $post->published_at ?>"
         }<?= $index < count($posts) - 1 ? ',' : '' ?>
         <?php endforeach; ?>
