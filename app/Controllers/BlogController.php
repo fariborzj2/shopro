@@ -114,7 +114,7 @@ class BlogController
         ]);
     }
 
-    public function show($category, $slug = null)
+    public function show($category = null, $slug = null)
     {
         // Handle route ambiguity: /blog/{slug} vs /blog/{category}/{slug}
         // If $slug is null, it means we came from /blog/{slug}, so $category actually holds the slug.
