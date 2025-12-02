@@ -19,6 +19,7 @@ DROP TABLE IF EXISTS `custom_order_fields`;
 DROP TABLE IF EXISTS `otp_codes`;
 DROP TABLE IF EXISTS `settings`;
 DROP TABLE IF EXISTS `pages`;
+DROP TABLE IF EXISTS `plugins`;
 
 
 -- Users Table
@@ -290,6 +291,18 @@ CREATE TABLE `blog_post_comments` (
   `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (`post_id`) REFERENCES `blog_posts`(`id`) ON DELETE CASCADE,
   FOREIGN KEY (`parent_id`) REFERENCES `blog_post_comments`(`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Plugins Table
+CREATE TABLE `plugins` (
+  `id` INT PRIMARY KEY AUTO_INCREMENT,
+  `name` VARCHAR(255) NOT NULL,
+  `slug` VARCHAR(255) NOT NULL UNIQUE,
+  `version` VARCHAR(50),
+  `status` ENUM('active', 'inactive') DEFAULT 'inactive',
+  `load_order` INT DEFAULT 10,
+  `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 

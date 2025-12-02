@@ -31,17 +31,6 @@ spl_autoload_register(function ($class) {
         return;
     }
 
-    // 2. Special handling for Plugins
-    // App\Plugins\AiNews\Services\Crawler -> app/Plugins/AiNews/Services/Crawler.php
-    if (strpos($class, 'App\\Plugins\\') === 0) {
-        $relative_class = substr($class, $len); // Remove 'App\'
-        $file = $base_dir . str_replace('\\', '/', $relative_class) . '.php';
-        if (file_exists($file)) {
-            require $file;
-            return;
-        }
-    }
-
     // 3. Standard fallback for other classes
     $relative_class = substr($class, $len);
     $file = $base_dir . str_replace('\\', '/', $relative_class) . '.php';
@@ -67,6 +56,11 @@ App\Core\ErrorHandler::register();
 // Load global helpers (first)
 // ----------------------------
 require PROJECT_ROOT . '/app/Core/helpers.php';
+
+// ----------------------------
+// Initialize Plugins (after core, before routing)
+// ----------------------------
+\App\Core\Plugin\PluginManager::loadActivePlugins();
 
 // ----------------------------
 // Load JDF globally (only once)
