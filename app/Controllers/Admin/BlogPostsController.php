@@ -187,7 +187,7 @@ class BlogPostsController
             $data["image_url"] = $uploader->upload(
                 $_FILES["image"],
                 "blog_posts/" . $dateFolder,
-                "images"
+                "uploads/images"
             );
         }
 
@@ -426,7 +426,7 @@ class BlogPostsController
             $data["image_url"] = $uploader->upload(
                 $_FILES["image"],
                 "blog_posts/" . $dateFolder,
-                "images"
+                "uploads/images"
             );
         }
 
