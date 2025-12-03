@@ -455,6 +455,23 @@ class BlogPost
         return $stmt->execute();
     }
 
+    /**
+     * Update the image URL of a blog post.
+     *
+     * @param int $id
+     * @param string|null $imageUrl
+     * @return bool
+     */
+    public static function updateImage($id, $imageUrl)
+    {
+        $sql = "UPDATE blog_posts SET image_url = :image_url WHERE id = :id";
+        $pdo = Database::getConnection();
+        $stmt = $pdo->prepare($sql);
+        $stmt->bindValue(':image_url', $imageUrl);
+        $stmt->bindValue(':id', $id, PDO::PARAM_INT);
+        return $stmt->execute();
+    }
+
     public static function getSearchSuggestions($term, $limit = 5)
     {
         $sql = "SELECT bp.title, bp.slug, bc.slug as category_slug
