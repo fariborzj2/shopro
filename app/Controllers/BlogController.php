@@ -19,12 +19,15 @@ class BlogController
 
     public function index()
     {
+        $settings = \App\Models\Setting::getAll();
+        $posts_per_page = $settings['blog_index_limit'] ?? self::POSTS_PER_PAGE;
+
         $page = $_GET['page'] ?? 1;
         $search = $_GET['search'] ?? null;
         $category_id = $_GET['category'] ?? null;
 
-        $offset = ($page - 1) * self::POSTS_PER_PAGE;
-        $result = BlogPost::findAllPublishedWithCount(self::POSTS_PER_PAGE, $offset, $search, $category_id);
+        $offset = ($page - 1) * $posts_per_page;
+        $result = BlogPost::findAllPublishedWithCount($posts_per_page, $offset, $search, $category_id);
         $raw_posts = $result['posts'];
         $total_posts = $result['total_count'];
 
@@ -34,15 +37,15 @@ class BlogController
             $posts[] = $this->sanitizePost($post);
         }
 
-        $paginator = new Paginator($total_posts, self::POSTS_PER_PAGE, $page, '/blog');
+        $paginator = new Paginator($total_posts, $posts_per_page, $page, '/blog');
         $categories = BlogCategory::findAllBy('status', 'active');
 
         $sidebar_data = $this->_getSidebarData();
 
         // Slider and featured categories
-        $settings = \App\Models\Setting::getAll();
-        // The new logic (Smart Featured Posts) handles limits (up to 9) and fallback internally.
-        $slider_posts = BlogPost::getSmartFeaturedPosts();
+        // The new logic (Smart Featured Posts) handles limits and fallback internally.
+        $slider_limit = $settings['blog_slider_limit'] ?? 5;
+        $slider_posts = BlogPost::getSmartFeaturedPosts($slider_limit);
 
         // Sanitize slider posts
         foreach ($slider_posts as &$sp) {
@@ -81,6 +84,9 @@ class BlogController
 
     public function category($slug)
     {
+        $settings = \App\Models\Setting::getAll();
+        $posts_per_page = $settings['blog_category_limit'] ?? self::POSTS_PER_PAGE;
+
         $slug = urldecode($slug);
         $category = BlogCategory::findBy('slug', $slug);
         if (!$category) {
@@ -90,9 +96,9 @@ class BlogController
         }
 
         $page = $_GET['page'] ?? 1;
-        $offset = ($page - 1) * self::POSTS_PER_PAGE;
+        $offset = ($page - 1) * $posts_per_page;
 
-        $result = BlogPost::findAllPublishedWithCount(self::POSTS_PER_PAGE, $offset, null, $category->id);
+        $result = BlogPost::findAllPublishedWithCount($posts_per_page, $offset, null, $category->id);
         $raw_posts = $result['posts'];
         $total_posts = $result['total_count'];
 
@@ -102,7 +108,7 @@ class BlogController
             $posts[] = $this->sanitizePost($post);
         }
 
-        $paginator = new Paginator($total_posts, self::POSTS_PER_PAGE, $page, '/blog/category/' . $slug);
+        $paginator = new Paginator($total_posts, $posts_per_page, $page, '/blog/category/' . $slug);
         $sidebar_data = $this->_getSidebarData();
 
         echo $this->template->render('blog/category', [
@@ -165,7 +171,7 @@ class BlogController
             $tags = BlogPost::getTagsByPostId($post->id);
 
             $settings = \App\Models\Setting::getAll();
-            $related_posts_limit = $settings['related_posts_limit'] ?? 5;
+            $related_posts_limit = $settings['blog_related_limit'] ?? 5;
             $related_posts = BlogPost::findRelatedPosts($post->id, $related_posts_limit);
 
             $comments = \App\Models\Comment::findByPostId($post->id);
@@ -232,6 +238,9 @@ class BlogController
 
     public function showTag($slug)
     {
+        $settings = \App\Models\Setting::getAll();
+        $posts_per_page = $settings['blog_tag_limit'] ?? self::POSTS_PER_PAGE;
+
         $slug = urldecode($slug);
         $tag = \App\Models\BlogTag::findBy('slug', $slug);
         if (!$tag) {
@@ -241,13 +250,13 @@ class BlogController
         }
 
         $page = $_GET['page'] ?? 1;
-        $offset = ($page - 1) * self::POSTS_PER_PAGE;
+        $offset = ($page - 1) * $posts_per_page;
 
-        $result = BlogPost::findAllPublishedWithCount(self::POSTS_PER_PAGE, $offset, null, null, $tag->id);
+        $result = BlogPost::findAllPublishedWithCount($posts_per_page, $offset, null, null, $tag->id);
         $posts = $result['posts'];
         $total_posts = $result['total_count'];
 
-        $paginator = new Paginator($total_posts, self::POSTS_PER_PAGE, $page, '/blog/tags/' . $slug);
+        $paginator = new Paginator($total_posts, $posts_per_page, $page, '/blog/tags/' . $slug);
 
         echo $this->template->render('blog/tag_posts', [
             'pageTitle' => 'Posts tagged with: ' . $tag->name,
@@ -348,22 +357,27 @@ class BlogController
 
     private function _getSidebarData()
     {
-        // Most Viewed Posts (e.g., top 5)
-        $mostViewedRaw = BlogPost::findMostViewed(5);
+        $settings = \App\Models\Setting::getAll();
+
+        // Most Viewed Posts
+        $viewedLimit = $settings['blog_viewed_limit'] ?? 5;
+        $mostViewedRaw = BlogPost::findMostViewed($viewedLimit);
         $mostViewed = [];
         foreach ($mostViewedRaw as $p) {
             $mostViewed[] = $this->sanitizePost($p);
         }
 
-        // Editor's Picks (e.g., top 5)
-        $editorsPicksRaw = BlogPost::findEditorsPicks(5);
+        // Editor's Picks
+        $recommendedLimit = $settings['blog_recommended_limit'] ?? 5;
+        $editorsPicksRaw = BlogPost::findEditorsPicks($recommendedLimit);
         $editorsPicks = [];
         foreach ($editorsPicksRaw as $p) {
             $editorsPicks[] = $this->sanitizePost($p);
         }
 
-        // Most Discussed (e.g., top 5 by comment count - if comments exist)
-        $mostDiscussedRaw = []; // Placeholder
+        // Most Discussed
+        $discussedLimit = $settings['blog_discussed_limit'] ?? 5;
+        $mostDiscussedRaw = BlogPost::findMostDiscussed($discussedLimit);
         $mostDiscussed = [];
         foreach ($mostDiscussedRaw as $p) {
             $mostDiscussed[] = $this->sanitizePost($p);

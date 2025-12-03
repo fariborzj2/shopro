@@ -8,6 +8,7 @@
                     'store' => 'فروشگاه',
                     'security' => 'امنیت',
                     'seo' => 'سئو',
+                    'blog' => 'بلاگ',
                     'email' => 'ایمیل',
                     'sms' => 'پیامک',
                     'payment' => 'درگاه پرداخت',
@@ -72,6 +73,59 @@
                 <div class="col-span-1">
                     <label for="login_lockout_time" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">زمان محدودیت (دقیقه)</label>
                     <input type="number" id="login_lockout_time" name="login_lockout_time" value="<?= htmlspecialchars($settings['login_lockout_time'] ?? '20') ?>" class="w-full rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white px-4 py-2.5 focus:ring-primary-500 focus:border-primary-500 shadow-sm">
+                </div>
+            </div>
+        </div>
+
+        <!-- Blog Settings -->
+        <div x-show="tab === 'blog'" class="space-y-6" style="display: none;">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Blog Home -->
+                <div class="col-span-1">
+                    <label for="blog_index_limit" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">تعداد مطالب در صفحه اصلی وبلاگ</label>
+                    <input type="number" id="blog_index_limit" name="blog_index_limit" value="<?= htmlspecialchars($settings['blog_index_limit'] ?? '10') ?>" class="w-full rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white px-4 py-2.5 focus:ring-primary-500 focus:border-primary-500 shadow-sm">
+                </div>
+
+                <!-- Blog Category -->
+                <div class="col-span-1">
+                    <label for="blog_category_limit" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">تعداد مطالب در صفحات دسته‌بندی وبلاگ</label>
+                    <input type="number" id="blog_category_limit" name="blog_category_limit" value="<?= htmlspecialchars($settings['blog_category_limit'] ?? '10') ?>" class="w-full rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white px-4 py-2.5 focus:ring-primary-500 focus:border-primary-500 shadow-sm">
+                </div>
+
+                <!-- Blog Tags -->
+                <div class="col-span-1">
+                    <label for="blog_tag_limit" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">تعداد مطالب در صفحات برچسب‌ها</label>
+                    <input type="number" id="blog_tag_limit" name="blog_tag_limit" value="<?= htmlspecialchars($settings['blog_tag_limit'] ?? '10') ?>" class="w-full rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white px-4 py-2.5 focus:ring-primary-500 focus:border-primary-500 shadow-sm">
+                </div>
+
+                <!-- Related Posts -->
+                <div class="col-span-1">
+                    <label for="blog_related_limit" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">تعداد مطالب مشابه (Related Posts)</label>
+                    <input type="number" id="blog_related_limit" name="blog_related_limit" value="<?= htmlspecialchars($settings['blog_related_limit'] ?? '5') ?>" class="w-full rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white px-4 py-2.5 focus:ring-primary-500 focus:border-primary-500 shadow-sm">
+                </div>
+
+                <!-- Slider -->
+                <div class="col-span-1">
+                    <label for="blog_slider_limit" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">تعداد آیتم‌های اسلایدر «مطالب برتر»</label>
+                    <input type="number" id="blog_slider_limit" name="blog_slider_limit" value="<?= htmlspecialchars($settings['blog_slider_limit'] ?? '5') ?>" class="w-full rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white px-4 py-2.5 focus:ring-primary-500 focus:border-primary-500 shadow-sm">
+                </div>
+
+                <!-- Most Discussed -->
+                <div class="col-span-1">
+                    <label for="blog_discussed_limit" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">تعداد مطالب پربحث</label>
+                    <input type="number" id="blog_discussed_limit" name="blog_discussed_limit" value="<?= htmlspecialchars($settings['blog_discussed_limit'] ?? '5') ?>" class="w-full rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white px-4 py-2.5 focus:ring-primary-500 focus:border-primary-500 shadow-sm">
+                </div>
+
+                <!-- Most Viewed -->
+                <div class="col-span-1">
+                    <label for="blog_viewed_limit" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">تعداد مطالب پربازدید</label>
+                    <input type="number" id="blog_viewed_limit" name="blog_viewed_limit" value="<?= htmlspecialchars($settings['blog_viewed_limit'] ?? '5') ?>" class="w-full rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white px-4 py-2.5 focus:ring-primary-500 focus:border-primary-500 shadow-sm">
+                </div>
+
+                <!-- Editors Picks -->
+                <div class="col-span-1">
+                    <label for="blog_recommended_limit" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">تعداد مطالب پیشنهادی</label>
+                    <input type="number" id="blog_recommended_limit" name="blog_recommended_limit" value="<?= htmlspecialchars($settings['blog_recommended_limit'] ?? '5') ?>" class="w-full rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white px-4 py-2.5 focus:ring-primary-500 focus:border-primary-500 shadow-sm">
                 </div>
             </div>
         </div>
