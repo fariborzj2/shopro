@@ -517,7 +517,7 @@ class BlogPostsController
             @unlink(PROJECT_ROOT . "/public" . $post["image_url"]);
 
             // Update DB
-            BlogPost::update($id, ["image_url" => null]);
+            BlogPost::updateImage($id, null);
 
             echo json_encode([
                 "success" => true,
