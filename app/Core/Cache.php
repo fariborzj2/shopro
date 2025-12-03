@@ -100,6 +100,49 @@ class Cache
         return $this->prefix . $key;
     }
 
+    /**
+     * Check if Redis is connected and available.
+     * @return bool
+     */
+    public function isAvailable()
+    {
+        return $this->redis !== null;
+    }
+
+    /**
+     * Get statistics about the cache.
+     * @return array
+     */
+    public function getStats()
+    {
+        if (!$this->redis) {
+            return [
+                'keys' => 0,
+                'memory' => '0 B',
+                'status' => 'Disconnected'
+            ];
+        }
+
+        try {
+            $info = $this->redis->info('memory');
+            $keys = $this->redis->dbSize();
+
+            $memory = isset($info['used_memory_human']) ? $info['used_memory_human'] : ($info['used_memory'] ?? 0) . ' B';
+
+            return [
+                'keys' => $keys,
+                'memory' => $memory,
+                'status' => 'Connected'
+            ];
+        } catch (Throwable $e) {
+            return [
+                'keys' => 0,
+                'memory' => 'Unknown',
+                'status' => 'Error: ' . $e->getMessage()
+            ];
+        }
+    }
+
     public function put($key, $value, $ttl = 300, $tags = [])
     {
         if (!$this->redis) return;
