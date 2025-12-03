@@ -57,33 +57,6 @@
         </div>
     </section>
 
-    <!-- Section: Description -->
-    <section>
-        <h3 class="text-lg font-bold text-gray-800 dark:text-white mb-4 flex items-center gap-2">
-            <span class="p-1.5 bg-blue-100 dark:bg-blue-900 rounded-lg text-blue-600 dark:text-blue-400">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
-            </span>
-            توضیحات
-        </h3>
-
-        <div class="space-y-6">
-            <!-- Short Description -->
-            <div>
-                <label for="short_description" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">توضیحات کوتاه</label>
-                <textarea id="short_description" name="short_description" rows="3"
-                          class="w-full rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white px-4 py-2.5 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 transition-all shadow-sm"><?php echo htmlspecialchars($product['short_description'] ?? ''); ?></textarea>
-            </div>
-
-            <!-- Full Description -->
-            <div>
-                <label for="description" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">توضیحات کامل</label>
-                <div class="rounded-xl overflow-hidden border border-gray-300 dark:border-gray-600">
-                    <textarea id="description" name="description" class="tinymce-editor"><?php echo htmlspecialchars($product['description'] ?? ''); ?></textarea>
-                </div>
-            </div>
-        </div>
-    </section>
-
     <hr class="border-gray-200 dark:border-gray-700">
 
     <!-- Section: Pricing -->
