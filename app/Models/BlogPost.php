@@ -420,6 +420,24 @@ class BlogPost
         return $stmt->fetchAll(PDO::FETCH_OBJ);
     }
 
+    public static function findMostDiscussed($limit = 5)
+    {
+        $sql = "SELECT bp.id, bp.title, bp.slug, bp.excerpt, bp.published_at, bp.image_url, bc.slug as category_slug,
+                (SELECT COUNT(*) FROM blog_post_comments bpc WHERE bpc.post_id = bp.id) as comments_count
+                FROM blog_posts bp
+                LEFT JOIN blog_categories bc ON bp.category_id = bc.id
+                WHERE bp.status = 'published' AND (bp.published_at IS NULL OR bp.published_at <= NOW())
+                ORDER BY comments_count DESC, bp.published_at DESC
+                LIMIT :limit";
+
+        $pdo = Database::getConnection();
+        $stmt = $pdo->prepare($sql);
+        $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
+        $stmt->execute();
+
+        return $stmt->fetchAll(PDO::FETCH_OBJ);
+    }
+
     public static function findEditorsPicks($limit = 5)
     {
         $sql = "SELECT bp.id, bp.title, bp.slug, bp.excerpt, bp.published_at, bp.image_url, bp.is_editors_pick, bc.slug as category_slug
@@ -534,8 +552,10 @@ class BlogPost
      * 2. Fallback to archive if < 3 posts.
      * 3. Score posts based on freshness, views, and comments.
      * 4. Return top 3-9 posts.
+     *
+     * @param int $limit
      */
-    public static function getSmartFeaturedPosts()
+    public static function getSmartFeaturedPosts($limit = 9)
     {
         $pdo = Database::getConnection();
         $ranges = [7, 14, 30, 90];
@@ -644,7 +664,7 @@ class BlogPost
             return $b->score <=> $a->score;
         });
 
-        // Step 4: Return top 9
-        return array_slice($candidates, 0, 9);
+        // Step 4: Return top N
+        return array_slice($candidates, 0, $limit);
     }
 }
