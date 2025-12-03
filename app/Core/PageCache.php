@@ -31,9 +31,9 @@ class PageCache
         }
 
         // 4. Check Settings
-        // In a high-perf scenario, we'd cache these settings flags too.
-        // For now, we query.
-        $settings = \App\Models\Setting::getAll();
+        // Use getAll(true) which uses cache, but inside Cache::remember it might call DB.
+        // PageCache::serve() is early in boot.
+        $settings = \App\Models\Setting::getAll(true);
 
         $enabled = isset($settings['cache_html_enabled']) && $settings['cache_html_enabled'] === '1';
         if (!$enabled) {
@@ -59,7 +59,6 @@ class PageCache
 
         if ($content) {
             // 8. Inject Fresh CSRF Token
-            // If the cached content has the placeholder, we replace it with the current session's token.
             if (strpos($content, self::CSRF_PLACEHOLDER) !== false) {
                 // Ensure we have a token for this guest session
                 $token = '';
@@ -69,8 +68,6 @@ class PageCache
                     $token = $_SESSION['csrf_token'];
                 }
 
-                // If for some reason token generation fails, we might output empty,
-                // but usually csrf_token() handles it.
                 $content = str_replace(self::CSRF_PLACEHOLDER, $token, $content);
             }
 
@@ -112,26 +109,45 @@ class PageCache
             return;
         }
 
-        $settings = \App\Models\Setting::getAll();
+        $settings = \App\Models\Setting::getAll(true);
         $enabled = isset($settings['cache_html_enabled']) && $settings['cache_html_enabled'] === '1';
 
         if ($enabled) {
             // Process Content: Replace CSRF tokens with Placeholder
-            // We look for the standard input value pattern or the logic used by csrf_field()
-            // Pattern: name="csrf_token" value="..."
-
             // We use a regex to safely find the value attribute of the csrf_token input
-            $pattern = '/(name="csrf_token"\s+value=")([^"]+)(")/i';
+            // Pattern: name="csrf_token" value="..." OR value="..." name="csrf_token"
 
-            if (preg_match($pattern, $content)) {
-                $content = preg_replace($pattern, '$1' . self::CSRF_PLACEHOLDER . '$3', $content);
-            }
+            $content = preg_replace_callback(
+                '/<input[^>]*name=["\']csrf_token["\'][^>]*>/i',
+                function($matches) {
+                    $tag = $matches[0];
+                    // Replace value="something" with value="PLACEHOLDER"
+                    return preg_replace('/value=["\'][^"\']*["\']/i', 'value="' . self::CSRF_PLACEHOLDER . '"', $tag);
+                },
+                $content
+            );
 
             $ttl = (int)($settings['cache_html_ttl'] ?? 600);
             $uri = $_SERVER['REQUEST_URI'];
             $cacheKey = 'page_' . md5($uri);
 
             Cache::getInstance()->put($cacheKey, $content, $ttl, $tags);
+        }
+    }
+
+    /**
+     * Purge a specific page from the cache by its URL.
+     * Useful for admin actions (e.g. updating a specific product page).
+     *
+     * @param string $uri The relative URI (e.g., /product/my-slug)
+     */
+    public static function deletePage($uri)
+    {
+        try {
+            $cacheKey = 'page_' . md5($uri);
+            Cache::getInstance()->delete($cacheKey);
+        } catch (\Exception $e) {
+            // Ignore
         }
     }
 }
