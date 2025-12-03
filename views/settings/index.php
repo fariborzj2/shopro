@@ -12,6 +12,7 @@
                     'email' => 'ایمیل',
                     'sms' => 'پیامک',
                     'payment' => 'درگاه پرداخت',
+                    'cache' => 'کشینگ (Cache)',
                 ];
                 foreach($tabs as $key => $label):
             ?>
@@ -237,11 +238,117 @@
             </div>
         </div>
 
+        <!-- Cache Settings -->
+        <div x-show="tab === 'cache'" class="space-y-6" style="display: none;">
+            <div class="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-xl border border-blue-100 dark:border-blue-800 mb-6">
+                <div class="flex items-start">
+                    <div class="flex-shrink-0">
+                        <?php partial('icon', ['name' => 'information-circle', 'class' => 'w-5 h-5 text-blue-600 dark:text-blue-400']); ?>
+                    </div>
+                    <div class="mr-3">
+                        <h3 class="text-sm font-medium text-blue-800 dark:text-blue-300">راهنمای کشینگ</h3>
+                        <div class="mt-2 text-sm text-blue-700 dark:text-blue-400">
+                            <p>سیستم کشینگ برای بهبود سرعت سایت استفاده می‌شود. قبل از فعال‌سازی، از نصب بودن Redis روی سرور اطمینان حاصل کنید.</p>
+                        </div>
+                        <div class="mt-4">
+                             <button type="button" onclick="document.getElementById('clearCacheForm').submit()" class="inline-flex items-center px-3 py-1.5 border border-red-200 shadow-sm text-xs font-medium rounded-lg text-red-700 bg-white hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
+                                پاکسازی کامل کش (Flush All)
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- General Cache Settings -->
+                 <div class="col-span-1 md:col-span-2">
+                    <h4 class="text-base font-semibold text-gray-800 dark:text-white mb-4 pb-2 border-b border-gray-100 dark:border-gray-700">تنظیمات عمومی کش</h4>
+                </div>
+
+                <div class="col-span-1">
+                    <label for="cache_driver" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">درایور کش (Driver)</label>
+                    <div class="relative">
+                        <select id="cache_driver" name="cache_driver" class="w-full appearance-none rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white px-4 py-2.5 pr-10 focus:ring-primary-500 focus:border-primary-500 shadow-sm">
+                            <option value="redis" <?= ($settings['cache_driver'] ?? 'redis') === 'redis' ? 'selected' : '' ?>>Redis (پیشنهادی)</option>
+                            <option value="disabled" <?= ($settings['cache_driver'] ?? '') === 'disabled' ? 'selected' : '' ?>>غیرفعال (Disabled)</option>
+                        </select>
+                        <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center px-3 text-gray-500">
+                            <?php partial('icon', ['name' => 'chevron-down', 'class' => 'w-4 h-4']); ?>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-span-1">
+                    <label class="flex items-center p-4 bg-gray-50 dark:bg-gray-700/50 rounded-xl border border-gray-200 dark:border-gray-700 cursor-pointer h-full">
+                        <input type="checkbox" id="cache_debug" name="cache_debug" value="1" <?= (isset($settings['cache_debug']) && $settings['cache_debug'] == '1') ? 'checked' : '' ?> class="h-4 w-4 text-primary-600 border-gray-300 rounded focus:ring-primary-500 bg-white dark:bg-gray-700 dark:border-gray-600">
+                        <div class="mr-3">
+                            <span class="block text-sm font-medium text-gray-900 dark:text-white">حالت دیباگ (Debug Mode)</span>
+                            <span class="block text-xs text-gray-500 dark:text-gray-400 mt-0.5">ثبت خطاها و اطلاعات اتصال در error log سرور.</span>
+                        </div>
+                    </label>
+                </div>
+
+                <!-- Connection Settings -->
+                <div class="col-span-1 md:col-span-2 mt-4">
+                    <h4 class="text-base font-semibold text-gray-800 dark:text-white mb-4 pb-2 border-b border-gray-100 dark:border-gray-700">تنظیمات اتصال Redis</h4>
+                </div>
+
+                <div class="col-span-1">
+                    <label for="redis_host" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">آدرس هاست (Host)</label>
+                    <input type="text" id="redis_host" name="redis_host" dir="ltr" value="<?= htmlspecialchars($settings['redis_host'] ?? '127.0.0.1') ?>" class="w-full rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white px-4 py-2.5 focus:ring-primary-500 focus:border-primary-500 shadow-sm font-mono">
+                </div>
+                <div class="col-span-1">
+                    <label for="redis_port" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">پورت (Port)</label>
+                    <input type="text" id="redis_port" name="redis_port" dir="ltr" value="<?= htmlspecialchars($settings['redis_port'] ?? '6379') ?>" class="w-full rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white px-4 py-2.5 focus:ring-primary-500 focus:border-primary-500 shadow-sm font-mono">
+                </div>
+                <div class="col-span-1">
+                    <label for="redis_password" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">رمز عبور (Password)</label>
+                    <input type="password" id="redis_password" name="redis_password" dir="ltr" value="<?= htmlspecialchars($settings['redis_password'] ?? '') ?>" class="w-full rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white px-4 py-2.5 focus:ring-primary-500 focus:border-primary-500 shadow-sm font-mono">
+                </div>
+                <div class="col-span-1">
+                    <label for="redis_db" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">شماره دیتابیس (DB Index)</label>
+                    <input type="number" id="redis_db" name="redis_db" dir="ltr" value="<?= htmlspecialchars($settings['redis_db'] ?? '0') ?>" class="w-full rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white px-4 py-2.5 focus:ring-primary-500 focus:border-primary-500 shadow-sm font-mono">
+                </div>
+
+                <!-- HTML Cache Settings -->
+                <div class="col-span-1 md:col-span-2 mt-4">
+                    <h4 class="text-base font-semibold text-gray-800 dark:text-white mb-4 pb-2 border-b border-gray-100 dark:border-gray-700">کش HTML (فول پیج)</h4>
+                </div>
+
+                <div class="col-span-1 md:col-span-2">
+                    <label class="flex items-center p-4 bg-gray-50 dark:bg-gray-700/50 rounded-xl border border-gray-200 dark:border-gray-700 cursor-pointer">
+                        <input type="checkbox" id="cache_html_enabled" name="cache_html_enabled" value="1" <?= (isset($settings['cache_html_enabled']) && $settings['cache_html_enabled'] == '1') ? 'checked' : '' ?> class="h-4 w-4 text-primary-600 border-gray-300 rounded focus:ring-primary-500 bg-white dark:bg-gray-700 dark:border-gray-600">
+                        <div class="mr-3">
+                            <span class="block text-sm font-medium text-gray-900 dark:text-white">فعال‌سازی کش HTML برای مهمان‌ها</span>
+                            <span class="block text-xs text-gray-500 dark:text-gray-400 mt-0.5">سرعت بارگذاری صفحات برای کاربران لاگین‌نکرده به شدت افزایش می‌یابد.</span>
+                        </div>
+                    </label>
+                </div>
+
+                <div class="col-span-1">
+                    <label for="cache_html_ttl" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">مدت زمان کش (ثانیه)</label>
+                    <input type="number" id="cache_html_ttl" name="cache_html_ttl" dir="ltr" value="<?= htmlspecialchars($settings['cache_html_ttl'] ?? '600') ?>" class="w-full rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white px-4 py-2.5 focus:ring-primary-500 focus:border-primary-500 shadow-sm">
+                    <p class="text-xs text-gray-500 mt-1">پیش‌فرض: ۶۰۰ ثانیه (۱۰ دقیقه)</p>
+                </div>
+
+                <div class="col-span-1 md:col-span-2">
+                    <label for="cache_excluded_urls" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">آدرس‌های استثنا (Exclude URLs)</label>
+                    <textarea id="cache_excluded_urls" name="cache_excluded_urls" rows="3" dir="ltr" class="w-full rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white px-4 py-2.5 focus:ring-primary-500 focus:border-primary-500 shadow-sm font-mono text-sm" placeholder="/contact&#10;/search*"><?= htmlspecialchars($settings['cache_excluded_urls'] ?? '') ?></textarea>
+                    <p class="text-xs text-gray-500 mt-1">هر الگو را در یک خط جدید وارد کنید. از * برای تطبیق همه چیز استفاده کنید.</p>
+                </div>
+            </div>
+        </div>
+
         <!-- Submit Button -->
         <div class="mt-8 pt-6 border-t border-gray-100 dark:border-gray-700 flex justify-end">
             <button type="submit" class="px-6 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 shadow-md hover:shadow-lg font-medium transition-all focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
                 ذخیره تنظیمات
             </button>
         </div>
+    </form>
+
+    <!-- Hidden Form for Clear Cache -->
+    <form id="clearCacheForm" action="<?= url('admin/settings/clear-cache') ?>" method="POST" style="display: none;">
+        <?php partial('csrf_field'); ?>
     </form>
 </div>
