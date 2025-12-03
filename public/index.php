@@ -73,6 +73,17 @@ if (!function_exists('jdate')) {
 }
 
 // ----------------------------
+// HTML Page Caching (Enterprise)
+// ----------------------------
+// Attempt to serve cached page for Guests before any heavy processing
+\App\Core\PageCache::serve();
+
+// Start output buffering for potential caching
+// Note: We only effectively cache if the controller flow finishes successfully
+// and the PageCache::end() logic decides it's cacheable.
+$cachingStarted = \App\Core\PageCache::start();
+
+// ----------------------------
 // Admin Auth Middleware
 // ----------------------------
 $uri = Request::uri();
@@ -154,3 +165,19 @@ $method = Request::method();
 
 Router::load(PROJECT_ROOT . '/app/routes.php')
     ->dispatch($uri, $method);
+
+// ----------------------------
+// End Page Caching
+// ----------------------------
+if ($cachingStarted) {
+    // Determine tags based on URI or Context (Basic implementation)
+    // In a real app, Controllers would register tags via a Registry.
+    // For now, we tag everything as 'pages' and maybe the first URI segment.
+    $parts = explode('/', trim($uri, '/'));
+    $tags = ['pages'];
+    if (!empty($parts[0])) {
+        $tags[] = $parts[0];
+    }
+
+    \App\Core\PageCache::end($tags);
+}
