@@ -25,16 +25,12 @@ class Cache
     {
         $this->prefix = $prefix;
 
-        // Attempt to connect using environment variables first, then database settings (if available), then defaults.
         $host = $_ENV['REDIS_HOST'] ?? '127.0.0.1';
         $port = $_ENV['REDIS_PORT'] ?? 6379;
         $password = $_ENV['REDIS_PASSWORD'] ?? null;
         $db = $_ENV['REDIS_DB'] ?? 0;
 
-        // Try to fetch overrides from DB Settings if not strictly defined in ENV (fallback mechanism)
-        // Note: We check if Database class exists to avoid dependency loops during early boot
         if (class_exists('App\Models\Setting') && class_exists('App\Core\Database')) {
-            // We use a try-catch because DB might not be ready
             try {
                 $settings = \App\Models\Setting::getAll();
                 if (!empty($settings['redis_host'])) $host = $settings['redis_host'];
@@ -42,13 +38,13 @@ class Cache
                 if (!empty($settings['redis_password'])) $password = $settings['redis_password'];
                 if (isset($settings['redis_db'])) $db = $settings['redis_db'];
             } catch (Exception $e) {
-                // DB not ready, proceed with defaults
+                // DB not ready
             }
         }
 
         try {
             $this->redis = new \Redis();
-            $this->redis->connect($host, $port, 2.0); // 2 sec timeout
+            $this->redis->connect($host, $port, 2.0);
 
             if ($password) {
                 $this->redis->auth($password);
@@ -58,8 +54,6 @@ class Cache
                 $this->redis->select($db);
             }
         } catch (Exception $e) {
-            // If Redis fails, we might fallback to file or null driver,
-            // but for this implementation we log and allow it to be null (methods should handle null check)
             error_log("Redis Connection Failed: " . $e->getMessage());
             $this->redis = null;
         }
@@ -70,9 +64,6 @@ class Cache
         return $this->prefix . $key;
     }
 
-    /**
-     * Store data in cache
-     */
     public function put($key, $value, $ttl = 300, $tags = [])
     {
         if (!$this->redis) return;
@@ -80,7 +71,6 @@ class Cache
         $packedValue = serialize($value);
         $fullKey = $this->key($key);
 
-        // Native Redis Pipeline
         $pipeline = $this->redis->multi(\Redis::PIPELINE);
 
         $pipeline->set($fullKey, $packedValue);
@@ -89,8 +79,8 @@ class Cache
         foreach ($tags as $tag) {
             $tagKey = $this->key("tag:$tag");
             $pipeline->sAdd($tagKey, $fullKey);
-            // Tags expire slightly later to prevent orphan keys, or same as content
-            $pipeline->expire($tagKey, $ttl);
+            // Tag set expires after 7 days
+            $pipeline->expire($tagKey, 604800);
         }
 
         $pipeline->exec();
@@ -116,9 +106,6 @@ class Cache
         $this->redis->flushDB();
     }
 
-    /**
-     * Remember method with Stampede Protection (Locking + Retry)
-     */
     public function remember($key, $ttl, callable $callback, $tags = [])
     {
         if (!$this->redis) {
@@ -127,19 +114,15 @@ class Cache
 
         $fullKey = $this->key($key);
 
-        // 1. Try to get directly
         $data = $this->get($key);
         if ($data !== null) {
             return $data;
         }
 
-        // 2. Acquire Lock
         $lockKey = $this->key("lock:$key");
-        // set(key, value, ['NX', 'EX'=>10]) returns true on success
         $isLocked = $this->redis->set($lockKey, 1, ['NX', 'EX' => 10]);
 
         if ($isLocked) {
-            // ---> Leader Process
             try {
                 $data = $callback();
 
@@ -149,23 +132,21 @@ class Cache
 
                 foreach ($tags as $tag) {
                     $pipeline->sAdd($this->key("tag:$tag"), $fullKey);
+                    $pipeline->expire($this->key("tag:$tag"), 604800);
                 }
 
-                // Release lock in pipeline
                 $pipeline->del($lockKey);
                 $pipeline->exec();
 
                 return $data;
 
             } catch (Exception $e) {
-                // Release lock immediately on error
                 $this->redis->del($lockKey);
                 throw $e;
             }
         } else {
-            // ---> Follower Process (Wait Loop)
             $attempts = 5;
-            $wait = 200000; // 200ms
+            $wait = 200000;
 
             while ($attempts > 0) {
                 usleep($wait);
@@ -176,14 +157,10 @@ class Cache
                 $attempts--;
             }
 
-            // Fallback: If still not ready, compute it locally
             return $callback();
         }
     }
 
-    /**
-     * Invalidate by Tag
-     */
     public function invalidateTag($tag)
     {
         if (!$this->redis) return;
@@ -192,12 +169,62 @@ class Cache
         $keys = $this->redis->sMembers($fullTag);
 
         if (!empty($keys)) {
-            // Delete all keys associated with tag + tag itself
             $keys[] = $fullTag;
-            $this->redis->del($keys);
+            // Use UNLINK if available (Redis 4.0+) for better performance
+            // Fallback to DEL if needed, but UNLINK is standard in modern Redis extensions
+            if (method_exists($this->redis, 'unlink')) {
+                $this->redis->unlink($keys);
+            } else {
+                $this->redis->del($keys);
+            }
 
-            // Future: Integration with CDN (Cloudflare Purge)
-            // self::purgeCdn($tag);
+            // CDN Integration
+            $this->purgeCdn($tag);
         }
+    }
+
+    /**
+     * Purge CDN (Cloudflare) by Tag.
+     */
+    protected function purgeCdn($tag)
+    {
+        // Check for Cloudflare settings in ENV or DB
+        $zoneId = $_ENV['CLOUDFLARE_ZONE_ID'] ?? null;
+        $token = $_ENV['CLOUDFLARE_API_TOKEN'] ?? null;
+
+        if (!$zoneId && class_exists('App\Models\Setting')) {
+             try {
+                $settings = \App\Models\Setting::getAll();
+                $zoneId = $settings['cloudflare_zone_id'] ?? null;
+                $token = $settings['cloudflare_api_token'] ?? null;
+             } catch(Exception $e) {}
+        }
+
+        if (!$zoneId || !$token) {
+            return;
+        }
+
+        // Logic to purge by tag
+        // Note: Enterprise Cloudflare supports 'tags', others might need 'purge_everything' or URL list.
+        // We implement 'tags' purge assuming the user has appropriate plan or uses Cache-Tags.
+
+        $url = "https://api.cloudflare.com/client/v4/zones/$zoneId/purge_cache";
+
+        $data = ['tags' => [$tag]];
+
+        $ch = curl_init($url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
+        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
+        curl_setopt($ch, CURLOPT_HTTPHEADER, [
+            'Authorization: Bearer ' . $token,
+            'Content-Type: application/json',
+        ]);
+
+        // Execute asynchronously (timeout 1s) to not block user request
+        curl_setopt($ch, CURLOPT_TIMEOUT_MS, 1000);
+        // We don't care about the result for now, just fire and forget (best effort)
+        curl_exec($ch);
+        curl_close($ch);
     }
 }
