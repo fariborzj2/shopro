@@ -182,9 +182,12 @@ class BlogPostsController
             isset($_FILES["image"]) &&
             $_FILES["image"]["error"] === UPLOAD_ERR_OK
         ) {
+            // Use Jalali date for the folder structure
+            $dateFolder = \jdate('Y-m-d');
             $data["image_url"] = $uploader->upload(
                 $_FILES["image"],
-                "blog/featured"
+                "blog_posts/" . $dateFolder,
+                "images"
             );
         }
 
@@ -417,9 +420,13 @@ class BlogPostsController
             if (!empty($post["image_url"])) {
                 @unlink(PROJECT_ROOT . "/public" . $post["image_url"]);
             }
+
+            // Use Jalali date for the folder structure
+            $dateFolder = \jdate('Y-m-d');
             $data["image_url"] = $uploader->upload(
                 $_FILES["image"],
-                "blog/featured"
+                "blog_posts/" . $dateFolder,
+                "images"
             );
         }
 
