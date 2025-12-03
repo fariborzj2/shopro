@@ -178,6 +178,7 @@ $router->post('/admin/api/upload-image', 'Admin\ApiController@uploadImage');
 // Media Library
 $router->get('/admin/media', 'Admin\MediaController@index');
 $router->post('/admin/media/delete/{id}', 'Admin\MediaController@delete');
+$router->post('/admin/media/delete-item', 'Admin\MediaController@deleteItem');
 
 // Plugins Management
 $router->get('/admin/plugins', 'Admin\PluginsController@index');
