@@ -239,7 +239,7 @@
         </div>
 
         <!-- Cache Settings -->
-        <div x-show="tab === 'cache'" class="space-y-6" style="display: none;">
+        <div x-show="tab === 'cache'" x-data="{ cacheDriver: '<?= $settings['cache_driver'] ?? 'litespeed' ?>' }" class="space-y-6" style="display: none;">
             <div class="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-xl border border-blue-100 dark:border-blue-800 mb-6">
                 <div class="flex items-start">
                     <div class="flex-shrink-0">
@@ -299,9 +299,9 @@
                 <div class="col-span-1">
                     <label for="cache_driver" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">درایور کش (Driver)</label>
                     <div class="relative">
-                        <select id="cache_driver" name="cache_driver" class="w-full appearance-none rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white px-4 py-2.5 pr-10 focus:ring-primary-500 focus:border-primary-500 shadow-sm">
-                            <option value="redis" <?= ($settings['cache_driver'] ?? 'redis') === 'redis' ? 'selected' : '' ?>>Redis (پیشنهادی)</option>
-                            <option value="litespeed" <?= ($settings['cache_driver'] ?? '') === 'litespeed' ? 'selected' : '' ?>>LiteSpeed Cache</option>
+                        <select id="cache_driver" x-model="cacheDriver" name="cache_driver" class="w-full appearance-none rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white px-4 py-2.5 pr-10 focus:ring-primary-500 focus:border-primary-500 shadow-sm">
+                            <option value="redis" <?= ($settings['cache_driver'] ?? 'litespeed') === 'redis' ? 'selected' : '' ?>>Redis</option>
+                            <option value="litespeed" <?= ($settings['cache_driver'] ?? 'litespeed') === 'litespeed' ? 'selected' : '' ?>>LiteSpeed Cache (پیشنهادی)</option>
                             <option value="disabled" <?= ($settings['cache_driver'] ?? '') === 'disabled' ? 'selected' : '' ?>>غیرفعال (Disabled)</option>
                         </select>
                         <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center px-3 text-gray-500">
@@ -320,26 +320,43 @@
                     </label>
                 </div>
 
-                <!-- Connection Settings -->
-                <div class="col-span-1 md:col-span-2 mt-4">
+                <!-- Connection Settings (Redis) -->
+                <div class="col-span-1 md:col-span-2 mt-4" x-show="cacheDriver === 'redis'">
                     <h4 class="text-base font-semibold text-gray-800 dark:text-white mb-4 pb-2 border-b border-gray-100 dark:border-gray-700">تنظیمات اتصال Redis</h4>
                 </div>
 
-                <div class="col-span-1">
+                <div class="col-span-1" x-show="cacheDriver === 'redis'">
                     <label for="redis_host" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">آدرس هاست (Host)</label>
                     <input type="text" id="redis_host" name="redis_host" dir="ltr" value="<?= htmlspecialchars($settings['redis_host'] ?? '127.0.0.1') ?>" class="w-full rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white px-4 py-2.5 focus:ring-primary-500 focus:border-primary-500 shadow-sm font-mono">
                 </div>
-                <div class="col-span-1">
+                <div class="col-span-1" x-show="cacheDriver === 'redis'">
                     <label for="redis_port" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">پورت (Port)</label>
                     <input type="text" id="redis_port" name="redis_port" dir="ltr" value="<?= htmlspecialchars($settings['redis_port'] ?? '6379') ?>" class="w-full rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white px-4 py-2.5 focus:ring-primary-500 focus:border-primary-500 shadow-sm font-mono">
                 </div>
-                <div class="col-span-1">
+                <div class="col-span-1" x-show="cacheDriver === 'redis'">
                     <label for="redis_password" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">رمز عبور (Password)</label>
                     <input type="password" id="redis_password" name="redis_password" dir="ltr" value="<?= htmlspecialchars($settings['redis_password'] ?? '') ?>" class="w-full rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white px-4 py-2.5 focus:ring-primary-500 focus:border-primary-500 shadow-sm font-mono">
                 </div>
-                <div class="col-span-1">
+                <div class="col-span-1" x-show="cacheDriver === 'redis'">
                     <label for="redis_db" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">شماره دیتابیس (DB Index)</label>
                     <input type="number" id="redis_db" name="redis_db" dir="ltr" value="<?= htmlspecialchars($settings['redis_db'] ?? '0') ?>" class="w-full rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white px-4 py-2.5 focus:ring-primary-500 focus:border-primary-500 shadow-sm font-mono">
+                </div>
+
+                <!-- Info (LiteSpeed) -->
+                <div class="col-span-1 md:col-span-2 mt-4" x-show="cacheDriver === 'litespeed'">
+                    <div class="bg-purple-50 dark:bg-purple-900/20 p-4 rounded-xl border border-purple-100 dark:border-purple-800">
+                        <div class="flex items-start">
+                            <div class="flex-shrink-0">
+                                <?php partial('icon', ['name' => 'information-circle', 'class' => 'w-5 h-5 text-purple-600 dark:text-purple-400']); ?>
+                            </div>
+                            <div class="mr-3">
+                                <h3 class="text-sm font-medium text-purple-800 dark:text-purple-300">LiteSpeed Cache فعال است</h3>
+                                <div class="mt-2 text-sm text-purple-700 dark:text-purple-400">
+                                    <p>این درایور از هدرهای HTTP برای کنترل کش سرور وب LiteSpeed استفاده می‌کند. تنظیمات خاصی مورد نیاز نیست.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- HTML Cache Settings -->

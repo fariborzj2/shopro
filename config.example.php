@@ -14,7 +14,7 @@ return [
     ],
     // Cache configuration
     'cache' => [
-        'driver' => 'redis', // 'redis' or 'litespeed'
+        'driver' => 'litespeed', // 'redis' or 'litespeed'
         'prefix' => 'app_v1_',
         'redis' => [
             'host' => '127.0.0.1',
