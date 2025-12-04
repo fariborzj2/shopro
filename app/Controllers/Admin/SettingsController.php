@@ -13,12 +13,31 @@ class SettingsController
     {
         $settings = Setting::getAll();
         $blog_categories = \App\Models\BlogCategory::all();
+        $cache = \App\Core\Cache::getInstance();
+        $cacheStats = $cache->getStats();
+        $cacheDriver = $cache->getDriverName();
 
         return view('main', 'settings/index', [
             'title' => 'تنظیمات سایت',
             'settings' => $settings,
-            'blog_categories' => $blog_categories
+            'blog_categories' => $blog_categories,
+            'cacheStats' => $cacheStats,
+            'cacheDriver' => $cacheDriver
         ]);
+    }
+
+    /**
+     * Clear the entire cache.
+     */
+    public function clearCache()
+    {
+        try {
+            \App\Core\Cache::getInstance()->flush();
+            header('Location: /admin/settings?success=cache_cleared');
+        } catch (\Exception $e) {
+            header('Location: /admin/settings?error=cache_failed');
+        }
+        exit();
     }
 
     /**
