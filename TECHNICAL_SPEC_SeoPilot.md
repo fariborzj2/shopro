@@ -1,4 +1,4 @@
-\
+
 # مستندات فنی جامع پلاگین SeoPilot (نسخه Enterprise)
 
 **نسخه:** 1.0.0 (Gold Master)
