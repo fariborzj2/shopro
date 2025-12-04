@@ -88,6 +88,15 @@ class Cache
     }
 
     /**
+     * Get the active driver name.
+     * @return string
+     */
+    public function getDriverName()
+    {
+        return $this->driver->getDriverName();
+    }
+
+    /**
      * Get statistics about the cache.
      * @return array
      */

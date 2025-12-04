@@ -55,4 +55,9 @@ class LiteSpeedCacheDriver implements CacheDriverInterface
     {
         header("X-LiteSpeed-Purge: $tag");
     }
+
+    public function getDriverName(): string
+    {
+        return 'litespeed';
+    }
 }

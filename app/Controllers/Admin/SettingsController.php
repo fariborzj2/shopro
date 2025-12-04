@@ -13,13 +13,16 @@ class SettingsController
     {
         $settings = Setting::getAll();
         $blog_categories = \App\Models\BlogCategory::all();
-        $cacheStats = \App\Core\Cache::getInstance()->getStats();
+        $cache = \App\Core\Cache::getInstance();
+        $cacheStats = $cache->getStats();
+        $cacheDriver = $cache->getDriverName();
 
         return view('main', 'settings/index', [
             'title' => 'تنظیمات سایت',
             'settings' => $settings,
             'blog_categories' => $blog_categories,
-            'cacheStats' => $cacheStats
+            'cacheStats' => $cacheStats,
+            'cacheDriver' => $cacheDriver
         ]);
     }
 

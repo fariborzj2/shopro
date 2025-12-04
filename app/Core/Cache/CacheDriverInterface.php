@@ -10,7 +10,5 @@ interface CacheDriverInterface
     public function get(string $key): mixed;
     public function delete(string $key): bool;
     public function clearAll(): bool;
-
-    // Add support for tags management if possible, or leave it to set implementation
-    // The requirement mentions 'set' logic involves tags.
+    public function getDriverName(): string;
 }

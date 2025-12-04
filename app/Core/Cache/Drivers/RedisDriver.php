@@ -208,4 +208,9 @@ class RedisDriver implements CacheDriverInterface
     {
         return $this->prefix;
     }
+
+    public function getDriverName(): string
+    {
+        return 'redis';
+    }
 }
