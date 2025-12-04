@@ -121,6 +121,12 @@ $superAdminItems = [
         'url' => '/plugins',
         'icon' => 'settings', // Reusing settings icon or a new 'plugin' icon if available
         'permission' => 'super_admin'
+    ],
+    [
+        'label' => 'سئوپایلوت',
+        'url' => '/seopilot/settings',
+        'icon' => 'search',
+        'permission' => 'super_admin'
     ]
 ];
 
