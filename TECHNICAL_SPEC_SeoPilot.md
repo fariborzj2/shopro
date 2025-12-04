@@ -1,220 +1,209 @@
+این نسخه جدید **بسیار عالی و بالغ‌تر** است.
 
-# مستندات فنی جامع پلاگین SeoPilot (نسخه Enterprise)
+**چرا نسخه شما بهتر است؟**
+۱. **نگاه معمارانه (Architectural View):** نسخه قبلی بیشتر "دستورالعمل کدنویسی" بود، اما این نسخه یک "سند معماری نرم‌افزار" است.
+۲. **ساختار دیتابیس مدرن:** استفاده از `data_raw JSON` در کنار ستون‌های ایندکس شده، هوشمندانه‌ترین روش برای سیستم‌های Enterprise است (ترکیب سرعت SQL و انعطاف NoSQL).
+۳. **جزئیات حرفه‌ای:** اضافه کردن مواردی مثل **Pixel Width Analysis** (به جای تعداد کاراکتر) و **Security/Hardening** نشان‌دهنده بلوغ محصول است.
+۴. **تست و QA:** بخشی که در نسخه من کمرنگ بود و اینجا بسیار خوب دیده شده است.
 
-**نسخه:** 1.0.0 (Gold Master)
-**وضعیت:** نهایی و آماده اجرا
-**مخاطب:** تیم توسعه و معماری نرم‌افزار
+با این حال، برای اینکه این سند برای **ایجنت هوش مصنوعی (Code Generator)** کاملاً قابل فهم باشد، باید کمی "جزئیات اجرایی" (مثل نمونه کدها و پترن‌ها) که در نسخه من بود را به ساختار عالی شما تزریق کنیم.
 
------
-
-## ۰. شناسنامه و معرفی محصول (Overview)
-
-### نام محصول: **SeoPilot (Enterprise Edition)**
-
-**شعار:** "نصب کن و فراموش کن" (Install & Forget)
-
-### شرح عملکرد (What it does exactly?)
-
-**SeoPilot** یک سیستم مدیریت سئو تمام‌خودکار، هوشمند و پرسرعت است که برای CMSهای اختصاصی PHP طراحی شده است. این پلاگین جایگزین ابزارهای سنگین و قدیمی مانند Yoast می‌شود و با تمرکز بر **سرعت (Performance)**، **زبان فارسی (Persian NLP)** و **پایداری (Stability)**، وظایف زیر را به صورت خودکار انجام می‌دهد:
-
-1.  **اتوماسیون کامل متا تگ‌ها:** تولید خودکار Title, Description, Robots, Canonical و OpenGraph در لحظه ذخیره محتوا، بدون نیاز به دخالت کاربر.
-2.  **تولید اسکیما (Schema Generator):** شناسایی نوع صفحه (محصول، مقاله، ویدیو) و تزریق JSON-LD استاندارد گوگل.
-3.  **آنالیز محتوای فارسی:** بررسی کیفیت متن با درک عمیق از زبان فارسی (نیم‌فاصله‌ها، اعراب، مترادف‌ها) و ارائه پیشنهادات عملی.
-4.  **کش ترکیبی (Hybrid Caching):** ذخیره خروجی HTML متا در دیتابیس و اتصال به LiteSpeed Cache برای ارائه پاسخ در ۰.۰۰۰ ثانیه.
-5.  **مدیریت ریدایرکت هوشمند:** شناسایی تغییر آدرس‌ها (Slug Change) و ایجاد ریدایرکت ۳۰۱ خودکار با جلوگیری از لوپ‌های خطرناک.
-6.  **تزریق بدون تداخل (Ghost Injection):** اصلاح کدهای `<head>` قالب بدون شکستن استایل‌ها یا تداخل با پلاگین‌های دیگر.
-
-### مشخصات فنی و پیش‌نیازها
-
-  * **زبان:** PHP 8.1 یا بالاتر.
-  * **دیتابیس:** MySQL 8.0+ یا MariaDB 10.6+.
-  * **معماری:** Modular, Event-Driven, PSR-4 Compliant.
-  * **سازگاری سرور:** LiteSpeed (Native Support), Nginx, Apache.
-  * **لایه‌های کش:** پشتیبانی داخلی از Redis, Memcached, File System و Database.
+در ادامه، **نسخه نهایی و ادغام شده** (Ultimate Version) را آماده کرده‌ام. این نسخه ساختار قدرتمند شما را حفظ کرده و جزئیات فنی دقیق را در دل آن جا داده است تا توسعه‌دهنده/AI هیچ ابهامی نداشته باشد.
 
 -----
 
-## ۱. اصول بنیادین معماری (Core Principles)
+# مستندات فنی جامع SeoPilot – نسخه Enterprise Master
 
-1.  **Zero-Conflict (عدم تداخل):** پلاگین هیچ استایل یا اسکریپتی را در محیط گلوبال بارگذاری نمی‌کند. همه کلاس‌ها و استایل‌ها Namespaced هستند.
-2.  **Hybrid Caching (کش ترکیبی):** استفاده همزمان از کش اپلیکیشن (Redis/File) و کش سرور (LiteSpeed) برای حداکثر سرعت.
-3.  **Safe DOM Injection (تزریق ایمن):** به جای چسباندن کد به `<head>`، ابتدا بررسی می‌کند تگ وجود دارد یا خیر، سپس اصلاح یا اضافه می‌کند.
-4.  **Zero-Config for User:** کاربر نهایی بجز یک ویزارد اولیه، درگیر تنظیمات فنی نمی‌شود.
+**نسخه:** 2.0.0 (Gold Release)
+**وضعیت:** Production-Ready Specification
+**استاندارد:** PSR-4 / SOLID / Zero-Conflict
 
 -----
 
-## ۲. ساختار فایل و دایرکتوری (Directory Structure)
+## ۰. معرفی محصول (Product Overview)
 
-رعایت استاندارد PSR-4 برای Autoloading اجباری است.
+**نام:** SeoPilot Enterprise
+**ماموریت:** موتور سئوی خودکار، نامرئی و فوق‌سریع برای CMSهای PHP.
+**فلسفه طراحی:**
+
+1.  **Invisible:** کاربر وجود پلاگین را حس نمی‌کند (بدون تنظیمات پیچیده).
+2.  **Native:** بومی‌سازی شده برای زبان فارسی و ساختار وب‌سرورهای لایت‌اسپید.
+3.  **Resilient:** پایداری در برابر خطاهای دیتابیس، کش و تغییرات قالب.
+
+-----
+
+## ۱. اصول معماری (Architecture Principles)
+
+### ۱.۱. ایزولاسیون مطلق (Zero-Conflict)
+
+  * **Namespace:** تمام کلاس‌ها تحت `SeoPilot\Enterprise` باشند.
+  * **DOM Isolation:** عدم استفاده از `echo` یا `print`. تمام خروجی‌ها باید به بافر تزریق شوند.
+  * **Prefixing:** جداول با `{prefix}_seopilot_` و متغیرهای JS/CSS با `sp_` نام‌گذاری شوند.
+
+### ۱.۲. جریان داده (Data Flow)
+
+1.  **Request:** درخواست به سرور می‌رسد.
+2.  **L1 Cache (LiteSpeed):** اگر موجود بود -\> پاسخ آنی (Zero PHP).
+3.  **L2 Cache (App - Redis/File):** اگر موجود بود -\> تزریق HTML آماده.
+4.  **Generation:** اگر کش نبود -\> اجرا شدن `Analyzer` -\> تولید -\> ذخیره در L1 & L2.
+
+-----
+
+## ۲. ساختار دایرکتوری (Standardized Structure)
+
+ساختار تفکیک شده بر اساس مسئولیت (Separation of Concerns):
 
 ```text
 /plugins/seopilot/
 ├── src/
-     ├── Controllers*
-     ├── Code*
-     ├── Models*
-     ├── Services*
-     └── routes.php
-├── views
-├── index.php
-├── install.php
-├── uninstall.php
-└── plugin.json
+│    ├── Core/              # هسته اصلی (Bootstrap, Config)
+│    ├── NLP/               # موتور پردازش زبان فارسی
+│    ├── Cache/             # درایورهای Redis, File, LiteSpeed
+│    ├── Analyzer/          # موتور تحلیل محتوا (Pixel-based)
+│    ├── Schema/            # تولیدکننده‌های JSON-LD
+│    ├── Injector/          # موتور تزریق ایمن (DOM)
+│    ├── Redirect/          # مدیریت تغییر مسیرها
+│    ├── Controllers/       # کنترلرهای ادمین
+│    ├── Services/          # سرویس‌های کمکی (AutoFixer)
+│    └── Database/          # مدل‌ها و ریپازیتوری‌ها
+├── public/                 # استایل‌ها و اسکریپت‌های ایزوله
+├── views/                  # قالب‌های ادمین (Blade/Native)
+├── index.php                 
+├── install.php             # اسکریپت نصب و مایگریشن
+├── uninstall.php           # پاکسازی کامل
+└── plugin.json           # مدیریت وابستگی‌ها
 ```
 
 -----
 
 ## ۳. دیتابیس (Optimized Schema)
 
-استفاده از ساختار **Flat Index** برای سرعت بالا (خواندن تمام متاهای یک صفحه با یک کوئری).
+طراحی هیبرید (SQL + JSON) برای سرعت و انعطاف.
 
 ```sql
--- 1. جدول اصلی (شامل کش HTML رندر شده)
-CREATE TABLE IF NOT EXISTS [prefix]_seopilot_meta (
+-- 1. جدول اصلی متا و کش (Hot Data)
+CREATE TABLE IF NOT EXISTS {prefix}_seopilot_meta (
     entity_id BIGINT UNSIGNED NOT NULL,
-    entity_type VARCHAR(50) NOT NULL, -- post, product, page
+    entity_type VARCHAR(32) NOT NULL, -- post, product, category
     
-    -- داده‌های خام (Raw Data) برای ویرایش
+    -- ستون‌های کلیدی برای جستجو و ایندکس
     focus_keyword VARCHAR(191),
-    seo_title VARCHAR(255),
-    seo_description VARCHAR(500),
-    canonical_url VARCHAR(2048),
-    robots VARCHAR(100) DEFAULT 'index,follow',
-    og_image VARCHAR(2048),
-    
-    -- کشِ رندر شده (The Speed Secret)
-    -- کل خروجی HTML متا اینجا ذخیره می‌شود تا در فرانت‌اند هیچ پردازشی انجام نشود
-    compiled_head MEDIUMTEXT,
-    
-    -- نمرات آنالیز (برای گزارش‌گیری)
     seo_score TINYINT UNSIGNED DEFAULT 0,
-    readability_score TINYINT UNSIGNED DEFAULT 0,
     
+    -- داده‌های منعطف (Future Proof)
+    data_raw JSON NULL, -- شامل title, desc, canonical, robots, og_...
+    
+    -- کشِ رندر شده (Super Fast Retrieval)
+    compiled_head MEDIUMTEXT NULL, 
+    
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (entity_type, entity_id),
     INDEX idx_score (seo_score)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
--- 2. جدول ریدایرکت‌های هوشمند (جلوگیری از 404)
-CREATE TABLE IF NOT EXISTS [prefix]_seopilot_redirects (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    source_uri VARCHAR(191) NOT NULL, -- Hashed or Limit length for Indexing
+-- 2. جدول ریدایرکت (High Performance Lookup)
+CREATE TABLE IF NOT EXISTS {prefix}_seopilot_redirects (
+    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    source_uri VARCHAR(191) NOT NULL, -- Hashed path
     target_uri VARCHAR(2048) NOT NULL,
     status_code SMALLINT DEFAULT 301,
     hit_count BIGINT UNSIGNED DEFAULT 0,
     is_active TINYINT(1) DEFAULT 1,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    UNIQUE KEY uq_source (source_uri)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE KEY uq_source(source_uri)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
--- 3. تنظیمات سراسری پلاگین
-CREATE TABLE IF NOT EXISTS [prefix]_seopilot_options (
+-- 3. جدول تنظیمات سراسری
+CREATE TABLE IF NOT EXISTS {prefix}_seopilot_options (
     option_name VARCHAR(64) PRIMARY KEY,
     option_value JSON NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 ```
 
 -----
 
-## ۴. لایه کشینگ پیشرفته (The Hybrid Cache Layer)
+## ۴. موتورهای منطقی (Core Engines)
 
-### الف) کش سمت اپلیکیشن (Application Cache)
+### ۴.۱. موتور کش هیبرید (Hybrid Cache Layer)
 
-پلاگین باید به صورت خودکار بهترین درایور موجود را انتخاب کند (Adapter Pattern).
+پیاده‌سازی الگوی **Chain of Responsibility**:
 
-  * **Redis:** اولویت اول (اگر اکستنشن `phpredis` فعال بود).
-  * **File:** اولویت دوم (ذخیره JSON در پوشه `cache/seo/`).
-  * **Database:** اولویت آخر (Fallback).
+1.  **LiteSpeed Handler:** مدیریت هدرهای `X-LiteSpeed-Tag` و `X-LiteSpeed-Purge`.
+2.  **App Cache (Driver Interface):**
+      * `RedisDriver`: اولویت اول (در صورت وجود اکستنشن).
+      * `FileDriver`: اولویت دوم (ذخیره JSON).
+      * `NullDriver`: برای محیط‌های توسعه.
 
-### ب) کش سمت سرور (LiteSpeed Integration)
+### ۴.۲. موتور NLP فارسی (Persian NLP Engine)
 
-برای هماهنگی با وب‌سرورهای لایت‌اسپید جهت اعمال آنی تغییرات.
+وظایف دقیق:
 
-```php
-// src/Cache/Server/LiteSpeed.php
-class LiteSpeed {
-    public static function tag(string $type, int $id) {
-        if (!self::isLitespeed()) return;
-        // ارسال تگ اختصاصی به هدر هنگام نمایش صفحه
-        // پارامتر false یعنی تگ را اضافه کن، جایگزین نکن
-        header("X-LiteSpeed-Tag: seopilot_{$type}_{$id}", false);
-    }
+  * **Normalization:** تبدیل `ي/ك` به `ی/ک`، حذف اعراب، تبدیل اعداد فارسی به انگلیسی (برای URL).
+  * **Zero-Width Space:** تبدیل هوشمند نیم‌فاصله‌ها برای شمارش کلمات (مثلاً "می‌شود" = 1 کلمه).
+  * **Stemming:** ریشه‌یابی کلمات (کتاب‌ها = کتاب) برای تطبیق Keyword.
 
-    public static function purge(string $type, int $id) {
-        if (!self::isLitespeed()) return;
-        // دستور پاکسازی هنگام ذخیره پست
-        header("X-LiteSpeed-Purge: seopilot_{$type}_{$id}");
-    }
-}
-```
+### ۴.۳. موتور آنالیز (Pixel-Perfect Analyzer)
 
------
+به جای شمارش کاراکتر (که دقیق نیست)، عرض پیکسل تایتل محاسبه شود.
 
-## ۵. منطق هسته و هوش مصنوعی (Core Logic)
+  * **Logic:** استفاده از فونت استاندارد Arial 16px برای محاسبه عرض رشته.
+  * **Target:** عرض مناسب بین 200px تا 580px.
+  * **DOM Parsing:** استفاده از `DOMDocument` برای استخراج متن خالص (بدون تگ‌های HTML) جهت آنالیز.
 
-### ۵.۱. پردازشگر فارسی (`PersianNLP`)
+### ۴.۴. موتور تزریق ایمن (Safe Injection Engine)
 
-وظیفه: درک صحیح متون فارسی.
+الگوریتم جلوگیری از تداخل:
 
-  * **Normalization:** تبدیل `ي` به `ی`، `ك` به `ک`، و حذف اعراب.
-  * **Half-Space Intelligence:** تبدیل هوشمند "می‌شود" (با نیم‌فاصله) به "می شود" (با فاصله) جهت شمارش دقیق کلمات.
-  * **Stemming:** تشخیص هم‌خانواده‌ها (مثلاً تشخیص اینکه "موبایل‌ها" همان "موبایل" است).
-
-### ۵.۲. آنالیزور ایمن (`Analyzer`)
-
-وظیفه: امتیازدهی دقیق به محتوا.
-
-  * **قانون حیاتی:** هرگز از Regex روی HTML خام استفاده نکنید.
-  * **روش اجرا:** استفاده از `DOMDocument` برای استخراج `textContent` تمیز و سپس اعمال قوانین.
-  * **قوانین نمونه:** طول تایتل (بر اساس پیکسل)، چگالی کلمه کلیدی (۰.۵٪ تا ۲.۵٪)، بررسی Alt تصاویر.
-
-### ۵.۳. اتوماسیون (`AutoFixer`)
-
-وظیفه: پر کردن جاهای خالی در لحظه ذخیره (هوک `on_save`).
-
-  * اگر `meta_description` خالی است -\> ۱۵۰ کاراکتر اول متن خالص را بردار.
-  * اگر `og:image` خالی است -\> اولین تصویر داخل متن را پیدا کن.
-  * اگر `canonical` خالی است -\> URL استاندارد فعلی را قرار بده.
+1.  بافر خروجی HTML دریافت می‌شود.
+2.  پارس کردن با `DOMDocument`.
+3.  **Deduplication:** اگر `<title>` وجود دارد -\> مقدارش را آپدیت کن (نه اینکه یکی دیگر اضافه کنی).
+4.  **Injection:** تگ‌های JSON-LD و Meta Tags را قبل از `</head>` قرار بده.
+5.  بازگرداندن HTML اصلاح شده.
 
 -----
 
-## ۶. تزریق ایمن (Safe Injection Strategy)
+## ۵. اتوماسیون و تعمیر خودکار (AutoMeta Engine)
 
-برای جلوگیری از تداخل با قالب یا پلاگین‌های دیگر، کلاس `SafeInjector` با الگوریتم زیر عمل می‌کند:
+این بخش در هوک `on_before_save` اجرا می‌شود.
 
-1.  کل خروجی HTML صفحه (Buffer) را دریافت کن.
-2.  با `DOMDocument` پارس کن.
-3.  **Deduplication:** آیا تگ `<title>` یا `<meta name="description">` از قبل وجود دارد؟
-      * **بله:** مقدار آن را آپدیت کن (جلوگیری از تایتل تکراری).
-      * **خیر:** تگ جدید بساز و به `<head>` اضافه کن.
-4.  خروجی اصلاح شده را برگردان.
-
------
-
-## ۷. رابط کاربری (UI) - ساده و تعاملی
-
-### ۷.۱. ویزارد نصب (Setup Wizard)
-
-در اولین فعال‌سازی:
-
-1.  **نوع سایت:** (فروشگاه/بلاگ/شرکتی) -\> تنظیم خودکار Schema Type.
-2.  **هویت:** (لوگو و نام سازمان) -\> تنظیمات Knowledge Graph.
-3.  **موتورهای جستجو:** (ایندکس شود؟) -\> تنظیم `robots.txt`.
-
-### ۷.۲. متاباکس (Editor Panel)
-
-  * **Live Preview:** نمایش نحوه دیده شدن در گوگل (موبایل/دسکتاپ) با قابلیت ویرایش زنده.
-  * **Score:** یک نشانگر رنگی ساده (سبز/زرد/قرمز).
-  * **Analysis List:** پیام‌های فارسی و گویا (مثلاً: "عنوان خیلی طولانی است، کوتاهترش کن").
+  * **Fallback Logic:**
+      * `Title` خالی؟ -\> استفاده از `Post Title`.
+      * `Description` خالی؟ -\> استخراج ۱۶۰ کاراکتر اول متن خالص + NLP Clean (حذف کاراکترهای ناقص).
+      * `OG Image` خالی؟ -\> اسکن متن برای اولین تگ `<img>` و برداشتن `src`.
+      * `Canonical` خالی؟ -\> ساخت URL استاندارد فعلی.
 
 -----
 
-## ۸. چک‌لیست توسعه (Implementation Checklist)
+## ۶. رابط کاربری (UI/UX)
 
-1.  [ ] **Setup:** ایجاد فایل `composer.json` و تعریف `SeoPilot\\` namespace.
-2.  [ ] **DB Migration:** نوشتن اسکریپت ساخت جداول با شرط `IF NOT EXISTS`.
-3.  [ ] **Cache Drivers:** پیاده‌سازی کلاس‌های Redis, File و LiteSpeed Handler.
-4.  [ ] **NLP Engine:** کدنویسی توابع نرمال‌سازی و ریشه‌یابی فارسی.
-5.  [ ] **Logic:** پیاده‌سازی `Analyzer` (بدون Regex) و `AutoFixer`.
-6.  [ ] **Injection:** پیاده‌سازی `SafeInjector` برای مدیریت بافر خروجی.
-7.  [ ] **UI:** طراحی متاباکس و ویزارد نصب.
-8.  [ ] **Testing:** تست نهایی روی سرور لایت‌اسپید و بررسی عدم تداخل با قالب.
+  * **Setup Wizard:** نصب ۴ مرحله‌ای (Type, Identity, Visibility, Finish).
+  * **MetaBox:**
+      * استفاده از `Alpine.js` یا `Vanilla JS` (بدون وابستگی به jQuery).
+      * **Live Preview:** نمایش همزمان Snippet موبایل و دسکتاپ.
+      * **Trend Chart:** نمایش نمودار کوچک تغییرات امتیاز سئو در طول زمان (Sparkline).
+
+-----
+
+## ۷. امنیت و پایداری (Security & Stability)
+
+  * **Input Sanitization:** تمام ورودی‌های `$_POST` و `$_GET` باید قبل از پردازش Sanitize شوند.
+  * **SQL Injection:** استفاده اجباری از Prepared Statements (PDO).
+  * **XSS Protection:** اسکیپ کردن خروجی‌ها در ویوهای ادمین.
+  * **Fail-Safe:** تمام فراخوانی‌های خارجی (مثل Redis) باید در بلوک `try-catch` باشند تا در صورت خطا، سایت پایین نیاید (Silent Fail).
+
+-----
+
+## ۸. تست و تضمین کیفیت (QA Strategy)
+
+چک‌لیست تست‌های اجباری قبل از تحویل:
+
+1.  [ ] **Unit Tests:** تست متدهای NLP با ورودی‌های پیچیده فارسی.
+2.  [ ] **Integration Tests:** تست اتصال به Redis و ذخیره/بازیابی.
+3.  [ ] **Conflict Test:** نصب همزمان با یک پلاگین که هدر را تغییر می‌دهد.
+4.  [ ] **LiteSpeed Test:** بررسی هدرهای HTTP خروجی برای اطمینان از وجود تگ‌ها.
+5.  [ ] **Redirect Loop Test:** تلاش برای ایجاد ریدایرکت A-\>B-\>A و اطمینان از بلاک شدن آن.
+
+-----
+
+**دستور نهایی به تیم توسعه:**
+این سند را به عنوان **Source of Truth** در نظر بگیرید. هر خط کد باید مستقیماً با یکی از بندهای این سند توجیه شود. اولویت اول با **پایداری** و **عدم تداخل** است.
