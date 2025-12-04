@@ -181,34 +181,6 @@ class BlogController
             $base_url = (isset($_SERVER['HTTPS']) ? "https" : "http") . "://$_SERVER[HTTP_HOST]";
             $canonical_url = $base_url . '/blog/' . $post->slug;
 
-            $schema_data = [
-                'article' => [
-                    '@context' => 'https://schema.org',
-                    '@type' => 'Article',
-                    'headline' => $post->title,
-                    'image' => $post->image_url ? $base_url . $post->image_url : null,
-                    'author' => ['@type' => 'Person', 'name' => $post->author_name],
-                    'publisher' => ['@type' => 'Organization', 'name' => 'نام سایت شما', 'logo' => ['@type' => 'ImageObject', 'url' => $base_url . '/logo.png']],
-                    'datePublished' => date('c', strtotime($post->published_at ?? $post->created_at ?? 'now')),
-                    'dateModified' => date('c', strtotime($post->updated_at ?? $post->published_at ?? $post->created_at ?? 'now')),
-                    'mainEntityOfPage' => $canonical_url,
-                ],
-                'faq' => !empty($faq_items) ? [
-                    '@context' => 'https://schema.org',
-                    '@type' => 'FAQPage',
-                    'mainEntity' => array_map(function($faq) {
-                        return [
-                            '@type' => 'Question',
-                            'name' => $faq['question'],
-                            'acceptedAnswer' => [
-                                '@type' => 'Answer',
-                                'text' => $faq['answer'],
-                            ],
-                        ];
-                    }, $faq_items),
-                ] : null,
-            ];
-
             echo $this->template->render('blog/show', [
                 'pageTitle' => $post->title,
                 'metaDescription' => $post->excerpt,
@@ -217,7 +189,6 @@ class BlogController
                 'faq_items' => $faq_items,
                 'tags' => $tags,
                 'related_posts' => $related_posts,
-                'schema_data' => $schema_data,
                 'comments' => $comments,
                 'captcha_image' => $captcha_image
             ]);

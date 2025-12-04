@@ -157,11 +157,6 @@
         });
     </script>
 
-    <?php if (isset($schema_data)): ?>
-        <?php foreach ($schema_data as $schema): if($schema): ?>
-            <script type="application/ld+json"><?php echo json_encode($schema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE); ?></script>
-        <?php endif; endforeach; ?>
-    <?php endif; ?>
 </head>
 <body
     class="bg-gray-50 text-gray-800 font-sans antialiased min-h-screen flex flex-col"

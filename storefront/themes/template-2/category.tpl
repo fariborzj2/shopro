@@ -349,49 +349,4 @@ function store(data) {
 }
 </script>
 
-<!-- JSON-LD Schema for CollectionPage -->
-<script type="application/ld+json">
-{
-    "@context": "https://schema.org",
-    "@type": "CollectionPage",
-    "name": "<?php echo htmlspecialchars($category->name_fa); ?>",
-    "description": "<?php echo htmlspecialchars($category->description); ?>",
-    "mainEntity": {
-        "@type": "ItemList",
-        "itemListElement": [
-            <?php foreach (json_decode($store_data)->products as $index => $product) : ?>
-            {
-                "@type": "Product",
-                "name": "<?php echo htmlspecialchars($product->name); ?>",
-                "image": "<?php echo htmlspecialchars($product->imageUrl); ?>",
-                "offers": {
-                    "@type": "Offer",
-                    "price": "<?php echo htmlspecialchars($product->price); ?>",
-                    "priceCurrency": "IRR"
-                },
-                "review": [
-                    <?php if (!empty($product->reviews)): ?>
-                    <?php foreach ($product->reviews as $r_index => $review): ?>
-                    {
-                        "@type": "Review",
-                        "reviewRating": {
-                            "@type": "Rating",
-                            "ratingValue": "<?php echo htmlspecialchars($review->rating); ?>"
-                        },
-                        "author": {
-                            "@type": "Person",
-                            "name": "<?php echo htmlspecialchars($review->user_name); ?>"
-                        },
-                        "reviewBody": "<?php echo htmlspecialchars($review->comment); ?>"
-                    }<?php echo $r_index < count($product->reviews) - 1 ? ',' : ''; ?>
-                    <?php endforeach; ?>
-                    <?php endif; ?>
-                ]
-            }<?php echo $index < count(json_decode($store_data)->products) - 1 ? ',' : ''; ?>
-            <?php endforeach; ?>
-        ]
-    }
-}
-</script>
-
 <?php include 'footer.tpl'; ?>
