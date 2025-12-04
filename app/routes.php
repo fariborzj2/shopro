@@ -187,3 +187,7 @@ $router->post('/admin/plugins/upload', 'Admin\PluginsController@upload');
 $router->post('/admin/plugins/activate/{slug}', 'Admin\PluginsController@activate');
 $router->post('/admin/plugins/deactivate/{slug}', 'Admin\PluginsController@deactivate');
 $router->post('/admin/plugins/delete/{slug}', 'Admin\PluginsController@delete');
+
+// SeoPilot Plugin Routes
+$router->get('/admin/seopilot/settings', '\SeoPilot\Enterprise\Controllers\AdminController@index');
+$router->post('/admin/seopilot/settings', '\SeoPilot\Enterprise\Controllers\AdminController@saveSettings');
