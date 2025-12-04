@@ -50,26 +50,16 @@
 ```text
 /plugins/seopilot/
 ├── src/
-│   ├── Core/
-│   │   ├── Installer.php       # نصب جداول و تنظیمات اولیه (Migration)
-│   │   ├── Kernel.php          # مدیریت هوک‌ها و بوت‌ستراپ
-│   │   └── SafeInjector.php    # تزریق ایمن در HTML با DOMDocument
-│   ├── Cache/
-│   │   ├── CacheManager.php    # مدیریت مرکزی و انتخاب درایور
-│   │   ├── Drivers/            # آداپتورهای Redis, File, Database
-│   │   └── Server/             # هندلر اختصاصی LiteSpeed/LSCache
-│   ├── Logic/
-│   │   ├── Analyzer.php        # موتور آنالیز محتوا (بدون Regex خطرناک)
-│   │   ├── PersianNLP.php      # پردازش زبان طبیعی فارسی (نرمال‌سازی)
-│   │   └── AutoFixer.php       # پرکردن خودکار متای خالی هنگام ذخیره
-│   ├── Database/
-│   │   └── Repository.php      # کوئری‌های بهینه SQL
-│   └── UI/
-│       ├── AdminWizard.php     # ویزارد نصب اولیه
-│       └── MetaBox.php         # متاباکس زیر پست (Preview & Analysis)
-├── assets/                     # CSS/JS (Scoped & Isolated)
-├── templates/                  # ویوهای پنل ادمین
-└── composer.json
+     ├── Controllers*
+     ├── Code*
+     ├── Models*
+     ├── Services*
+     └── routes.php
+├── views
+├── index.php
+├── install.php
+├── uninstall.php
+└── plugin.json
 ```
 
 -----
