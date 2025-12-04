@@ -250,10 +250,41 @@
                         <div class="mt-2 text-sm text-blue-700 dark:text-blue-400">
                             <p>سیستم کشینگ برای بهبود سرعت سایت استفاده می‌شود. قبل از فعال‌سازی، از نصب بودن Redis روی سرور اطمینان حاصل کنید.</p>
                         </div>
-                        <div class="mt-4">
+                        <div class="mt-4 flex flex-wrap items-center gap-4">
                              <button type="button" onclick="document.getElementById('clearCacheForm').submit()" class="inline-flex items-center px-3 py-1.5 border border-red-200 shadow-sm text-xs font-medium rounded-lg text-red-700 bg-white hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
                                 پاکسازی کامل کش (Flush All)
                             </button>
+
+                            <?php if ($cacheDriver === 'redis'): ?>
+                                <!-- Cache Size (Redis) -->
+                                <div class="text-xs text-blue-800 dark:text-blue-300 bg-blue-100 dark:bg-blue-900/50 px-2 py-1.5 rounded-lg border border-blue-200 dark:border-blue-800">
+                                    <span class="font-bold ml-1">حجم کش:</span>
+                                    <span dir="ltr" class="font-mono"><?= $cacheStats['memory'] ?? '0 B' ?></span>
+                                </div>
+
+                                <!-- Redis Status -->
+                                <div>
+                                    <?php if (($cacheStats['status'] ?? '') === 'Connected'): ?>
+                                        <span class="inline-flex items-center px-2 py-1 rounded-lg text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900/50 dark:text-green-300 border border-green-200 dark:border-green-800">
+                                            <span class="w-1.5 h-1.5 ml-1.5 bg-green-500 rounded-full animate-pulse"></span>
+                                            Redis متصل
+                                        </span>
+                                    <?php else: ?>
+                                        <span class="inline-flex items-center px-2 py-1 rounded-lg text-xs font-medium bg-red-100 text-red-800 dark:bg-red-900/50 dark:text-red-300 border border-red-200 dark:border-red-800">
+                                            <span class="w-1.5 h-1.5 ml-1.5 bg-red-500 rounded-full"></span>
+                                            Redis قطع
+                                        </span>
+                                    <?php endif; ?>
+                                </div>
+                            <?php elseif ($cacheDriver === 'litespeed'): ?>
+                                <!-- LiteSpeed Status -->
+                                <div>
+                                    <span class="inline-flex items-center px-2 py-1 rounded-lg text-xs font-medium bg-purple-100 text-purple-800 dark:bg-purple-900/50 dark:text-purple-300 border border-purple-200 dark:border-purple-800">
+                                        <span class="w-1.5 h-1.5 ml-1.5 bg-purple-500 rounded-full animate-pulse"></span>
+                                        LiteSpeed فعال
+                                    </span>
+                                </div>
+                            <?php endif; ?>
                         </div>
                     </div>
                 </div>
@@ -348,7 +379,7 @@
     </form>
 
     <!-- Hidden Form for Clear Cache -->
-    <form id="clearCacheForm" action="<?= url('admin/settings/clear-cache') ?>" method="POST" style="display: none;">
+    <form id="clearCacheForm" action="<?= url('settings/clear-cache') ?>" method="POST" style="display: none;">
         <?php partial('csrf_field'); ?>
     </form>
 </div>
