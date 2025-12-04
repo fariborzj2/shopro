@@ -72,31 +72,4 @@
     </div>
 </main>
 
-<!-- JSON-LD Schema -->
-<script type="application/ld+json">
-{
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    "mainEntity": [
-        <?php
-        $allItems = [];
-        foreach ($faq_items_grouped as $group) {
-            $allItems = array_merge($allItems, $group);
-        }
-        $itemCount = count($allItems);
-        foreach ($allItems as $index => $item):
-        ?>
-        {
-            "@type": "Question",
-            "name": "<?php echo htmlspecialchars($item['question']); ?>",
-            "acceptedAnswer": {
-                "@type": "Answer",
-                "text": "<?php echo htmlspecialchars($item['answer']); ?>"
-            }
-        }<?php echo $index < $itemCount - 1 ? ',' : ''; ?>
-        <?php endforeach; ?>
-    ]
-}
-</script>
-
 <?php include 'footer.tpl'; ?>

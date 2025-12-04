@@ -14,25 +14,4 @@
     </article>
 </main>
 
-<!-- JSON-LD Schema -->
-<script type="application/ld+json">
-{
-    "@context": "https://schema.org",
-    "@type": "Article",
-    "headline": "<?php echo htmlspecialchars($page_title); ?>",
-    "mainEntityOfPage": {
-        "@type": "WebPage",
-        "@id": "<?php echo (isset($_SERVER['HTTPS']) ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']; ?>"
-    },
-    "publisher": {
-        "@type": "Organization",
-        "name": "فروشگاه مدرن",
-        "logo": {
-            "@type": "ImageObject",
-            "url": "<?php echo (isset($_SERVER['HTTPS']) ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST']; ?>/assets/logo.png"
-        }
-    }
-}
-</script>
-
 <?php include 'footer.tpl'; ?>

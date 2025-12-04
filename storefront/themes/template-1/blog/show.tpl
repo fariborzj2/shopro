@@ -367,9 +367,4 @@
     });
 </script>
 
-<!-- JSON-LD Schema -->
-<script type="application/ld+json">
-<?= json_encode($schema_data, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT) ?>
-</script>
-
 <?php include __DIR__ . '/../footer.tpl'; ?>
