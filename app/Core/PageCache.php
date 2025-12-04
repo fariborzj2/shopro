@@ -102,37 +102,38 @@ class PageCache
             return;
         }
 
-        $content = ob_get_flush(); // Flush and return content to user (and capture it)
+        $content = ob_get_clean(); // Get content and clean buffer (do not output yet)
+        $outputContent = $content;
 
         // Re-verify guest/method
-        if (isset($_SESSION['user_id']) || isset($_SESSION['admin_id']) || $_SERVER['REQUEST_METHOD'] !== 'GET') {
-            return;
+        if (!isset($_SESSION['user_id']) && !isset($_SESSION['admin_id']) && $_SERVER['REQUEST_METHOD'] === 'GET') {
+            $settings = \App\Models\Setting::getAll(true);
+            $enabled = isset($settings['cache_html_enabled']) && $settings['cache_html_enabled'] === '1';
+
+            if ($enabled) {
+                // Process Content: Replace CSRF tokens with Placeholder
+                // We use a regex to safely find the value attribute of the csrf_token input
+                // Pattern: name="csrf_token" value="..." OR value="..." name="csrf_token"
+
+                $content = preg_replace_callback(
+                    '/<input[^>]*name=["\']csrf_token["\'][^>]*>/i',
+                    function($matches) {
+                        $tag = $matches[0];
+                        // Replace value="something" with value="PLACEHOLDER"
+                        return preg_replace('/value=["\'][^"\']*["\']/i', 'value="' . self::CSRF_PLACEHOLDER . '"', $tag);
+                    },
+                    $content
+                );
+
+                $ttl = (int)($settings['cache_html_ttl'] ?? 600);
+                $uri = $_SERVER['REQUEST_URI'];
+                $cacheKey = 'page_' . md5($uri);
+
+                Cache::getInstance()->put($cacheKey, $content, $ttl, $tags);
+            }
         }
 
-        $settings = \App\Models\Setting::getAll(true);
-        $enabled = isset($settings['cache_html_enabled']) && $settings['cache_html_enabled'] === '1';
-
-        if ($enabled) {
-            // Process Content: Replace CSRF tokens with Placeholder
-            // We use a regex to safely find the value attribute of the csrf_token input
-            // Pattern: name="csrf_token" value="..." OR value="..." name="csrf_token"
-
-            $content = preg_replace_callback(
-                '/<input[^>]*name=["\']csrf_token["\'][^>]*>/i',
-                function($matches) {
-                    $tag = $matches[0];
-                    // Replace value="something" with value="PLACEHOLDER"
-                    return preg_replace('/value=["\'][^"\']*["\']/i', 'value="' . self::CSRF_PLACEHOLDER . '"', $tag);
-                },
-                $content
-            );
-
-            $ttl = (int)($settings['cache_html_ttl'] ?? 600);
-            $uri = $_SERVER['REQUEST_URI'];
-            $cacheKey = 'page_' . md5($uri);
-
-            Cache::getInstance()->put($cacheKey, $content, $ttl, $tags);
-        }
+        echo $outputContent;
     }
 
     /**
