@@ -3,7 +3,7 @@
 namespace SeoPilot\Enterprise\Injector;
 
 use App\Core\Database;
-use SeoPilot\Enterprise\Service\AutoFixer;
+// use SeoPilot\Enterprise\Service\AutoFixer;
 use SeoPilot\Enterprise\Cache\CacheManager;
 use SeoPilot\Enterprise\Security\OutputSanitizer;
 
@@ -16,37 +16,23 @@ class BufferInjector
     public static function handle(string $html): string
     {
         // Fail-safe: If HTML is too short or not HTML, return as is
-        if (strlen($html) < 50 || stripos($html, '<html') === false) {
+        if (strlen($html) < 50 || stripos($html, '<head') === false) {
             return $html;
         }
 
         try {
-            // 1. Parse DOM Once
-            $dom = new \DOMDocument();
-            libxml_use_internal_errors(true);
-            // Hack for UTF-8 in loadHTML
-            $dom->loadHTML(mb_convert_encoding($html, 'HTML-ENTITIES', 'UTF-8'), LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
-            libxml_clear_errors();
-
-            // 2. Identify Context (Entity Type & ID)
+            // 1. Resolve Metadata
             $metaData = self::resolveMetaData();
 
-            // 3. AutoFixer (AutoMeta) with DOM reuse
-            $settings = self::getOptions();
-            if ($settings['ai_auto_meta'] ?? false) {
-                 if (!$metaData) {
-                     $metaData = ['title' => '', 'description' => '', 'json_ld' => []];
-                 }
-                 // Fix missing parts reusing DOM
-                 $metaData = AutoFixer::fix($metaData, $dom);
-            }
+            // AutoFixer disabled for stability (DOMDocument causes issues)
+            // if ($settings['ai_auto_meta'] ?? false) { ... }
 
-            if (empty($metaData['title']) && empty($metaData['description'])) {
+            if (!$metaData) {
                 return $html;
             }
 
-            // 4. Inject into the existing DOM
-            return self::inject($dom, $metaData);
+            // 2. Inject using Regex (No DOMDocument)
+            return self::inject($html, $metaData);
 
         } catch (\Throwable $e) {
             // Fail-safe
@@ -56,92 +42,52 @@ class BufferInjector
 
     /**
      * Core Injection Logic
-     * @param mixed $htmlSource \DOMDocument or string (for BC/Testing)
+     * @param string $html
      * @param array $metaData
      */
-    public static function inject($htmlSource, array $metaData): string
+    public static function inject(string $html, array $metaData): string
     {
-        $dom = null;
-        if ($htmlSource instanceof \DOMDocument) {
-            $dom = $htmlSource;
-        } else {
-            $dom = new \DOMDocument();
-            libxml_use_internal_errors(true);
-            $dom->loadHTML(mb_convert_encoding($htmlSource, 'HTML-ENTITIES', 'UTF-8'), LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
-            libxml_clear_errors();
-        }
-
-        $head = $dom->getElementsByTagName('head')->item(0);
-        if (!$head) {
-            // Create head if missing (rare)
-            $head = $dom->createElement('head');
-            $htmlNode = $dom->getElementsByTagName('html')->item(0);
-            if ($htmlNode) {
-                $htmlNode->insertBefore($head, $htmlNode->firstChild);
-            } else {
-                return $dom->saveHTML();
-            }
-        }
-
-        // Deduplication & Injection
-
-        // 1. Title
+        // 1. Remove existing Title if we have a new one
         if (!empty($metaData['title'])) {
-            $sanitizedTitle = OutputSanitizer::clean($metaData['title']);
-
-            $titles = $dom->getElementsByTagName('title');
-            while ($titles->length > 0) {
-                $titles->item(0)->parentNode->removeChild($titles->item(0));
-            }
-
-            $newTitle = $dom->createElement('title', $sanitizedTitle);
-            $head->insertBefore($newTitle, $head->firstChild);
+            $html = preg_replace('/<title[^>]*>.*?<\/title>/is', '', $html);
         }
 
-        // 2. Description
+        // 2. Remove existing Description if we have a new one
         if (!empty($metaData['description'])) {
-            $sanitizedDesc = OutputSanitizer::cleanDescription($metaData['description']);
-
-            // Remove existing meta desc
-            $metas = $dom->getElementsByTagName('meta');
-            $nodesToRemove = [];
-            foreach ($metas as $meta) {
-                if ($meta->getAttribute('name') === 'description') {
-                    $nodesToRemove[] = $meta;
-                }
-            }
-            foreach ($nodesToRemove as $node) {
-                $node->parentNode->removeChild($node);
-            }
-
-            $newDesc = $dom->createElement('meta');
-            $newDesc->setAttribute('name', 'description');
-            $newDesc->setAttribute('content', $sanitizedDesc);
-            $head->appendChild($newDesc);
+            $html = preg_replace('/<meta[^>]+name=["\']description["\'][^>]*>/i', '', $html);
         }
 
-        // 3. JSON-LD
+        // 3. Prepare Injection String
+        $injection = '';
+
+        if (!empty($metaData['title'])) {
+            $title = OutputSanitizer::clean($metaData['title']);
+            $injection .= "<title>{$title}</title>\n";
+        }
+
+        if (!empty($metaData['description'])) {
+            $desc = OutputSanitizer::cleanDescription($metaData['description']);
+            $injection .= "<meta name=\"description\" content=\"{$desc}\">\n";
+        }
+
         if (!empty($metaData['json_ld'])) {
-            $jsonString = OutputSanitizer::cleanJson($metaData['json_ld']);
-
-            $script = $dom->createElement('script');
-            $script->setAttribute('type', 'application/ld+json');
-            $script->appendChild($dom->createTextNode($jsonString));
-            $head->appendChild($script);
+            $json = OutputSanitizer::cleanJson($metaData['json_ld']);
+            $injection .= "<script type=\"application/ld+json\">{$json}</script>\n";
         }
 
-        // 4. LiteSpeed Headers
+        // 4. Inject before </head>
+        if ($injection) {
+            $html = preg_replace('/<\/head>/i', $injection . '</head>', $html, 1);
+        }
+
+        // 5. LiteSpeed Headers
         $context = self::resolveContext();
         if ($context['entityType'] && $context['entityId']) {
             $cache = new CacheManager();
             $cache->setTags(["{$context['entityType']}_{$context['entityId']}"]);
         }
 
-        // Return clean HTML (decode entities if possible, but keep structure)
-        // Since we loaded with HTML-ENTITIES, saveHTML might output entities.
-        // We'll trust standard saveHTML for now as full decoding can be risky for some chars.
-        // But we ensure no Double-Encoding happens.
-        return $dom->saveHTML();
+        return $html;
     }
 
     /**
