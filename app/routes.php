@@ -102,6 +102,7 @@ $router->post('/admin/admins/delete/{id}', 'Admin\AdminsController@delete');
 // Settings
 $router->get('/admin/settings', 'Admin\SettingsController@index');
 $router->post('/admin/settings', 'Admin\SettingsController@update');
+$router->post('/admin/settings/clear-cache', 'Admin\SettingsController@clearCache');
 
 
 // Blog Categories
