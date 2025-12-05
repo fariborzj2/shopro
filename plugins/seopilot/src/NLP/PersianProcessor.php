@@ -16,6 +16,11 @@ class PersianProcessor
             return '';
         }
 
+        // Ensure UTF-8 Validity
+        if (!mb_check_encoding($text, 'UTF-8')) {
+            $text = mb_convert_encoding($text, 'UTF-8', 'UTF-8');
+        }
+
         $text = str_replace(
             ['ي', 'ك', '٤', '٥', '٦', 'ة', 'ۀ'],
             ['ی', 'ک', '۴', '۵', '۶', 'ه', 'ه'],
@@ -23,9 +28,14 @@ class PersianProcessor
         );
 
         // Remove Tashkeel (Arabic diacritics)
-        $text = preg_replace('/[\x{064B}-\x{065F}]/u', '', $text);
+        $cleaned = preg_replace('/[\x{064B}-\x{065F}]/u', '', $text);
 
-        return trim($text);
+        // Handle Regex Failure
+        if ($cleaned === null) {
+            return $text;
+        }
+
+        return trim($cleaned);
     }
 
     /**
@@ -49,22 +59,33 @@ class PersianProcessor
      */
     public static function wordCount(string $text): int
     {
+        if (trim($text) === '') {
+            return 0;
+        }
+
         $text = self::normalize($text);
 
-        // Remove ZWNJ for counting purposes (merge parts) or treat as letter?
-        // Actually, "می‌شود" is one word. If we replace ZWNJ with nothing, it becomes "می‌شود".
-        // If we replace with space, it becomes two.
-        // Standard Persian logic: ZWNJ connects parts of ONE word.
-        // So we remove ZWNJ.
-        $text = str_replace("\xe2\x80\x8c", '', $text); // Remove ZWNJ
+        // Remove ZWNJ for counting purposes (merge parts)
+        $text = str_replace("\xe2\x80\x8c", '', $text);
 
         // Remove punctuation
-        $text = preg_replace('/[^\p{L}\p{N}\s]/u', '', $text);
+        $cleaned = preg_replace('/[^\p{L}\p{N}\s]/u', '', $text);
+        if ($cleaned === null) {
+            $cleaned = $text;
+        }
 
         // Collapse multiple spaces
-        $text = preg_replace('/\s+/', ' ', $text);
+        $collapsed = preg_replace('/\s+/', ' ', $cleaned);
+        if ($collapsed === null) {
+            $collapsed = $cleaned;
+        }
 
-        $words = explode(' ', trim($text));
+        $collapsed = trim($collapsed);
+        if ($collapsed === '') {
+            return 0;
+        }
+
+        $words = explode(' ', $collapsed);
         return count(array_filter($words));
     }
 

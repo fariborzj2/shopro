@@ -163,7 +163,7 @@
                              <!-- Action: Auto Alt -->
                              <div class="flex items-center justify-between border-b border-slate-100 p-4 dark:border-slate-700" x-show="analysis.structure && analysis.structure.images_no_alt > 0">
                                 <span class="text-sm font-medium text-slate-900 dark:text-white">
-                                    <span class="text-red-500 font-bold" x-text="analysis.structure.images_no_alt"></span> تصویر بدون Alt یافت شد!
+                                    <span class="text-red-500 font-bold" x-text="analysis.structure ? analysis.structure.images_no_alt : 0"></span> تصویر بدون Alt یافت شد!
                                 </span>
                                 <button @click="autoAlt()" class="text-xs bg-indigo-600 text-white px-3 py-1.5 rounded hover:bg-indigo-700">اصلاح خودکار (Auto Alt)</button>
                              </div>

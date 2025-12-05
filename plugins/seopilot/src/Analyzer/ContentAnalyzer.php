@@ -32,7 +32,16 @@ class ContentAnalyzer
         // 3. Structure Analysis
         $dom = new \DOMDocument();
         // Hack to handle UTF-8 correctly in DOMDocument
-        @$dom->loadHTML('<?xml encoding="utf-8" ?>' . $content, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
+        // Check for empty content to avoid loading issues
+        $domContent = trim($content);
+        if (empty($domContent)) {
+            $domContent = '<div></div>';
+        }
+
+        // Suppress warnings for malformed HTML
+        libxml_use_internal_errors(true);
+        @$dom->loadHTML('<?xml encoding="utf-8" ?>' . $domContent, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
+        libxml_clear_errors();
 
         $h2Count = $dom->getElementsByTagName('h2')->length;
         $h3Count = $dom->getElementsByTagName('h3')->length;
@@ -48,7 +57,7 @@ class ContentAnalyzer
         // 4. Link Analysis
         $internalLinks = 0;
         $externalLinks = 0;
-        $host = $_SERVER['HTTP_HOST'] ?? '';
+        $host = $_SERVER['HTTP_HOST'] ?? 'localhost'; // Fallback for CLI/Testing
 
         foreach ($dom->getElementsByTagName('a') as $link) {
             $href = $link->getAttribute('href');
@@ -63,7 +72,12 @@ class ContentAnalyzer
 
         // 5. Readability
         // Sentence length check (Persian heuristics: looking for . ? !)
-        $sentences = preg_split('/[.?!؟]+/', $text);
+        // Use PREG_SPLIT_NO_EMPTY to avoid empty tokens
+        $sentences = preg_split('/[.?!؟]+/', $text, -1, PREG_SPLIT_NO_EMPTY);
+        if ($sentences === false) {
+             $sentences = [];
+        }
+
         $longSentences = 0;
         foreach ($sentences as $sentence) {
             if (PersianProcessor::wordCount($sentence) > 25) {
