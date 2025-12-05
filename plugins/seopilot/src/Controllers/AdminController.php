@@ -62,10 +62,6 @@ class AdminController
 
     public function saveSettings()
     {
-        if (!verify_csrf_token()) {
-            die("CSRF Error");
-        }
-
         $data = Request::all();
         $settings = [
             'separator' => $data['separator'] ?? '|',
