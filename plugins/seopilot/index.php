@@ -1,49 +1,61 @@
 <?php
 
-/**
- * SeoPilot Plugin Entry Point
- */
-
+use App\Core\Router;
 use App\Core\Request;
-use SeoPilot\Enterprise\Controllers\AnalysisController;
-use SeoPilot\Enterprise\Injector\AdminInjector;
 use App\Core\Plugin\Filter;
 
-// 1. Register Routes for API
+use SeoPilot\Enterprise\Injector\AdminInjector;
+use SeoPilot\Enterprise\Injector\BufferInjector;
+
+
+// =============================================================
+// 1. Unified URI
+// =============================================================
 $uri = Request::uri();
 
-if (strpos($uri, '/admin/seopilot/') === 0) {
-    $controller = new AnalysisController();
 
-    if ($uri === '/admin/seopilot/analyze') {
-        $controller->analyze();
-    } elseif ($uri === '/admin/seopilot/save') {
-        $controller->save();
-    } elseif ($uri === '/admin/seopilot/magic-fix') {
-        $controller->magicFix();
-    } elseif ($uri === '/admin/seopilot/suggest') {
-        $controller->suggestKeywords();
-    } elseif ($uri === '/admin/seopilot/auto-alt') {
-        $controller->autoAlt();
-    }
-}
+// =============================================================
+// 2. Admin Settings Routes
+// =============================================================
+Router::addRoute('GET',  '/admin/seopilot/settings', '\SeoPilot\Enterprise\Controllers\AdminController@index');
+Router::addRoute('POST', '/admin/seopilot/settings', '\SeoPilot\Enterprise\Controllers\AdminController@saveSettings');
 
-// 2. Inject Admin Panel Interface
+
+// =============================================================
+// 3. API Routes (Correct Format for Your Router)
+// =============================================================
+Router::addRoute('POST', '/admin/seopilot/analyze',    '\SeoPilot\Enterprise\Controllers\AnalysisController@analyze');
+Router::addRoute('POST', '/admin/seopilot/save',       '\SeoPilot\Enterprise\Controllers\AnalysisController@save');
+Router::addRoute('POST', '/admin/seopilot/magic-fix',  '\SeoPilot\Enterprise\Controllers\AnalysisController@magicFix');
+Router::addRoute('POST', '/admin/seopilot/suggest',    '\SeoPilot\Enterprise\Controllers\AnalysisController@suggestKeywords');
+Router::addRoute('POST', '/admin/seopilot/auto-alt',   '\SeoPilot\Enterprise\Controllers\AnalysisController@autoAlt');
+
+
+// =============================================================
+// 4. Inject Admin Interface
+// =============================================================
 if (strpos($uri, '/admin') === 0) {
     AdminInjector::handle();
 }
 
-// 3. Register Sidebar Menu Item
-Filter::add('admin_menu_items', function($items) {
-    // Check if user has permission (assuming super_admin or a specific permission)
-    // Sidebar logic handles permission checks based on the 'permission' key.
 
+// =============================================================
+// 5. Sidebar Menu Entry (Fixed URL)
+// =============================================================
+Filter::add('admin_menu_items', function ($items) {
     $items[] = [
         'label' => 'سئوپایلوت',
         'url' => '/seopilot/settings',
-        'icon' => 'search', // Using a generic icon available in icons partial
-        'permission' => 'super_admin' // Restrict to super admin for now
+        'icon' => 'search',
+        'permission' => 'super_admin'
     ];
-
     return $items;
 });
+
+
+// =============================================================
+// 6. Buffer Injector for Frontend Only
+// =============================================================
+if (!str_starts_with($uri, '/admin') && !str_starts_with($uri, '/api')) {
+    ob_start(['\SeoPilot\Enterprise\Injector\BufferInjector', 'handle']);
+}
