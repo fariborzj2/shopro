@@ -13,15 +13,23 @@ class AdminInjector
     {
         $uri = Request::uri();
 
-        // Only inject on Edit/Create pages that likely have TinyMCE
-        // Patterns: /admin/posts/create, /admin/posts/edit/1, /admin/products/..., /admin/pages/...
-        if (!preg_match('#^/admin/(posts|products|pages|categories)/(create|edit/\d+)#', $uri, $matches)) {
+        // Debug Log
+        // error_log("SeoPilot AdminInjector: Checking URI: $uri");
+
+        // Adjusted Pattern: The core blog routes are /admin/blog/posts/create, not /admin/posts/create
+        // Core matches:
+        // /admin/blog/posts/create
+        // /admin/blog/posts/edit/1
+        // /admin/products/create
+        // /admin/pages/create
+
+        if (!preg_match('#^/admin/(blog/posts|products|pages|categories)/(create|edit/\d+)#', $uri, $matches)) {
             return;
         }
 
         // Determine Entity Context
         $entityType = match($matches[1]) {
-            'posts' => 'post',
+            'blog/posts' => 'post',
             'products' => 'product',
             'pages' => 'page',
             'categories' => 'category',
@@ -35,17 +43,6 @@ class AdminInjector
         }
 
         // Hook into output buffer
-        // Note: Since we don't have a formal Hook system in the core, we use ob_start in index.php
-        // but here we are called from index.php likely.
-        // We will assume `ob_start` callback or we manually inject if we can control the flow.
-
-        // Actually, the plugin entry point `plugins/seopilot/index.php` should register a shutdown function
-        // or if the core supports hooks.
-        // Given constraints, we'll try to append to the footer if possible,
-        // or relying on the BufferInjector to handle *admin* pages too?
-        // BufferInjector seems focused on frontend <head>.
-
-        // Let's create a specific output handler for admin injection
         ob_start(function($buffer) use ($entityType, $entityId) {
             return self::injectHtml($buffer, $entityType, $entityId);
         });
@@ -57,12 +54,6 @@ class AdminInjector
         $panelHtml = file_get_contents(__DIR__ . '/../../views/analysis_panel.php');
 
         // 2. Inject the Button Script
-        // We look for the save button or the editor to place our button nearby.
-        // A generic fixed floating button or injecting into the form action bar.
-        // Let's try to find `.flex.justify-end` or similar action bar in the form,
-        // or just append a floating button for safety.
-
-        // Better: Inject a script that finds the Editor toolbar and appends the button.
         $buttonScript = <<<HTML
         <script>
             document.addEventListener('DOMContentLoaded', function() {
@@ -94,7 +85,7 @@ class AdminInjector
                         e.preventDefault();
                         // Dispatch event to open Alpine modal
                         // We need the title and slug from the form inputs
-                        let title = document.querySelector('input[name="title"], input[name="name_fa"]')?.value || '';
+                        let title = document.querySelector('input[name="title"]')?.value || document.querySelector('input[name="name_fa"]')?.value || '';
                         let slug = document.querySelector('input[name="slug"]')?.value || '';
 
                         window.dispatchEvent(new CustomEvent('open-seopilot', {
