@@ -1,36 +1,33 @@
 <?php
 
 /**
- * SeoPilot Enterprise Bootstrapper
- *
- * Loaded by App\Core\Plugin\PluginManager
+ * SeoPilot Plugin Entry Point
  */
 
-use App\Core\Router;
-use App\Core\Plugin\Filter;
-use SeoPilot\Enterprise\Injector\BufferInjector;
+use App\Core\Request;
+use SeoPilot\Enterprise\Controllers\AnalysisController;
+use SeoPilot\Enterprise\Injector\AdminInjector;
 
-// 1. Register Routes
-// We add routes for the admin settings page.
-Router::addRoute('GET', '/admin/seopilot/settings', '\SeoPilot\Enterprise\Controllers\AdminController@index');
-Router::addRoute('POST', '/admin/seopilot/settings', '\SeoPilot\Enterprise\Controllers\AdminController@saveSettings');
+// 1. Register Routes for API
+$uri = Request::uri();
 
-// 2. Register Sidebar Menu Item
-// We use the 'admin_menu_items' filter to inject our menu item.
-Filter::add('admin_menu_items', function($items) {
-    $items[] = [
-        'label' => 'سئوپایلوت',
-        'url' => '/seopilot/settings', // url() helper will prepend /admin
-        'icon' => 'search',
-        'permission' => 'super_admin' // Or a specific permission if defined
-    ];
-    return $items;
-});
+if (strpos($uri, '/admin/seopilot/') === 0) {
+    $controller = new AnalysisController();
 
-// 3. Start Output Buffering for Injection
-// This runs on every request where the plugin is active.
-// Note: We check if we are NOT in admin panel or API to avoid overhead.
-$uri = $_SERVER['REQUEST_URI'] ?? '/';
-if (strpos($uri, '/admin') === false && strpos($uri, '/api') === false) {
-    ob_start(['\SeoPilot\Enterprise\Injector\BufferInjector', 'handle']);
+    if ($uri === '/admin/seopilot/analyze') {
+        $controller->analyze();
+    } elseif ($uri === '/admin/seopilot/save') {
+        $controller->save();
+    } elseif ($uri === '/admin/seopilot/magic-fix') {
+        $controller->magicFix();
+    } elseif ($uri === '/admin/seopilot/suggest') {
+        $controller->suggestKeywords();
+    } elseif ($uri === '/admin/seopilot/auto-alt') {
+        $controller->autoAlt();
+    }
+}
+
+// 2. Inject Admin Panel Interface
+if (strpos($uri, '/admin') === 0) {
+    AdminInjector::handle();
 }
