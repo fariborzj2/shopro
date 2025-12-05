@@ -6,14 +6,14 @@
      x-cloak>
 
     <!-- Modal Backdrop -->
-    <div class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm transition-opacity"
+    <div class="fixed inset-0 bg-gray-900/80 backdrop-blur-sm transition-opacity"
          x-show="isOpen"
          x-transition.opacity></div>
 
     <!-- Modal Container -->
     <div class="fixed inset-0 overflow-y-auto">
         <div class="flex min-h-full items-center justify-center p-4">
-            <div class="relative w-full max-w-4xl rounded-2xl bg-white shadow-2xl ring-1 ring-slate-900/5 dark:bg-slate-800 dark:ring-white/10"
+            <div class="relative w-full max-w-4xl rounded-2xl bg-white shadow-2xl ring-1 ring-gray-900/5 dark:bg-gray-800 dark:ring-white/10"
                  @click.outside="closeModal()"
                  x-show="isOpen"
                  x-transition:enter="ease-out duration-300"
@@ -24,27 +24,27 @@
                  x-transition:leave-end="opacity-0 scale-95">
 
                 <!-- Header -->
-                <div class="flex items-center justify-between border-b border-slate-200 px-6 py-4 dark:border-slate-700">
+                <div class="flex items-center justify-between border-b border-gray-200 px-6 py-4 dark:border-gray-700">
                     <div class="flex items-center gap-3">
-                        <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-indigo-600 text-white shadow-md shadow-indigo-600/20">
+                        <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-primary-600 text-white shadow-md shadow-primary-600/20">
                             <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
                             </svg>
                         </div>
                         <div>
-                            <h2 class="text-lg font-bold text-slate-900 dark:text-white">SeoPilot Analysis</h2>
-                            <p class="text-sm text-slate-500 dark:text-slate-400">تحلیل هوشمند محتوا و سئو</p>
+                            <h2 class="text-lg font-bold text-gray-900 dark:text-white">آنالیز سئو پایلوت</h2>
+                            <p class="text-sm text-gray-500 dark:text-gray-400">تحلیل هوشمند محتوا و سئو</p>
                         </div>
                     </div>
 
                     <div class="flex items-center gap-4">
                         <div class="flex flex-col items-end">
-                            <span class="text-xs font-medium text-slate-500">امتیاز کلی</span>
+                            <span class="text-xs font-medium text-gray-500">امتیاز کلی</span>
                             <span class="text-2xl font-black" :class="getScoreColor()">
                                 <span x-text="score"></span>/100
                             </span>
                         </div>
-                        <button @click="closeModal()" class="rounded-lg p-2 text-slate-400 hover:bg-slate-100 hover:text-slate-500 dark:hover:bg-slate-700">
+                        <button @click="closeModal()" class="rounded-lg p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-500 dark:hover:bg-gray-700">
                             <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                             </svg>
@@ -53,12 +53,12 @@
                 </div>
 
                 <!-- Tabs -->
-                <div class="border-b border-slate-200 bg-slate-50 px-6 dark:border-slate-700 dark:bg-slate-800/50">
+                <div class="border-b border-gray-200 bg-gray-50 px-6 dark:border-gray-700 dark:bg-gray-800/50">
                     <nav class="-mb-px flex gap-6" aria-label="Tabs">
                         <template x-for="tab in tabs" :key="tab.id">
                             <button
                                 @click="currentTab = tab.id"
-                                :class="currentTab === tab.id ? 'border-indigo-500 text-indigo-600 dark:text-indigo-400' : 'border-transparent text-slate-500 hover:border-slate-300 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-300'"
+                                :class="currentTab === tab.id ? 'border-primary-500 text-primary-600 dark:text-primary-400' : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300'"
                                 class="whitespace-nowrap border-b-2 py-4 px-1 text-sm font-medium transition-colors"
                                 x-text="tab.label">
                             </button>
@@ -74,22 +74,22 @@
 
                         <!-- Toggle Device -->
                         <div class="flex justify-end">
-                            <div class="inline-flex rounded-lg bg-slate-100 p-1 dark:bg-slate-700">
-                                <button @click="device = 'mobile'" :class="device === 'mobile' ? 'bg-white text-slate-900 shadow dark:bg-slate-600 dark:text-white' : 'text-slate-500 dark:text-slate-400'" class="rounded px-3 py-1.5 text-sm font-medium transition-all">Mobile</button>
-                                <button @click="device = 'desktop'" :class="device === 'desktop' ? 'bg-white text-slate-900 shadow dark:bg-slate-600 dark:text-white' : 'text-slate-500 dark:text-slate-400'" class="rounded px-3 py-1.5 text-sm font-medium transition-all">Desktop</button>
+                            <div class="inline-flex rounded-lg bg-gray-100 p-1 dark:bg-gray-700">
+                                <button @click="device = 'mobile'" :class="device === 'mobile' ? 'bg-white text-gray-900 shadow dark:bg-gray-600 dark:text-white' : 'text-gray-500 dark:text-gray-400'" class="rounded px-3 py-1.5 text-sm font-medium transition-all">موبایل</button>
+                                <button @click="device = 'desktop'" :class="device === 'desktop' ? 'bg-white text-gray-900 shadow dark:bg-gray-600 dark:text-white' : 'text-gray-500 dark:text-gray-400'" class="rounded px-3 py-1.5 text-sm font-medium transition-all">دسکتاپ</button>
                             </div>
                         </div>
 
                         <!-- Google Preview Card -->
-                        <div class="rounded-xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-700 dark:bg-slate-800">
+                        <div class="rounded-xl border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-800">
                             <!-- Breadcrumb -->
-                            <div class="mb-1 flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400">
-                                <span class="flex h-5 w-5 items-center justify-center rounded-full bg-slate-100 text-xs dark:bg-slate-700">W</span>
+                            <div class="mb-1 flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
+                                <span class="flex h-5 w-5 items-center justify-center rounded-full bg-gray-100 text-xs dark:bg-gray-700">W</span>
                                 <div class="flex flex-col">
-                                    <span class="text-xs text-slate-900 dark:text-white">Your Site Name</span>
+                                    <span class="text-xs text-gray-900 dark:text-white">وبسایت شما</span>
                                     <span class="text-[10px]" x-text="'https://example.com/' + (slug || 'your-slug')"></span>
                                 </div>
-                                <svg class="h-4 w-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" /></svg>
+                                <svg class="h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" /></svg>
                             </div>
 
                             <!-- Title -->
@@ -103,37 +103,37 @@
                         <div class="grid gap-6 md:grid-cols-2">
                             <!-- Focus Keyword & Suggestions -->
                             <div class="col-span-2">
-                                <label class="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-300">کلمه کلیدی کانونی</label>
+                                <label class="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">کلمه کلیدی کانونی</label>
                                 <div class="relative flex gap-2">
                                     <div class="relative w-full">
-                                        <input type="text" x-model="meta.focus_keyword" @input.debounce.500ms="analyze()" class="w-full rounded-lg border-slate-300 bg-slate-50 focus:border-indigo-500 focus:ring-indigo-500 dark:border-slate-600 dark:bg-slate-700 dark:text-white" placeholder="مثلاً: خرید گوشی موبایل">
+                                        <input type="text" x-model="meta.focus_keyword" @input.debounce.500ms="analyze()" class="w-full rounded-lg border-gray-300 bg-gray-50 focus:border-primary-500 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white" placeholder="مثلاً: خرید گوشی موبایل">
                                         <div class="absolute inset-y-0 left-0 flex items-center pl-3">
-                                            <span class="text-xs text-slate-400" x-text="meta.focus_keyword.length > 0 ? 'ذخیره شد' : ''"></span>
+                                            <span class="text-xs text-gray-400" x-text="meta.focus_keyword.length > 0 ? 'ذخیره شد' : ''"></span>
                                         </div>
                                     </div>
-                                    <button @click="suggestKeywords()" class="whitespace-nowrap rounded-lg bg-slate-200 px-4 py-2 text-sm text-slate-700 hover:bg-slate-300 dark:bg-slate-700 dark:text-slate-300">
+                                    <button @click="suggestKeywords()" class="whitespace-nowrap rounded-lg bg-gray-200 px-4 py-2 text-sm text-gray-700 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-300">
                                         💡 پیشنهاد
                                     </button>
                                 </div>
                                 <!-- Suggestions Dropdown -->
                                 <div x-show="suggestions.length > 0" class="mt-2 flex flex-wrap gap-2">
                                     <template x-for="s in suggestions" :key="s">
-                                        <button @click="meta.focus_keyword = s; suggestions = []; analyze()" class="rounded-full bg-indigo-50 px-3 py-1 text-xs text-indigo-700 hover:bg-indigo-100 dark:bg-indigo-900/30 dark:text-indigo-300" x-text="s"></button>
+                                        <button @click="meta.focus_keyword = s; suggestions = []; analyze()" class="rounded-full bg-primary-50 px-3 py-1 text-xs text-primary-700 hover:bg-primary-100 dark:bg-primary-900/30 dark:text-primary-300" x-text="s"></button>
                                     </template>
                                 </div>
                             </div>
 
                             <!-- SEO Title -->
                             <div class="col-span-2">
-                                <label class="mb-2 flex justify-between text-sm font-medium text-slate-700 dark:text-slate-300">
+                                <label class="mb-2 flex justify-between text-sm font-medium text-gray-700 dark:text-gray-300">
                                     <span>عنوان سئو (SEO Title)</span>
                                     <span class="text-xs" :class="getTitleColor()">
                                         <span x-text="pixelWidth(meta.title)"></span>px / 580px
                                     </span>
                                 </label>
-                                <input type="text" x-model="meta.title" class="w-full rounded-lg border-slate-300 focus:border-indigo-500 focus:ring-indigo-500 dark:border-slate-600 dark:bg-slate-700 dark:text-white">
+                                <input type="text" x-model="meta.title" class="w-full rounded-lg border-gray-300 focus:border-primary-500 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white">
                                 <!-- Progress Bar -->
-                                <div class="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-slate-100 dark:bg-slate-700">
+                                <div class="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-gray-100 dark:bg-gray-700">
                                     <div class="h-full transition-all duration-300"
                                          :class="getTitleBarColor()"
                                          :style="`width: ${Math.min((pixelWidth(meta.title) / 600) * 100, 100)}%`"></div>
@@ -142,35 +142,35 @@
 
                             <!-- Meta Description -->
                             <div class="col-span-2">
-                                <label class="mb-2 flex justify-between text-sm font-medium text-slate-700 dark:text-slate-300">
+                                <label class="mb-2 flex justify-between text-sm font-medium text-gray-700 dark:text-gray-300">
                                     <span>توضیحات متا (Meta Description)</span>
                                     <div class="flex items-center gap-2">
-                                        <button @click="magicFix()" class="flex items-center gap-1 rounded bg-indigo-50 px-2 py-0.5 text-xs font-medium text-indigo-600 hover:bg-indigo-100 dark:bg-indigo-900/30 dark:text-indigo-400">
+                                        <button @click="magicFix()" class="flex items-center gap-1 rounded bg-primary-50 px-2 py-0.5 text-xs font-medium text-primary-600 hover:bg-primary-100 dark:bg-primary-900/30 dark:text-primary-400">
                                             <svg class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
-                                            Magic Fix
+                                            اصلاح جادویی
                                         </button>
-                                        <span class="text-xs text-slate-500" x-text="meta.description.length + '/160'"></span>
+                                        <span class="text-xs text-gray-500" x-text="meta.description.length + '/160'"></span>
                                     </div>
                                 </label>
-                                <textarea x-model="meta.description" rows="3" class="w-full rounded-lg border-slate-300 focus:border-indigo-500 focus:ring-indigo-500 dark:border-slate-600 dark:bg-slate-700 dark:text-white"></textarea>
+                                <textarea x-model="meta.description" rows="3" class="w-full rounded-lg border-gray-300 focus:border-primary-500 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white"></textarea>
                             </div>
                         </div>
                     </div>
 
                     <!-- Tab: Analysis -->
                     <div x-show="currentTab === 'analysis'" class="space-y-4">
-                        <div class="rounded-lg border border-slate-200 bg-white dark:border-slate-700 dark:bg-slate-800">
+                        <div class="rounded-lg border border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-800">
                              <!-- Action: Auto Alt -->
-                             <div class="flex items-center justify-between border-b border-slate-100 p-4 dark:border-slate-700" x-show="analysis.structure && analysis.structure.images_no_alt > 0">
-                                <span class="text-sm font-medium text-slate-900 dark:text-white">
+                             <div class="flex items-center justify-between border-b border-gray-100 p-4 dark:border-gray-700" x-show="analysis.structure && analysis.structure.images_no_alt > 0">
+                                <span class="text-sm font-medium text-gray-900 dark:text-white">
                                     <span class="text-red-500 font-bold" x-text="analysis.structure ? analysis.structure.images_no_alt : 0"></span> تصویر بدون Alt یافت شد!
                                 </span>
-                                <button @click="autoAlt()" class="text-xs bg-indigo-600 text-white px-3 py-1.5 rounded hover:bg-indigo-700">اصلاح خودکار (Auto Alt)</button>
+                                <button @click="autoAlt()" class="text-xs bg-primary-600 text-white px-3 py-1.5 rounded hover:bg-primary-700">اصلاح خودکار (Auto Alt)</button>
                              </div>
 
                             <!-- Items -->
                             <template x-for="(item, index) in analysisItems" :key="index">
-                                <div class="flex items-start gap-3 border-b border-slate-100 p-4 last:border-0 dark:border-slate-700">
+                                <div class="flex items-start gap-3 border-b border-gray-100 p-4 last:border-0 dark:border-gray-700">
                                     <div class="mt-0.5 flex-shrink-0">
                                         <div class="flex h-5 w-5 items-center justify-center rounded-full"
                                              :class="item.passed ? 'bg-green-100 text-green-600 dark:bg-green-900/30' : 'bg-red-100 text-red-600 dark:bg-red-900/30'">
@@ -179,8 +179,8 @@
                                         </div>
                                     </div>
                                     <div>
-                                        <h4 class="text-sm font-medium text-slate-900 dark:text-white" x-text="item.label"></h4>
-                                        <p class="text-xs text-slate-500 dark:text-slate-400" x-text="item.desc"></p>
+                                        <h4 class="text-sm font-medium text-gray-900 dark:text-white" x-text="item.label"></h4>
+                                        <p class="text-xs text-gray-500 dark:text-gray-400" x-text="item.desc"></p>
                                     </div>
                                 </div>
                             </template>
@@ -190,23 +190,23 @@
                     <!-- Tab: Social -->
                     <div x-show="currentTab === 'social'" class="space-y-6">
                          <!-- Facebook/OG -->
-                         <div class="rounded-xl border border-slate-200 p-4 dark:border-slate-700">
-                            <h4 class="mb-3 text-sm font-bold text-slate-700 dark:text-slate-300">Facebook / OpenGraph</h4>
+                         <div class="rounded-xl border border-gray-200 p-4 dark:border-gray-700">
+                            <h4 class="mb-3 text-sm font-bold text-gray-700 dark:text-gray-300">Facebook / OpenGraph</h4>
                             <div class="flex gap-4">
                                 <!-- Preview -->
-                                <div class="w-1/2 overflow-hidden rounded-lg border border-slate-200 bg-slate-50 dark:border-slate-700 dark:bg-slate-900">
-                                    <div class="aspect-video w-full bg-slate-200 bg-cover bg-center dark:bg-slate-800" :style="`background-image: url('${meta.og_image || 'https://placehold.co/600x315'}')`"></div>
+                                <div class="w-1/2 overflow-hidden rounded-lg border border-gray-200 bg-gray-50 dark:border-gray-700 dark:bg-gray-900">
+                                    <div class="aspect-video w-full bg-gray-200 bg-cover bg-center dark:bg-gray-800" :style="`background-image: url('${meta.og_image || 'https://placehold.co/600x315'}')`"></div>
                                     <div class="p-3">
-                                        <div class="truncate text-xs uppercase text-slate-500">EXAMPLE.COM</div>
-                                        <div class="truncate text-sm font-bold text-slate-900 dark:text-white" x-text="meta.title"></div>
-                                        <div class="line-clamp-1 text-xs text-slate-600 dark:text-slate-400" x-text="meta.description"></div>
+                                        <div class="truncate text-xs uppercase text-gray-500">EXAMPLE.COM</div>
+                                        <div class="truncate text-sm font-bold text-gray-900 dark:text-white" x-text="meta.title"></div>
+                                        <div class="line-clamp-1 text-xs text-gray-600 dark:text-gray-400" x-text="meta.description"></div>
                                     </div>
                                 </div>
                                 <!-- Inputs -->
                                 <div class="w-1/2 space-y-3">
                                     <div>
-                                        <label class="block text-xs font-medium text-slate-700 dark:text-slate-300">تصویر شاخص شبکه اجتماعی</label>
-                                        <input type="text" x-model="meta.og_image" placeholder="URL تصویر..." class="mt-1 w-full rounded-md border-slate-300 text-xs dark:border-slate-600 dark:bg-slate-700">
+                                        <label class="block text-xs font-medium text-gray-700 dark:text-gray-300">تصویر شاخص شبکه اجتماعی</label>
+                                        <input type="text" x-model="meta.og_image" placeholder="URL تصویر..." class="mt-1 w-full rounded-md border-gray-300 text-xs dark:border-gray-600 dark:bg-gray-700">
                                     </div>
                                 </div>
                             </div>
@@ -216,8 +216,8 @@
                     <!-- Tab: Schema -->
                     <div x-show="currentTab === 'schema'" class="space-y-6">
                         <div>
-                            <label class="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-300">نوع محتوا (Schema Type)</label>
-                            <select x-model="meta.schema_type" class="w-full rounded-lg border-slate-300 bg-slate-50 focus:border-indigo-500 focus:ring-indigo-500 dark:border-slate-600 dark:bg-slate-700 dark:text-white">
+                            <label class="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">نوع محتوا (Schema Type)</label>
+                            <select x-model="meta.schema_type" class="w-full rounded-lg border-gray-300 bg-gray-50 focus:border-primary-500 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white">
                                 <option value="Article">مقاله (Article)</option>
                                 <option value="NewsArticle">خبر (NewsArticle)</option>
                                 <option value="Product">محصول (Product)</option>
@@ -245,13 +245,13 @@
                 </div>
 
                 <!-- Footer -->
-                <div class="flex items-center justify-between border-t border-slate-200 bg-slate-50 px-6 py-4 dark:border-slate-700 dark:bg-slate-800/50">
-                    <div class="text-xs text-slate-500">
+                <div class="flex items-center justify-between border-t border-gray-200 bg-gray-50 px-6 py-4 dark:border-gray-700 dark:bg-gray-800/50">
+                    <div class="text-xs text-gray-500">
                         آخرین آنالیز: <span x-text="lastAnalyzed || 'هرگز'"></span>
                     </div>
                     <div class="flex gap-3">
-                        <button @click="closeModal()" class="rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 dark:border-slate-600 dark:bg-slate-700 dark:text-white dark:hover:bg-slate-600">انصراف</button>
-                        <button @click="save()" class="flex items-center gap-2 rounded-lg bg-indigo-600 px-6 py-2 text-sm font-bold text-white shadow-lg shadow-indigo-600/20 hover:bg-indigo-700">
+                        <button @click="closeModal()" class="rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:hover:bg-gray-600">انصراف</button>
+                        <button @click="save()" class="flex items-center gap-2 rounded-lg bg-primary-600 px-6 py-2 text-sm font-bold text-white shadow-lg shadow-primary-600/20 hover:bg-primary-700">
                             <span x-show="!isSaving">ذخیره تغییرات</span>
                             <span x-show="isSaving">در حال ذخیره...</span>
                         </button>
@@ -277,7 +277,7 @@ document.addEventListener('alpine:init', () => {
         // Entity Context
         entityType: null,
         entityId: null,
-        title: '', // Original Post Title
+        title: '',
         slug: '',
 
         // Meta Data (Editable)
@@ -308,6 +308,8 @@ document.addEventListener('alpine:init', () => {
             this.title = detail.title;
             this.slug = detail.slug;
 
+            this.loadInitialData();
+
             // Load Content from Editor (TinyMCE)
             let content = '';
             if (window.tinymce && tinymce.activeEditor) {
@@ -322,6 +324,53 @@ document.addEventListener('alpine:init', () => {
             this.isOpen = false;
         },
 
+        loadInitialData() {
+            // 1. Title & Slug
+            const titleInput = document.querySelector('input[name="title"]') || document.querySelector('input[name="name_fa"]');
+            const slugInput = document.querySelector('input[name="slug"]');
+
+            // Only update if meta.title is empty or matches previous default
+            if (!this.meta.title && titleInput) this.meta.title = titleInput.value;
+            if (slugInput) this.slug = slugInput.value;
+
+            // 2. Meta Description & Title from Form Inputs (if they exist and are populated)
+            const formMetaDesc = document.querySelector('textarea[name="meta_description"]');
+            const formMetaTitle = document.querySelector('input[name="meta_title"]');
+
+            if (formMetaDesc && formMetaDesc.value) {
+                this.meta.description = formMetaDesc.value;
+            }
+
+            if (formMetaTitle && formMetaTitle.value) {
+                this.meta.title = formMetaTitle.value;
+            }
+
+            // 3. Focus Keyword from Tags
+            // We look for input[name="tags[]"] or input[name="meta_keywords[]"]
+            // Since they are hidden inputs generated by Alpine, we might need to find them carefully.
+            // But the TagInput creates hidden inputs. We can query them.
+            if (!this.meta.focus_keyword) {
+                 const tags = Array.from(document.querySelectorAll('input[name="tags[]"], input[name="meta_keywords[]"]'))
+                                   .map(input => input.value)
+                                   .filter(val => val && !val.startsWith('new:')); // Filter out 'new:' prefix if handled by backend, but here value is usually ID or raw string.
+
+                 // However, the tagInput script puts `new:Tag` for new tags.
+                 // And IDs for existing. IDs are useless for keyword analysis.
+                 // We need the TEXT.
+
+                 // Alternative: Scrape the Alpine component state if possible, or text content of chips.
+                 // The chips are in `.inline-flex > span[x-text]`.
+
+                 const chips = Array.from(document.querySelectorAll('.inline-flex.items-center span[x-text]'))
+                                    .map(span => span.innerText)
+                                    .filter(text => text);
+
+                 if (chips.length > 0) {
+                     this.meta.focus_keyword = chips[0];
+                 }
+            }
+        },
+
         // Pixel Width Calculator (Arial 16px)
         pixelWidth(text) {
             if (!text) return 0;
@@ -333,7 +382,7 @@ document.addEventListener('alpine:init', () => {
 
         getTitleColor() {
             const w = this.pixelWidth(this.meta.title);
-            if (w === 0) return 'text-slate-400';
+            if (w === 0) return 'text-gray-400';
             if (w < 200) return 'text-orange-500'; // Too short
             if (w > 580) return 'text-red-500';    // Too long
             return 'text-green-500'; // Perfect
@@ -529,7 +578,14 @@ document.addEventListener('alpine:init', () => {
 
                 const res = await response.json();
                 if (res.success) {
-                    if (window.showToast) window.showToast('SEO settings saved successfully', 'success');
+                    // Update the underlying form inputs if they exist
+                    const formMetaDesc = document.querySelector('textarea[name="meta_description"]');
+                    const formMetaTitle = document.querySelector('input[name="meta_title"]');
+
+                    if (formMetaDesc) formMetaDesc.value = this.meta.description;
+                    if (formMetaTitle) formMetaTitle.value = this.meta.title;
+
+                    if (window.showToast) window.showToast('تنظیمات سئو با موفقیت ذخیره شد', 'success');
                     else alert('تنظیمات سئو با موفقیت ذخیره شد');
                     this.closeModal();
                 }
