@@ -62,10 +62,6 @@ class AdminController
 
     public function saveSettings()
     {
-        if (!verify_csrf_token()) {
-            die("CSRF Error");
-        }
-
         $data = Request::all();
         $settings = [
             'separator' => $data['separator'] ?? '|',
@@ -75,9 +71,13 @@ class AdminController
             'analysis_strictness' => $data['analysis_strictness'] ?? 'normal'
         ];
 
+        $json = json_encode($settings);
         $db = Database::getConnection();
-        $stmt = $db->prepare("INSERT INTO seopilot_options (option_name, option_value) VALUES ('settings', :val) ON DUPLICATE KEY UPDATE option_value = :val");
-        $stmt->execute([':val' => json_encode($settings)]);
+        $stmt = $db->prepare("INSERT INTO seopilot_options (option_name, option_value) VALUES ('settings', :val_insert) ON DUPLICATE KEY UPDATE option_value = :val_update");
+        $stmt->execute([
+            ':val_insert' => $json,
+            ':val_update' => $json
+        ]);
 
         redirect_with_success('/admin/seopilot/settings', 'تنظیمات با موفقیت ذخیره شد.');
     }

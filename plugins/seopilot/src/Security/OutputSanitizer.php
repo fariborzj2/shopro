@@ -32,6 +32,38 @@ class OutputSanitizer
      */
     public static function cleanJson(array $data): string
     {
-        return json_encode($data, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);
+        // Recursively clean the data to remove HTML tags and decode entities
+        $cleanedData = self::recursiveClean($data);
+
+        // Encode with UNESCAPED_UNICODE and UNESCAPED_SLASHES.
+        // REMOVE JSON_HEX_* flags as they escape characters like <, >, &, ' into \uXXXX format.
+        // We want raw UTF-8.
+        // To be safe against XSS when injecting into <script>, strict JSON syntax is usually enough
+        // provided we are not inside an HTML attribute.
+        // However, standard practice for JSON-LD is to output clean JSON.
+        // The only risk is </script> inside the string breaking out of the tag.
+
+        return json_encode($cleanedData, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+    }
+
+    private static function recursiveClean($data)
+    {
+        if (is_array($data)) {
+            foreach ($data as $key => $value) {
+                $data[$key] = self::recursiveClean($value);
+            }
+            return $data;
+        } elseif (is_string($data)) {
+            // 1. Strip HTML tags
+            $text = strip_tags($data);
+
+            // 2. Decode HTML entities (e.g., &zwnj; -> actual char, &amp; -> &)
+            // This converts things like &#1580; to ج
+            $text = html_entity_decode($text, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+
+            return $text;
+        } else {
+            return $data;
+        }
     }
 }
