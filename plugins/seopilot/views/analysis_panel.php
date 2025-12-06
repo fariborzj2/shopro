@@ -295,6 +295,16 @@ document.addEventListener('alpine:init', () => {
 
         // Analysis Result
         analysis: {},
+        
+        // Helper to update CSRF token
+        updateCsrf(token) {
+            if (token) {
+                const meta = document.querySelector('meta[name="csrf-token"]');
+                if (meta) {
+                    meta.setAttribute('content', token);
+                }
+            }
+        },
 
         tabs: [
             { id: 'preview', label: 'پیش‌نمایش گوگل' },
@@ -450,6 +460,7 @@ document.addEventListener('alpine:init', () => {
 
                 const res = await response.json();
                 if (res.success) {
+                    this.updateCsrf(res.new_csrf_token);
                     this.analysis = res.data;
                     this.score = res.score;
                     this.lastAnalyzed = new Date().toLocaleTimeString('fa-IR');
@@ -480,6 +491,7 @@ document.addEventListener('alpine:init', () => {
 
                 const res = await response.json();
                 if (res.success) {
+                    this.updateCsrf(res.new_csrf_token);
                     this.meta.description = res.suggestion.description;
                     if (!this.meta.focus_keyword && res.suggestion.keyword) {
                         this.meta.focus_keyword = res.suggestion.keyword;
@@ -510,6 +522,7 @@ document.addEventListener('alpine:init', () => {
                 });
                 const res = await response.json();
                 if (res.success && res.suggestions) {
+                    this.updateCsrf(res.new_csrf_token);
                     this.suggestions = res.suggestions;
                 }
              } catch(e) { console.error(e); }
@@ -535,13 +548,16 @@ document.addEventListener('alpine:init', () => {
                 });
 
                 const res = await response.json();
-                if (res.success && res.count > 0) {
-                    // Update Editor Content
-                    tinymce.activeEditor.setContent(res.content);
-                    alert(res.count + ' تصویر به صورت خودکار تگ Alt دریافت کردند.');
-                    this.analyze();
-                } else {
-                    alert('هیچ تصویری بدون Alt یافت نشد یا خطا رخ داد.');
+                if (res.success) {
+                    this.updateCsrf(res.new_csrf_token);
+                    if (res.count > 0) {
+                        // Update Editor Content
+                        tinymce.activeEditor.setContent(res.content);
+                        alert(res.count + ' تصویر به صورت خودکار تگ Alt دریافت کردند.');
+                        this.analyze();
+                    } else {
+                        alert('هیچ تصویری بدون Alt یافت نشد یا خطا رخ داد.');
+                    }
                 }
             } catch (e) {
                 console.error('Auto Alt Failed', e);
@@ -567,6 +583,7 @@ document.addEventListener('alpine:init', () => {
 
                 const res = await response.json();
                 if (res.success) {
+                    this.updateCsrf(res.new_csrf_token);
                     // Update the underlying form inputs if they exist
                     const formMetaDesc = document.querySelector('textarea[name="meta_description"]');
                     const formMetaTitle = document.querySelector('input[name="meta_title"]');
