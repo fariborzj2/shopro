@@ -31,7 +31,8 @@ class AnalysisController
             echo json_encode([
                 'success' => true,
                 'data' => $analysis,
-                'score' => $score
+                'score' => $score,
+                'new_csrf_token' => csrf_token()
             ]);
         } catch (\Throwable $e) {
             http_response_code(500);
@@ -92,7 +93,10 @@ class AnalysisController
                 $dataRaw
             ]);
 
-            echo json_encode(['success' => true]);
+            echo json_encode([
+                'success' => true,
+                'new_csrf_token' => csrf_token()
+            ]);
 
         } catch (\Throwable $e) {
             http_response_code(500);
@@ -137,7 +141,8 @@ class AnalysisController
                 'suggestion' => [
                     'description' => $description,
                     'keyword' => $suggestedKeyword
-                ]
+                ],
+                'new_csrf_token' => csrf_token()
             ]);
         } catch (\Throwable $e) {
             http_response_code(500);
@@ -186,7 +191,11 @@ class AnalysisController
                 }
             }
 
-            echo json_encode(['success' => true, 'suggestions' => $suggestions]);
+            echo json_encode([
+                'success' => true, 
+                'suggestions' => $suggestions,
+                'new_csrf_token' => csrf_token()
+            ]);
         } catch (\Throwable $e) {
             http_response_code(500);
             echo json_encode(['success' => false, 'error' => $e->getMessage()]);
@@ -239,10 +248,15 @@ class AnalysisController
                 echo json_encode([
                     'success' => true,
                     'content' => $newContent,
-                    'count' => $count
+                    'count' => $count,
+                    'new_csrf_token' => csrf_token()
                 ]);
             } else {
-                echo json_encode(['success' => true, 'count' => 0]);
+                echo json_encode([
+                    'success' => true, 
+                    'count' => 0,
+                    'new_csrf_token' => csrf_token()
+                ]);
             }
         } catch (\Throwable $e) {
             http_response_code(500);
