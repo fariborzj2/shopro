@@ -83,7 +83,7 @@
                         </div>
 
                         <!-- Google Preview Card -->
-                        <div class="rounded-xl border border-gray-200 bg-white p-4 shadow-sm sm:p-6 dark:border-gray-700 dark:bg-gray-800">
+                        <div class="rounded-xl border border-gray-200 bg-white p-4 shadow-sm sm:p-6 dark:border-gray-700 dark:bg-gray-800 transition-all duration-300" :class="device === 'mobile' ? 'max-w-[375px] mx-auto' : ''">
                             <!-- Breadcrumb -->
                             <div class="mb-1 flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
                                 <span class="flex h-5 w-5 items-center justify-center rounded-full bg-gray-100 text-xs dark:bg-gray-700">W</span>
@@ -108,12 +108,12 @@
                                 <label class="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">کلمه کلیدی کانونی</label>
                                 <div class="relative flex flex-col gap-2 sm:flex-row">
                                     <div class="relative w-full">
-                                        <input type="text" x-model="meta.focus_keyword" @input.debounce.500ms="analyze()" class="form-input w-full rounded-lg border-gray-300 bg-gray-50 focus:border-primary-500 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white" placeholder="مثلاً: خرید گوشی موبایل">
+                                        <input type="text" x-model="meta.focus_keyword" @input.debounce.500ms="analyze()" class="w-full rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white px-4 py-2.5 focus:ring-primary-500 focus:border-primary-500 shadow-sm" placeholder="مثلاً: خرید گوشی موبایل">
                                         <div class="absolute inset-y-0 left-0 flex items-center pl-3">
                                             <span class="text-xs text-gray-400" x-text="meta.focus_keyword.length > 0 ? 'ذخیره شد' : ''"></span>
                                         </div>
                                     </div>
-                                    <button @click="suggestKeywords()" class="shrink-0 whitespace-nowrap rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600">
+                                    <button @click="suggestKeywords()" class="shrink-0 whitespace-nowrap rounded-xl border border-gray-300 bg-white px-4 py-2.5 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700">
                                         💡 پیشنهاد
                                     </button>
                                 </div>
@@ -133,7 +133,7 @@
                                         <span x-text="pixelWidth(meta.title)"></span>px / 580px
                                     </span>
                                 </label>
-                                <input type="text" x-model="meta.title" class="form-input w-full rounded-lg border-gray-300 focus:border-primary-500 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white">
+                                <input type="text" x-model="meta.title" class="w-full rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white px-4 py-2.5 focus:ring-primary-500 focus:border-primary-500 shadow-sm">
                                 <!-- Progress Bar -->
                                 <div class="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-gray-100 dark:bg-gray-700">
                                     <div class="h-full transition-all duration-300"
@@ -154,7 +154,7 @@
                                         <span class="text-xs text-gray-500" x-text="meta.description.length + '/160'"></span>
                                     </div>
                                 </label>
-                                <textarea x-model="meta.description" rows="3" class="form-input w-full rounded-lg border-gray-300 focus:border-primary-500 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white"></textarea>
+                                <textarea x-model="meta.description" rows="3" class="w-full rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white px-4 py-2.5 focus:ring-primary-500 focus:border-primary-500 shadow-sm"></textarea>
                             </div>
                         </div>
                     </div>
@@ -208,7 +208,7 @@
                                 <div class="w-full space-y-3 sm:w-1/2">
                                     <div>
                                         <label class="block text-xs font-medium text-gray-700 dark:text-gray-300">تصویر شاخص شبکه اجتماعی</label>
-                                        <input type="text" x-model="meta.og_image" placeholder="URL تصویر..." class="form-input mt-1 w-full rounded-md border-gray-300 text-xs dark:border-gray-600 dark:bg-gray-700">
+                                        <input type="text" x-model="meta.og_image" placeholder="URL تصویر..." class="mt-1 w-full rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white px-4 py-2.5 focus:ring-primary-500 focus:border-primary-500 shadow-sm text-xs">
                                     </div>
                                 </div>
                             </div>
@@ -219,7 +219,7 @@
                     <div x-show="currentTab === 'schema'" class="space-y-6">
                         <div>
                             <label class="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">نوع محتوا (Schema Type)</label>
-                            <select x-model="meta.schema_type" class="form-input w-full rounded-lg border-gray-300 bg-gray-50 focus:border-primary-500 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white">
+                            <select x-model="meta.schema_type" class="w-full rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white px-4 py-2.5 focus:ring-primary-500 focus:border-primary-500 shadow-sm">
                                 <option value="Article">مقاله (Article)</option>
                                 <option value="NewsArticle">خبر (NewsArticle)</option>
                                 <option value="Product">محصول (Product)</option>
@@ -367,6 +367,16 @@ document.addEventListener('alpine:init', () => {
                  if (chips.length > 0) {
                      this.meta.focus_keyword = chips[0];
                  }
+            }
+
+            // 4. Social Image from Featured Image
+            // Try to find the image in the main form preview
+            const featuredImg = document.querySelector('div[x-show="imageUrl"] img');
+            if (featuredImg && featuredImg.src && !featuredImg.src.startsWith('data:')) {
+                 this.meta.og_image = featuredImg.src;
+            } else if (featuredImg && featuredImg.src) {
+                 // Even if it is data: (base64), show it in preview, though saving might need handling
+                 this.meta.og_image = featuredImg.src;
             }
         },
 
@@ -588,8 +598,14 @@ document.addEventListener('alpine:init', () => {
                     const formMetaDesc = document.querySelector('textarea[name="meta_description"]');
                     const formMetaTitle = document.querySelector('input[name="meta_title"]');
 
-                    if (formMetaDesc) formMetaDesc.value = this.meta.description;
-                    if (formMetaTitle) formMetaTitle.value = this.meta.title;
+                    if (formMetaDesc) {
+                        formMetaDesc.value = this.meta.description;
+                        formMetaDesc.dispatchEvent(new Event('input'));
+                    }
+                    if (formMetaTitle) {
+                         formMetaTitle.value = this.meta.title;
+                         formMetaTitle.dispatchEvent(new Event('input'));
+                    }
 
                     if (window.showToast) window.showToast('تنظیمات سئو با موفقیت ذخیره شد', 'success');
                     else alert('تنظیمات سئو با موفقیت ذخیره شد');
