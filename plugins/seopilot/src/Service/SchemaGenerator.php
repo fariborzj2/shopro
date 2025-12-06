@@ -237,7 +237,7 @@ class SchemaGenerator
             '@context' => 'https://schema.org',
             '@type' => 'Product',
             'name' => $product->name_fa,
-            'description' => strip_tags($product->description ?? ''),
+            'description' => html_entity_decode(strip_tags($product->description ?? ''), ENT_QUOTES | ENT_HTML5, 'UTF-8'),
             'image' => $product->image_url ? (strpos($product->image_url, 'http') === 0 ? $product->image_url : $url . $product->image_url) : null,
             'sku' => (string)$product->id,
             'offers' => [
@@ -309,7 +309,7 @@ class SchemaGenerator
             ],
             'datePublished' => date('c', strtotime($post->published_at ?? $post->created_at ?? 'now')),
             'dateModified' => date('c', strtotime($post->updated_at ?? $post->published_at ?? $post->created_at ?? 'now')),
-            'description' => $post->excerpt ?? mb_substr(strip_tags($post->content), 0, 160),
+            'description' => $post->excerpt ?? mb_substr(html_entity_decode(strip_tags($post->content), ENT_QUOTES | ENT_HTML5, 'UTF-8'), 0, 160),
             'mainEntityOfPage' => [
                 '@type' => 'WebPage',
                 '@id' => $url
@@ -352,7 +352,7 @@ class SchemaGenerator
             '@context' => 'https://schema.org',
             '@type' => 'CollectionPage',
             'name' => $category->name_fa ?? $category->name ?? 'Category',
-            'description' => strip_tags($category->description ?? ''),
+            'description' => html_entity_decode(strip_tags($category->description ?? ''), ENT_QUOTES | ENT_HTML5, 'UTF-8'),
             'url' => $url
         ];
 
@@ -384,7 +384,7 @@ class SchemaGenerator
             '@type' => 'WebPage',
             'name' => $page->title,
             'url' => $url,
-            'description' => mb_substr(strip_tags($page->content), 0, 160)
+            'description' => mb_substr(html_entity_decode(strip_tags($page->content), ENT_QUOTES | ENT_HTML5, 'UTF-8'), 0, 160)
          ];
     }
 
