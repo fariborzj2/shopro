@@ -64,6 +64,32 @@ class AnalysisController
             $entityType = $input['entity_type'];
             $meta = $input['meta']; // Array: title, description, focus_keyword, etc.
 
+            // --- NORMALIZATION START ---
+
+            // 1. Normalize Focus Keyword
+            $focusKeyword = $meta['focus_keyword'] ?? '';
+            // Convert numbers (Persian/Arabic -> English)
+            $focusKeyword = \convert_persian_numbers($focusKeyword);
+            // Replace Persian comma with English comma
+            $focusKeyword = str_replace('،', ',', $focusKeyword);
+            // Decode entities (fix &zwnj; -> actual character)
+            $focusKeyword = html_entity_decode($focusKeyword, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+            $focusKeyword = trim($focusKeyword);
+            $meta['focus_keyword'] = $focusKeyword;
+
+            // 2. Normalize Description & Title
+            // Ensure we save the actual characters, not HTML entities (e.g., &zwnj;)
+            if (isset($meta['description'])) {
+                $meta['description'] = html_entity_decode($meta['description'], ENT_QUOTES | ENT_HTML5, 'UTF-8');
+                $meta['description'] = trim($meta['description']);
+            }
+            if (isset($meta['title'])) {
+                $meta['title'] = html_entity_decode($meta['title'], ENT_QUOTES | ENT_HTML5, 'UTF-8');
+                $meta['title'] = trim($meta['title']);
+            }
+
+            // --- NORMALIZATION END ---
+
             $db = Database::getConnection();
             $score = $input['score'] ?? 0;
 

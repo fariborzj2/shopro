@@ -8,9 +8,18 @@
 // $metaData (array|null): Existing meta data for the entity
 // $defaultTitle (string): Fallback title (e.g. product name)
 // $defaultDesc (string): Fallback description
+
+// Prepare data: Decode entities recursively to ensure &zwnj; becomes visible character
+// and prevent double encoding in the JSON output.
+$cleanMeta = $metaData ?? [];
+array_walk_recursive($cleanMeta, function(&$item) {
+    if (is_string($item)) {
+        $item = html_entity_decode($item, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+    }
+});
 ?>
 
-<div class="bg-white rounded-2xl shadow-card p-6 mt-6" x-data="seoPilotMeta(<?= htmlspecialchars(json_encode($metaData ?? []), ENT_QUOTES, 'UTF-8') ?>, '<?= htmlspecialchars($defaultTitle ?? '', ENT_QUOTES, 'UTF-8') ?>', '<?= htmlspecialchars($defaultDesc ?? '', ENT_QUOTES, 'UTF-8') ?>')">
+<div class="bg-white rounded-2xl shadow-card p-6 mt-6" x-data="seoPilotMeta(<?= htmlspecialchars(json_encode($cleanMeta, JSON_UNESCAPED_UNICODE), ENT_QUOTES, 'UTF-8') ?>, '<?= htmlspecialchars($defaultTitle ?? '', ENT_QUOTES, 'UTF-8') ?>', '<?= htmlspecialchars($defaultDesc ?? '', ENT_QUOTES, 'UTF-8') ?>')">
     <div class="flex items-center justify-between mb-4 border-b border-slate-100 pb-4">
         <h3 class="text-lg font-bold text-slate-800 flex items-center gap-2">
             <span class="text-primary">🚀</span>
