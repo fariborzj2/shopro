@@ -146,6 +146,8 @@ class AnalysisController
 
             // 1. Description Generation (First 160 chars)
             $cleanText = strip_tags($content);
+            // Decode entities (like &zwnj;) to real characters BEFORE processing
+            $cleanText = html_entity_decode($cleanText, ENT_QUOTES | ENT_HTML5, 'UTF-8');
             $cleanText = preg_replace('/\s+/', ' ', $cleanText);
             $description = mb_substr($cleanText, 0, 160);
             if (mb_strlen($cleanText) > 160) {
