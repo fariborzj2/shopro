@@ -42,7 +42,7 @@ class AnalysisController
     }
 
     /**
-     * Save SEO Meta
+     * Save SEO Meta (Only Analysis Data)
      */
     public function save()
     {
@@ -62,7 +62,7 @@ class AnalysisController
 
             $entityId = $input['entity_id'];
             $entityType = $input['entity_type'];
-            $meta = $input['meta']; // Array: title, description, focus_keyword, etc.
+            $meta = $input['meta']; // Array: focus_keyword
 
             // --- NORMALIZATION START ---
 
@@ -75,48 +75,29 @@ class AnalysisController
             // Decode entities (fix &zwnj; -> actual character)
             $focusKeyword = html_entity_decode($focusKeyword, ENT_QUOTES | ENT_HTML5, 'UTF-8');
             $focusKeyword = trim($focusKeyword);
-            $meta['focus_keyword'] = $focusKeyword;
-
-            // 2. Normalize Description & Title
-            // Ensure we save the actual characters, not HTML entities (e.g., &zwnj;)
-            if (isset($meta['description'])) {
-                $meta['description'] = html_entity_decode($meta['description'], ENT_QUOTES | ENT_HTML5, 'UTF-8');
-                $meta['description'] = trim($meta['description']);
-            }
-            if (isset($meta['title'])) {
-                $meta['title'] = html_entity_decode($meta['title'], ENT_QUOTES | ENT_HTML5, 'UTF-8');
-                $meta['title'] = trim($meta['title']);
-            }
-
             // --- NORMALIZATION END ---
 
             $db = Database::getConnection();
             $score = $input['score'] ?? 0;
 
-            $dataRaw = json_encode([
-                'title' => $meta['title'] ?? '',
-                'description' => $meta['description'] ?? '',
-                'canonical' => $meta['canonical'] ?? '',
-                'robots' => $meta['robots'] ?? [],
-                'og_image' => $meta['og_image'] ?? '',
-                'json_ld' => $meta['json_ld'] ?? []
-            ], JSON_UNESCAPED_UNICODE);
+            // Note: We only update focus_keyword and score.
+            // We do NOT touch data_raw (title/description/schema/robots) because
+            // the UI for those has been removed, and we don't want to overwrite them with nulls.
+            // If the record doesn't exist, we insert with defaults.
 
             $stmt = $db->prepare("INSERT INTO seopilot_meta
-                (entity_id, entity_type, focus_keyword, seo_score, data_raw, updated_at)
-                VALUES (?, ?, ?, ?, ?, NOW())
+                (entity_id, entity_type, focus_keyword, seo_score, updated_at)
+                VALUES (?, ?, ?, ?, NOW())
                 ON DUPLICATE KEY UPDATE
                 focus_keyword = VALUES(focus_keyword),
                 seo_score = VALUES(seo_score),
-                data_raw = VALUES(data_raw),
                 updated_at = NOW()");
 
             $stmt->execute([
                 $entityId,
                 $entityType,
-                $meta['focus_keyword'] ?? '',
-                $score,
-                $dataRaw
+                $focusKeyword,
+                $score
             ]);
 
             echo json_encode([
@@ -124,106 +105,6 @@ class AnalysisController
                 'new_csrf_token' => csrf_token()
             ]);
 
-        } catch (\Throwable $e) {
-            http_response_code(500);
-            echo json_encode(['success' => false, 'error' => $e->getMessage()]);
-        }
-        exit;
-    }
-
-    /**
-     * Magic Fix: Description Generation + Auto Alt + Keyword Suggestions
-     */
-    public function magicFix()
-    {
-        ini_set('display_errors', 0);
-        header('Content-Type: application/json; charset=utf-8');
-
-        try {
-            $input = Request::json();
-            $content = $input['content'] ?? '';
-            $title = $input['title'] ?? '';
-
-            // 1. Description Generation (First 160 chars)
-            $cleanText = strip_tags($content);
-            // Decode entities (like &zwnj;) to real characters BEFORE processing
-            $cleanText = html_entity_decode($cleanText, ENT_QUOTES | ENT_HTML5, 'UTF-8');
-            $cleanText = preg_replace('/\s+/', ' ', $cleanText);
-            $description = mb_substr($cleanText, 0, 160);
-            if (mb_strlen($cleanText) > 160) {
-                $lastSpace = mb_strrpos($description, ' ');
-                if ($lastSpace) {
-                    $description = mb_substr($description, 0, $lastSpace) . '...';
-                }
-            }
-
-            // 2. Keyword Suggestion (Frequency)
-            $words = explode(' ', $cleanText);
-            $words = array_filter($words, function($w) { return mb_strlen($w) > 3; });
-            $counts = array_count_values($words);
-            arsort($counts);
-            $suggestedKeyword = array_key_first($counts) ?? '';
-
-            echo json_encode([
-                'success' => true,
-                'suggestion' => [
-                    'description' => $description,
-                    'keyword' => $suggestedKeyword
-                ],
-                'new_csrf_token' => csrf_token()
-            ]);
-        } catch (\Throwable $e) {
-            http_response_code(500);
-            echo json_encode(['success' => false, 'error' => $e->getMessage()]);
-        }
-        exit;
-    }
-
-    /**
-     * Proxy for Google Suggest API
-     */
-    public function suggestKeywords()
-    {
-        ini_set('display_errors', 0);
-        header('Content-Type: application/json; charset=utf-8');
-
-        try {
-            $input = Request::json();
-            $query = $input['query'] ?? '';
-
-            if (empty($query)) {
-                echo json_encode(['success' => true, 'suggestions' => []]);
-                exit;
-            }
-
-            $url = "https://suggestqueries.google.com/complete/search?client=chrome&q=" . urlencode($query);
-
-            // Use cURL to fetch suggestions
-            $ch = curl_init();
-            curl_setopt($ch, CURLOPT_URL, $url);
-            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-            curl_setopt($ch, CURLOPT_TIMEOUT, 3);
-            $response = curl_exec($ch);
-
-            if (curl_errno($ch)) {
-                throw new \Exception('Curl error: ' . curl_error($ch));
-            }
-            curl_close($ch);
-
-            $suggestions = [];
-            if ($response) {
-                $data = json_decode($response, true);
-                if (isset($data[1])) {
-                    $suggestions = $data[1];
-                }
-            }
-
-            echo json_encode([
-                'success' => true, 
-                'suggestions' => $suggestions,
-                'new_csrf_token' => csrf_token()
-            ]);
         } catch (\Throwable $e) {
             http_response_code(500);
             echo json_encode(['success' => false, 'error' => $e->getMessage()]);
