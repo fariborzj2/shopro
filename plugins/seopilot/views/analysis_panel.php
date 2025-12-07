@@ -352,9 +352,14 @@ document.addEventListener('alpine:init', () => {
                     this.lastAnalyzed = now.getHours().toString().padStart(2, '0') + ':' +
                                        now.getMinutes().toString().padStart(2, '0') + ':' +
                                        now.getSeconds().toString().padStart(2, '0');
+                } else {
+                    if (res.error) {
+                        alert('خطای آنالیز: ' + res.error);
+                    }
                 }
             } catch (e) {
                 console.error('SeoPilot Analysis Failed', e);
+                // alert('خطای ارتباط با سرور. لطفاً مجدداً تلاش کنید.'); // Optional: Alert user
             }
         },
 

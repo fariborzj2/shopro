@@ -22,12 +22,9 @@ Router::addRoute('POST', '/admin/seopilot/settings', '\SeoPilot\Enterprise\Contr
 
 
 // =============================================================
-// 3. API Routes (Correct Format for Your Router)
+// 3. API Routes (Analysis Only)
 // =============================================================
 Router::addRoute('POST', '/admin/seopilot/analyze',    '\SeoPilot\Enterprise\Controllers\AnalysisController@analyze');
-Router::addRoute('POST', '/admin/seopilot/save',       '\SeoPilot\Enterprise\Controllers\AnalysisController@save');
-Router::addRoute('POST', '/admin/seopilot/magic-fix',  '\SeoPilot\Enterprise\Controllers\AnalysisController@magicFix');
-Router::addRoute('POST', '/admin/seopilot/suggest',    '\SeoPilot\Enterprise\Controllers\AnalysisController@suggestKeywords');
 Router::addRoute('POST', '/admin/seopilot/auto-alt',   '\SeoPilot\Enterprise\Controllers\AnalysisController@autoAlt');
 
 
