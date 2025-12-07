@@ -17,7 +17,7 @@
                     <ul class="space-y-3">
                         <li><a href="/page/about-us" class="text-base text-gray-500 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 transition-colors">درباره ما</a></li>
                         <li><a href="/page/terms" class="text-base text-gray-500 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 transition-colors">قوانین و مقررات</a></li>
-                        <li><a href="/page/contact-us" class="text-base text-gray-500 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 transition-colors">تماس با ما</a></li>
+                        <li><a href="/contact-us" class="text-base text-gray-500 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 transition-colors">تماس با ما</a></li>
                         <li><a href="/page/faq" class="text-base text-gray-500 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 transition-colors">سوالات متداول</a></li>
                     </ul>
                 </div>

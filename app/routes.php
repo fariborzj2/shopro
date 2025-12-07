@@ -6,6 +6,8 @@
 // Storefront Routes
 // ----------------------------------------------------------------------
 $router->get('/', 'StorefrontController@home');
+$router->get('/contact-us', 'StorefrontController@contactUs');
+$router->post('/contact-us/send', 'StorefrontController@sendContact');
 $router->get('/page/{slug}', 'StorefrontController@page');
 $router->get('/category/{slug}', 'StorefrontController@category');
 
