@@ -279,26 +279,4 @@
     });
 </script>
 
-<!-- JSON-LD Schema -->
-<script type="application/ld+json">
-{
-    "@context": "https://schema.org",
-    "@type": "Blog",
-    "name": "وبلاگ فروشگاه مدرن",
-    "description": "جدیدترین مقالات و اخبار تکنولوژی",
-    "blogPost": [
-        <?php foreach ($posts as $index => $post) : ?>
-        {
-            "@type": "BlogPosting",
-            "headline": "<?= htmlspecialchars($post->title) ?>",
-            "alternativeHeadline": "<?= htmlspecialchars($post->excerpt) ?>",
-            "image": "<?= $post->image_url ?? '' ?>",
-            "url": "<?php echo (isset($_SERVER['HTTPS']) ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST']; ?>/blog/<?= $post->category_slug ?>/<?= $post->id ?>-<?= $post->slug ?>",
-            "datePublished": "<?= $post->published_at ?>"
-        }<?= $index < count($posts) - 1 ? ',' : '' ?>
-        <?php endforeach; ?>
-    ]
-}
-</script>
-
 <?php include __DIR__ . '/../footer.tpl'; ?>
