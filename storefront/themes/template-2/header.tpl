@@ -193,9 +193,6 @@
                     <a href="/page/about-us" class="px-5 py-2.5 rounded-full text-sm font-bold text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-200 dark:hover:bg-gray-700 transition-all duration-200">
                         درباره ما
                     </a>
-                    <a href="/contact-us" class="px-5 py-2.5 rounded-full text-sm font-bold transition-all duration-200 <?php echo ($_SERVER['REQUEST_URI'] == '/contact-us') ? 'bg-white dark:bg-gray-700 text-primary-600 shadow-sm' : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-200 dark:hover:bg-gray-700'; ?>">
-                        تماس با ما
-                    </a>
                 </nav>
 
                 <!-- Actions -->

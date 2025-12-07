@@ -2,10 +2,10 @@
 
 namespace SeoPilot\Enterprise\Controllers;
 
-use App\Core\Database;
 use App\Core\Request;
-use SeoPilot\Enterprise\Analyzer\ContentAnalyzer;
-use SeoPilot\Enterprise\NLP\PersianProcessor;
+use SeoPilot\Enterprise\Analyzer\SeoPilot_Analyzer_Core;
+use SeoPilot\Enterprise\Analyzer\SeoPilot_Scoring_System;
+use SeoPilot\Enterprise\NLP\SeoPilot_Persian_Normalizer; // Added for autoAlt
 
 class AnalysisController
 {
@@ -24,14 +24,20 @@ class AnalysisController
             $content = $input['content'] ?? '';
             $keyword = $input['keyword'] ?? '';
             $title = $input['title'] ?? '';
+            $metaTitle = $input['meta_title'] ?? '';
+            $metaDesc = $input['meta_desc'] ?? '';
+            // Get Slug (can be from 'slug' key)
+            $slug = $input['slug'] ?? '';
 
-            $analysis = ContentAnalyzer::analyze($content, $keyword, $title);
-            $score = $this->calculateScore($analysis, $title, $keyword);
+            $analysis = SeoPilot_Analyzer_Core::analyze($content, $keyword, $title, $metaTitle, $metaDesc, $slug);
+            $score = SeoPilot_Scoring_System::calculateScore($analysis);
+            $todoList = SeoPilot_Scoring_System::generateToDoList($analysis);
 
             echo json_encode([
                 'success' => true,
                 'data' => $analysis,
                 'score' => $score,
+                'todo_list' => $todoList,
                 'new_csrf_token' => csrf_token()
             ]);
         } catch (\Throwable $e) {
@@ -70,6 +76,8 @@ class AnalysisController
                 if (empty($alt)) {
                     // Generate Alt: Title + Index (Simple but effective fallback)
                     // "Post Title - Image 1"
+                    // Use SeoPilot_Persian_Normalizer just to ensure consistent usage if needed,
+                    // though for basic concatenation it's fine.
                     $newAlt = $title . ' - تصویر ' . ($index + 1);
                     $img->setAttribute('alt', $newAlt);
                     $count++;
@@ -101,16 +109,5 @@ class AnalysisController
             echo json_encode(['success' => false, 'error' => $e->getMessage()]);
         }
         exit;
-    }
-
-    private function calculateScore($analysis, $title, $keyword)
-    {
-        $score = 50;
-        if (!empty($keyword) && strpos($title, $keyword) !== false) $score += 10;
-        if (isset($analysis['keyword_stats']['density']) && $analysis['keyword_stats']['density'] >= 0.5 && $analysis['keyword_stats']['density'] <= 2.5) $score += 15;
-        if (isset($analysis['word_count']) && $analysis['word_count'] > 300) $score += 10;
-        if (isset($analysis['links']['internal']) && $analysis['links']['internal'] > 0) $score += 5;
-        if (isset($analysis['structure']['images']) && $analysis['structure']['images'] > 0 && isset($analysis['structure']['images_no_alt']) && $analysis['structure']['images_no_alt'] == 0) $score += 5;
-        return min(100, $score);
     }
 }

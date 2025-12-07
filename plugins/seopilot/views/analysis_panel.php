@@ -53,44 +53,91 @@
                 </div>
 
                 <!-- Content -->
-                <div class="max-h-[70vh] overflow-y-auto p-4 sm:p-6">
+                <div class="max-h-[70vh] overflow-y-auto p-4 sm:p-6 text-right" dir="rtl">
 
-                    <!-- Focus Keyword Input for Analysis -->
-                    <div class="mb-6">
-                        <label class="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">کلمه کلیدی کانونی</label>
-                        <div class="relative w-full">
+                    <!-- Top Section: Inputs -->
+                    <div class="grid gap-4 md:grid-cols-2 mb-6">
+                         <!-- Focus Keyword -->
+                        <div class="col-span-2 md:col-span-1">
+                            <label class="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">کلمه کلیدی کانونی</label>
                             <input type="text" x-model="meta.focus_keyword" @input.debounce.500ms="analyze()" class="w-full rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white px-4 py-2.5 focus:ring-primary-500 focus:border-primary-500 shadow-sm" placeholder="مثلاً: خرید گوشی موبایل">
+                        </div>
+                        <!-- Meta Title (Input for Analysis Only) -->
+                        <div>
+                            <label class="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">عنوان سئو (جهت بررسی)</label>
+                            <input type="text" x-model="meta.title" @input.debounce.500ms="analyze()" class="w-full rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white px-4 py-2.5 focus:ring-primary-500 focus:border-primary-500 shadow-sm">
+                        </div>
+                        <!-- Meta Description (Input for Analysis Only) -->
+                        <div class="col-span-2">
+                             <label class="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">توضیحات متا (جهت بررسی)</label>
+                             <textarea x-model="meta.description" @input.debounce.500ms="analyze()" rows="2" class="w-full rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white px-4 py-2.5 focus:ring-primary-500 focus:border-primary-500 shadow-sm"></textarea>
                         </div>
                     </div>
 
-                    <!-- Analysis Results -->
-                    <div class="space-y-4">
-                        <div class="rounded-lg border border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-800">
-                             <!-- Action: Auto Alt -->
-                             <div class="flex items-center justify-between border-b border-gray-100 p-4 dark:border-gray-700" x-show="analysis.structure && analysis.structure.images_no_alt > 0">
-                                <span class="text-sm font-medium text-gray-900 dark:text-white">
-                                    <span class="text-red-500 font-bold" x-text="analysis.structure ? analysis.structure.images_no_alt : 0"></span> تصویر بدون Alt یافت شد!
-                                </span>
-                                <button @click="autoAlt()" class="rounded bg-primary-600 px-3 py-1.5 text-xs text-white hover:bg-primary-700">اصلاح خودکار (Auto Alt)</button>
-                             </div>
+                    <!-- To-Do List (Prioritized) -->
+                    <div class="mb-6 space-y-3" x-show="todoList && todoList.length > 0">
+                        <h3 class="font-bold text-gray-900 dark:text-white">لیست مشکلات و پیشنهادات</h3>
+                        <template x-for="(todo, index) in todoList" :key="index">
+                            <div class="flex items-start gap-3 rounded-lg p-3 border"
+                                 :class="todo.type === 'critical' ? 'bg-red-50 border-red-100 text-red-800 dark:bg-red-900/20 dark:border-red-800 dark:text-red-200' : 'bg-yellow-50 border-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:border-yellow-800 dark:text-yellow-200'">
+                                <svg x-show="todo.type === 'critical'" class="h-5 w-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
+                                <svg x-show="todo.type === 'warning'" class="h-5 w-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                <span class="text-sm font-medium" x-text="todo.msg"></span>
+                            </div>
+                        </template>
+                    </div>
 
-                            <!-- Items -->
-                            <template x-for="(item, index) in analysisItems" :key="index">
-                                <div class="flex items-start gap-3 border-b border-gray-100 p-4 last:border-0 dark:border-gray-700">
-                                    <div class="mt-0.5 flex-shrink-0">
-                                        <div class="flex h-5 w-5 items-center justify-center rounded-full"
-                                             :class="item.passed ? 'bg-green-100 text-green-600 dark:bg-green-900/30' : 'bg-red-100 text-red-600 dark:bg-red-900/30'">
-                                            <svg x-show="item.passed" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>
-                                            <svg x-show="!item.passed" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <h4 class="text-sm font-medium text-gray-900 dark:text-white" x-text="item.label"></h4>
-                                        <p class="text-xs text-gray-500 dark:text-gray-400" x-text="item.desc"></p>
-                                    </div>
-                                </div>
-                            </template>
+                    <div x-show="todoList.length === 0 && score > 0" class="mb-6 rounded-lg bg-green-50 p-4 text-green-800 border border-green-100 dark:bg-green-900/20 dark:text-green-200 dark:border-green-800">
+                        <div class="flex items-center gap-2">
+                            <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                            <span class="font-bold">عالی! هیچ مشکل مهمی یافت نشد.</span>
                         </div>
+                    </div>
+
+                    <!-- Detailed Analysis Tabs/Sections -->
+                    <div class="space-y-6" x-show="score > 0">
+
+                        <!-- 1. Content Stats -->
+                        <div class="border-t pt-4 border-gray-100 dark:border-gray-700">
+                            <h4 class="mb-3 font-bold text-gray-800 dark:text-gray-200">آمار محتوا</h4>
+                            <div class="grid grid-cols-2 gap-4 text-sm">
+                                <div class="rounded bg-gray-50 p-3 dark:bg-gray-700/50">
+                                    <span class="block text-gray-500 dark:text-gray-400">تعداد کلمات</span>
+                                    <span class="font-bold text-gray-900 dark:text-white" x-text="analysis.content?.word_count"></span>
+                                </div>
+                                <div class="rounded bg-gray-50 p-3 dark:bg-gray-700/50">
+                                    <span class="block text-gray-500 dark:text-gray-400">چگالی کلمه کلیدی</span>
+                                    <span class="font-bold text-gray-900 dark:text-white" x-text="(analysis.content?.density || 0) + '%'"></span>
+                                </div>
+                                <div class="rounded bg-gray-50 p-3 dark:bg-gray-700/50">
+                                    <span class="block text-gray-500 dark:text-gray-400">زمان مطالعه تقریبی</span>
+                                    <span class="font-bold text-gray-900 dark:text-white" x-text="(analysis.readability?.reading_time_min || 0) + ' دقیقه'"></span>
+                                </div>
+                                <div class="rounded bg-gray-50 p-3 dark:bg-gray-700/50">
+                                    <span class="block text-gray-500 dark:text-gray-400">تعداد هدینگ‌ها (H1)</span>
+                                    <span class="font-bold text-gray-900 dark:text-white" x-text="analysis.structure?.h1_count"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 2. Auto Alt Action -->
+                        <div class="flex items-center justify-between rounded-lg bg-indigo-50 px-4 py-3 border border-indigo-100 dark:bg-indigo-900/20 dark:border-indigo-800" x-show="analysis.images && analysis.images.no_alt > 0">
+                            <span class="text-sm font-medium text-indigo-900 dark:text-indigo-200">
+                                <span class="font-bold" x-text="analysis.images.no_alt"></span> تصویر بدون Alt دارید.
+                            </span>
+                            <button @click="autoAlt()" class="rounded bg-indigo-600 px-3 py-1.5 text-xs text-white hover:bg-indigo-700 shadow-sm transition-colors">اصلاح خودکار</button>
+                        </div>
+
+                        <!-- 3. LSI Suggestions -->
+                        <div class="border-t pt-4 border-gray-100 dark:border-gray-700" x-show="analysis.lsi && analysis.lsi.length > 0">
+                            <h4 class="mb-3 font-bold text-gray-800 dark:text-gray-200">کلمات مرتبط پیشنهادی (LSI)</h4>
+                            <div class="flex flex-wrap gap-2">
+                                <template x-for="word in analysis.lsi" :key="word">
+                                    <span class="rounded-full bg-gray-100 px-3 py-1 text-xs text-gray-700 dark:bg-gray-700 dark:text-gray-300" x-text="word"></span>
+                                </template>
+                            </div>
+                        </div>
+
                     </div>
                 </div>
 
@@ -115,6 +162,7 @@ document.addEventListener('alpine:init', () => {
         isOpen: false,
         score: 0,
         lastAnalyzed: null,
+        todoList: [],
 
         // Entity Context
         entityType: null,
@@ -122,9 +170,11 @@ document.addEventListener('alpine:init', () => {
         title: '',
         slug: '',
 
-        // Meta Data (Analysis only needs Focus Keyword)
+        // Meta Data (Inputs for Analysis)
         meta: {
-            focus_keyword: ''
+            focus_keyword: '',
+            title: '',
+            description: ''
         },
 
         // Analysis Result
@@ -166,7 +216,7 @@ document.addEventListener('alpine:init', () => {
         loadInitialData() {
             // 1. Title (for context)
             const titleInput = document.querySelector('input[name="title"]') || document.querySelector('input[name="name_fa"]');
-            if (titleInput) this.title = titleInput.value;
+            if (titleInput && !this.meta.title) this.meta.title = titleInput.value;
 
             // 2. Focus Keyword from Tags (if empty)
             if (!this.meta.focus_keyword) {
@@ -178,50 +228,22 @@ document.addEventListener('alpine:init', () => {
                      this.meta.focus_keyword = chips[0];
                  }
             }
+
+            // 3. Meta Description (Try to find existing input on page)
+            const metaDescInput = document.querySelector('textarea[name="meta_description"]');
+            if (metaDescInput && !this.meta.description) {
+                this.meta.description = metaDescInput.value;
+            }
+             const metaTitleInput = document.querySelector('input[name="meta_title"]');
+            if (metaTitleInput && !this.meta.title) {
+                this.meta.title = metaTitleInput.value;
+            }
         },
 
         getScoreColor() {
             if (this.score < 50) return 'text-red-500';
             if (this.score < 80) return 'text-yellow-500';
             return 'text-green-500';
-        },
-
-        get analysisItems() {
-            const items = [];
-            const a = this.analysis;
-
-            if (!a || !a.keyword_stats) return [];
-
-            // Keyword Density
-            const density = a.keyword_stats.density;
-            items.push({
-                label: 'چگالی کلمه کلیدی',
-                desc: `چگالی فعلی ${density}% است. (استاندارد: 0.5 تا 2.5 درصد)`,
-                passed: density >= 0.5 && density <= 2.5
-            });
-
-            // Word Count
-            items.push({
-                label: 'طول محتوا',
-                desc: `${a.word_count} کلمه. (حداقل 300 کلمه توصیه می‌شود)`,
-                passed: a.word_count > 300
-            });
-
-            // Images
-            items.push({
-                label: 'متن جایگزین تصاویر (Alt)',
-                desc: `${a.structure.images_no_alt} تصویر بدون Alt هستند.`,
-                passed: a.structure.images_no_alt === 0
-            });
-
-            // Internal Links
-            items.push({
-                label: 'لینک‌سازی داخلی',
-                desc: `${a.links.internal} لینک داخلی پیدا شد.`,
-                passed: a.links.internal > 0
-            });
-
-            return items;
         },
 
         async analyze(contentOverride = null) {
@@ -240,7 +262,10 @@ document.addEventListener('alpine:init', () => {
                     body: JSON.stringify({
                         content: content,
                         keyword: this.meta.focus_keyword,
-                        title: this.title
+                        title: this.title,
+                        meta_title: this.meta.title,
+                        meta_desc: this.meta.description,
+                        slug: this.slug
                     })
                 });
 
@@ -249,6 +274,7 @@ document.addEventListener('alpine:init', () => {
                     this.updateCsrf(res.new_csrf_token);
                     this.analysis = res.data;
                     this.score = res.score;
+                    this.todoList = res.todo_list;
                     this.lastAnalyzed = new Date().toLocaleTimeString('fa-IR');
                 }
             } catch (e) {
