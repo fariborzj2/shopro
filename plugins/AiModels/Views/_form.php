@@ -31,6 +31,18 @@ $action = $isEdit ? "/admin/ai-models/update/{$model->id}" : "/admin/ai-models/s
             </div>
         </div>
 
+        <!-- API URL -->
+        <div>
+            <label for="api_url" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                آدرس API (اختیاری)
+            </label>
+            <input type="url" id="api_url" name="api_url" dir="ltr" x-model="apiUrl"
+                   value="<?php echo $isEdit && isset($model->api_url) ? htmlspecialchars($model->api_url) : ''; ?>"
+                   placeholder="https://api.openai.com/v1"
+                   class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:text-white transition-colors">
+            <p class="mt-1 text-xs text-gray-500">در صورت خالی بودن، آدرس پیش‌فرض استفاده می‌شود.</p>
+        </div>
+
         <!-- API Key -->
         <div>
             <label for="api_key" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
@@ -40,7 +52,7 @@ $action = $isEdit ? "/admin/ai-models/update/{$model->id}" : "/admin/ai-models/s
                 <input type="password" id="api_key" name="api_key" <?php echo $isEdit ? '' : 'required'; ?> dir="ltr" x-model="apiKey"
                        placeholder="<?php echo $isEdit ? 'برای تغییر وارد کنید...' : 'sk-...'; ?>"
                        class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:text-white transition-colors">
-                
+
                 <button type="button" @click="testConnection" :disabled="testing"
                         class="px-4 py-2 bg-indigo-50 text-indigo-600 rounded-xl hover:bg-indigo-100 transition-colors flex items-center gap-2 whitespace-nowrap">
                     <span x-show="!testing">تست اتصال</span>
@@ -80,10 +92,11 @@ $action = $isEdit ? "/admin/ai-models/update/{$model->id}" : "/admin/ai-models/s
 function aiModelForm() {
     return {
         apiKey: '',
+        apiUrl: '<?php echo $isEdit && isset($model->api_url) ? htmlspecialchars($model->api_url) : ''; ?>',
         nameEn: '<?php echo $isEdit ? htmlspecialchars($model->name_en) : ''; ?>',
         testing: false,
         testResult: { status: null, message: '' },
-        
+
         testConnection() {
             if (!this.apiKey) {
                 this.testResult = { status: 'error', message: 'لطفا ابتدا کلید API را وارد کنید.' };
@@ -101,6 +114,7 @@ function aiModelForm() {
                 },
                 body: JSON.stringify({
                     api_key: this.apiKey,
+                    api_url: this.apiUrl,
                     name_en: this.nameEn
                 })
             })
@@ -115,7 +129,7 @@ function aiModelForm() {
                 this.testing = false;
             });
         },
-        
+
         onSubmit(e) {
             // Optional: Client side validation
         }

@@ -34,7 +34,7 @@ class AiModelsController
         }
 
         $data = Request::all();
-        
+
         // Validation
         if (empty($data['name_fa']) || empty($data['name_en']) || empty($data['api_key'])) {
             $_SESSION['errors'] = ['لطفا تمام فیلدهای اجباری را پر کنید.'];
@@ -69,7 +69,7 @@ class AiModelsController
         }
 
         $data = Request::all();
-        
+
         if (empty($data['name_fa']) || empty($data['name_en'])) {
             redirect_back_with_error('لطفا تمام فیلدهای اجباری را پر کنید.');
         }
@@ -96,9 +96,10 @@ class AiModelsController
     {
         // AJAX endpoint
         header('Content-Type: application/json');
-        
+
         $input = json_decode(file_get_contents('php://input'), true);
         $apiKey = $input['api_key'] ?? '';
+        $apiUrl = $input['api_url'] ?? '';
         $modelName = strtolower($input['name_en'] ?? '');
 
         if (empty($apiKey)) {
@@ -107,11 +108,15 @@ class AiModelsController
         }
 
         // Simple connectivity check
-        
+
         $ch = curl_init();
-        
+
+        // Use user provided URL if available
+        if (!empty($apiUrl)) {
+            $url = $apiUrl;
+        }
         // Heuristic to guess a real endpoint if possible
-        if (strpos($modelName, 'gpt') !== false || strpos($modelName, 'openai') !== false) {
+        elseif (strpos($modelName, 'gpt') !== false || strpos($modelName, 'openai') !== false) {
              $url = 'https://api.openai.com/v1/models';
         } elseif (strpos($modelName, 'claude') !== false || strpos($modelName, 'anthropic') !== false) {
              $url = 'https://api.anthropic.com/v1/models';
@@ -125,7 +130,7 @@ class AiModelsController
         curl_setopt($ch, CURLOPT_URL, $url);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_TIMEOUT, 10);
-        
+
         // Add Authorization header just in case it hits a real API (except google)
         if ($url !== 'https://www.google.com') {
             curl_setopt($ch, CURLOPT_HTTPHEADER, [

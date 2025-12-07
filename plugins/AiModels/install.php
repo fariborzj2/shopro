@@ -10,6 +10,7 @@ $sql = "CREATE TABLE IF NOT EXISTS `ai_models` (
     `name_fa` VARCHAR(255) NOT NULL,
     `name_en` VARCHAR(255) NOT NULL UNIQUE,
     `api_key` TEXT NOT NULL,
+    `api_url` VARCHAR(255) NULL,
     `description` TEXT NULL,
     `is_active` TINYINT(1) DEFAULT 1,
     `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,

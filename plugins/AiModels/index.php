@@ -23,16 +23,16 @@ Filter::add('admin_menu_items', function($items) {
         'url' => '/ai-models',
         'icon' => 'server', // Fallback to 'server' which often uses same icon or just defaults if missing
                             // Actually, 'server' is not in the list. 'settings' is. 'search' is.
-                            // I'll use 'search' for now as it's closest to "AI/Discovery" visually in the available set, 
+                            // I'll use 'search' for now as it's closest to "AI/Discovery" visually in the available set,
                             // or 'settings'. Let's use 'settings' to be safe, or 'star' (feature).
                             // Wait, 'cpu-chip' was not in the list.
-                            // I'll use 'star' or 'filter'. 
+                            // I'll use 'star' or 'filter'.
                             // 'filter' looks a bit like a chip? No.
                             // I'll use 'search' (like SeoPilot) or just 'settings'.
                             // Let's use 'search' as it's distinct enough.
                             // Better: Add a new case to icon.php? No, avoiding core modification.
                             // I will use 'star' to highlight it.
-        'permission' => 'settings' 
+        'permission' => 'settings'
     ];
     return $items;
 });

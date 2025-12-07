@@ -57,12 +57,12 @@
                                 </td>
                                 <td class="px-6 py-4">
                                     <div class="flex items-center gap-3">
-                                        <a href="/admin/ai-models/edit/<?php echo $model['id']; ?>" 
+                                        <a href="/admin/ai-models/edit/<?php echo $model['id']; ?>"
                                            class="text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors" title="ویرایش">
                                             <?php partial('icon', ['name' => 'edit', 'class' => 'w-5 h-5']); ?>
                                         </a>
-                                        
-                                        <form action="/admin/ai-models/delete/<?php echo $model['id']; ?>" method="POST" 
+
+                                        <form action="/admin/ai-models/delete/<?php echo $model['id']; ?>" method="POST"
                                               onsubmit="return confirm('آیا از حذف این مدل اطمینان دارید؟');" class="inline-block">
                                             <?php csrf_field(); ?>
                                             <button type="submit" class="text-gray-400 hover:text-red-600 dark:hover:text-red-400 transition-colors" title="حذف">
