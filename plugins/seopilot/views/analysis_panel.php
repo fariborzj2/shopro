@@ -60,9 +60,6 @@
                         <label class="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">کلمه کلیدی کانونی</label>
                         <div class="relative w-full">
                             <input type="text" x-model="meta.focus_keyword" @input.debounce.500ms="analyze()" class="w-full rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white px-4 py-2.5 focus:ring-primary-500 focus:border-primary-500 shadow-sm" placeholder="مثلاً: خرید گوشی موبایل">
-                            <div class="absolute inset-y-0 left-0 flex items-center pl-3">
-                                <span class="text-xs text-gray-400" x-text="meta.focus_keyword.length > 0 ? 'ذخیره شد' : ''"></span>
-                            </div>
                         </div>
                     </div>
 
@@ -102,12 +99,8 @@
                     <div class="text-xs text-gray-500">
                         آخرین آنالیز: <span x-text="lastAnalyzed || 'هرگز'"></span>
                     </div>
-                    <div class="flex w-full gap-3 sm:w-auto">
-                        <button @click="closeModal()" class="w-1/2 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 sm:w-auto dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:hover:bg-gray-600">انصراف</button>
-                        <button @click="save()" class="flex w-1/2 items-center justify-center gap-2 rounded-lg bg-primary-600 px-6 py-2 text-sm font-bold text-white shadow-lg shadow-primary-600/20 hover:bg-primary-700 sm:w-auto">
-                            <span x-show="!isSaving">ذخیره</span>
-                            <span x-show="isSaving">در حال ذخیره...</span>
-                        </button>
+                    <div class="flex w-full justify-end gap-3 sm:w-auto">
+                        <button @click="closeModal()" class="w-full rounded-lg border border-gray-300 bg-white px-6 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 sm:w-auto dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:hover:bg-gray-600">بستن</button>
                     </div>
                 </div>
 
@@ -121,7 +114,6 @@ document.addEventListener('alpine:init', () => {
     Alpine.data('seoPilotPanel', () => ({
         isOpen: false,
         score: 0,
-        isSaving: false,
         lastAnalyzed: null,
 
         // Entity Context
@@ -297,37 +289,6 @@ document.addEventListener('alpine:init', () => {
                 }
             } catch (e) {
                 console.error('Auto Alt Failed', e);
-            }
-        },
-
-        async save() {
-            this.isSaving = true;
-            try {
-                const response = await fetch('/admin/seopilot/save', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                    },
-                    body: JSON.stringify({
-                        entity_id: this.entityId,
-                        entity_type: this.entityType,
-                        meta: this.meta,
-                        score: this.score
-                    })
-                });
-
-                const res = await response.json();
-                if (res.success) {
-                    this.updateCsrf(res.new_csrf_token);
-                    if (window.showToast) window.showToast('تنظیمات آنالیز با موفقیت ذخیره شد', 'success');
-                    else alert('تنظیمات آنالیز با موفقیت ذخیره شد');
-                    this.closeModal();
-                }
-            } catch (e) {
-                alert('خطا در ذخیره سازی');
-            } finally {
-                this.isSaving = false;
             }
         }
     }));

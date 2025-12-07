@@ -42,77 +42,6 @@ class AnalysisController
     }
 
     /**
-     * Save SEO Meta (Only Analysis Data)
-     */
-    public function save()
-    {
-        // Prevent PHP errors from breaking JSON
-        ini_set('display_errors', 0);
-        header('Content-Type: application/json; charset=utf-8');
-
-        try {
-            $this->ensureTableExists();
-
-            $input = Request::json();
-
-            // Validate input
-            if (!isset($input['entity_id'], $input['entity_type'], $input['meta'])) {
-                throw new \Exception('Invalid input data');
-            }
-
-            $entityId = $input['entity_id'];
-            $entityType = $input['entity_type'];
-            $meta = $input['meta']; // Array: focus_keyword
-
-            // --- NORMALIZATION START ---
-
-            // 1. Normalize Focus Keyword
-            $focusKeyword = $meta['focus_keyword'] ?? '';
-            // Convert numbers (Persian/Arabic -> English)
-            $focusKeyword = \convert_persian_numbers($focusKeyword);
-            // Replace Persian comma with English comma
-            $focusKeyword = str_replace('،', ',', $focusKeyword);
-            // Decode entities (fix &zwnj; -> actual character)
-            $focusKeyword = html_entity_decode($focusKeyword, ENT_QUOTES | ENT_HTML5, 'UTF-8');
-            $focusKeyword = trim($focusKeyword);
-            // --- NORMALIZATION END ---
-
-            $db = Database::getConnection();
-            $score = $input['score'] ?? 0;
-
-            // Note: We only update focus_keyword and score.
-            // We do NOT touch data_raw (title/description/schema/robots) because
-            // the UI for those has been removed, and we don't want to overwrite them with nulls.
-            // If the record doesn't exist, we insert with defaults.
-
-            $stmt = $db->prepare("INSERT INTO seopilot_meta
-                (entity_id, entity_type, focus_keyword, seo_score, updated_at)
-                VALUES (?, ?, ?, ?, NOW())
-                ON DUPLICATE KEY UPDATE
-                focus_keyword = VALUES(focus_keyword),
-                seo_score = VALUES(seo_score),
-                updated_at = NOW()");
-
-            $stmt->execute([
-                $entityId,
-                $entityType,
-                $focusKeyword,
-                $score
-            ]);
-
-            echo json_encode([
-                'success' => true,
-                'new_csrf_token' => csrf_token()
-            ]);
-
-        } catch (\Throwable $e) {
-            http_response_code(500);
-            echo json_encode(['success' => false, 'error' => $e->getMessage()]);
-        }
-        exit;
-    }
-
-    /**
      * Auto Generate Alt Tags for Images
      */
     public function autoAlt()
@@ -183,25 +112,5 @@ class AnalysisController
         if (isset($analysis['links']['internal']) && $analysis['links']['internal'] > 0) $score += 5;
         if (isset($analysis['structure']['images']) && $analysis['structure']['images'] > 0 && isset($analysis['structure']['images_no_alt']) && $analysis['structure']['images_no_alt'] == 0) $score += 5;
         return min(100, $score);
-    }
-
-    private function ensureTableExists()
-    {
-        try {
-            $db = Database::getConnection();
-            $db->exec("CREATE TABLE IF NOT EXISTS seopilot_meta (
-                entity_id BIGINT UNSIGNED NOT NULL,
-                entity_type VARCHAR(32) NOT NULL,
-                focus_keyword VARCHAR(191),
-                seo_score TINYINT UNSIGNED DEFAULT 0,
-                data_raw JSON NULL,
-                compiled_head MEDIUMTEXT NULL,
-                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-                PRIMARY KEY (entity_type, entity_id),
-                INDEX idx_score (seo_score)
-            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;");
-        } catch (\Exception $e) {
-            // Ignore error if table exists or permission issue
-        }
     }
 }
