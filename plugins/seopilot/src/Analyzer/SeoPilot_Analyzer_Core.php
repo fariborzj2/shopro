@@ -44,6 +44,7 @@ class SeoPilot_Analyzer_Core
         $wordCount = SeoPilot_Persian_Normalizer::wordCount($text);
 
         $density = 0;
+        $count = 0;
         if ($wordCount > 0 && !empty($keyword)) {
             $cleanWordCount = SeoPilot_Persian_Normalizer::wordCount($textForDensity);
             $count = substr_count($normalizedText, $keyword);
@@ -73,7 +74,7 @@ class SeoPilot_Analyzer_Core
         return [
             'word_count' => $wordCount,
             'density' => $density,
-            'keyword_count' => substr_count($normalizedText, $keyword),
+            'keyword_count' => $count,
             'keyword_in_first_100' => $inFirst100,
             'keyword_in_conclusion' => $inConclusion,
             'keyword_in_title' => $inTitle
