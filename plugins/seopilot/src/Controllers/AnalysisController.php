@@ -5,7 +5,13 @@ namespace SeoPilot\Enterprise\Controllers;
 use App\Core\Request;
 use SeoPilot\Enterprise\Analyzer\SeoPilot_Analyzer_Core;
 use SeoPilot\Enterprise\Analyzer\SeoPilot_Scoring_System;
-use SeoPilot\Enterprise\NLP\SeoPilot_Persian_Normalizer; // Added for autoAlt
+use SeoPilot\Enterprise\NLP\SeoPilot_Persian_Normalizer;
+
+// Manually require new classes because the autoloader might not be updated/dumped
+// in this restricted environment (no CLI/Composer).
+require_once __DIR__ . '/../NLP/SeoPilot_Persian_Normalizer.php';
+require_once __DIR__ . '/../Analyzer/SeoPilot_Analyzer_Core.php';
+require_once __DIR__ . '/../Analyzer/SeoPilot_Scoring_System.php';
 
 class AnalysisController
 {
@@ -76,8 +82,6 @@ class AnalysisController
                 if (empty($alt)) {
                     // Generate Alt: Title + Index (Simple but effective fallback)
                     // "Post Title - Image 1"
-                    // Use SeoPilot_Persian_Normalizer just to ensure consistent usage if needed,
-                    // though for basic concatenation it's fine.
                     $newAlt = $title . ' - تصویر ' . ($index + 1);
                     $img->setAttribute('alt', $newAlt);
                     $count++;
