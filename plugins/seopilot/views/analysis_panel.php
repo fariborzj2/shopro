@@ -289,14 +289,27 @@ document.addEventListener('alpine:init', () => {
             const titleInput = document.querySelector('input[name="title"]') || document.querySelector('input[name="name_fa"]') || document.querySelector('input[name="name"]');
             if (titleInput && !this.meta.title) this.meta.title = titleInput.value;
 
-            // 3. Focus Keyword (Try multiple sources)
-            // Priority: seopilot_focus_keyword -> focus_keyword -> tags -> meta keys
-            const focusInput = document.querySelector('input[name="seopilot_focus_keyword"]') || document.querySelector('input[name="focus_keyword"]');
-            if (focusInput) {
-                this.meta.focus_keyword = focusInput.value;
-            } else {
-                // Fallback: Check tags input (comma separated)
-                const tagsInput = document.querySelector('input[name="tags"]') || document.querySelector('input[name="meta_keywords"]');
+            // 3. Focus Keyword (Detection Priority: meta_keywords -> seopilot_focus -> tags)
+            this.meta.focus_keyword = ''; // Reset
+
+            // Priority 1: Meta Keywords (input or textarea)
+            const metaKeywordsInput = document.querySelector('input[name="meta_keywords"]') || document.querySelector('textarea[name="meta_keywords"]');
+            if (metaKeywordsInput && metaKeywordsInput.value) {
+                // Split by comma and take the first one
+                this.meta.focus_keyword = metaKeywordsInput.value.split(',')[0].trim();
+            }
+
+            // Priority 2: Custom Field
+            if (!this.meta.focus_keyword) {
+                const focusInput = document.querySelector('input[name="seopilot_focus_keyword"]') || document.querySelector('input[name="focus_keyword"]');
+                if (focusInput && focusInput.value) {
+                    this.meta.focus_keyword = focusInput.value.trim();
+                }
+            }
+
+            // Priority 3: Tags
+            if (!this.meta.focus_keyword) {
+                const tagsInput = document.querySelector('input[name="tags"]');
                 if (tagsInput && tagsInput.value) {
                     this.meta.focus_keyword = tagsInput.value.split(',')[0].trim();
                 }

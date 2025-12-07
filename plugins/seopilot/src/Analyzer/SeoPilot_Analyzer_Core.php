@@ -23,7 +23,7 @@ class SeoPilot_Analyzer_Core
 
         $contentMetrics = self::analyzeContent($dom, $text, $normalizedText, $textForDensity, $normalizedKeyword, $title);
         $readabilityMetrics = self::analyzeReadability($text);
-        $structureMetrics = self::analyzeStructure($dom, $normalizedKeyword, $title); // Pass title for H1 Logic
+        $structureMetrics = self::analyzeStructure($dom, $normalizedKeyword, $title);
         $linkMetrics = self::analyzeLinks($dom);
         $imageMetrics = self::analyzeImages($dom, $normalizedKeyword);
         $technicalMetrics = self::analyzeTechnical($metaTitle, $metaDesc, $normalizedKeyword, $slug);
@@ -144,17 +144,12 @@ class SeoPilot_Analyzer_Core
         $h2 = $dom->getElementsByTagName('h2');
         $h3 = $dom->getElementsByTagName('h3');
 
-        // H1 Logic: Count the main title as a virtual H1 if present.
-        // If the editor content contains H1, it's usually duplicative/error in most CMS themes.
-        // H1 Count = (Title Exists ? 1 : 0) + Editor H1s.
-        // Ideal is exactly 1.
         $titleH1 = !empty($title) ? 1 : 0;
         $editorH1 = $h1->length;
         $h1Count = $titleH1 + $editorH1;
 
         $hierarchyOk = !($h3->length > 0 && $h2->length == 0);
 
-        // Keyword in H2/H3
         $keywordInSub = 0;
         $totalSub = $h2->length + $h3->length;
 
@@ -167,7 +162,6 @@ class SeoPilot_Analyzer_Core
 
         $keywordInSubPercent = ($totalSub > 0) ? ($keywordInSub / $totalSub) * 100 : 0;
 
-        // Paragraph Length
         $paragraphs = $dom->getElementsByTagName('p');
         $longParagraphs = 0;
         foreach ($paragraphs as $p) {
@@ -280,12 +274,42 @@ class SeoPilot_Analyzer_Core
 
     private static function getLsiSuggestions($keyword)
     {
-        if (empty($keyword)) return [];
+        if (empty($keyword) || mb_strlen($keyword) < 2) {
+            return [];
+        }
+
+        // Fetch suggestions from Google
+        // URL: http://suggestqueries.google.com/complete/search?client=chrome&q={keyword}&hl=fa
+        $url = "http://suggestqueries.google.com/complete/search?client=chrome&q=" . urlencode($keyword) . "&hl=fa";
+
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        // Set User-Agent to avoid blocking
+        curl_setopt($ch, CURLOPT_USERAGENT, "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36");
+        curl_setopt($ch, CURLOPT_TIMEOUT, 2); // Fast timeout to not block UI
+
+        $response = curl_exec($ch);
+        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        curl_close($ch);
+
+        if ($httpCode === 200 && $response) {
+            // Response format: ["keyword", ["suggestion1", "suggestion2", ...], ...]
+            $data = json_decode($response, true);
+            if (isset($data[1]) && is_array($data[1])) {
+                // Filter out the exact keyword match if present
+                $suggestions = array_filter($data[1], function($s) use ($keyword) {
+                    return $s !== $keyword;
+                });
+                return array_slice($suggestions, 0, 8); // Return top 8
+            }
+        }
+
+        // Fallback if API fails
         return [
             $keyword . ' چیست',
             'خرید ' . $keyword,
             'بهترین ' . $keyword,
-            'انواع ' . $keyword,
             'قیمت ' . $keyword
         ];
     }
