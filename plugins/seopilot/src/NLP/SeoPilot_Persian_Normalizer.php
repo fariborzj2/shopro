@@ -5,7 +5,7 @@ namespace SeoPilot\Enterprise\NLP;
 class SeoPilot_Persian_Normalizer
 {
     /**
-     * Normalize Persian text
+     * Normalize Persian text for Analysis
      * - Unifies Ya/Kaf
      * - Converts numbers to English (for processing)
      * - Removes tashkeel
@@ -36,6 +36,36 @@ class SeoPilot_Persian_Normalizer
         $text = self::toEnglishNumbers($text);
 
         return trim($text);
+    }
+
+    /**
+     * Fix Text Formatting (Auto-Correction)
+     * - Fixes Half-Spaces (mi, ha, etc)
+     * - Standardizes Characters
+     */
+    public static function fixFormatting(string $text): string
+    {
+        if (empty($text)) return '';
+
+        // 1. Standardize Characters (Y/K)
+        $text = str_replace(
+            ['ي', 'ك', '٤', '٥', '٦', 'ة', 'ۀ'],
+            ['ی', 'ک', '۴', '۵', '۶', 'ه', 'ه'],
+            $text
+        );
+
+        // 2. Fix "Mi" prefix (mi + space -> mi + zwnj)
+        // \bمی\s+ -> می\xe2\x80\x8c
+        $text = preg_replace('/\b(می|نمی)\s+(\p{L})/u', '$1' . "\xe2\x80\x8c" . '$2', $text);
+
+        // 3. Fix "Ha" suffix (space + ha -> zwnj + ha)
+        // (\p{L})\s+ها\b -> $1\xe2\x80\x8cها
+        $text = preg_replace('/(\p{L})\s+(ها)\b/u', '$1' . "\xe2\x80\x8c" . '$2', $text);
+
+        // 4. Fix "Tar/Tarin" suffix (optional, usually attached or zwnj)
+        $text = preg_replace('/(\p{L})\s+(تر|ترین)\b/u', '$1' . "\xe2\x80\x8c" . '$2', $text);
+
+        return $text;
     }
 
     /**
@@ -81,8 +111,7 @@ class SeoPilot_Persian_Normalizer
         $text = self::normalize($text);
         $text = str_replace("\xe2\x80\x8c", '', $text); // Remove ZWNJ
 
-        // Remove punctuation but KEEP numbers (\p{N}) so "iPhone 14" counts correctly
-        // \p{L} = letters, \p{N} = numbers
+        // Remove punctuation but KEEP numbers
         $cleaned = preg_replace('/[^\p{L}\p{N}\s]/u', '', $text);
         $collapsed = preg_replace('/\s+/', ' ', $cleaned ?? $text);
 
@@ -90,24 +119,10 @@ class SeoPilot_Persian_Normalizer
         return count(array_filter($words));
     }
 
-    /**
-     * Check for common half-space (ZWNJ) issues
-     * e.g., "می شود" instead of "می‌شود", "کتاب ها" instead of "کتاب‌ها"
-     */
     public static function hasHalfSpaceIssues(string $text): bool
     {
-        // 1. Prefix "mi" followed by space (should be ZWNJ)
-        // \bمی\s+ means "mi" followed by whitespace
-        if (preg_match('/\bمی\s+/u', $text)) {
-            return true;
-        }
-
-        // 2. Suffix "ha" preceded by space (often should be ZWNJ or attached)
-        // heuristic: word + space + ha
-        if (preg_match('/\s+ها\b/u', $text)) {
-            return true;
-        }
-
+        if (preg_match('/\b(می|نمی)\s+/u', $text)) return true;
+        if (preg_match('/\s+ها\b/u', $text)) return true;
         return false;
     }
 }

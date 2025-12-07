@@ -23,7 +23,7 @@ class SeoPilot_Analyzer_Core
 
         $contentMetrics = self::analyzeContent($dom, $text, $normalizedText, $textForDensity, $normalizedKeyword, $title);
         $readabilityMetrics = self::analyzeReadability($text);
-        $structureMetrics = self::analyzeStructure($dom, $normalizedKeyword);
+        $structureMetrics = self::analyzeStructure($dom, $normalizedKeyword, $title); // Pass title for H1 Logic
         $linkMetrics = self::analyzeLinks($dom);
         $imageMetrics = self::analyzeImages($dom, $normalizedKeyword);
         $technicalMetrics = self::analyzeTechnical($metaTitle, $metaDesc, $normalizedKeyword, $slug);
@@ -90,7 +90,6 @@ class SeoPilot_Analyzer_Core
         $totalSentences = count($sentences);
         $transitionCount = 0;
 
-        // Simple Transition Words List (Hardcoded for Persian)
         $transitions = ['بنابراین', 'علاوه بر این', 'در نتیجه', 'همچنین', 'از سوی دیگر', 'با این حال', 'به عبارت دیگر', 'پس', 'سپس'];
 
         $sentenceStarts = [];
@@ -104,7 +103,6 @@ class SeoPilot_Analyzer_Core
                 $longSentences++;
             }
 
-            // Transitions
             foreach ($transitions as $t) {
                 if (strpos($s, $t) !== false) {
                     $transitionCount++;
@@ -112,7 +110,6 @@ class SeoPilot_Analyzer_Core
                 }
             }
 
-            // Start Variety
             $words = explode(' ', $s);
             $firstWord = $words[0] ?? '';
             if (!empty($firstWord)) {
@@ -120,7 +117,6 @@ class SeoPilot_Analyzer_Core
             }
         }
 
-        // Check for 3 consecutive sentences starting with same word
         for ($i = 0; $i < count($sentenceStarts) - 2; $i++) {
             if ($sentenceStarts[$i] === $sentenceStarts[$i+1] && $sentenceStarts[$i+1] === $sentenceStarts[$i+2]) {
                 $consecutiveStarts++;
@@ -130,7 +126,6 @@ class SeoPilot_Analyzer_Core
         $halfSpaceIssues = SeoPilot_Persian_Normalizer::hasHalfSpaceIssues($text);
         $transitionScore = ($totalSentences > 0) ? ($transitionCount / $totalSentences) > 0.3 : false;
 
-        // Reading Time (Average 200 words per minute)
         $readingTime = ceil(SeoPilot_Persian_Normalizer::wordCount($text) / 200);
 
         return [
@@ -143,13 +138,19 @@ class SeoPilot_Analyzer_Core
         ];
     }
 
-    private static function analyzeStructure(\DOMDocument $dom, $keyword)
+    private static function analyzeStructure(\DOMDocument $dom, $keyword, $title = '')
     {
         $h1 = $dom->getElementsByTagName('h1');
         $h2 = $dom->getElementsByTagName('h2');
         $h3 = $dom->getElementsByTagName('h3');
 
-        $h1Count = $h1->length;
+        // H1 Logic: Count the main title as a virtual H1 if present.
+        // If the editor content contains H1, it's usually duplicative/error in most CMS themes.
+        // H1 Count = (Title Exists ? 1 : 0) + Editor H1s.
+        // Ideal is exactly 1.
+        $titleH1 = !empty($title) ? 1 : 0;
+        $editorH1 = $h1->length;
+        $h1Count = $titleH1 + $editorH1;
 
         $hierarchyOk = !($h3->length > 0 && $h2->length == 0);
 
@@ -175,7 +176,6 @@ class SeoPilot_Analyzer_Core
             }
         }
 
-        // Check for Lists
         $hasList = ($dom->getElementsByTagName('ul')->length > 0 || $dom->getElementsByTagName('ol')->length > 0);
 
         return [
@@ -191,7 +191,7 @@ class SeoPilot_Analyzer_Core
     {
         $internal = 0;
         $external = 0;
-        $unsafeExternal = 0; // Missing nofollow or target blank
+        $unsafeExternal = 0;
         $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
 
         foreach ($dom->getElementsByTagName('a') as $link) {
@@ -202,19 +202,8 @@ class SeoPilot_Analyzer_Core
                 $internal++;
             } else {
                 $external++;
-                // Security & UX Check
-                $rel = $link->getAttribute('rel');
                 $target = $link->getAttribute('target');
-
-                // Expecting nofollow (for trust) and target blank (for UX)
-                // Note: user said "check rel=nofollow for unreliable links". We can't know reliability easily.
-                // But generally, SEO plugins warn if external links don't have target="_blank".
-
-                $hasBlank = ($target === '_blank');
-                // Nofollow check is tricky without context, skipping strict enforcement unless requested.
-                // Wait, requirements: "Check rel=nofollow for unreliable... Check target=_blank".
-                // I'll flag if target is missing.
-                if (!$hasBlank) $unsafeExternal++;
+                if ($target !== '_blank') $unsafeExternal++;
             }
         }
 
@@ -236,7 +225,6 @@ class SeoPilot_Analyzer_Core
             $alt = $img->getAttribute('alt');
             $src = $img->getAttribute('src');
 
-            // Alt Check
             if (empty($alt)) {
                 $noAlt++;
             } else {
@@ -245,14 +233,10 @@ class SeoPilot_Analyzer_Core
                 }
             }
 
-            // Filename Check
-            // Extract filename
             $filename = basename($src);
-            // Check for Persian chars in filename (range for arabic/persian)
             if (preg_match('/[\x{0600}-\x{06FF}]/u', $filename)) {
                 $badFilenames++;
             }
-            // Check for generic names (img_123, image1, dsc001)
             if (preg_match('/^(img|image|dsc|pic)[-_]?\d+/i', $filename)) {
                 $badFilenames++;
             }
@@ -268,11 +252,9 @@ class SeoPilot_Analyzer_Core
 
     private static function analyzeTechnical($title, $desc, $keyword, $slug)
     {
-        // Meta Title
         $titleLen = mb_strlen($title);
         $titleOk = $titleLen > 0 && $titleLen < 60;
 
-        // Meta Desc
         $descLen = mb_strlen($desc);
         $descOk = $descLen >= 120 && $descLen <= 160;
 
@@ -283,17 +265,7 @@ class SeoPilot_Analyzer_Core
         $keywordInTitleStart = !empty($keyword) && mb_strpos($nTitle, $keyword) === 0;
         $keywordInDesc = !empty($keyword) && strpos($nDesc, $keyword) !== false;
 
-        // URL Analysis
-        // 1. Short (e.g., < 75 chars)
         $urlShort = mb_strlen($slug) < 75;
-        // 2. Keyword in URL
-        // If keyword is Persian, we check decoded slug. If English, we convert keyword to En?
-        // User asked: "Check keyword (prefer English) in URL".
-        // We'll just check if normalized keyword (even if Persian) exists in decoded slug.
-        // Actually, slug is usually URL-encoded or English.
-        // If keyword is "گوشی", slug might be "goshi". Matching is hard.
-        // We will assume exact match if slug is Persian, or skip if mismatch language.
-        // Let's just check standard containment for now.
         $keywordInUrl = !empty($keyword) && strpos(urldecode($nSlug), $keyword) !== false;
 
         return [

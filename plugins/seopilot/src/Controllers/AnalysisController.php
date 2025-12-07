@@ -32,7 +32,6 @@ class AnalysisController
             $title = $input['title'] ?? '';
             $metaTitle = $input['meta_title'] ?? '';
             $metaDesc = $input['meta_desc'] ?? '';
-            // Get Slug (can be from 'slug' key)
             $slug = $input['slug'] ?? '';
 
             $analysis = SeoPilot_Analyzer_Core::analyze($content, $keyword, $title, $metaTitle, $metaDesc, $slug);
@@ -44,6 +43,32 @@ class AnalysisController
                 'data' => $analysis,
                 'score' => $score,
                 'todo_list' => $todoList,
+                'new_csrf_token' => csrf_token()
+            ]);
+        } catch (\Throwable $e) {
+            http_response_code(500);
+            echo json_encode(['success' => false, 'error' => $e->getMessage()]);
+        }
+        exit;
+    }
+
+    /**
+     * Fix Text Formatting (Half-spaces, etc.)
+     */
+    public function fixText()
+    {
+        ini_set('display_errors', 0);
+        header('Content-Type: application/json; charset=utf-8');
+
+        try {
+            $input = Request::json();
+            $content = $input['content'] ?? '';
+
+            $fixedContent = SeoPilot_Persian_Normalizer::fixFormatting($content);
+
+            echo json_encode([
+                'success' => true,
+                'content' => $fixedContent,
                 'new_csrf_token' => csrf_token()
             ]);
         } catch (\Throwable $e) {
@@ -80,8 +105,6 @@ class AnalysisController
             foreach ($images as $index => $img) {
                 $alt = $img->getAttribute('alt');
                 if (empty($alt)) {
-                    // Generate Alt: Title + Index (Simple but effective fallback)
-                    // "Post Title - Image 1"
                     $newAlt = $title . ' - تصویر ' . ($index + 1);
                     $img->setAttribute('alt', $newAlt);
                     $count++;
@@ -90,7 +113,6 @@ class AnalysisController
 
             if ($count > 0) {
                 $newContent = $dom->saveHTML();
-                // Remove XML wrapper
                 $newContent = preg_replace('~<(?:!DOCTYPE|html|body)[^>]*>~i', '', $newContent);
                 $newContent = preg_replace('~</(?:html|body)>~i', '', $newContent);
                 $newContent = trim($newContent);

@@ -26,6 +26,7 @@ Router::addRoute('POST', '/admin/seopilot/settings', '\SeoPilot\Enterprise\Contr
 // =============================================================
 Router::addRoute('POST', '/admin/seopilot/analyze',    '\SeoPilot\Enterprise\Controllers\AnalysisController@analyze');
 Router::addRoute('POST', '/admin/seopilot/auto-alt',   '\SeoPilot\Enterprise\Controllers\AnalysisController@autoAlt');
+Router::addRoute('POST', '/admin/seopilot/fix-text',   '\SeoPilot\Enterprise\Controllers\AnalysisController@fixText');
 
 
 // =============================================================

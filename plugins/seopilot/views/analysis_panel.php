@@ -58,15 +58,15 @@
                 <!-- Main Content -->
                 <div class="max-h-[75vh] overflow-y-auto p-4 sm:p-6 text-right" dir="rtl">
 
-                    <!-- Keyword Context -->
-                    <div class="mb-6 flex items-center justify-between rounded-xl bg-white p-4 shadow-sm border border-gray-100 dark:bg-gray-800 dark:border-gray-700">
-                        <div class="flex items-center gap-2">
-                            <span class="text-sm text-gray-500 dark:text-gray-400">آنالیز برای کلمه کلیدی:</span>
-                            <span class="rounded-md bg-primary-50 px-3 py-1 text-sm font-bold text-primary-700 dark:bg-primary-900/30 dark:text-primary-300"
-                                  x-text="meta.focus_keyword || '---'"></span>
-                            <span x-show="!meta.focus_keyword" class="text-xs text-red-500">(کلمه کلیدی یافت نشد)</span>
+                    <!-- Keyword Context (Editable) -->
+                    <div class="mb-6 flex flex-col md:flex-row items-center justify-between rounded-xl bg-white p-4 shadow-sm border border-gray-100 dark:bg-gray-800 dark:border-gray-700 gap-4">
+                        <div class="flex w-full md:w-auto items-center gap-2 flex-grow">
+                            <label class="whitespace-nowrap text-sm font-medium text-gray-700 dark:text-gray-300">کلمه کلیدی کانونی:</label>
+                            <input type="text" x-model="meta.focus_keyword" @input.debounce.800ms="analyze()"
+                                   class="w-full md:min-w-[250px] rounded-lg border border-gray-300 px-3 py-1.5 text-sm dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-primary-500"
+                                   placeholder="کلمه کلیدی را وارد کنید...">
                         </div>
-                        <div class="text-xs text-gray-400">
+                        <div class="text-xs text-gray-400 whitespace-nowrap">
                             آخرین به‌روزرسانی: <span x-text="lastAnalyzed || '---'" class="font-mono"></span>
                         </div>
                     </div>
@@ -108,15 +108,20 @@
                         <div class="relative overflow-hidden rounded-xl bg-white p-5 shadow-sm border border-gray-100 dark:bg-gray-800 dark:border-gray-700">
                             <div class="mb-2 flex items-center justify-between">
                                 <h4 class="text-sm font-bold text-gray-700 dark:text-gray-300">خوانایی</h4>
-                                <div class="h-2 w-2 rounded-full" :class="!analysis.readability?.long_sentences_count ? 'bg-green-500' : 'bg-yellow-500'"></div>
+                                <div class="h-2 w-2 rounded-full" :class="!analysis.readability?.long_sentences_count && !analysis.readability?.half_space_issues ? 'bg-green-500' : 'bg-yellow-500'"></div>
                             </div>
                             <div class="flex items-baseline gap-1">
                                 <span class="text-lg font-bold text-gray-900 dark:text-white" x-text="analysis.readability?.reading_time_min || 0"></span>
                                 <span class="text-xs text-gray-500">دقیقه زمان مطالعه</span>
                             </div>
-                            <p class="mt-2 text-xs text-gray-500 dark:text-gray-400">
-                                جملات طولانی: <span class="font-medium" :class="analysis.readability?.long_sentences_count > 0 ? 'text-red-500' : 'text-green-500'" x-text="analysis.readability?.long_sentences_count || 0"></span>
-                            </p>
+                            <div class="mt-2 flex flex-col gap-1">
+                                 <p class="text-xs text-gray-500 dark:text-gray-400">
+                                    جملات طولانی: <span class="font-medium" :class="analysis.readability?.long_sentences_count > 0 ? 'text-red-500' : 'text-green-500'" x-text="analysis.readability?.long_sentences_count || 0"></span>
+                                 </p>
+                                 <button x-show="analysis.readability?.half_space_issues" @click="fixText()" class="mt-1 w-full rounded bg-indigo-50 py-1 text-xs font-bold text-indigo-700 hover:bg-indigo-100">
+                                    اصلاح خودکار نگارش
+                                </button>
+                            </div>
                         </div>
 
                         <!-- 4. Headings -->
@@ -279,19 +284,19 @@ document.addEventListener('alpine:init', () => {
             const slugInput = document.querySelector('input[name="slug"]');
             if (slugInput && !this.meta.slug) this.meta.slug = slugInput.value;
 
-            // 2. Title
+            // 2. Title (Support name_fa, name, title)
             this.meta.title = detail.title || '';
-            const titleInput = document.querySelector('input[name="title"]') || document.querySelector('input[name="name_fa"]');
+            const titleInput = document.querySelector('input[name="title"]') || document.querySelector('input[name="name_fa"]') || document.querySelector('input[name="name"]');
             if (titleInput && !this.meta.title) this.meta.title = titleInput.value;
 
-            // 3. Focus Keyword (Try to find 'tags', 'keywords', or specific seopilot field)
-            // Priority: seopilot_focus_keyword -> tags input -> first tag
+            // 3. Focus Keyword (Try multiple sources)
+            // Priority: seopilot_focus_keyword -> focus_keyword -> tags -> meta keys
             const focusInput = document.querySelector('input[name="seopilot_focus_keyword"]') || document.querySelector('input[name="focus_keyword"]');
             if (focusInput) {
                 this.meta.focus_keyword = focusInput.value;
             } else {
-                // Fallback: Check tags input (often comma separated)
-                const tagsInput = document.querySelector('input[name="tags"]');
+                // Fallback: Check tags input (comma separated)
+                const tagsInput = document.querySelector('input[name="tags"]') || document.querySelector('input[name="meta_keywords"]');
                 if (tagsInput && tagsInput.value) {
                     this.meta.focus_keyword = tagsInput.value.split(',')[0].trim();
                 }
@@ -322,6 +327,11 @@ document.addEventListener('alpine:init', () => {
             if (content === null && window.tinymce && tinymce.activeEditor) {
                 content = tinymce.activeEditor.getContent();
             }
+            // Fallback for non-TinyMCE pages (e.g., categories with standard textarea)
+            if (!content) {
+                const descArea = document.querySelector('textarea[name="description"]') || document.querySelector('textarea[name="content"]');
+                if (descArea) content = descArea.value;
+            }
 
             try {
                 const response = await fetch('/admin/seopilot/analyze', {
@@ -334,7 +344,7 @@ document.addEventListener('alpine:init', () => {
                         content: content,
                         keyword: this.meta.focus_keyword,
                         title: this.meta.title,
-                        meta_title: this.meta.title, // Assuming title is meta title for now if separate input missing
+                        meta_title: this.meta.title,
                         meta_desc: this.meta.description,
                         slug: this.meta.slug
                     })
@@ -359,7 +369,6 @@ document.addEventListener('alpine:init', () => {
                 }
             } catch (e) {
                 console.error('SeoPilot Analysis Failed', e);
-                // alert('خطای ارتباط با سرور. لطفاً مجدداً تلاش کنید.'); // Optional: Alert user
             }
         },
 
@@ -386,9 +395,9 @@ document.addEventListener('alpine:init', () => {
                 if (res.success) {
                     this.updateCsrf(res.new_csrf_token);
                     if (res.count > 0) {
-                        // Update Editor Content
-                        tinymce.activeEditor.setContent(res.content);
-                        // Re-run analysis
+                        if (window.tinymce && tinymce.activeEditor) {
+                            tinymce.activeEditor.setContent(res.content);
+                        }
                         this.analyze(res.content);
                     } else {
                         alert('هیچ تصویری بدون Alt یافت نشد.');
@@ -396,6 +405,45 @@ document.addEventListener('alpine:init', () => {
                 }
             } catch (e) {
                 console.error('Auto Alt Failed', e);
+            }
+        },
+
+        async fixText() {
+            let content = '';
+            if (window.tinymce && tinymce.activeEditor) {
+                content = tinymce.activeEditor.getContent();
+            }
+            if (!content) {
+                const descArea = document.querySelector('textarea[name="description"]') || document.querySelector('textarea[name="content"]');
+                if (descArea) content = descArea.value;
+            }
+
+            try {
+                const response = await fetch('/admin/seopilot/fix-text', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                    },
+                    body: JSON.stringify({
+                        content: content
+                    })
+                });
+
+                const res = await response.json();
+                if (res.success) {
+                    this.updateCsrf(res.new_csrf_token);
+                    if (window.tinymce && tinymce.activeEditor) {
+                        tinymce.activeEditor.setContent(res.content);
+                    } else {
+                        const descArea = document.querySelector('textarea[name="description"]') || document.querySelector('textarea[name="content"]');
+                        if (descArea) descArea.value = res.content;
+                    }
+                    // Re-run analysis
+                    this.analyze(res.content);
+                }
+            } catch (e) {
+                console.error('Text Fix Failed', e);
             }
         }
     }));
