@@ -4,7 +4,7 @@
 use App\Models\Setting;
 
 function load_theme_view($relativePath) {
-    $allowed_themes = ['template-1', 'template-2'];
+    $allowed_themes = ['template-1'];
 
     // 1. Determine active theme
     // Priority: Cookie > Database Setting > Default 'template-1'
