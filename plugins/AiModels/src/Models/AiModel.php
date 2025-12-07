@@ -32,11 +32,12 @@ class AiModel
 
         $encryptedKey = self::encrypt($data['api_key']);
 
-        $stmt = $db->prepare("INSERT INTO ai_models (name_fa, name_en, api_key, description, is_active) VALUES (?, ?, ?, ?, ?)");
+        $stmt = $db->prepare("INSERT INTO ai_models (name_fa, name_en, api_key, api_url, description, is_active) VALUES (?, ?, ?, ?, ?, ?)");
         return $stmt->execute([
             $data['name_fa'],
             $data['name_en'],
             $encryptedKey,
+            $data['api_url'] ?? null,
             $data['description'] ?? null,
             isset($data['is_active']) ? 1 : 0
         ]);
@@ -49,12 +50,14 @@ class AiModel
         $fields = [
             'name_fa = ?',
             'name_en = ?',
+            'api_url = ?',
             'description = ?',
             'is_active = ?'
         ];
         $params = [
             $data['name_fa'],
             $data['name_en'],
+            $data['api_url'] ?? null,
             $data['description'] ?? null,
             isset($data['is_active']) ? 1 : 0
         ];

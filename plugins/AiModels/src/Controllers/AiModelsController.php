@@ -11,8 +11,8 @@ class AiModelsController
     private function renderView($view, $data = [])
     {
         // Path traversal to access plugin views from core view helper
-        // Core view path is 'views/', so we go up to 'app/Plugins/AiModels/Views/'
-        $viewPath = '../../app/Plugins/AiModels/Views/' . $view;
+        // Core view path is 'views/', so we go up to 'plugins/AiModels/Views/'
+        $viewPath = '../plugins/AiModels/Views/' . $view;
         view('main', $viewPath, $data);
     }
 
@@ -99,6 +99,7 @@ class AiModelsController
 
         $input = json_decode(file_get_contents('php://input'), true);
         $apiKey = $input['api_key'] ?? '';
+        $apiUrl = $input['api_url'] ?? '';
         $modelName = strtolower($input['name_en'] ?? '');
 
         if (empty($apiKey)) {
@@ -110,8 +111,12 @@ class AiModelsController
 
         $ch = curl_init();
 
+        // Use user provided URL if available
+        if (!empty($apiUrl)) {
+            $url = $apiUrl;
+        }
         // Heuristic to guess a real endpoint if possible
-        if (strpos($modelName, 'gpt') !== false || strpos($modelName, 'openai') !== false) {
+        elseif (strpos($modelName, 'gpt') !== false || strpos($modelName, 'openai') !== false) {
              $url = 'https://api.openai.com/v1/models';
         } elseif (strpos($modelName, 'claude') !== false || strpos($modelName, 'anthropic') !== false) {
              $url = 'https://api.anthropic.com/v1/models';
