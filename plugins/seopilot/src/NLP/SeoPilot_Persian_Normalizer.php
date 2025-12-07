@@ -30,7 +30,12 @@ class SeoPilot_Persian_Normalizer
         // Remove Tashkeel (Arabic diacritics)
         $cleaned = preg_replace('/[\x{064B}-\x{065F}]/u', '', $text);
 
-        return trim($cleaned ?? $text);
+        $text = $cleaned ?? $text;
+
+        // Convert numbers to English for consistent keyword matching
+        $text = self::toEnglishNumbers($text);
+
+        return trim($text);
     }
 
     /**
@@ -76,8 +81,9 @@ class SeoPilot_Persian_Normalizer
         $text = self::normalize($text);
         $text = str_replace("\xe2\x80\x8c", '', $text); // Remove ZWNJ
 
-        // Remove punctuation and numbers to count only words
-        $cleaned = preg_replace('/[^\p{L}\s]/u', '', $text);
+        // Remove punctuation but KEEP numbers (\p{N}) so "iPhone 14" counts correctly
+        // \p{L} = letters, \p{N} = numbers
+        $cleaned = preg_replace('/[^\p{L}\p{N}\s]/u', '', $text);
         $collapsed = preg_replace('/\s+/', ' ', $cleaned ?? $text);
 
         $words = explode(' ', trim($collapsed));

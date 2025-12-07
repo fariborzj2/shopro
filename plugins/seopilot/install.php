@@ -13,7 +13,7 @@ try {
     $db = Database::getConnection();
 
     // 1. Meta Table (Hybrid SQL/JSON)
-    // Stores all SEO metadata for posts, products, categories, etc.
+    // Stores SEO metadata (focus keyword, score) and raw data for meta tag generation.
     $sqlMeta = "CREATE TABLE IF NOT EXISTS seopilot_meta (
         entity_id BIGINT UNSIGNED NOT NULL,
         entity_type VARCHAR(32) NOT NULL,
@@ -27,8 +27,8 @@ try {
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;";
     $db->exec($sqlMeta);
 
-    // 2. Redirects Table (High Performance)
-    // Handles 301/302/410 redirects efficiently
+    // 2. Redirects Table
+    // Handles 301/302/410 redirects
     $sqlRedirects = "CREATE TABLE IF NOT EXISTS seopilot_redirects (
         id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
         source_uri VARCHAR(191) NOT NULL,
@@ -42,7 +42,7 @@ try {
     $db->exec($sqlRedirects);
 
     // 3. Options Table (Global Settings)
-    // Stores configuration like separator, homepage title, social links
+    // Stores configuration for the plugin
     $sqlOptions = "CREATE TABLE IF NOT EXISTS seopilot_options (
         option_name VARCHAR(64) PRIMARY KEY,
         option_value JSON NOT NULL
@@ -50,12 +50,12 @@ try {
     $db->exec($sqlOptions);
 
     // Insert Default Options
+    // 'analysis_strictness' removed as the new Analyzer Core uses standardized metrics.
     $defaultOptions = [
         'separator' => '|',
-        'site_type' => 'organization', // organization or person
+        'site_type' => 'organization',
         'ai_auto_meta' => true,
-        'sitemap_enabled' => true,
-        'analysis_strictness' => 'normal'
+        'sitemap_enabled' => true
     ];
 
     $stmt = $db->prepare("INSERT IGNORE INTO seopilot_options (option_name, option_value) VALUES ('settings', ?)");
