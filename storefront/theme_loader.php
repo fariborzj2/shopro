@@ -35,7 +35,7 @@ function load_theme_view($relativePath) {
     // 3. Fallback logic: if file doesn't exist in requested theme, use template-1 (default)
     if (!file_exists($targetPath)) {
         // Optional: Log missing file for debugging
-        // error_log("Theme file missing: $targetPath, falling back to template-1");
+        error_log("Theme file missing: $targetPath, falling back to template-1");
         $theme = 'template-1';
         $targetPath = $baseThemesDir . $theme . '/' . $relativePath;
     }
