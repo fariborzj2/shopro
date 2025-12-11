@@ -196,7 +196,10 @@
                                     <span class="text-md font-bold text-gray-600 dark:text-white" x-text="new Intl.NumberFormat('fa-IR').format(product.price) + ' تومان'"></span>
                                 </div>
 
-                                <button class="w-10 h-10 rounded-full bg-gray-50 dark:bg-gray-700 text-gray-400 dark:text-gray-300 group-hover:bg-primary-600 group-hover:text-white transition-colors hidden lg:flex items-center justify-center">
+                                <button
+                                    class="w-10 h-10 rounded-full bg-gray-50 dark:bg-gray-700 text-gray-400 dark:text-gray-300 group-hover:bg-primary-600 group-hover:text-white transition-colors hidden lg:flex items-center justify-center"
+                                    :aria-label="'خرید ' + product.name"
+                                >
                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
                                 </button>
                             </div>
@@ -385,6 +388,7 @@ function store(data) {
         customFields: [],
         isModalOpen: false,
         isUserLoggedIn: false,
+        isSubmitting: false,
 
         init() {
             this.categories = data.categories || [];
@@ -430,6 +434,9 @@ function store(data) {
                 });
         },
         submitOrder() {
+            if (this.isSubmitting) return;
+            this.isSubmitting = true;
+
             const form = document.getElementById('purchaseForm');
             const formData = new FormData(form);
 
@@ -484,10 +491,12 @@ function store(data) {
                     window.location.href = body.payment_url;
                 } else {
                     alert('خطا: ' + (body.error || 'امکان اتصال به درگاه پرداخت وجود ندارد.'));
+                    this.isSubmitting = false;
                 }
             }).catch(error => {
                 console.error('Error submitting order:', error);
                 alert('یک خطای پیش‌بینی نشده در هنگام پرداخت رخ داد.');
+                this.isSubmitting = false;
             });
         }
     }
