@@ -96,8 +96,17 @@ class AnalysisController
             }
 
             $dom = new \DOMDocument();
-            // UTF-8 Hack
-            @$dom->loadHTML('<?xml encoding="utf-8" ?>' . $content, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
+
+            // Suppress libxml errors and handle them internally
+            $internalErrors = libxml_use_internal_errors(true);
+
+            // UTF-8 Hack: Prepend XML declaration to force UTF-8 processing.
+            // This is required because loadHTML defaults to ISO-8859-1.
+            $dom->loadHTML('<?xml encoding="utf-8" ?>' . $content, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
+
+            // Restore error handling
+            libxml_clear_errors();
+            libxml_use_internal_errors($internalErrors);
 
             $images = $dom->getElementsByTagName('img');
             $count = 0;
@@ -113,6 +122,11 @@ class AnalysisController
 
             if ($count > 0) {
                 $newContent = $dom->saveHTML();
+
+                // Remove the XML declaration we added
+                $newContent = preg_replace('/^<\?xml.*?\?>\s*/i', '', $newContent);
+
+                // Remove wrappers (html, body, doctype)
                 $newContent = preg_replace('~<(?:!DOCTYPE|html|body)[^>]*>~i', '', $newContent);
                 $newContent = preg_replace('~</(?:html|body)>~i', '', $newContent);
                 $newContent = trim($newContent);
