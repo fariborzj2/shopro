@@ -4,6 +4,7 @@ namespace SeoPilot\Enterprise\Cache;
 
 class CacheManager
 {
+    public static $testing = false;
     private $redis;
     private $pendingHeaders = [];
 
@@ -54,7 +55,8 @@ class CacheManager
         $tagString = implode(',', $tags);
         $this->pendingHeaders['X-LiteSpeed-Tag'] = $tagString;
 
-        if (!headers_sent() && php_sapi_name() !== 'cli') {
+        // Allow header sending in CLI if strictly testing
+        if (!headers_sent() && (php_sapi_name() !== 'cli' || self::$testing)) {
             header("X-LiteSpeed-Tag: $tagString");
         }
     }
