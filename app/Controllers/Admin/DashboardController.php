@@ -3,7 +3,7 @@
 namespace App\Controllers\Admin;
 
 use App\Models\Dashboard;
-use App\Models\Order;
+use App\Core\Plugin\Filter;
 
 class DashboardController
 {
@@ -16,7 +16,9 @@ class DashboardController
         $reports = Dashboard::getReports();
         $salesChartData = Dashboard::getSalesChartData('week');
         $usersChartData = Dashboard::getUsersChartData('week');
-        $recentOrders = Dashboard::getRecentOrders();
+
+        // Get dashboard widgets from plugins
+        $widgets = Filter::apply('dashboard_widgets', []);
 
         return view('main', 'dashboard', [
             'title' => 'داشبورد',
@@ -24,7 +26,7 @@ class DashboardController
             'reports' => $reports,
             'salesChartData' => $salesChartData,
             'usersChartData' => $usersChartData,
-            'recent_orders' => $recentOrders
+            'widgets' => $widgets
         ]);
     }
 

@@ -222,6 +222,27 @@ class Order
     }
 
     /**
+     * Get recent orders for dashboard.
+     *
+     * @param int $limit
+     * @return array
+     */
+    public static function getRecent($limit = 10)
+    {
+        $sql = "SELECT o.id, o.amount, o.order_status, o.payment_status, u.name as user_name
+                FROM orders o
+                LEFT JOIN users u ON o.user_id = u.id
+                ORDER BY o.created_at DESC
+                LIMIT :limit";
+
+        $pdo = Database::getConnection();
+        $stmt = $pdo->prepare($sql);
+        $stmt->bindValue('limit', (int)$limit, PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    /**
      * Count total orders.
      *
      * @param string $search

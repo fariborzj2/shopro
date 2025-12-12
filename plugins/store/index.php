@@ -1,9 +1,31 @@
 <?php
 
 use App\Core\Plugin\Filter;
+use Store\Models\Order;
 
 // Load Plugin Helpers (including store_view)
 require_once __DIR__ . '/helpers.php';
+
+// Register Dashboard Widgets
+Filter::add('dashboard_widgets', function($widgets) {
+    // Get recent orders
+    $recent_orders = Order::getRecent(10);
+
+    // Render widget content
+    // We can use output buffering to capture the view
+    ob_start();
+    // Make $recent_orders available to the view
+    include __DIR__ . '/views/admin/dashboard_widget.php';
+    $content = ob_get_clean();
+
+    $widgets[] = [
+        'id' => 'store_recent_orders',
+        'content' => $content,
+        'order' => 10
+    ];
+
+    return $widgets;
+});
 
 // Register Menu Items
 Filter::add('admin_menu_items', function($items) {
