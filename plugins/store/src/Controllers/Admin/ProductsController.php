@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Controllers\Admin;
+namespace Store\Controllers\Admin;
 
-use App\Models\Product;
-use App\Models\Category;
+use Store\Models\Product;
+use Store\Models\Category;
 use App\Models\Setting;
 use App\Core\Paginator;
 
@@ -40,7 +40,7 @@ class ProductsController
         $products = Product::paginated(self::ITEMS_PER_PAGE, $paginator->getOffset(), $search, $category_id);
         $categories = Category::all();
 
-        return view('main', 'products/index', [
+        return store_view('main', 'products/index', [
             'title' => 'مدیریت محصولات',
             'products' => $products,
             'paginator' => $paginator,
@@ -58,7 +58,7 @@ class ProductsController
         $categories = Category::all();
         $settings = Setting::getAll();
 
-        return view('main', 'products/create', [
+        return store_view('main', 'products/create', [
             'title' => 'افزودن محصول جدید',
             'categories' => $categories,
             'product' => null,
@@ -130,7 +130,7 @@ class ProductsController
         $categories = Category::all();
         $settings = Setting::getAll();
 
-        return view('main', 'products/edit', [
+        return store_view('main', 'products/edit', [
             'title' => 'ویرایش محصول',
             'product' => $product,
             'categories' => $categories,

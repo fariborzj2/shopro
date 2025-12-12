@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Controllers;
+namespace Store\Controllers;
 
-use App\Models\Review;
+use Store\Models\Review;
 use App\Core\Request;
 use App\Core\Database;
 

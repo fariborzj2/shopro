@@ -5,9 +5,7 @@
 // ----------------------------------------------------------------------
 // Storefront Routes
 // ----------------------------------------------------------------------
-$router->get('/', 'StorefrontController@home');
-$router->get('/page/{slug}', 'StorefrontController@page');
-$router->get('/category/{slug}', 'StorefrontController@category');
+// Routes moved to plugins/store/routes.php
 
 // Blog Routes
 $router->get('/blog', 'BlogController@index');
@@ -21,24 +19,9 @@ $router->post('/blog/comments/store', 'BlogController@storeComment');
 // ----------------------------------------------------------------------
 // API Routes
 // ----------------------------------------------------------------------
-$router->get('/api/product-details/{id}', 'ApiController@productDetails');
 $router->post('/api/auth/send-otp', 'AuthController@sendOtp');
 $router->post('/api/auth/verify-otp', 'AuthController@verifyOtp');
 $router->get('/logout', 'AuthController@logout');
-$router->post('/api/payment/start', 'PaymentController@startPayment');
-$router->post('/reviews/store', 'ReviewsController@store');
-
-
-// Payment Gateway Callback
-// ----------------------------------------------------------------------
-$router->get('/payment/callback', 'PaymentController@verifyPayment');
-$router->post('/payment/callback', 'PaymentController@verifyPayment');
-
-
-// User Dashboard
-// ----------------------------------------------------------------------
-$router->get('/dashboard/orders', 'UserDashboardController@orders');
-$router->get('/dashboard/orders/{id}', 'UserDashboardController@orderDetails');
 
 
 // ----------------------------------------------------------------------
@@ -62,32 +45,6 @@ $router->post('/admin/users/store', 'Admin\UsersController@store');
 $router->get('/admin/users/edit/{id}', 'Admin\UsersController@edit');
 $router->post('/admin/users/update/{id}', 'Admin\UsersController@update');
 $router->post('/admin/users/delete/{id}', 'Admin\UsersController@delete');
-
-
-// Categories
-$router->get('/admin/categories', 'Admin\CategoriesController@index');
-$router->get('/admin/categories/create', 'Admin\CategoriesController@create');
-$router->post('/admin/categories/store', 'Admin\CategoriesController@store');
-$router->get('/admin/categories/edit/{id}', 'Admin\CategoriesController@edit');
-$router->post('/admin/categories/update/{id}', 'Admin\CategoriesController@update');
-$router->post('/admin/categories/delete/{id}', 'Admin\CategoriesController@delete');
-$router->post('/admin/categories/reorder', 'Admin\CategoriesController@reorder');
-
-
-// Products
-$router->get('/admin/products', 'Admin\ProductsController@index');
-$router->get('/admin/products/create', 'Admin\ProductsController@create');
-$router->post('/admin/products/store', 'Admin\ProductsController@store');
-$router->get('/admin/products/edit/{id}', 'Admin\ProductsController@edit');
-$router->post('/admin/products/update/{id}', 'Admin\ProductsController@update');
-$router->post('/admin/products/delete/{id}', 'Admin\ProductsController@delete');
-$router->post('/admin/products/reorder', 'Admin\ProductsController@reorder');
-
-
-// Orders
-$router->get('/admin/orders', 'Admin\OrdersController@index');
-$router->get('/admin/orders/show/{id}', 'Admin\OrdersController@show');
-$router->post('/admin/orders/update_status/{id}', 'Admin\OrdersController@updateStatus');
 
 
 // Admins
@@ -142,13 +99,6 @@ $router->post('/admin/blog/comments/delete/{id}', 'Admin\BlogCommentsController@
 $router->post('/admin/blog/comments/status/{id}', 'Admin\BlogCommentsController@updateStatus');
 $router->post('/admin/blog/comments/reply/{id}', 'Admin\BlogCommentsController@reply');
 
-// Custom Order Fields
-$router->get('/admin/custom-fields', 'Admin\CustomOrderFieldsController@index');
-$router->get('/admin/custom-fields/create', 'Admin\CustomOrderFieldsController@create');
-$router->post('/admin/custom-fields/store', 'Admin\CustomOrderFieldsController@store');
-$router->get('/admin/custom-fields/edit/{id}', 'Admin\CustomOrderFieldsController@edit');
-$router->post('/admin/custom-fields/update/{id}', 'Admin\CustomOrderFieldsController@update');
-$router->post('/admin/custom-fields/delete/{id}', 'Admin\CustomOrderFieldsController@delete');
 
 // Pages Management
 $router->get('/admin/pages', 'Admin\PagesController@index');
@@ -167,11 +117,6 @@ $router->post('/admin/faq/update/{id}', 'Admin\FaqController@update');
 $router->post('/admin/faq/delete/{id}', 'Admin\FaqController@delete');
 $router->post('/admin/faq/reorder', 'Admin\FaqController@reorder');
 
-// Reviews Management
-$router->get('/admin/reviews', 'Admin\ReviewsController@index');
-$router->get('/admin/reviews/edit/{id}', 'Admin\ReviewsController@edit');
-$router->post('/admin/reviews/update/{id}', 'Admin\ReviewsController@update');
-$router->post('/admin/reviews/delete/{id}', 'Admin\ReviewsController@destroy');
 
 // API routes for admin panel (e.g., TinyMCE image upload)
 $router->post('/admin/api/upload-image', 'Admin\ApiController@uploadImage');
@@ -191,3 +136,7 @@ $router->post('/admin/plugins/delete/{slug}', 'Admin\PluginsController@delete');
 // SeoPilot Plugin Routes
 $router->get('/admin/seopilot/settings', '\SeoPilot\Enterprise\Controllers\AdminController@index');
 $router->post('/admin/seopilot/settings', '\SeoPilot\Enterprise\Controllers\AdminController@saveSettings');
+
+
+// Load Active Plugin Routes
+\App\Core\Plugin\PluginManager::loadRoutes($router);

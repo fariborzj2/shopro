@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Controllers\Admin;
+namespace Store\Controllers\Admin;
 
-use App\Models\CustomOrderField;
+use Store\Models\CustomOrderField;
 use App\Core\Request;
 
 class CustomOrderFieldsController
@@ -10,7 +10,7 @@ class CustomOrderFieldsController
     public function index()
     {
         $fields = CustomOrderField::all();
-        return view('main', 'custom_fields/index', [
+        return store_view('main', 'custom_fields/index', [
             'title' => 'مدیریت پارامترها (فیلدهای سفارشی)',
             'fields' => $fields
         ]);
@@ -18,7 +18,7 @@ class CustomOrderFieldsController
 
     public function create()
     {
-        return view('main', 'custom_fields/form', [
+        return store_view('main', 'custom_fields/form', [
             'title' => 'ایجاد فیلد سفارشی جدید',
             'field' => null
         ]);
@@ -39,7 +39,7 @@ class CustomOrderFieldsController
         if (!$field) {
             redirect_back_with_error('فیلد مورد نظر یافت نشد.');
         }
-        return view('main', 'custom_fields/form', [
+        return store_view('main', 'custom_fields/form', [
             'title' => 'ویرایش فیلد سفارشی',
             'field' => $field
         ]);
