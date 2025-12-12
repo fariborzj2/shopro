@@ -9,33 +9,27 @@ require_once __DIR__ . '/helpers.php';
 Filter::add('admin_menu_items', function($items) {
     $storeItems = [
         [
-            'title' => 'محصولات',
+            'label' => 'محصولات',
             'icon' => 'box',
-            'route' => '/admin/products',
+            'url' => '/products',
             'permission' => 'products'
         ],
         [
-            'title' => 'سفارشات',
+            'label' => 'سفارشات',
             'icon' => 'orders',
-            'route' => '/admin/orders',
+            'url' => '/orders',
             'permission' => 'orders'
         ],
         [
-            'title' => 'دسته‌بندی‌ها',
+            'label' => 'دسته‌بندی‌ها',
             'icon' => 'grid',
-            'route' => '/admin/categories',
+            'url' => '/categories',
             'permission' => 'categories'
         ],
         [
-            'title' => 'فیلدهای سفارشی',
+            'label' => 'فیلدهای سفارشی',
             'icon' => 'list',
-            'route' => '/admin/custom-fields',
-            'permission' => 'products'
-        ],
-        [
-            'title' => 'نقد و بررسی‌ها',
-            'icon' => 'message-square',
-            'route' => '/admin/reviews',
+            'url' => '/custom-fields',
             'permission' => 'products'
         ]
     ];
@@ -49,12 +43,6 @@ Filter::add('admin_menu_items', function($items) {
 // Register Dashboard Widgets
 Filter::add('dashboard_widgets', function($widgets) {
     // Fetch data required for the widget
-    // Note: Models are expected to be available (autoloaded by core or plugin)
-    // We assume Dashboard model is core. If Store has its own models, use them.
-    // However, existing Dashboard logic used App\Models\Dashboard.
-    // If we want to strictly decouple, we should move the Dashboard model logic here too,
-    // but for now we reuse the existing model methods.
-
     $kpis = Dashboard::getKpis();
     $reports = Dashboard::getReports();
     $salesChartData = Dashboard::getSalesChartData('week');
