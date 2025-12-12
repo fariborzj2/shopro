@@ -170,7 +170,7 @@ class Order
         $where = "WHERE 1=1";
 
         if (!empty($filters['search'])) {
-            $where .= " AND (o.id LIKE :search OR u.name LIKE :search OR u.mobile LIKE :search OR o.order_code LIKE :search)";
+            $where .= " AND (o.id LIKE :search OR u.name LIKE :search OR u.mobile LIKE :search)";
             $params['search'] = "%" . $filters['search'] . "%";
         }
 
