@@ -98,18 +98,35 @@ class SeoPilotTest extends TestCase
      */
     public function testLiteSpeedHeaders()
     {
-        // Mock CacheManager
-        $cache = new CacheManager();
-        $cache->setTags(['post_123']);
+        // Enable testing mode to force header emission in CLI
+        CacheManager::$testing = true;
 
-        // Since we can't inspect actual headers sent in PHPUnit easily without running process,
-        // we check if the manager *would* send them or stores them in an internal buffer.
-        // Or we use xdebug_get_headers if available.
-        // For this unit test, we'll verify the internal state of CacheManager.
+        try {
+            // Mock CacheManager
+            $cache = new CacheManager();
+            $cache->setTags(['post_123']);
 
-        $headers = $cache->getPendingHeaders();
-        $this->assertArrayHasKey('X-LiteSpeed-Tag', $headers);
-        $this->assertEquals('post_123', $headers['X-LiteSpeed-Tag']);
+            // Check if xdebug_get_headers is available
+            if (function_exists('xdebug_get_headers')) {
+                $headers = xdebug_get_headers();
+                $headerFound = false;
+                foreach ($headers as $header) {
+                    if (strpos($header, 'X-LiteSpeed-Tag: post_123') !== false) {
+                        $headerFound = true;
+                        break;
+                    }
+                }
+                $this->assertTrue($headerFound, 'X-LiteSpeed-Tag header was not found in xdebug headers');
+            } else {
+                // Verify internal state as a reliable check for unit testing logic
+                $headers = $cache->getPendingHeaders();
+                $this->assertArrayHasKey('X-LiteSpeed-Tag', $headers);
+                $this->assertEquals('post_123', $headers['X-LiteSpeed-Tag']);
+            }
+        } finally {
+            // Restore static state to ensure isolation
+            CacheManager::$testing = false;
+        }
     }
 
     /**
