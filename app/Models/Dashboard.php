@@ -237,20 +237,4 @@ class Dashboard
         ];
     }
 
-    /**
-     * Get the 5 most recent orders.
-     *
-     * @return array
-     */
-    public static function getRecentOrders()
-    {
-        $sql = "SELECT o.id, o.amount, o.order_status, o.payment_status, u.name as user_name
-                FROM orders o
-                LEFT JOIN users u ON o.user_id = u.id
-                ORDER BY o.created_at DESC
-                LIMIT 5";
-
-        $stmt = Database::query($sql);
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    }
 }
