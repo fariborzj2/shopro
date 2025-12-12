@@ -13,8 +13,11 @@ class ContentExtractor
 
         libxml_use_internal_errors(true);
         $doc = new DOMDocument();
-        // UTF-8 Hack
-        @$doc->loadHTML('<?xml encoding="UTF-8">' . $html, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
+        // Ensure UTF-8 encoding is handled correctly by DOMDocument (which defaults to ISO-8859-1).
+        // We prepend a meta charset tag to force UTF-8 parsing and output.
+        // This is preferred over the XML declaration hack for HTML content.
+        $html = '<meta http-equiv="Content-Type" content="text/html; charset=utf-8">' . $html;
+        @$doc->loadHTML($html, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
         libxml_clear_errors();
 
         $xpath = new DOMXPath($doc);
