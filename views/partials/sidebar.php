@@ -21,24 +21,6 @@ $menuItems = [
         'permission' => 'dashboard'
     ],
     [
-        'label' => 'سفارشات',
-        'url' => '/orders',
-        'icon' => 'orders',
-        'permission' => 'orders'
-    ],
-    [
-        'label' => 'محصولات',
-        'url' => '/products',
-        'icon' => 'products',
-        'permission' => 'products'
-    ],
-    [
-        'label' => 'دسته‌بندی‌ها',
-        'url' => '/categories',
-        'icon' => 'categories',
-        'permission' => 'categories'
-    ],
-    [
         'label' => 'کاربران',
         'url' => '/users',
         'icon' => 'users',
@@ -80,12 +62,6 @@ $menuItems = [
         'permission' => 'media'
     ],
     [
-        'label' => 'پارامترها',
-        'url' => '/custom-fields',
-        'icon' => 'settings',
-        'permission' => 'custom_fields'
-    ],
-    [
         'label' => 'مدیریت صفحات',
         'url' => '/pages',
         'icon' => 'pages',
@@ -122,12 +98,6 @@ $superAdminItems = [
         'icon' => 'settings', // Reusing settings icon or a new 'plugin' icon if available
         'permission' => 'super_admin'
     ],
-    [
-        'label' => 'سئوپایلوت',
-        'url' => '/seopilot/settings',
-        'icon' => 'search',
-        'permission' => 'super_admin'
-    ]
 ];
 
 ?>
