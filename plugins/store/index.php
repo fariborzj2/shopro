@@ -2,6 +2,9 @@
 
 use App\Core\Plugin\Filter;
 
+// Load Plugin Helpers (including store_view)
+require_once __DIR__ . '/helpers.php';
+
 // Register Menu Items
 Filter::add('admin_menu_items', function($items) {
     // Add Shop related items
