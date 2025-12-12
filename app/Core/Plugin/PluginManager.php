@@ -360,4 +360,17 @@ class PluginManager
             rmdir($dir);
         }
     }
+
+    public static function isActive($slug)
+    {
+        try {
+            $db = Database::getConnection();
+            $stmt = $db->prepare("SELECT COUNT(*) FROM plugins WHERE slug = ? AND status = 'active'");
+            $stmt->execute([$slug]);
+            return (bool) $stmt->fetchColumn();
+        } catch (\Throwable $e) {
+            // Table might not exist yet
+            return false;
+        }
+    }
 }
