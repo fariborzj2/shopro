@@ -8,31 +8,31 @@ Filter::add('admin_menu_items', function($items) {
     $shopItems = [
         [
             'label' => 'سفارشات',
-            'url' => '/admin/orders',
+            'url' => '/orders',
             'icon' => 'orders',
             'permission' => 'orders'
         ],
         [
             'label' => 'محصولات',
-            'url' => '/admin/products',
+            'url' => '/products',
             'icon' => 'products',
             'permission' => 'products'
         ],
         [
             'label' => 'دسته‌بندی‌ها',
-            'url' => '/admin/categories',
+            'url' => '/categories',
             'icon' => 'categories',
             'permission' => 'categories'
         ],
         [
             'label' => 'نظرات',
-            'url' => '/admin/reviews',
+            'url' => '/reviews',
             'icon' => 'message',
             'permission' => 'reviews'
         ],
         [
             'label' => 'پارامترها',
-            'url' => '/admin/custom-fields',
+            'url' => '/custom-fields',
             'icon' => 'settings',
             'permission' => 'custom_fields'
         ]
