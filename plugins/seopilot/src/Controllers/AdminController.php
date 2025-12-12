@@ -23,38 +23,10 @@ class AdminController
         $viewPath = dirname(__DIR__, 2) . '/views/admin/settings.php';
 
         if (file_exists($viewPath)) {
-            // Manual render with layout
-            ob_start();
-            extract(['settings' => $settings]);
-            include $viewPath;
-            $content = ob_get_clean();
-
-            // This assumes the core view() helper isn't used, OR we wrap it in the main layout.
-            // But we can't easily access main layout file directly from here without copy-paste or assuming path.
-            // Best approach: Use the core Template engine if possible, or include the layout files.
-
-            // Hack: We can use the global view() helper if we temporarily copy the view to views/tmp? No.
-            // Better: Load the main layout and inject content.
-
-            // Assuming views/layouts/main.php exists (from Memory)
-            $layoutPath = PROJECT_ROOT . '/views/layouts/main.php';
-            if (file_exists($layoutPath)) {
-                // Determine user (admin) for the layout
-                // $admin = ... (already in session)
-                $page_title = 'تنظیمات SeoPilot';
-                // view() helper expects $view to be a filename relative to views/.
-                // We can't use it for plugin views.
-
-                // So we manually include layout.
-                // We need to match variables expected by layout.
-                $admin = \App\Models\Admin::find($_SESSION['admin_id']);
-                // Layout expects $content variable? Or yields?
-                // Standard PHP layout usually echoes $content.
-
-                include $layoutPath;
-            } else {
-                echo $content;
-            }
+            view('main', $viewPath, [
+                'settings' => $settings,
+                'page_title' => 'تنظیمات SeoPilot'
+            ]);
         } else {
             echo "View not found: $viewPath";
         }
