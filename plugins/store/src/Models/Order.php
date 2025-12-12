@@ -156,6 +156,72 @@ class Order
     }
 
     /**
+     * Find all orders with filtering and pagination.
+     *
+     * @param int $page
+     * @param int $limit
+     * @param array $filters
+     * @return array
+     */
+    public static function findAll($page = 1, $limit = 15, $filters = [])
+    {
+        $offset = ($page - 1) * $limit;
+        $params = [];
+        $where = "WHERE 1=1";
+
+        if (!empty($filters['search'])) {
+            $where .= " AND (o.id LIKE :search OR u.name LIKE :search OR u.mobile LIKE :search OR o.order_code LIKE :search)";
+            $params['search'] = "%" . $filters['search'] . "%";
+        }
+
+        if (!empty($filters['payment_status'])) {
+            $where .= " AND o.payment_status = :payment_status";
+            $params['payment_status'] = $filters['payment_status'];
+        }
+
+        if (!empty($filters['order_status'])) {
+            $where .= " AND o.order_status = :order_status";
+            $params['order_status'] = $filters['order_status'];
+        }
+
+        // Count query
+        $countSql = "SELECT COUNT(o.id)
+                     FROM orders o
+                     LEFT JOIN users u ON o.user_id = u.id
+                     $where";
+
+        $stmtCount = Database::query($countSql, $params);
+        $total = (int) $stmtCount->fetchColumn();
+
+        // Data query
+        $sql = "SELECT o.*, u.name as user_name, u.mobile as user_mobile, p.name_fa as product_name
+                FROM orders o
+                LEFT JOIN users u ON o.user_id = u.id
+                LEFT JOIN products p ON o.product_id = p.id
+                $where
+                ORDER BY o.id DESC
+                LIMIT :limit OFFSET :offset";
+
+        // We need to bind limit and offset as integers for PDO
+        $pdo = Database::getConnection();
+        $stmt = $pdo->prepare($sql);
+
+        foreach ($params as $key => $value) {
+            $stmt->bindValue($key, $value);
+        }
+        $stmt->bindValue('limit', (int)$limit, PDO::PARAM_INT);
+        $stmt->bindValue('offset', (int)$offset, PDO::PARAM_INT);
+
+        $stmt->execute();
+        $orders = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        return [
+            'orders' => $orders,
+            'total' => $total
+        ];
+    }
+
+    /**
      * Count total orders.
      *
      * @param string $search
