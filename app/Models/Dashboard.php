@@ -20,12 +20,12 @@ class Dashboard
         $month_start = date('Y-m-01');
 
         // Sales today (Exclude cancelled orders)
-        $stmt = $pdo->prepare("SELECT SUM(amount) FROM orders WHERE DATE(order_time) = ? AND payment_status = 'paid' AND order_status != 'cancelled'");
+        $stmt = $pdo->prepare("SELECT SUM(amount) FROM orders WHERE DATE(created_at) = ? AND payment_status = 'paid' AND order_status != 'cancelled'");
         $stmt->execute([$today]);
         $sales_today = $stmt->fetchColumn() ?: 0;
 
         // Orders today
-        $stmt = $pdo->prepare("SELECT COUNT(id) FROM orders WHERE DATE(order_time) = ?");
+        $stmt = $pdo->prepare("SELECT COUNT(id) FROM orders WHERE DATE(created_at) = ?");
         $stmt->execute([$today]);
         $orders_today = $stmt->fetchColumn() ?: 0;
 
@@ -35,7 +35,7 @@ class Dashboard
         $new_users_today = $stmt->fetchColumn() ?: 0;
 
         // Orders this month
-        $stmt = $pdo->prepare("SELECT COUNT(id) FROM orders WHERE order_time >= ?");
+        $stmt = $pdo->prepare("SELECT COUNT(id) FROM orders WHERE created_at >= ?");
         $stmt->execute([$month_start]);
         $orders_this_month = $stmt->fetchColumn() ?: 0;
 
@@ -68,7 +68,7 @@ class Dashboard
         $total_sales = $stmt->fetchColumn() ?: 0;
 
         // Failed Orders Today
-        $stmt = $pdo->prepare("SELECT COUNT(id) FROM orders WHERE payment_status = 'failed' AND DATE(order_time) = ?");
+        $stmt = $pdo->prepare("SELECT COUNT(id) FROM orders WHERE payment_status = 'failed' AND DATE(created_at) = ?");
         $stmt->execute([$today]);
         $failed_orders_today = $stmt->fetchColumn() ?: 0;
 
@@ -90,7 +90,7 @@ class Dashboard
     {
         $pdo = Database::getConnection();
         $dateFormat = '%Y-%m-%d';
-        $groupBy = 'DATE(order_time)';
+        $groupBy = 'DATE(created_at)';
         $startDate = date('Y-m-d', strtotime('-6 days'));
         $intervalStep = '1 day';
         $intervalFormat = 'Y-m-d';
@@ -104,7 +104,7 @@ class Dashboard
             // Last 12 months
             $startDate = date('Y-m-01', strtotime('-11 months'));
             $dateFormat = '%Y-%m';
-            $groupBy = 'DATE_FORMAT(order_time, "%Y-%m")';
+            $groupBy = 'DATE_FORMAT(created_at, "%Y-%m")';
             $intervalStep = '1 month';
             $intervalFormat = 'Y-m';
             $loopCount = 11;
@@ -112,7 +112,7 @@ class Dashboard
 
         $sql = "SELECT $groupBy as date, SUM(amount) as total_sales, COUNT(id) as total_orders
                 FROM orders
-                WHERE order_time >= :start_date AND payment_status = 'paid'
+                WHERE created_at >= :start_date AND payment_status = 'paid'
                 GROUP BY date
                 ORDER BY date ASC";
 
@@ -247,7 +247,7 @@ class Dashboard
         $sql = "SELECT o.id, o.order_code, o.amount, o.order_status, o.payment_status, u.name as user_name
                 FROM orders o
                 LEFT JOIN users u ON o.user_id = u.id
-                ORDER BY o.order_time DESC
+                ORDER BY o.created_at DESC
                 LIMIT 5";
 
         $stmt = Database::query($sql);
