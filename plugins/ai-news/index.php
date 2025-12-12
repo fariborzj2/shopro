@@ -25,11 +25,11 @@ Filter::add('admin_menu_items', function($items) {
         'children' => [
             [
                 'label' => 'تنظیمات پلاگین',
-                'url' => '/admin/ai-news/settings',
+                'url' => '/ai-news/settings',
             ],
             [
                 'label' => 'لیست مطالب هوشمند',
-                'url' => '/admin/ai-news/list',
+                'url' => '/ai-news/list',
             ],
         ]
     ];
