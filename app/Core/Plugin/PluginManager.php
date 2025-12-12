@@ -114,23 +114,33 @@ class PluginManager
             $zip->extractTo($extractPath);
             $zip->close();
 
-            // Find plugin.json
-            $files = scandir($extractPath);
-            $pluginDir = null;
-            foreach($files as $f) {
-                if ($f === '.' || $f === '..') continue;
-                if (is_dir($extractPath . '/' . $f) && file_exists($extractPath . '/' . $f . '/plugin.json')) {
-                    $pluginDir = $f;
-                    break;
+            $source = null;
+
+            // Check for flat structure (plugin.json at root of zip)
+            if (file_exists($extractPath . '/plugin.json')) {
+                $source = $extractPath;
+            } else {
+                // Check for nested structure (folder/plugin.json)
+                $files = scandir($extractPath);
+                $pluginDir = null;
+                foreach($files as $f) {
+                    if ($f === '.' || $f === '..') continue;
+                    if (is_dir($extractPath . '/' . $f) && file_exists($extractPath . '/' . $f . '/plugin.json')) {
+                        $pluginDir = $f;
+                        break;
+                    }
+                }
+
+                if ($pluginDir) {
+                    $source = $extractPath . '/' . $pluginDir;
                 }
             }
 
-            if (!$pluginDir) {
+            if (!$source) {
                 self::rrmdir($extractPath);
                 throw new \Exception("ساختار پلاگین نامعتبر است. فایل plugin.json یافت نشد.");
             }
 
-            $source = $extractPath . '/' . $pluginDir;
             $json = json_decode(file_get_contents($source . '/plugin.json'), true);
 
             if (!$json || !isset($json['slug'])) {
@@ -159,7 +169,12 @@ class PluginManager
             }
 
             rename($source, $dest);
-            self::rrmdir($extractPath);
+
+            // Clean up extraction folder if we didn't just rename the whole thing
+            // If $source == $extractPath, rename() moved it, so $extractPath no longer exists.
+            if (file_exists($extractPath)) {
+                self::rrmdir($extractPath);
+            }
 
             // Register in DB
             $db = Database::getConnection();
