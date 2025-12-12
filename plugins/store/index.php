@@ -5,36 +5,41 @@ use App\Core\Plugin\Filter;
 // Register Menu Items
 Filter::add('admin_menu_items', function($items) {
     // Add Shop related items
-    $shopItems = [
-        [
-            'label' => 'سفارشات',
-            'url' => '/orders',
-            'icon' => 'orders',
-            'permission' => 'orders'
-        ],
-        [
-            'label' => 'محصولات',
-            'url' => '/products',
-            'icon' => 'products',
-            'permission' => 'products'
-        ],
-        [
-            'label' => 'دسته‌بندی‌ها',
-            'url' => '/categories',
-            'icon' => 'categories',
-            'permission' => 'categories'
-        ],
-        [
-            'label' => 'نظرات',
-            'url' => '/reviews',
-            'icon' => 'message',
-            'permission' => 'reviews'
-        ],
-        [
-            'label' => 'پارامترها',
-            'url' => '/custom-fields',
-            'icon' => 'settings',
-            'permission' => 'custom_fields'
+    $shopItems[] = [
+        'label' => 'مدیریت فروشگاه',
+        'icon' => 'orders',
+        'permission' => 'store',
+        'children' => [
+            [
+                'label' => 'سفارشات',
+                'url' => '/orders',
+                'icon' => 'orders',
+                'permission' => 'orders'
+            ],
+            [
+                'label' => 'محصولات',
+                'url' => '/products',
+                'icon' => 'products',
+                'permission' => 'products'
+            ],
+            [
+                'label' => 'دسته‌بندی‌ها',
+                'url' => '/categories',
+                'icon' => 'categories',
+                'permission' => 'categories'
+            ],
+            [
+                'label' => 'نظرات',
+                'url' => '/reviews',
+                'icon' => 'message',
+                'permission' => 'reviews'
+            ],
+            [
+                'label' => 'پارامترها',
+                'url' => '/custom-fields',
+                'icon' => 'settings',
+                'permission' => 'custom_fields'
+            ]
         ]
     ];
 
