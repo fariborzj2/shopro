@@ -4,6 +4,7 @@ use App\Core\Plugin\Filter;
 use App\Models\Dashboard;
 
 require_once __DIR__ . '/helpers.php';
+require_once __DIR__ . '/theme_loader.php';
 
 // Register Admin Menu Items
 Filter::add('admin_menu_items', function($items) {
