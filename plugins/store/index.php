@@ -1,25 +1,81 @@
 <?php
 
 use App\Core\Plugin\Filter;
-use Store\Models\Order;
+use App\Models\Dashboard;
 
-// Load Plugin Helpers (including store_view)
 require_once __DIR__ . '/helpers.php';
+
+// Register Admin Menu Items
+Filter::add('admin_menu_items', function($items) {
+    $storeItems = [
+        [
+            'title' => 'محصولات',
+            'icon' => 'box',
+            'route' => '/admin/products',
+            'permission' => 'products'
+        ],
+        [
+            'title' => 'سفارشات',
+            'icon' => 'orders',
+            'route' => '/admin/orders',
+            'permission' => 'orders'
+        ],
+        [
+            'title' => 'دسته‌بندی‌ها',
+            'icon' => 'grid',
+            'route' => '/admin/categories',
+            'permission' => 'categories'
+        ],
+        [
+            'title' => 'فیلدهای سفارشی',
+            'icon' => 'list',
+            'route' => '/admin/custom-fields',
+            'permission' => 'products'
+        ],
+        [
+            'title' => 'نقد و بررسی‌ها',
+            'icon' => 'message-square',
+            'route' => '/admin/reviews',
+            'permission' => 'products'
+        ]
+    ];
+
+    // Insert after Dashboard (index 0)
+    array_splice($items, 1, 0, $storeItems);
+
+    return $items;
+});
 
 // Register Dashboard Widgets
 Filter::add('dashboard_widgets', function($widgets) {
-    // Get recent orders
-    $recent_orders = Order::getRecent(10);
+    // Fetch data required for the widget
+    // Note: Models are expected to be available (autoloaded by core or plugin)
+    // We assume Dashboard model is core. If Store has its own models, use them.
+    // However, existing Dashboard logic used App\Models\Dashboard.
+    // If we want to strictly decouple, we should move the Dashboard model logic here too,
+    // but for now we reuse the existing model methods.
 
-    // Render widget content
-    // We can use output buffering to capture the view
+    $kpis = Dashboard::getKpis();
+    $reports = Dashboard::getReports();
+    $salesChartData = Dashboard::getSalesChartData('week');
+    $usersChartData = Dashboard::getUsersChartData('week');
+
+    // Load the view content
     ob_start();
-    // Make $recent_orders available to the view
-    include __DIR__ . '/views/admin/dashboard_widget.php';
+    // Make variables available to the view
+    extract([
+        'kpis' => $kpis,
+        'reports' => $reports,
+        'salesChartData' => $salesChartData,
+        'usersChartData' => $usersChartData
+    ]);
+
+    include __DIR__ . '/views/dashboard_widget.php';
     $content = ob_get_clean();
 
     $widgets[] = [
-        'id' => 'store_recent_orders',
+        'id' => 'store_stats',
+        'title' => 'آمار فروشگاه',
         'content' => $content,
         'order' => 10
     ];
@@ -27,56 +83,13 @@ Filter::add('dashboard_widgets', function($widgets) {
     return $widgets;
 });
 
-// Register Menu Items
-Filter::add('admin_menu_items', function($items) {
-    // Add Shop related items
-    $shopItems[] = [
-        'label' => 'مدیریت فروشگاه',
-        'icon' => 'orders',
-        'permission' => 'store',
-        'children' => [
-            [
-                'label' => 'سفارشات',
-                'url' => '/orders',
-                'icon' => 'orders',
-                'permission' => 'orders'
-            ],
-            [
-                'label' => 'محصولات',
-                'url' => '/products',
-                'icon' => 'products',
-                'permission' => 'products'
-            ],
-            [
-                'label' => 'دسته‌بندی‌ها',
-                'url' => '/categories',
-                'icon' => 'categories',
-                'permission' => 'categories'
-            ],
-            [
-                'label' => 'نظرات',
-                'url' => '/reviews',
-                'icon' => 'message',
-                'permission' => 'reviews'
-            ],
-            [
-                'label' => 'پارامترها',
-                'url' => '/custom-fields',
-                'icon' => 'settings',
-                'permission' => 'custom_fields'
-            ]
-        ]
-    ];
-
-    // Insert after 'dashboard' if possible, or just append
-    // For simplicity, let's inject them at a specific position or just merge
-    // Given the structure, array_splice or just array_merge is fine.
-    // Let's put them after Dashboard (index 0).
-
-    // Note: The structure of $items is indexed array.
-    // Dashboard is usually at 0.
-
-    array_splice($items, 1, 0, $shopItems);
-
-    return $items;
+// Handle AJAX Chart Data
+Filter::add('dashboard_chart_data', function($data, $type, $period) {
+    // Only handle types we know about
+    if ($type === 'sales') {
+        return Dashboard::getSalesChartData($period);
+    } elseif ($type === 'users') {
+        return Dashboard::getUsersChartData($period);
+    }
+    return $data;
 });
