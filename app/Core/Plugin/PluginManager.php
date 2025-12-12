@@ -33,6 +33,26 @@ class PluginManager
         }
     }
 
+    public static function loadRoutes($router)
+    {
+        try {
+            $db = Database::getConnection();
+            $stmt = $db->query("SELECT * FROM plugins WHERE status = 'active' ORDER BY load_order ASC");
+            $plugins = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+
+            foreach ($plugins as $plugin) {
+                $path = self::PLUGIN_DIR . '/' . $plugin['slug'];
+                $routesPath = $path . '/routes.php';
+                if (file_exists($routesPath)) {
+                    // Include the routes file, assuming it uses $router variable
+                    require $routesPath;
+                }
+            }
+        } catch (\Throwable $e) {
+            error_log("Plugin routes failed to load: " . $e->getMessage());
+        }
+    }
+
     private static function loadPlugin($plugin)
     {
         $path = self::PLUGIN_DIR . '/' . $plugin['slug'];

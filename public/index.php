@@ -13,7 +13,6 @@ session_start();
 define('PROJECT_ROOT', dirname(__DIR__));
 
 // Add the storefront templates directory to the include path
-set_include_path(get_include_path() . PATH_SEPARATOR . PROJECT_ROOT . '/storefront/templates');
 
 // Set the default timezone to Tehran
 date_default_timezone_set('Asia/Tehran');
