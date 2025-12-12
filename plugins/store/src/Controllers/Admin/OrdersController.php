@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Controllers\Admin;
+namespace Store\Controllers\Admin;
 
-use App\Models\Order;
+use Store\Models\Order;
 use App\Core\Paginator;
 
 class OrdersController
@@ -47,7 +47,7 @@ class OrdersController
         $paginator = new Paginator($data['total'], $perPage, $page, $baseUrl);
 
         // Pass the orders and paginator object to the view
-        return view('main', 'orders/index', [
+        return store_view('main', 'orders/index', [
             'title' => 'مدیریت سفارشات',
             'orders' => $data['orders'],
             'paginator' => $paginator,
@@ -83,7 +83,7 @@ class OrdersController
             return http_response_code(404);
         }
 
-        return view('main', 'orders/show', [
+        return store_view('main', 'orders/show', [
             'title' => 'جزئیات سفارش #' . $order->order_code,
             'order' => $order
         ]);

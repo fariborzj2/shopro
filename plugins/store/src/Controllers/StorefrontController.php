@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Controllers;
+namespace Store\Controllers;
 
 use App\Models\FaqItem;
 use App\Models\Page;
-use App\Models\Category;
-use App\Models\Order;
-use App\Models\Product;
-use App\Models\Review;
+use Store\Models\Category;
+use Store\Models\Order;
+use Store\Models\Product;
+use Store\Models\Review;
 use App\Models\Setting;
 use App\Models\BlogPost;
 use App\Core\Template;

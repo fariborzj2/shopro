@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Controllers;
+namespace Store\Controllers;
 
-use App\Models\Order;
-use App\Models\Transaction;
+use Store\Models\Order;
+use Store\Models\Transaction;
 use App\Core\Template;
 
 class UserDashboardController

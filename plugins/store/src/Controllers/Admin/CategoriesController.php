@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Controllers\Admin;
+namespace Store\Controllers\Admin;
 
-use App\Models\Category;
-use App\Models\CustomOrderField;
+use Store\Models\Category;
+use Store\Models\CustomOrderField;
 use App\Models\Media;
 use App\Core\ImageUploader;
 
@@ -15,7 +15,7 @@ class CategoriesController
     public function index()
     {
         $categories = Category::all();
-        return view('main', 'categories/index', [
+        return store_view('main', 'categories/index', [
             'title' => 'مدیریت دسته‌بندی‌ها',
             'categories' => $categories
         ]);
@@ -28,7 +28,7 @@ class CategoriesController
     {
         $allCategories = Category::all(); // Renamed to avoid confusion in view
         $customFields = CustomOrderField::all();
-        return view('main', 'categories/create', [
+        return store_view('main', 'categories/create', [
             'title' => 'افزودن دسته‌بندی جدید',
             'allCategories' => $allCategories,
             'customFields' => $customFields,
@@ -102,7 +102,7 @@ class CategoriesController
         $customFields = CustomOrderField::all();
         $attachedFieldIds = Category::getAttachedCustomFieldIds($id);
 
-        return view('main', 'categories/edit', [
+        return store_view('main', 'categories/edit', [
             'title' => 'ویرایش دسته‌بندی',
             'category' => $category,
             'allCategories' => $allCategories,

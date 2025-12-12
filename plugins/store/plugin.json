@@ -1,0 +1,15 @@
+{
+    "name": "فروشگاه",
+    "slug": "store",
+    "version": "1.0.0",
+    "description": "سیستم فروشگاه کامل",
+    "author": "Jules",
+    "autoload": {
+        "psr-4": {
+            "Store\\": "src/"
+        }
+    },
+    "requires": {
+        "core": "1.0.0"
+    }
+}

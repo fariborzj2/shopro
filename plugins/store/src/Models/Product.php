@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models;
+namespace Store\Models;
 
 use App\Core\Database;
 use PDO;

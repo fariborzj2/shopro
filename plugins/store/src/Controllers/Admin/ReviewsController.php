@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Controllers\Admin;
+namespace Store\Controllers\Admin;
 
-use App\Models\Review;
+use Store\Models\Review;
 use App\Core\Request;
 
 class ReviewsController
@@ -10,13 +10,13 @@ class ReviewsController
     public function index()
     {
         $reviews = Review::findAll();
-        view('main', 'reviews/index', ['reviews' => $reviews]);
+        store_view('main', 'reviews/index', ['reviews' => $reviews]);
     }
 
     public function edit($id)
     {
         $review = Review::find($id);
-        view('main', 'reviews/edit', ['review' => $review]);
+        store_view('main', 'reviews/edit', ['review' => $review]);
     }
 
     public function update($id)

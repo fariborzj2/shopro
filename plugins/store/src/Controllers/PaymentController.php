@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Controllers;
+namespace Store\Controllers;
 
 use App\Core\Request;
-use App\Core\ZibalService;
+use Store\Services\ZibalService;
 use App\Models\Setting;
-use App\Models\Product;
-use App\Models\Order;
-use App\Models\Transaction;
+use Store\Models\Product;
+use Store\Models\Order;
+use Store\Models\Transaction;
 
 class PaymentController
 {
