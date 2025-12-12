@@ -2,14 +2,12 @@
     "name": "فروشگاه",
     "slug": "store",
     "version": "1.0.0",
-    "description": "سیستم فروشگاه کامل",
-    "author": "Jules",
+    "description": "پلاگین مدیریت فروشگاه و گزارشات",
+    "author": "System",
     "autoload": {
         "psr-4": {
             "Store\\": "src/"
         }
     },
-    "requires": {
-        "core": "1.0.0"
-    }
+    "events": {}
 }
