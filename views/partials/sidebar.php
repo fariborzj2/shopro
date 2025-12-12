@@ -19,7 +19,7 @@ $menuItems = [
         'url' => '/dashboard',
         'icon' => 'dashboard',
         'permission' => 'dashboard'
-    ]
+    ],
     [
         'label' => 'کاربران',
         'url' => '/users',
