@@ -16,7 +16,7 @@ class Order
     public static function find($id)
     {
         $sql = "SELECT o.*,
-                       p.name_fa as product_name, p.image_url as product_image,
+                       p.name_fa as product_name,
                        u.name as user_name, u.mobile as user_mobile
                 FROM orders o
                 LEFT JOIN products p ON o.product_id = p.id
@@ -159,7 +159,7 @@ class Order
         }
 
         $sql = "SELECT o.*,
-                       p.name_fa as product_name, p.image_url as product_image,
+                       p.name_fa as product_name,
                        u.name as user_name, u.mobile as user_mobile
                 FROM orders o
                 LEFT JOIN products p ON o.product_id = p.id
