@@ -97,7 +97,7 @@
                             #<?php echo $order['order_code']; ?>
                         </td>
                         <td class="px-6 py-4 text-right">
-                            <?php echo \jdate('d F Y', strtotime($order['created_at'])); ?>
+                            <?php echo \jdate('d F Y', strtotime($order['order_time'])); ?>
                         </td>
                         <td class="px-6 py-4 font-bold text-gray-900 dark:text-white text-right">
                             <?php echo number_format($order['final_amount']); ?>
