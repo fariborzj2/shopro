@@ -88,7 +88,7 @@ class UserDashboardController
         $orders = Order::findAllBy('user_id', $_SESSION['user_id']);
         // Sort descending
         usort($orders, function($a, $b) {
-            return $b['id'] - $a['id'];
+            return $b->id - $a->id;
         });
 
         echo $this->render('orders', [
