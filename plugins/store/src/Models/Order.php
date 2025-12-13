@@ -144,6 +144,34 @@ class Order
     }
 
     /**
+     * Find all orders by a specific column.
+     *
+     * @param string $column
+     * @param mixed $value
+     * @param string $orderBy
+     * @return array
+     */
+    public static function findAllBy($column, $value, $orderBy = 'id DESC')
+    {
+        $allowedColumns = ['user_id', 'product_id', 'payment_status', 'order_status'];
+        if (!in_array($column, $allowedColumns)) {
+            throw new \Exception("Invalid column name provided to findAllBy.");
+        }
+
+        $sql = "SELECT o.*,
+                       p.name_fa as product_name, p.image_url as product_image,
+                       u.name as user_name, u.mobile as user_mobile
+                FROM orders o
+                LEFT JOIN products p ON o.product_id = p.id
+                LEFT JOIN users u ON o.user_id = u.id
+                WHERE o.$column = :value
+                ORDER BY $orderBy";
+
+        $stmt = Database::query($sql, ['value' => $value]);
+        return $stmt->fetchAll(PDO::FETCH_OBJ);
+    }
+
+    /**
      * Find all orders with filtering.
      *
      * @param int $limit
