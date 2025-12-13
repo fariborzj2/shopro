@@ -30,12 +30,12 @@ class Order
      * Create a new order.
      *
      * @param array $data
-     * @return bool
+     * @return int The ID of the created order
      */
     public static function create($data)
     {
-        $sql = "INSERT INTO orders (user_id, product_id, amount, quantity, payment_status, order_status, custom_fields_data)
-                VALUES (:user_id, :product_id, :amount, :quantity, :payment_status, :order_status, :custom_fields_data)";
+        $sql = "INSERT INTO orders (user_id, product_id, amount, quantity, payment_status, order_status, custom_fields_data, order_code)
+                VALUES (:user_id, :product_id, :amount, :quantity, :payment_status, :order_status, :custom_fields_data, :order_code)";
 
         $params = [
             'user_id' => $data['user_id'],
@@ -44,11 +44,12 @@ class Order
             'quantity' => $data['quantity'] ?? 1,
             'payment_status' => $data['payment_status'] ?? 'unpaid',
             'order_status' => $data['order_status'] ?? 'pending',
-            'custom_fields_data' => isset($data['custom_fields_data']) ? json_encode($data['custom_fields_data']) : null
+            'custom_fields_data' => isset($data['custom_fields_data']) ? json_encode($data['custom_fields_data']) : null,
+            'order_code' => $data['order_code']
         ];
 
         Database::query($sql, $params);
-        return true;
+        return Database::lastInsertId();
     }
 
     /**
