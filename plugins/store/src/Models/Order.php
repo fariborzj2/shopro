@@ -72,6 +72,33 @@ class Order
     }
 
     /**
+     * Generic update method.
+     *
+     * @param int $id
+     * @param array $data
+     * @return bool
+     */
+    public static function update($id, $data)
+    {
+        if (empty($data)) {
+            return false;
+        }
+
+        $fields = [];
+        $params = ['id' => $id];
+
+        foreach ($data as $key => $value) {
+            $fields[] = "$key = :$key";
+            $params[$key] = $value;
+        }
+
+        $sql = "UPDATE orders SET " . implode(', ', $fields) . " WHERE id = :id";
+        Database::query($sql, $params);
+
+        return true;
+    }
+
+    /**
      * Update payment status.
      *
      * @param int $id
