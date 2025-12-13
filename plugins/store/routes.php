@@ -37,9 +37,15 @@ $router->post('/api/reviews/store', '\Store\Controllers\ReviewsController@store'
 $router->get('/api/product-details/{id}', '\Store\Controllers\Admin\ApiController@productDetails');
 
 // User Dashboard
-$router->get('/dashboard', '\Store\Controllers\UserDashboardController@orders');
+$router->get('/dashboard', '\Store\Controllers\UserDashboardController@index');
 $router->get('/dashboard/orders', '\Store\Controllers\UserDashboardController@orders');
 $router->get('/dashboard/orders/{id}', '\Store\Controllers\UserDashboardController@orderDetails');
+$router->get('/dashboard/messages', '\Store\Controllers\UserDashboardController@messages');
+$router->get('/dashboard/messages/{id}', '\Store\Controllers\UserDashboardController@viewMessage');
+$router->get('/dashboard/profile', '\Store\Controllers\UserDashboardController@profile');
+$router->post('/dashboard/profile/update', '\Store\Controllers\UserDashboardController@updateProfile');
+$router->get('/dashboard/logs', '\Store\Controllers\UserDashboardController@logs');
+$router->post('/dashboard/security/logout-all', '\Store\Controllers\UserDashboardController@logoutAll');
 
 
 // ----------------------------------------------------------------------
