@@ -17,6 +17,18 @@ $router->post('/blog/comments/store', 'BlogController@storeComment');
 
 
 // ----------------------------------------------------------------------
+// User Dashboard Routes
+// ----------------------------------------------------------------------
+$router->get('/dashboard', 'UserDashboardController@index');
+$router->get('/dashboard/orders', 'UserDashboardController@orders');
+$router->get('/dashboard/orders/{id}', 'UserDashboardController@orderDetails');
+$router->get('/dashboard/profile', 'UserDashboardController@profile');
+$router->post('/dashboard/profile/update', 'UserDashboardController@updateProfile');
+$router->get('/dashboard/messages', 'UserDashboardController@messages');
+$router->get('/dashboard/logs', 'UserDashboardController@logs');
+
+
+// ----------------------------------------------------------------------
 // API Routes
 // ----------------------------------------------------------------------
 $router->post('/api/auth/send-otp', 'AuthController@sendOtp');
