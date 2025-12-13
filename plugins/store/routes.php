@@ -36,6 +36,10 @@ $router->post('/api/reviews/store', '\Store\Controllers\ReviewsController@store'
 // Custom Fields
 $router->get('/api/product-details/{id}', '\Store\Controllers\Admin\ApiController@productDetails');
 
+// User Dashboard
+$router->get('/dashboard/orders', '\Store\Controllers\UserDashboardController@orders');
+$router->get('/dashboard/orders/{id}', '\Store\Controllers\UserDashboardController@orderDetails');
+
 
 // ----------------------------------------------------------------------
 // Admin Routes for Store
