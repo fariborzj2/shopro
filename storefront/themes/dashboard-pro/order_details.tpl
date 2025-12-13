@@ -20,9 +20,9 @@
 
                 // Determine current step index
                 $currentIndex = 0;
-                if ($order['payment_status'] === 'paid') $currentIndex = 1;
-                if ($order['order_status'] === 'completed') $currentIndex = 2;
-                if ($order['order_status'] === 'cancelled') $currentIndex = -1;
+                if ($order->payment_status === 'paid') $currentIndex = 1;
+                if ($order->order_status === 'completed') $currentIndex = 2;
+                if ($order->order_status === 'cancelled') $currentIndex = -1;
             ?>
 
             <?php if($currentIndex === -1): ?>
@@ -68,7 +68,7 @@
                         <svg class="w-full h-full text-gray-400 p-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
                     </div>
                     <div class="flex-1">
-                        <h4 class="text-lg font-bold text-gray-800 dark:text-white mb-2"><?php echo htmlspecialchars($order['product_name']); ?></h4>
+                        <h4 class="text-lg font-bold text-gray-800 dark:text-white mb-2"><?php echo htmlspecialchars($order->product_name); ?></h4>
 
                         <!-- Custom Fields Display -->
                          <?php if (!empty($customFields)): ?>
@@ -83,8 +83,8 @@
                         <?php endif; ?>
 
                         <div class="flex items-center justify-between mt-4 pt-4 border-t border-gray-100 dark:border-gray-700">
-                             <div class="text-sm text-gray-500">تعداد: <span class="text-gray-900 dark:text-white font-bold"><?php echo $order['quantity']; ?></span></div>
-                             <div class="text-lg font-bold text-primary-600 dark:text-primary-400"><?php echo number_format($order['amount']); ?> <span class="text-sm text-gray-500">تومان</span></div>
+                             <div class="text-sm text-gray-500">تعداد: <span class="text-gray-900 dark:text-white font-bold"><?php echo $order->quantity; ?></span></div>
+                             <div class="text-lg font-bold text-primary-600 dark:text-primary-400"><?php echo number_format($order->amount); ?> <span class="text-sm text-gray-500">تومان</span></div>
                         </div>
                     </div>
                 </div>
@@ -102,11 +102,11 @@
             <ul class="space-y-3 text-sm">
                 <li class="flex justify-between">
                     <span class="text-gray-500 dark:text-gray-400">شماره سفارش</span>
-                    <span class="font-mono font-medium text-gray-900 dark:text-white"><?php echo $order['order_code']; ?></span>
+                    <span class="font-mono font-medium text-gray-900 dark:text-white"><?php echo $order->order_code; ?></span>
                 </li>
                 <li class="flex justify-between">
                     <span class="text-gray-500 dark:text-gray-400">تاریخ ثبت</span>
-                    <span class="font-medium text-gray-900 dark:text-white"><?php echo \jdate('d F Y - H:i', strtotime($order['order_time'])); ?></span>
+                    <span class="font-medium text-gray-900 dark:text-white"><?php echo \jdate('d F Y - H:i', strtotime($order->order_time)); ?></span>
                 </li>
                 <li class="flex justify-between">
                     <span class="text-gray-500 dark:text-gray-400">روش پرداخت</span>
@@ -120,24 +120,24 @@
             <h3 class="font-bold text-gray-800 dark:text-white mb-4 border-b border-gray-100 dark:border-gray-700 pb-3">جزئیات پرداخت</h3>
 
             <div class="space-y-3 mb-6">
-                <?php if(isset($order['discount_used']) && $order['discount_used'] > 0): ?>
+                <?php if(isset($order->discount_used) && $order->discount_used > 0): ?>
                 <div class="flex justify-between text-sm">
                     <span class="text-gray-500">مبلغ اولیه</span>
-                    <span class="text-gray-900 dark:text-white decoration-slice"><?php echo number_format($order['amount'] + $order['discount_used']); ?> تومان</span>
+                    <span class="text-gray-900 dark:text-white decoration-slice"><?php echo number_format($order->amount + $order->discount_used); ?> تومان</span>
                 </div>
                 <div class="flex justify-between text-sm text-green-600">
                     <span>تخفیف</span>
-                    <span><?php echo number_format($order['discount_used']); ?>- تومان</span>
+                    <span><?php echo number_format($order->discount_used); ?>- تومان</span>
                 </div>
                 <?php endif; ?>
 
                 <div class="flex justify-between text-base font-bold pt-2 border-t border-dashed border-gray-200 dark:border-gray-700">
                     <span class="text-gray-800 dark:text-white">مبلغ پرداختی</span>
-                    <span class="text-primary-600 dark:text-primary-400"><?php echo number_format($order['amount']); ?> تومان</span>
+                    <span class="text-primary-600 dark:text-primary-400"><?php echo number_format($order->amount); ?> تومان</span>
                 </div>
             </div>
 
-            <?php if($order['payment_status'] === 'paid'): ?>
+            <?php if($order->payment_status === 'paid'): ?>
                 <div class="bg-green-50 text-green-700 border border-green-200 dark:bg-green-900/20 dark:border-green-800 dark:text-green-300 rounded-xl p-3 text-center text-sm font-medium">
                     <svg class="w-5 h-5 inline-block ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                     پرداخت موفق
