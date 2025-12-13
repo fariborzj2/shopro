@@ -1,6 +1,8 @@
 -- Admin Panel Schema
 
 -- Drop tables if they exist to start fresh, in an order that respects foreign key constraints.
+DROP TABLE IF EXISTS `user_login_logs`;
+DROP TABLE IF EXISTS `user_messages`;
 DROP TABLE IF EXISTS `transactions`;
 DROP TABLE IF EXISTS `reviews`;
 DROP TABLE IF EXISTS `orders`;
@@ -20,6 +22,7 @@ DROP TABLE IF EXISTS `otp_codes`;
 DROP TABLE IF EXISTS `settings`;
 DROP TABLE IF EXISTS `pages`;
 DROP TABLE IF EXISTS `plugins`;
+DROP TABLE IF EXISTS `media_uploads`;
 
 
 -- Users Table
@@ -303,6 +306,29 @@ CREATE TABLE `plugins` (
   `load_order` INT DEFAULT 10,
   `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- User Messages Table
+CREATE TABLE `user_messages` (
+    `id` INT PRIMARY KEY AUTO_INCREMENT,
+    `user_id` INT NOT NULL,
+    `sender_id` INT DEFAULT NULL COMMENT 'Admin ID if system message',
+    `subject` VARCHAR(255) NOT NULL,
+    `body` TEXT NOT NULL,
+    `is_read` BOOLEAN DEFAULT FALSE,
+    `parent_id` INT DEFAULT NULL,
+    `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- User Login Logs Table
+CREATE TABLE `user_login_logs` (
+    `id` INT PRIMARY KEY AUTO_INCREMENT,
+    `user_id` INT NOT NULL,
+    `ip_address` VARCHAR(45) NOT NULL,
+    `user_agent` VARCHAR(255) NOT NULL,
+    `login_time` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 
