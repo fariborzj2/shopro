@@ -84,7 +84,7 @@
 
                         <div class="flex items-center justify-between mt-4 pt-4 border-t border-gray-100 dark:border-gray-700">
                              <div class="text-sm text-gray-500">تعداد: <span class="text-gray-900 dark:text-white font-bold"><?php echo $order['quantity']; ?></span></div>
-                             <div class="text-lg font-bold text-primary-600 dark:text-primary-400"><?php echo number_format($order['final_amount']); ?> <span class="text-sm text-gray-500">تومان</span></div>
+                             <div class="text-lg font-bold text-primary-600 dark:text-primary-400"><?php echo number_format($order['amount']); ?> <span class="text-sm text-gray-500">تومان</span></div>
                         </div>
                     </div>
                 </div>
@@ -106,7 +106,7 @@
                 </li>
                 <li class="flex justify-between">
                     <span class="text-gray-500 dark:text-gray-400">تاریخ ثبت</span>
-                    <span class="font-medium text-gray-900 dark:text-white"><?php echo \jdate('d F Y - H:i', strtotime($order['created_at'])); ?></span>
+                    <span class="font-medium text-gray-900 dark:text-white"><?php echo \jdate('d F Y - H:i', strtotime($order['order_time'])); ?></span>
                 </li>
                 <li class="flex justify-between">
                     <span class="text-gray-500 dark:text-gray-400">روش پرداخت</span>
@@ -120,20 +120,20 @@
             <h3 class="font-bold text-gray-800 dark:text-white mb-4 border-b border-gray-100 dark:border-gray-700 pb-3">جزئیات پرداخت</h3>
 
             <div class="space-y-3 mb-6">
-                <?php if($order['amount'] != $order['final_amount']): ?>
+                <?php if(isset($order['discount_used']) && $order['discount_used'] > 0): ?>
                 <div class="flex justify-between text-sm">
                     <span class="text-gray-500">مبلغ اولیه</span>
-                    <span class="text-gray-900 dark:text-white decoration-slice"><?php echo number_format($order['amount']); ?> تومان</span>
+                    <span class="text-gray-900 dark:text-white decoration-slice"><?php echo number_format($order['amount'] + $order['discount_used']); ?> تومان</span>
                 </div>
                 <div class="flex justify-between text-sm text-green-600">
                     <span>تخفیف</span>
-                    <span><?php echo number_format($order['amount'] - $order['final_amount']); ?>- تومان</span>
+                    <span><?php echo number_format($order['discount_used']); ?>- تومان</span>
                 </div>
                 <?php endif; ?>
 
                 <div class="flex justify-between text-base font-bold pt-2 border-t border-dashed border-gray-200 dark:border-gray-700">
                     <span class="text-gray-800 dark:text-white">مبلغ پرداختی</span>
-                    <span class="text-primary-600 dark:text-primary-400"><?php echo number_format($order['final_amount']); ?> تومان</span>
+                    <span class="text-primary-600 dark:text-primary-400"><?php echo number_format($order['amount']); ?> تومان</span>
                 </div>
             </div>
 

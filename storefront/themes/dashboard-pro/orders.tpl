@@ -41,11 +41,11 @@
                             </span>
                         </td>
                         <td class="px-6 py-4 text-right text-xs">
-                            <?php echo \jdate('d F Y', strtotime($order['created_at'])); ?>
-                            <span class="block text-gray-400 text-[10px] mt-0.5"><?php echo \jdate('H:i', strtotime($order['created_at'])); ?></span>
+                            <?php echo \jdate('d F Y', strtotime($order['order_time'])); ?>
+                            <span class="block text-gray-400 text-[10px] mt-0.5"><?php echo \jdate('H:i', strtotime($order['order_time'])); ?></span>
                         </td>
                         <td class="px-6 py-4 font-bold text-gray-900 dark:text-white text-right">
-                            <?php echo number_format($order['final_amount']); ?> <span class="text-xs font-normal text-gray-500">تومان</span>
+                            <?php echo number_format($order['amount']); ?> <span class="text-xs font-normal text-gray-500">تومان</span>
                         </td>
                         <td class="px-6 py-4 text-center">
                              <div class="flex flex-col gap-1 items-center">
