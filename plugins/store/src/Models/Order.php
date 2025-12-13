@@ -49,7 +49,7 @@ class Order
         ];
 
         Database::query($sql, $params);
-        return Database::lastInsertId();
+        return Database::getConnection()->lastInsertId();
     }
 
     /**
