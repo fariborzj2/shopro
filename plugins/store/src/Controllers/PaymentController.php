@@ -97,7 +97,7 @@ class PaymentController
     /**
      * Verify the payment after returning from the gateway.
      */
-    public function verifyPayment()
+    public function callback()
     {
         $track_id = $_GET['trackId'] ?? null;
         $success = $_GET['success'] ?? '0';
