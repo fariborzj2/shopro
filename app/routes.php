@@ -5,7 +5,7 @@
 // ----------------------------------------------------------------------
 // Storefront Routes
 // ----------------------------------------------------------------------
-$router->get('/', 'SiteController@index');
+// $router->get('/', 'SiteController@index'); // Disabled in favor of StorefrontController
 // Routes moved to plugins/store/routes.php
 
 // Blog Routes
