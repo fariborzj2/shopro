@@ -4,6 +4,7 @@ use App\Core\Request;
 
 // app/Core/helpers.php
 require_once __DIR__ . '/faq_helpers.php';
+require_once __DIR__ . '/theme_functions.php';
 // Theme loader is now handled by the Store plugin
 
 /**
