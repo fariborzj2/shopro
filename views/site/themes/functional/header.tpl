@@ -48,9 +48,10 @@
             }
         }
     </script>
+    <link rel="stylesheet" href="/fonts/estedad/style.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
-        /* Add Estedad font face here if locally available, otherwise fallback to system/Inter */
+
         [x-cloak] { display: none !important; }
 
         /* Functional UI tweaks */
