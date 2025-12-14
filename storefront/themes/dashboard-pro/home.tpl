@@ -77,7 +77,8 @@
         <a href="/dashboard/orders" class="text-sm text-primary-600 hover:text-primary-700 dark:text-primary-400 dark:hover:text-primary-300">مشاهده همه</a>
     </div>
 
-    <div class="overflow-x-auto">
+    <!-- Desktop Table (md+) -->
+    <div class="hidden md:block overflow-x-auto">
         <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
             <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700/50 dark:text-gray-300">
                 <tr>
@@ -146,5 +147,58 @@
                 <?php endif; ?>
             </tbody>
         </table>
+    </div>
+
+    <!-- Mobile Cards (md:hidden) -->
+    <div class="grid grid-cols-1 gap-4 md:hidden p-4">
+        <?php if(!empty($recentOrders)): ?>
+            <?php foreach($recentOrders as $order): ?>
+                <div class="bg-gray-50 dark:bg-gray-700/50 rounded-xl p-4 border border-gray-100 dark:border-gray-700">
+                    <div class="flex justify-between items-start mb-3">
+                        <div class="flex flex-col">
+                            <span class="text-xs text-gray-500 dark:text-gray-400">کد سفارش</span>
+                            <span class="font-bold text-gray-900 dark:text-white">#<?php echo $order['order_code']; ?></span>
+                        </div>
+                        <span class="text-xs text-gray-400"><?php echo \jdate('d F Y', strtotime($order['order_time'])); ?></span>
+                    </div>
+
+                    <div class="flex justify-between items-center mb-4">
+                        <span class="text-sm font-bold text-gray-800 dark:text-white"><?php echo number_format($order['amount']); ?> <span class="text-xs font-normal text-gray-500">تومان</span></span>
+                    </div>
+
+                    <div class="flex flex-wrap gap-2 mb-4">
+                        <?php
+                            $statusClass = match($order['payment_status']) {
+                                'paid' => 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300',
+                                'failed' => 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300',
+                                default => 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300',
+                            };
+                            $statusLabel = \translate_payment_status_fa($order['payment_status']);
+
+                            $orderStatusClass = match($order['order_status']) {
+                                'completed' => 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300',
+                                'cancelled' => 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300',
+                                default => 'bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-300',
+                            };
+                            $orderStatusLabel = \translate_order_status_fa($order['order_status']);
+                        ?>
+                        <span class="<?php echo $statusClass; ?> text-xs px-2 py-1 rounded-lg">
+                            <?php echo $statusLabel; ?>
+                        </span>
+                        <span class="<?php echo $orderStatusClass; ?> text-xs px-2 py-1 rounded-lg">
+                            <?php echo $orderStatusLabel; ?>
+                        </span>
+                    </div>
+
+                    <a href="/dashboard/orders/<?php echo $order['id']; ?>" class="block w-full text-center py-2 border border-primary-200 dark:border-primary-800 text-primary-600 dark:text-primary-400 rounded-lg hover:bg-primary-50 dark:hover:bg-primary-900/20 transition-colors text-sm font-medium">
+                        مشاهده جزئیات
+                    </a>
+                </div>
+            <?php endforeach; ?>
+        <?php else: ?>
+            <div class="text-center py-8 text-gray-500">
+                <p>سفارشی یافت نشد.</p>
+            </div>
+        <?php endif; ?>
     </div>
 </div>
