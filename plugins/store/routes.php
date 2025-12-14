@@ -12,9 +12,14 @@ if (!PluginManager::isActive('store')) {
 // ----------------------------------------------------------------------
 
 // Home & Product Lists
-// $router->get('/', '\Store\Controllers\StorefrontController@index');
+$router->get('/', '\Store\Controllers\StorefrontController@index'); // Uncommented
 $router->get('/category/{slug}', '\Store\Controllers\StorefrontController@category');
 $router->get('/product/{id}', '\Store\Controllers\StorefrontController@product');
+
+// Static Pages & FAQ
+$router->get('/faq', '\Store\Controllers\StorefrontController@faq');
+$router->get('/page/{slug}', '\Store\Controllers\StorefrontController@page');
+
 
 // Search
 $router->get('/search', '\Store\Controllers\StorefrontController@search');
