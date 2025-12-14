@@ -504,7 +504,8 @@
 
 <?php
     $style = 'storefront';
-    include __DIR__ . '/../../../views/partials/_error_modal.php';
+    // Use PROJECT_ROOT constant for reliable path resolution
+    include PROJECT_ROOT . '/views/partials/_error_modal.php';
 ?>
 
 
