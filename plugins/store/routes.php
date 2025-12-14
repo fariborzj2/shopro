@@ -12,7 +12,7 @@ if (!PluginManager::isActive('store')) {
 // ----------------------------------------------------------------------
 
 // Home & Product Lists
-$router->get('/', '\Store\Controllers\StorefrontController@index');
+// $router->get('/', '\Store\Controllers\StorefrontController@index');
 $router->get('/category/{slug}', '\Store\Controllers\StorefrontController@category');
 $router->get('/product/{id}', '\Store\Controllers\StorefrontController@product');
 

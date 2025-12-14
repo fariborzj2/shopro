@@ -1,10 +1,15 @@
 <?php
 
 use App\Core\Plugin\Filter;
+use App\Core\Hook;
 use App\Models\Dashboard;
 
 require_once __DIR__ . '/helpers.php';
-require_once __DIR__ . '/theme_loader.php';
+
+// Register Frontend Hooks
+Hook::add('home_products', function() {
+    include __DIR__ . '/views/partials/home_products_widget.php';
+});
 
 // Register Admin Menu Items
 Filter::add('admin_menu_items', function($items) {

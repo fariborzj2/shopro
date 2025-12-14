@@ -5,6 +5,7 @@
 // ----------------------------------------------------------------------
 // Storefront Routes
 // ----------------------------------------------------------------------
+$router->get('/', 'SiteController@index');
 // Routes moved to plugins/store/routes.php
 
 // Blog Routes
