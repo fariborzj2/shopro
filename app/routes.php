@@ -153,3 +153,12 @@ $router->post('/admin/seopilot/settings', '\SeoPilot\Enterprise\Controllers\Admi
 
 // Load Active Plugin Routes
 \App\Core\Plugin\PluginManager::loadRoutes($router);
+
+// ----------------------------------------------------------------------
+// Fallback Route for Homepage
+// ----------------------------------------------------------------------
+// If the store plugin is disabled, the root route '/' won't be defined.
+// In that case, we fallback to the blog index or another controller.
+if (!\App\Core\Plugin\PluginManager::isActive('store')) {
+    $router->get('/', 'BlogController@index');
+}
