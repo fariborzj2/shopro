@@ -51,9 +51,16 @@
                     <label for="default_theme" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">قالب پیش‌فرض سایت</label>
                     <div class="relative">
                         <select id="default_theme" name="default_theme" class="w-full appearance-none rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white px-4 py-2.5 pr-10 focus:ring-primary-500 focus:border-primary-500 shadow-sm">
-                            <option value="template-1" <?= ($settings['default_theme'] ?? 'template-1') === 'template-1' ? 'selected' : '' ?>>پیش‌فرض (قالب ۱)</option>
-                            <option value="template-2" <?= ($settings['default_theme'] ?? '') === 'template-2' ? 'selected' : '' ?>>تلگرام پرمیوم (قالب ۲)</option>
-                            <option value="template-3" <?= ($settings['default_theme'] ?? '') === 'template-3' ? 'selected' : '' ?>>طرح ادمین (قالب ۳)</option>
+                            <?php if (isset($available_themes) && is_array($available_themes)): ?>
+                                <?php foreach ($available_themes as $theme): ?>
+                                    <option value="<?= htmlspecialchars($theme['value']) ?>" <?= ($settings['default_theme'] ?? 'template-1') === $theme['value'] ? 'selected' : '' ?>>
+                                        <?= htmlspecialchars($theme['label']) ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            <?php else: ?>
+                                <!-- Fallback if variable is missing -->
+                                <option value="template-1" <?= ($settings['default_theme'] ?? 'template-1') === 'template-1' ? 'selected' : '' ?>>پیش‌فرض (قالب ۱)</option>
+                            <?php endif; ?>
                         </select>
                         <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center px-3 text-gray-500">
                             <?php partial('icon', ['name' => 'chevron-down', 'class' => 'w-4 h-4']); ?>

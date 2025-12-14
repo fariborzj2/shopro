@@ -17,12 +17,43 @@ class SettingsController
         $cacheStats = $cache->getStats();
         $cacheDriver = $cache->getDriverName();
 
+        // Scan for available themes
+        $themesDir = PROJECT_ROOT . '/views/site/themes/';
+        $available_themes = [];
+        if (is_dir($themesDir)) {
+            $dirs = scandir($themesDir);
+            foreach ($dirs as $dir) {
+                if ($dir === '.' || $dir === '..') {
+                    continue;
+                }
+                if (is_dir($themesDir . $dir)) {
+                    // Determine label (keep existing Persian names for known themes, use directory name for others)
+                    $label = $dir;
+                    if ($dir === 'template-1') {
+                        $label = 'پیش‌فرض (قالب ۱)';
+                    } elseif ($dir === 'template-2') {
+                        $label = 'تلگرام پرمیوم (قالب ۲)';
+                    } elseif ($dir === 'template-3') {
+                        $label = 'طرح ادمین (قالب ۳)';
+                    } else {
+                        $label = ucfirst(str_replace(['-', '_'], ' ', $dir));
+                    }
+
+                    $available_themes[] = [
+                        'value' => $dir,
+                        'label' => $label
+                    ];
+                }
+            }
+        }
+
         return view('main', 'settings/index', [
             'title' => 'تنظیمات سایت',
             'settings' => $settings,
             'blog_categories' => $blog_categories,
             'cacheStats' => $cacheStats,
-            'cacheDriver' => $cacheDriver
+            'cacheDriver' => $cacheDriver,
+            'available_themes' => $available_themes
         ]);
     }
 
