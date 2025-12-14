@@ -23,10 +23,27 @@ class AdminController
         $viewPath = dirname(__DIR__, 2) . '/views/admin/settings.php';
 
         if (file_exists($viewPath)) {
-            view('main', $viewPath, [
+            $data = [
                 'settings' => $settings,
                 'page_title' => 'تنظیمات SeoPilot'
-            ]);
+            ];
+
+            // 1. Render the plugin's internal view to capture content
+            extract($data);
+            ob_start();
+            require $viewPath;
+            $content = ob_get_clean();
+
+            // 2. Render the main layout with the captured content
+            $data['content'] = $content;
+            extract($data);
+
+            $layoutPath = PROJECT_ROOT . '/views/layouts/main.php';
+            if (file_exists($layoutPath)) {
+                require $layoutPath;
+            } else {
+                echo $content;
+            }
         } else {
             echo "View not found: $viewPath";
         }
