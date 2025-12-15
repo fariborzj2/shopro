@@ -19,6 +19,3 @@ spl_autoload_register(function ($class) {
         require $file;
     }
 });
-
-// Boot the plugin
-Hooks::boot();
