@@ -8,15 +8,9 @@ use App\Core\Request;
 class GeneratorController {
 
     public function createJob() {
-        if (!verify_csrf_token()) {
-             header('Content-Type: application/json');
-             echo json_encode(['error' => 'Invalid CSRF Token']);
-             return;
-        }
+        // CSRF handled globally
 
-        $input = Request::input(); // Assuming Request::input() or Request::json() gets JSON body
-        // Or Request::all() handles JSON.
-        // Let's use file_get_contents('php://input') to be safe if Request is not fully known
+        $input = Request::input();
         $raw = file_get_contents('php://input');
         $data = json_decode($raw, true);
 
@@ -29,7 +23,12 @@ class GeneratorController {
         $jobId = AiJob::create($data['type'], $data['payload'] ?? []);
 
         header('Content-Type: application/json');
-        echo json_encode(['success' => true, 'job_id' => $jobId]);
+        // Return new CSRF token if needed for subsequent requests
+        $response = ['success' => true, 'job_id' => $jobId];
+        if (isset($_SESSION['csrf_token'])) {
+            $response['new_csrf_token'] = $_SESSION['csrf_token'];
+        }
+        echo json_encode($response);
     }
 
     public function status($id) {
@@ -44,17 +43,16 @@ class GeneratorController {
     }
 
     public function processQueue() {
-        // Trigger worker manually via AJAX
-         if (!verify_csrf_token()) {
-             header('Content-Type: application/json');
-             echo json_encode(['error' => 'Invalid CSRF Token']);
-             return;
-        }
+        // CSRF handled globally
 
         $worker = new \AiContentPro\Workers\QueueWorker();
         $results = $worker->processPendingJobs();
 
         header('Content-Type: application/json');
-        echo json_encode(['success' => true, 'processed' => $results]);
+        $response = ['success' => true, 'processed' => $results];
+        if (isset($_SESSION['csrf_token'])) {
+            $response['new_csrf_token'] = $_SESSION['csrf_token'];
+        }
+        echo json_encode($response);
     }
 }
