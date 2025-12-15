@@ -27,7 +27,7 @@ class Hooks {
     public static function addAdminMenu($items) {
         $items[] = [
             'label' => 'AI Content Pro',
-            'url' => '/admin/ai-content-pro/settings',
+            'url' => '/ai-content-pro/settings',
             'icon' => 'settings',
             'permission' => 'settings'
         ];
