@@ -1,8 +1,12 @@
-<div class="flex justify-between items-center mb-6">
-    <h1 class="text-2xl font-bold text-gray-800 dark:text-white">مدیریت نظرات</h1>
-</div>
+<div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
+    <!-- Header -->
+    <div class="p-6 border-b border-gray-100 dark:border-gray-700 flex flex-col md:flex-row justify-between items-center gap-4">
+        <div>
+            <h1 class="text-xl font-bold text-gray-800 dark:text-white">مدیریت نظرات</h1>
+            <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">لیست تمامی نظرات ثبت شده برای محصولات</p>
+        </div>
+    </div>
 
-<div class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
     <div class="overflow-x-auto">
         <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
             <thead class="bg-gray-50 dark:bg-gray-700/50">
