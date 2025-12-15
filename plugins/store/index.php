@@ -15,34 +15,41 @@ Hook::add('home_products', function() {
 Filter::add('admin_menu_items', function($items) {
     $storeItems = [
         [
-            'label' => 'محصولات',
-            'icon' => 'box',
-            'url' => '/products',
-            'permission' => 'products'
-        ],
-        [
-            'label' => 'سفارشات',
-            'icon' => 'orders',
-            'url' => '/orders',
-            'permission' => 'orders'
-        ],
-        [
-            'label' => 'دسته‌بندی‌ها',
-            'icon' => 'grid',
-            'url' => '/categories',
-            'permission' => 'categories'
-        ],
-        [
-            'label' => 'فیلدهای سفارشی',
-            'icon' => 'list',
-            'url' => '/custom-fields',
-            'permission' => 'products'
-        ],
-        [
-            'label' => 'نظرات فروشگاه',
-            'url' => '/reviews',
-            'icon' => 'message',
-            'permission' => 'reviews'
+            'label' => 'مدیریت فروشگاه',
+            'icon' => 'store',
+            'permission' => 'store',
+            'children' => [
+                [
+                    'label' => 'محصولات',
+                    'icon' => 'box',
+                    'url' => '/products',
+                    'permission' => 'products'
+                ],
+                [
+                    'label' => 'سفارشات',
+                    'icon' => 'orders',
+                    'url' => '/orders',
+                    'permission' => 'orders'
+                ],
+                [
+                    'label' => 'دسته‌بندی‌ها',
+                    'icon' => 'grid',
+                    'url' => '/categories',
+                    'permission' => 'categories'
+                ],
+                [
+                    'label' => 'فیلدهای سفارشی',
+                    'icon' => 'list',
+                    'url' => '/custom-fields',
+                    'permission' => 'products'
+                ],
+                [
+                    'label' => 'نظرات فروشگاه',
+                    'url' => '/reviews',
+                    'icon' => 'message',
+                    'permission' => 'reviews'
+                ],
+            ],
         ],
     ];
 
