@@ -44,12 +44,6 @@ $menuItems = [
         ]
     ],
     [
-        'label' => 'نظرات',
-        'url' => '/reviews',
-        'icon' => 'message',
-        'permission' => 'reviews'
-    ],
-    [
         'label' => 'کتابخانه رسانه',
         'url' => '/media',
         'icon' => 'media',
