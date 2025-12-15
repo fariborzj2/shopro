@@ -1,7 +1,7 @@
 <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-soft p-6">
     <div class="flex items-center justify-between mb-6">
         <h1 class="text-2xl font-bold text-gray-800 dark:text-white">تنظیمات هوش مصنوعی (AI Content Pro)</h1>
-        <span class="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm font-medium">نسخه 1.2.0</span>
+        <span class="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm font-medium">نسخه 1.2.1</span>
     </div>
 
     <form action="/admin/ai-content-pro/settings/update" method="POST" class="space-y-6">
@@ -25,8 +25,8 @@
                 <div>
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">مدل پیش‌فرض</label>
                     <select name="model_content" class="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors">
-                        <option value="gemini-2.5-flash" <?php echo ($settings['model_content'] ?? '') == 'gemini-2.5-flash' ? 'selected' : ''; ?>>Gemini 2.5 Flash</option>
-                        <option value="gemini-pro" <?php echo ($settings['model_content'] ?? '') == 'gemini-pro' ? 'selected' : ''; ?>>Gemini Pro</option>
+                        <option value="gemini-1.5-flash" <?php echo ($settings['model_content'] ?? '') == 'gemini-1.5-flash' ? 'selected' : ''; ?>>Gemini 1.5 Flash</option>
+                        <option value="gemini-1.5-pro" <?php echo ($settings['model_content'] ?? '') == 'gemini-1.5-pro' ? 'selected' : ''; ?>>Gemini 1.5 Pro</option>
                     </select>
                 </div>
             </div>
