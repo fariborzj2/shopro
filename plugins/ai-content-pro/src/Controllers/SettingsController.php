@@ -35,10 +35,8 @@ class SettingsController {
             return;
         }
 
-        if (!verify_csrf_token()) {
-             redirect_back_with_error('نشست نامعتبر است.');
-             exit;
-        }
+        // CSRF is handled globally in public/index.php and rotates the token.
+        // We do not need to verify it again here.
 
         $data = Request::all();
 
