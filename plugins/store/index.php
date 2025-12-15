@@ -37,7 +37,13 @@ Filter::add('admin_menu_items', function($items) {
             'icon' => 'list',
             'url' => '/custom-fields',
             'permission' => 'products'
-        ]
+        ],
+        [
+            'label' => 'نظرات فروشگاه',
+            'url' => '/reviews',
+            'icon' => 'message',
+            'permission' => 'reviews'
+        ],
     ];
 
     // Insert after Dashboard (index 0)
