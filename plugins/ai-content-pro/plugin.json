@@ -1,0 +1,22 @@
+{
+  "name": "AI Content Pro",
+  "slug": "ai-content-pro",
+  "version": "1.0.0",
+  "description": "Advanced AI Content Generation & SEO Automation Plugin using Google Gemini",
+  "author": "Jules",
+  "website": "https://example.com",
+  "requires": {
+    "php": ">=8.1",
+    "cms": ">=1.0.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "AiContentPro\\": "src/"
+    }
+  },
+  "events": {
+    "onActivate": "AiContentPro\\Hooks::activate",
+    "onDeactivate": "AiContentPro\\Hooks::deactivate",
+    "onLoad": "AiContentPro\\Hooks::boot"
+  }
+}
