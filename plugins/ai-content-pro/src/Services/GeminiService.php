@@ -19,19 +19,19 @@ class GeminiService {
      *
      * @param string $prompt The user prompt
      * @param string $systemInstruction Optional system instruction
-     * @param string $model Model name (default: gemini-2.5-flash)
+     * @param string $model Model name (default: gemini-1.5-flash)
      * @param float $temperature
      * @return string|null Generated text or null on failure
      */
-    public function generateContent($prompt, $systemInstruction = '', $model = 'gemini-2.5-flash', $temperature = 0.7) {
+    public function generateContent($prompt, $systemInstruction = '', $model = 'gemini-1.5-flash', $temperature = 0.7) {
         if (empty($this->apiKey)) {
             AiLog::error("Gemini API Key is missing.");
             return null;
         }
 
-        $url = $this->baseUrl . $model . ':generateContent';
+        // Strictly follow Quickstart: Key as query parameter
+        $url = $this->baseUrl . $model . ':generateContent?key=' . $this->apiKey;
 
-        // Construct payload strictly following documentation
         $payload = [
             'contents' => [
                 [
@@ -45,28 +45,13 @@ class GeminiService {
             ]
         ];
 
-        // Add system instruction if supported and provided
-        // Note: 'systemInstruction' field support depends on the model version,
-        // strictly speaking quickstart uses 'contents'.
-        // For strict adherence to quickstart 'contents' is the way.
-        // However, we can prepend system instruction to the prompt if needed or use the field if we are sure.
-        // The quickstart mentions "Make your first request" with just contents.
-        // But the "System instructions" guide (linked in docs) is standard.
-        // To be safe and strictly follow the "Quickstart" link provided, I will prepend system instructions to the user prompt
-        // OR use the proper field if I recall it correctly from the full docs.
-        // Quickstart doesn't explicitly show system instructions in the JSON payload example.
-        // It just shows `contents`.
-        // I will prepend the system instruction to the prompt to be 100% compatible with the basic endpoint structure shown in Quickstart.
-
         if (!empty($systemInstruction)) {
-            // Modify the prompt to include system instruction context
             $prompt = "System Instruction: " . $systemInstruction . "\n\nUser Request: " . $prompt;
             $payload['contents'][0]['parts'][0]['text'] = $prompt;
         }
 
         $headers = [
-            'Content-Type: application/json',
-            'x-goog-api-key: ' . $this->apiKey
+            'Content-Type: application/json'
         ];
 
         try {
@@ -75,8 +60,8 @@ class GeminiService {
             curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($payload));
             curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true); // Strict SSL
-            curl_setopt($ch, CURLOPT_TIMEOUT, 30); // 30s timeout
+            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
+            curl_setopt($ch, CURLOPT_TIMEOUT, 30);
 
             $response = curl_exec($ch);
             $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
@@ -95,7 +80,6 @@ class GeminiService {
 
             $data = json_decode($response, true);
 
-            // Parse response
             if (isset($data['candidates'][0]['content']['parts'][0]['text'])) {
                 return $data['candidates'][0]['content']['parts'][0]['text'];
             } else {

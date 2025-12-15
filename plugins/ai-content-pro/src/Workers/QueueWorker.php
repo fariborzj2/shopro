@@ -75,7 +75,7 @@ class QueueWorker {
             // Language Validation for Articles
             if ($job['type'] === 'generate_article') {
                 if (!$this->validatePersian($result)) {
-                     throw new \Exception("Language validation failed: Content is not in Persian.");
+                     throw new \Exception("Language validation failed: Content must be predominantly in Persian.");
                 }
             }
 
@@ -103,6 +103,23 @@ class QueueWorker {
     }
 
     private function validatePersian($text) {
-        return preg_match('/[\x{0600}-\x{06FF}]/u', $text);
+        $text = strip_tags($text);
+        if (empty($text)) return false;
+
+        $length = mb_strlen($text);
+        if ($length === 0) return false;
+
+        // Count Persian/Arabic characters
+        $persianCount = preg_match_all('/[\x{0600}-\x{06FF}]/u', $text);
+
+        // Count total alphanumeric (roughly) to ignore whitespace/symbols in ratio
+        // Actually, just length is fine, but spaces skew it.
+        // Let's use simple ratio: PersianChars / TotalChars.
+        // Persian texts often have English terms (HTML tags removed), spaces, numbers.
+        // A threshold of 50% is safe for "predominantly" Persian.
+
+        $ratio = $persianCount / $length;
+
+        return $ratio > 0.4; // 40% allows for heavy technical terms and formatting chars
     }
 }

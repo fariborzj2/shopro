@@ -3,7 +3,7 @@
 namespace AiContentPro;
 
 use App\Core\Database;
-use AiContentPro\Services\GeminiService;
+use App\Core\Plugin\Filter;
 
 class Hooks {
     public static function activate() {
@@ -17,10 +17,24 @@ class Hooks {
     public static function boot() {
         // Register Routes
         self::registerRoutes();
+
+        // Register Admin Menu
+        if (class_exists('App\Core\Plugin\Filter')) {
+            Filter::add('admin_menu_items', [self::class, 'addAdminMenu']);
+        }
+    }
+
+    public static function addAdminMenu($items) {
+        $items[] = [
+            'label' => 'AI Content Pro',
+            'url' => '/admin/ai-content-pro/settings',
+            'icon' => 'settings',
+            'permission' => 'settings'
+        ];
+        return $items;
     }
 
     private static function registerRoutes() {
-        // Explicitly load the routes file
         $routesPath = __DIR__ . '/../../routes.php';
         if (file_exists($routesPath)) {
             require_once $routesPath;
@@ -31,13 +45,15 @@ class Hooks {
         $defaults = [
             'gemini_api_key' => '',
             'enable_content_gen' => '0',
+            'enable_faq_gen' => '0',
+            'enable_image_gen' => '0',
+            'enable_internal_links' => '0',
             'enable_seo' => '0',
             'enable_comments' => '0',
             'enable_calendar' => '0',
-            'model_content' => 'gemini-2.5-flash',
+            'model_content' => 'gemini-1.5-flash',
             'max_tokens_content' => '2000',
             'language' => 'fa',
-            // Granular defaults
             'seo_title_length' => '60',
             'seo_desc_length' => '160',
             'queue_retry_limit' => '3',
