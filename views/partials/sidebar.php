@@ -21,12 +21,6 @@ $menuItems = [
         'permission' => 'dashboard'
     ],
     [
-        'label' => 'کاربران',
-        'url' => '/users',
-        'icon' => 'users',
-        'permission' => 'users'
-    ],
-    [
         'label' => 'مدیریت بلاگ',
         'icon' => 'blog',
         'permission' => 'blog',
