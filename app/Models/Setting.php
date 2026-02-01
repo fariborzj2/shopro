@@ -43,6 +43,51 @@ class Setting
     }
 
     /**
+     * Get the active TinyMCE API key, rotating it if the interval has passed.
+     *
+     * @return string
+     */
+    public static function getTinyMceApiKey()
+    {
+        $settings = self::getAll();
+        $keys_str = $settings['tinymce_api_keys'] ?? '';
+
+        if (empty($keys_str) || trim($keys_str) === 'no-api-key') {
+            return 'no-api-key';
+        }
+
+        $keys = array_values(array_filter(array_map('trim', explode("\n", $keys_str))));
+        if (empty($keys)) {
+            return 'no-api-key';
+        }
+
+        $count = count($keys);
+        $interval_hours = (int)($settings['tinymce_rotation_interval'] ?? 24);
+        if ($interval_hours <= 0) $interval_hours = 24;
+
+        $current_index = (int)($settings['tinymce_current_key_index'] ?? 0);
+        $last_rotation = (int)($settings['tinymce_last_rotation'] ?? 0);
+
+        // Check if it's time to rotate
+        if (time() - $last_rotation >= $interval_hours * 3600) {
+            $new_index = ($current_index + 1) % $count;
+            $new_rotation_time = time();
+
+            // Save new state (this will also invalidate the cache)
+            self::updateBatch([
+                'tinymce_current_key_index' => $new_index,
+                'tinymce_last_rotation' => $new_rotation_time
+            ]);
+
+            return $keys[$new_index];
+        }
+
+        // Return current key (ensure index is valid)
+        $actual_index = $current_index % $count;
+        return $keys[$actual_index];
+    }
+
+    /**
      * Update a batch of settings in the database.
      *
      * @param array $data
@@ -66,6 +111,14 @@ class Setting
             }
 
             $pdo->commit();
+
+            // Invalidate cache
+            try {
+                Cache::getInstance()->invalidateTag('config');
+            } catch (\Exception $e) {
+                // Ignore cache errors
+            }
+
             return true;
         } catch (\Exception $e) {
             $pdo->rollBack();

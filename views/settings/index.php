@@ -12,6 +12,7 @@
                     'email' => 'ایمیل',
                     'sms' => 'پیامک',
                     'payment' => 'درگاه پرداخت',
+                    'editor' => 'ادیتور',
                     'cache' => 'کشینگ (Cache)',
                 ];
                 foreach($tabs as $key => $label):
@@ -242,6 +243,22 @@
              <div class="col-span-1">
                 <label for="zibal_merchant_id" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">کد مرچنت زیبال (Merchant ID)</label>
                 <input type="text" id="zibal_merchant_id" name="zibal_merchant_id" dir="ltr" value="<?= htmlspecialchars($settings['zibal_merchant_id'] ?? '') ?>" class="w-full rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white px-4 py-2.5 focus:ring-primary-500 focus:border-primary-500 shadow-sm font-mono text-sm">
+            </div>
+        </div>
+
+        <!-- Editor Settings -->
+        <div x-show="tab === 'editor'" class="space-y-6" style="display: none;">
+            <div class="grid grid-cols-1 gap-6">
+                <div class="col-span-1">
+                    <label for="tinymce_api_keys" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">کلیدهای API TinyMCE</label>
+                    <textarea id="tinymce_api_keys" name="tinymce_api_keys" rows="5" dir="ltr" class="w-full rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white px-4 py-2.5 focus:ring-primary-500 focus:border-primary-500 shadow-sm font-mono text-sm" placeholder="واحد در هر خط"><?= htmlspecialchars($settings['tinymce_api_keys'] ?? '') ?></textarea>
+                    <p class="text-xs text-gray-500 mt-1">هر کلید را در یک خط جدید وارد کنید. سیستم به طور خودکار بین این کلیدها جابجا می‌شود.</p>
+                </div>
+                <div class="col-span-1 md:col-span-1">
+                    <label for="tinymce_rotation_interval" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">دوره چرخش کلیدها (ساعت)</label>
+                    <input type="number" id="tinymce_rotation_interval" name="tinymce_rotation_interval" value="<?= htmlspecialchars($settings['tinymce_rotation_interval'] ?? '24') ?>" class="w-full rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white px-4 py-2.5 focus:ring-primary-500 focus:border-primary-500 shadow-sm">
+                    <p class="text-xs text-gray-500 mt-1">هر چند ساعت یکبار کلید مورد استفاده تغییر کند.</p>
+                </div>
             </div>
         </div>
 
