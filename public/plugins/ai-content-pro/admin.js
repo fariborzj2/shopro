@@ -173,17 +173,25 @@ function generateSimpleAi(type, payload, callback) {
         },
         body: JSON.stringify({ type, payload })
     })
-    .then(res => res.json())
+    .then(res => {
+        if (!res.ok) {
+            return res.json().then(err => { throw err; });
+        }
+        return res.json();
+    })
     .then(data => {
+        if (data.new_csrf_token) {
+            updateCsrfToken(data.new_csrf_token);
+        }
         if (data.job_id) {
             pollSimpleStatus(data.job_id, callback);
         } else {
-            showToast('خطا در ایجاد درخواست هوش مصنوعی', 'error');
+            showToast(data.message || data.error || 'خطا در ایجاد درخواست هوش مصنوعی', 'error');
         }
     })
     .catch(err => {
-        console.error(err);
-        showToast('خطای سیستمی در ارتباط با API', 'error');
+        console.error('AI Request Error:', err);
+        showToast(err.message || 'خطای سیستمی در درخواست هوش مصنوعی', 'error');
     });
 }
 
@@ -191,9 +199,21 @@ function showToast(message, type = 'error') {
     window.dispatchEvent(new CustomEvent('show-toast', { detail: { message, type } }));
 }
 
+function updateCsrfToken(token) {
+    if (!token) return;
+    const meta = document.querySelector('meta[name="csrf-token"]');
+    if (meta) meta.setAttribute('content', token);
+    document.querySelectorAll('input[name="csrf_token"]').forEach(input => input.value = token);
+}
+
 function pollSimpleStatus(id, callback) {
     fetch(`/admin/api/ai/jobs/status/${id}`)
-    .then(res => res.json())
+    .then(res => {
+        if (!res.ok) {
+            return res.json().then(err => { throw err; });
+        }
+        return res.json();
+    })
     .then(job => {
         if (job.status === 'completed') {
             try {
@@ -206,6 +226,10 @@ function pollSimpleStatus(id, callback) {
         } else {
             setTimeout(() => pollSimpleStatus(id, callback), 2500);
         }
+    })
+    .catch(err => {
+        console.error('Polling Error:', err);
+        showToast(err.message || 'خطا در دریافت وضعیت کار هوش مصنوعی', 'error');
     });
 }
 

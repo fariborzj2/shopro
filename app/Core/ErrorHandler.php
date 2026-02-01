@@ -90,9 +90,19 @@ class ErrorHandler
             ];
         }
 
-        // Include the error view directly.
-        // Using a function like `view()` might not be safe if the error originated from it.
-        require_once PROJECT_ROOT . '/views/error.php';
+        // Handle AJAX/JSON requests
+        if (self::isAjaxRequest()) {
+            header('Content-Type: application/json');
+            echo json_encode([
+                'success' => false,
+                'error' => $title,
+                'message' => $message,
+                'debug' => $debug_info
+            ], JSON_UNESCAPED_UNICODE);
+        } else {
+            // Include the error view directly.
+            require_once PROJECT_ROOT . '/views/error.php';
+        }
 
         // Stop execution, especially after a fatal error.
         if ($isFatal) {
@@ -111,10 +121,24 @@ class ErrorHandler
 
         http_response_code($code);
 
-        // We don't pass debug info for HTTP errors as they are not exceptions.
-        $debug_info = null;
-
-        require_once PROJECT_ROOT . '/views/error.php';
+        if (self::isAjaxRequest()) {
+            header('Content-Type: application/json');
+            echo json_encode([
+                'success' => false,
+                'error' => $title,
+                'message' => $message
+            ], JSON_UNESCAPED_UNICODE);
+        } else {
+            $debug_info = null;
+            require_once PROJECT_ROOT . '/views/error.php';
+        }
         exit();
+    }
+
+    private static function isAjaxRequest(): bool
+    {
+        return (isset($_SERVER['HTTP_ACCEPT']) && strpos($_SERVER['HTTP_ACCEPT'], 'application/json') !== false) ||
+               (isset($_SERVER['CONTENT_TYPE']) && strpos($_SERVER['CONTENT_TYPE'], 'application/json') !== false) ||
+               (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest');
     }
 }

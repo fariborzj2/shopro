@@ -26,17 +26,21 @@
         })
         .then(res => res.json())
         .then(data => {
+            if (data.new_csrf_token) {
+                updateCsrfToken(data.new_csrf_token);
+            }
             if (data.job_id) {
                 this.jobId = data.job_id;
                 this.pollStatus();
             } else {
-                alert('خطا در ایجاد کار: ' + (data.error || 'ناشناخته'));
+                showToast('خطا در ایجاد کار: ' + (data.error || 'ناشناخته'), 'error');
                 this.loading = false;
             }
         })
         .catch(err => {
             console.error(err);
             this.loading = false;
+            showToast('خطای سیستمی در ارتباط با سرور', 'error');
         });
     },
 
@@ -49,6 +53,7 @@
             this.jobStatus = job.status;
             if (job.status === 'completed') {
                 this.loading = false;
+                showToast('کار با موفقیت انجام شد.', 'success');
                 try {
                     this.jobResult = JSON.parse(job.result);
                 } catch(e) {
@@ -56,7 +61,7 @@
                 }
             } else if (job.status === 'failed') {
                 this.loading = false;
-                alert('خطا در پردازش هوش مصنوعی: ' + job.error_message);
+                showToast('خطا در پردازش هوش مصنوعی: ' + job.error_message, 'error');
             } else {
                 // Poll again after 3 seconds
                 setTimeout(() => this.pollStatus(), 3000);
@@ -66,7 +71,32 @@
 
     copyResult() {
         const text = typeof this.jobResult === 'string' ? this.jobResult : JSON.stringify(this.jobResult, null, 2);
-        navigator.clipboard.writeText(text).then(() => alert('کپی شد!'));
+        navigator.clipboard.writeText(text).then(() => showToast('در حافظه کپی شد.', 'success'));
+    },
+
+    createBulkJobs(topicsStr) {
+        const topics = topicsStr.split('\n').map(t => t.trim()).filter(t => t.length > 3);
+        if (topics.length === 0) return;
+
+        this.loading = true;
+
+        fetch('/admin/api/ai/jobs/bulk', {
+            method: 'POST',
+            body: JSON.stringify({ type: 'generate_article', topics })
+        })
+        .then(res => res.json())
+        .then(data => {
+            this.loading = false;
+            if (data.new_csrf_token) {
+                updateCsrfToken(data.new_csrf_token);
+            }
+            if (data.success) {
+                showToast(`${data.count} کار به صف تولید اضافه شد.`, 'success');
+                this.bulkTopics = '';
+                // Redirect to dashboard to see progress
+                setTimeout(() => window.location.href = '/admin/ai-content-pro', 1500);
+            }
+        });
     }
 }">
 
