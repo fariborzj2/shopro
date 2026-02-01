@@ -84,6 +84,10 @@
             <?php partial('icon', ['name' => 'search', 'class' => 'w-5 h-5']); ?>
             بهینه‌ساز سئو
         </button>
+        <button @click="activeTab = 'bulk'" :class="activeTab === 'bulk' ? 'bg-white dark:bg-gray-700 shadow-sm text-primary-600 dark:text-primary-400' : 'text-gray-500 hover:text-gray-700 dark:hover:text-gray-300'" class="flex-1 py-3 px-4 rounded-xl text-sm font-bold transition-all flex items-center justify-center gap-2">
+            <?php partial('icon', ['name' => 'plus', 'class' => 'w-5 h-5']); ?>
+            تولید انبوه
+        </button>
     </div>
 
     <!-- Main Content -->
@@ -171,6 +175,22 @@
                     class="w-full py-4 bg-green-600 hover:bg-green-700 text-white font-extrabold rounded-2xl shadow-lg transition-all flex items-center justify-center gap-2">
                 <?php partial('icon', ['name' => 'search', 'class' => 'w-6 h-6']); ?>
                 تولید تایتل و دیسکریپشن بهینه
+            </button>
+        </div>
+
+        <!-- Bulk Tool -->
+        <div x-show="activeTab === 'bulk'" class="p-8 space-y-6" style="display: none;" x-data="{ bulkTopics: '' }">
+             <div class="space-y-4">
+                <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">لیست موضوعات (هر خط یک موضوع)</label>
+                <textarea x-model="bulkTopics" rows="8" placeholder="مثلاً:&#10;آموزش سئو سایت&#10;چگونه لاغر شویم؟&#10;بهترین زبان‌های برنامه نویسی" class="w-full px-4 py-3 rounded-2xl border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700/50 focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none transition-all"></textarea>
+                <p class="text-xs text-gray-500">برای هر خط یک مقاله در صف انتظار ایجاد خواهد شد.</p>
+            </div>
+
+            <button @click="createBulkJobs(bulkTopics)"
+                    :disabled="!bulkTopics.trim()"
+                    class="w-full py-4 bg-purple-600 hover:bg-purple-700 disabled:opacity-50 text-white font-extrabold rounded-2xl shadow-lg transition-all flex items-center justify-center gap-2">
+                <?php partial('icon', ['name' => 'plus', 'class' => 'w-6 h-6']); ?>
+                افزودن موضوعات به صف تولید
             </button>
         </div>
 

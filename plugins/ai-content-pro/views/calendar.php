@@ -71,9 +71,32 @@
 
 <script>
 function createArticleFromCalendar(topic) {
-    if (confirm(`آیا می‌خواهید محتوا برای موضوع "${topic}" تولید شود؟`)) {
-        // Redirect to generator with preset topic
-        window.location.href = `/admin/ai-content-pro/generator?tool=article&topic=${encodeURIComponent(topic)}`;
-    }
+    window.dispatchEvent(new CustomEvent('open-ai-prompt', {
+        detail: {
+            title: 'تولید مقاله از تقویم',
+            placeholder: 'موضوع: ' + topic,
+            callback: (customTopic) => {
+                const finalTopic = customTopic || topic;
+                showToast('در حال شروع فرآیند تولید محتوا...', 'info');
+
+                generateSimpleAi('generate_article', { topic: finalTopic }, (res) => {
+                     // Job completed, now what?
+                     // In calendar view, we don't have an editor.
+                     // Better show it in a suggestion modal or redirect to a "view" page.
+                     window.dispatchEvent(new CustomEvent('open-ai-suggestion', {
+                        detail: {
+                            title: 'محتوای تولید شده: ' + finalTopic,
+                            content: res,
+                            callback: (content) => {
+                                // Maybe copy to clipboard or just close
+                                navigator.clipboard.writeText(content);
+                                showToast('محتوا در حافظه کپی شد.', 'success');
+                            }
+                        }
+                    }));
+                });
+            }
+        }
+    }));
 }
 </script>

@@ -48,6 +48,10 @@ class Hooks {
                     'url' => '/ai-content-pro/calendar',
                 ],
                 [
+                    'label' => 'گزارشات فنی',
+                    'url' => '/ai-content-pro/logs',
+                ],
+                [
                     'label' => 'تنظیمات',
                     'url' => '/ai-content-pro/settings',
                 ],

@@ -15,6 +15,26 @@ class GeneratorController extends BaseController {
         ], 'ابزار تولید محتوای هوشمند');
     }
 
+    public function createBulk() {
+        $raw = file_get_contents('php://input');
+        $data = json_decode($raw, true);
+
+        if (!$data || !isset($data['topics']) || !is_array($data['topics'])) {
+             header('Content-Type: application/json');
+             echo json_encode(['error' => 'Invalid Bulk Payload']);
+             return;
+        }
+
+        $count = 0;
+        foreach ($data['topics'] as $topic) {
+            AiJob::create($data['type'] ?? 'generate_article', ['topic' => $topic]);
+            $count++;
+        }
+
+        header('Content-Type: application/json');
+        echo json_encode(['success' => true, 'count' => $count]);
+    }
+
     public function createJob() {
         // CSRF handled globally
 
