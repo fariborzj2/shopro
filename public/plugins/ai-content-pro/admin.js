@@ -32,17 +32,25 @@ function integrateBlogPostForm() {
     const titleLabel = document.querySelector('label[for="title"]');
     if (titleLabel) {
         addAiButton(titleLabel, '✨ تولید عنوان هوشمند', (btn) => {
-            const topic = prompt('موضوع مقاله را برای تولید تایتل وارد کنید:');
-            if (!topic) return;
-            const originalText = btn.innerText;
-            btn.innerText = '⏳ در حال تولید...';
-            btn.disabled = true;
+            window.dispatchEvent(new CustomEvent('open-ai-prompt', {
+                detail: {
+                    title: 'تولید عنوان هوشمند',
+                    placeholder: 'موضوع مقاله را وارد کنید (مثلاً: فواید قهوه)',
+                    callback: (topic) => {
+                        const originalText = btn.innerText;
+                        btn.innerText = '⏳ ...';
+                        btn.disabled = true;
+                        showToast('در حال تولید عنوان توسط Gemini...', 'info');
 
-            generateSimpleAi('generate_article', { topic, options: { length: 'short', format: 'title' } }, (res) => {
-                document.getElementById('title').value = res.replace(/<\/?[^>]+(>|$)/g, "").replace(/^"|"$/g, '').trim();
-                btn.innerText = originalText;
-                btn.disabled = false;
-            });
+                        generateSimpleAi('generate_article', { topic, options: { length: 'short', format: 'title' } }, (res) => {
+                            document.getElementById('title').value = res.replace(/<\/?[^>]+(>|$)/g, "").replace(/^"|"$/g, '').trim();
+                            btn.innerText = originalText;
+                            btn.disabled = false;
+                            showToast('عنوان با موفقیت تولید شد.', 'success');
+                        });
+                    }
+                }
+            }));
         });
     }
 
@@ -57,17 +65,19 @@ function integrateBlogPostForm() {
                 content = document.getElementById('content').value;
             }
 
-            if (!content || content.length < 50) return alert('ابتدا محتوای مقاله را وارد کنید (حداقل ۵۰ کاراکتر).');
+            if (!content || content.length < 50) return showToast('ابتدا حداقل ۵۰ کاراکتر محتوا بنویسید.', 'error');
 
             const originalText = btn.innerText;
-            btn.innerText = '⏳ در حال آنالیز...';
+            btn.innerText = '⏳ ...';
             btn.disabled = true;
+            showToast('در حال آنالیز محتوا و تولید متا...', 'info');
 
             generateSimpleAi('generate_meta', { content }, (res) => {
                 if (res.meta_title) document.getElementById('meta_title').value = res.meta_title;
                 if (res.meta_description) document.getElementById('meta_description').value = res.meta_description;
                 btn.innerText = originalText;
                 btn.disabled = false;
+                showToast('تگ‌های متا بروزرسانی شدند.', 'success');
             });
         });
     }
@@ -88,10 +98,11 @@ function integrateBlogPostForm() {
                      `;
                      btn.onclick = () => {
                          const topic = document.getElementById('title').value;
-                         if (!topic) return alert('لطفاً ابتدا عنوان مقاله را وارد کنید تا هوش مصنوعی بداند در چه موردی بنویسد.');
+                         if (!topic) return showToast('لطفاً ابتدا عنوان مقاله را وارد کنید.', 'error');
 
-                         btn.innerHTML = '⏳ در حال نوشتن...';
+                         btn.innerHTML = '⏳ در حال جادو...';
                          btn.disabled = true;
+                         showToast('Gemini در حال نگارش مقاله است، لطفاً شکیبا باشید...', 'info');
 
                          generateSimpleAi('generate_article', { topic }, (res) => {
                              if (window.tinymce && tinymce.get(textarea.id)) {
@@ -99,14 +110,43 @@ function integrateBlogPostForm() {
                              } else {
                                  textarea.value = res;
                              }
-                             btn.innerHTML = '✅ محتوا تولید شد!';
+                             btn.innerHTML = '✅ تولید شد!';
+                             showToast('مقاله با موفقیت به ویرایشگر اضافه شد.', 'success');
                              setTimeout(() => {
-                                 btn.innerHTML = '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg> تولید مجدد / تکمیل';
+                                 btn.innerHTML = '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg> تولید مجدد';
                                  btn.disabled = false;
                              }, 3000);
                          });
                      };
-                     container.parentNode.insertBefore(btn, container);
+
+                     // Add "Expand" button
+                     const expandBtn = document.createElement('button');
+                     expandBtn.type = 'button';
+                     expandBtn.className = 'mb-2 mr-2 text-[10px] bg-white text-gray-600 px-3 py-1.5 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors';
+                     expandBtn.innerText = '✍️ ادامه نگارش متن انتخابی';
+                     expandBtn.onclick = () => {
+                         let selectedText = '';
+                         if (window.tinymce && tinymce.get(textarea.id)) {
+                             selectedText = tinymce.get(textarea.id).selection.getContent({format: 'text'});
+                         }
+
+                         if (!selectedText) return showToast('ابتدا بخشی از متن را انتخاب کنید.', 'error');
+
+                         showToast('در حال توسعه متن توسط هوش مصنوعی...', 'info');
+                         generateSimpleAi('generate_article', { topic: selectedText, options: { length: 'short', instruction: 'Continue writing this text.' } }, (res) => {
+                             if (window.tinymce && tinymce.get(textarea.id)) {
+                                 tinymce.get(textarea.id).selection.setContent(selectedText + ' ' + res);
+                             }
+                             showToast('متن با موفقیت ادامه یافت.', 'success');
+                         });
+                     };
+
+                     const toolbar = document.createElement('div');
+                     toolbar.className = 'flex items-center';
+                     toolbar.appendChild(btn);
+                     toolbar.appendChild(expandBtn);
+
+                     container.parentNode.insertBefore(toolbar, container);
                 }
             });
         });
@@ -138,13 +178,17 @@ function generateSimpleAi(type, payload, callback) {
         if (data.job_id) {
             pollSimpleStatus(data.job_id, callback);
         } else {
-            alert('خطا در ارتباط با سرور');
+            showToast('خطا در ایجاد درخواست هوش مصنوعی', 'error');
         }
     })
     .catch(err => {
         console.error(err);
-        alert('خطای سیستمی در درخواست هوش مصنوعی');
+        showToast('خطای سیستمی در ارتباط با API', 'error');
     });
+}
+
+function showToast(message, type = 'error') {
+    window.dispatchEvent(new CustomEvent('show-toast', { detail: { message, type } }));
 }
 
 function pollSimpleStatus(id, callback) {
@@ -158,7 +202,7 @@ function pollSimpleStatus(id, callback) {
                 callback(job.result);
             }
         } else if (job.status === 'failed') {
-            alert('خطای هوش مصنوعی: ' + job.error_message);
+            showToast('پردازش با خطا مواجه شد: ' + job.error_message, 'error');
         } else {
             setTimeout(() => pollSimpleStatus(id, callback), 2500);
         }
@@ -181,16 +225,23 @@ function integrateCommentsList() {
                 const originalContent = btn.innerHTML;
                 btn.innerHTML = '<span class="text-[10px] animate-pulse">...</span>';
                 btn.disabled = true;
+                showToast('در حال تولید پاسخ هوشمند...', 'info');
 
                 generateSimpleAi('generate_reply', { comment_text: commentText }, (res) => {
                     const reply = typeof res === 'string' ? res : (res.reply || res.text || JSON.stringify(res));
                     btn.innerHTML = originalContent;
                     btn.disabled = false;
 
-                    if (confirm('پیشنهاد هوش مصنوعی برای پاسخ:\n\n' + reply + '\n\nآیا می‌خواهید این پاسخ را ثبت کنید؟')) {
-                        const editLink = row.querySelector('a[title="ویرایش"]').href;
-                        window.location.href = editLink + (editLink.includes('?') ? '&' : '?') + 'ai_reply=' + encodeURIComponent(reply);
-                    }
+                    window.dispatchEvent(new CustomEvent('open-ai-suggestion', {
+                        detail: {
+                            title: 'پیشنهاد پاسخ هوشمند',
+                            content: reply,
+                            callback: (finalReply) => {
+                                const editLink = row.querySelector('a[title="ویرایش"]').href;
+                                window.location.href = editLink + (editLink.includes('?') ? '&' : '?') + 'ai_reply=' + encodeURIComponent(finalReply);
+                            }
+                        }
+                    }));
                 });
             };
 

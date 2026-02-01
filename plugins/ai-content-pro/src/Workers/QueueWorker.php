@@ -64,6 +64,14 @@ class QueueWorker {
                     $result = $calendar->generatePlan($payload['period'] ?? 'week', $payload['topic'] ?? 'General');
                     break;
 
+                case 'generate_faq':
+                    if (AiSetting::get('enable_faq_gen') !== '1') {
+                         throw new \Exception("Feature 'generate_faq' is disabled.");
+                    }
+                    $engine = new ContentEngine();
+                    $result = $engine->generateFaq($payload['topic']);
+                    break;
+
                 default:
                     throw new \Exception("Unknown job type: " . $job['type']);
             }

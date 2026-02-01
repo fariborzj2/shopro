@@ -27,4 +27,24 @@ class AiLog {
     public static function info($message, $context = []) {
         self::log('info', $message, $context);
     }
+
+    public static function getPaginated($page = 1, $limit = 20) {
+        $offset = ($page - 1) * $limit;
+        $db = Database::getConnection();
+        $stmt = $db->prepare("SELECT * FROM ai_cp_logs ORDER BY created_at DESC LIMIT ? OFFSET ?");
+        $stmt->bindValue(1, $limit, \PDO::PARAM_INT);
+        $stmt->bindValue(2, $offset, \PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+    }
+
+    public static function countAll() {
+        $db = Database::getConnection();
+        return $db->query("SELECT COUNT(*) FROM ai_cp_logs")->fetchColumn();
+    }
+
+    public static function clear() {
+        $db = Database::getConnection();
+        return $db->exec("TRUNCATE TABLE ai_cp_logs");
+    }
 }

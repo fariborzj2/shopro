@@ -182,11 +182,12 @@ function closeJobModal() {
 }
 
 function triggerWorker() {
+    showToast('در حال شروع پردازش صف...', 'info');
     fetch('/admin/api/ai/process', { method: 'POST' })
         .then(res => res.json())
         .then(data => {
-            alert(`تعداد ${data.processed} مورد پردازش شد.`);
-            location.reload();
+            showToast(`تعداد ${data.processed} مورد با موفقیت پردازش شد.`, 'success');
+            setTimeout(() => location.reload(), 2000);
         });
 }
 </script>

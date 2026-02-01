@@ -52,6 +52,10 @@ class ContentEngine {
 
         $userPrompt = "Write an article about: " . $topic;
 
+        if (!empty($options['instruction'])) {
+            $userPrompt = "INSTRUCTION: " . $options['instruction'] . "\nCONTEXT: " . $topic;
+        }
+
         if ($sourceContext) {
             $userPrompt .= "\n\n" . $sourceContext;
         }
@@ -85,6 +89,8 @@ class ContentEngine {
     }
 
     private function injectInternalLinks($html) {
+        if (empty($html)) return $html;
+
         try {
             $posts = \App\Models\BlogPost::getAllPublished();
             if (empty($posts)) return $html;
@@ -94,34 +100,67 @@ class ContentEngine {
                 return mb_strlen($b['title'] ?? '') <=> mb_strlen($a['title'] ?? '');
             });
 
-            // We only want to link a few times (e.g. max 5 links) to avoid spamming
+            // Use DOMDocument for safe manipulation
+            $dom = new \DOMDocument();
+            // Suppress warnings for HTML5 tags or malformed HTML from AI
+            libxml_use_internal_errors(true);
+
+            // Add mb_convert_encoding to handle UTF-8 properly with DOMDocument
+            $encodedHtml = '<?xml encoding="utf-8" ?>' . $html;
+            $dom->loadHTML($encodedHtml, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
+            libxml_clear_errors();
+
             $linkCount = 0;
-            $maxLinks = 5;
-            $linkedIds = [];
+            $maxLinks = (int) AiSetting::get('max_internal_links', 5);
+
+            $xpath = new \DOMXPath($dom);
 
             foreach ($posts as $post) {
                 if ($linkCount >= $maxLinks) break;
 
-                $title = $post['title'];
-                if (mb_strlen($title) < 5) continue;
+                $title = trim($post['title']);
+                if (mb_strlen($title) < 4) continue;
 
                 $url = "/blog/" . ($post['category_slug'] ?? 'uncategorized') . "/{$post['id']}-{$post['slug']}";
 
-                // Use regex with negative lookahead to avoid linking inside existing <a> tags or headings
-                // This is a simplified version of the "Safe Injection"
-                $quotedTitle = preg_quote($title, '/');
+                // Find text nodes that contain the title and are NOT inside <a> or headings
+                // We target <p>, <li>, <div>, <span>
+                $query = "//text()[contains(., '$title') and not(ancestor::a) and not(ancestor::h1) and not(ancestor::h2) and not(ancestor::h3) and not(ancestor::h4)]";
+                $nodes = $xpath->query($query);
 
-                // Pattern: match title not followed by </a> and not inside <h...>
-                // Actually, a safer way in PHP without DOM is:
-                $pattern = '/(?!(?:[^<]+>|[^>]+<\/a>))(' . $quotedTitle . ')/ui';
+                foreach ($nodes as $node) {
+                    if ($linkCount >= $maxLinks) break;
 
-                if (preg_match($pattern, $html)) {
-                    $html = preg_replace($pattern, '<a href="' . $url . '" class="text-primary-600 hover:underline font-medium">$1</a>', $html, 1);
-                    $linkCount++;
+                    $text = $node->nodeValue;
+                    // Strict case-insensitive match for Persian/Arabic
+                    if (mb_stripos($text, $title) !== false) {
+                        // Split text and inject anchor
+                        $parts = preg_split('/(' . preg_quote($title, '/') . ')/ui', $text, 2, PREG_SPLIT_DELIM_CAPTURE);
+
+                        if (count($parts) === 3) {
+                            $newFragment = $dom->createDocumentFragment();
+                            $newFragment->appendChild($dom->createTextNode($parts[0]));
+
+                            $a = $dom->createElement('a', htmlspecialchars($parts[1]));
+                            $a->setAttribute('href', $url);
+                            $a->setAttribute('class', 'text-primary-600 hover:underline font-bold ai-internal-link');
+                            $newFragment->appendChild($a);
+
+                            $newFragment->appendChild($dom->createTextNode($parts[2]));
+
+                            $node->parentNode->replaceChild($newFragment, $node);
+                            $linkCount++;
+                        }
+                    }
                 }
             }
+
+            $html = $dom->saveHTML();
+            // Remove the xml tag we added
+            $html = str_replace('<?xml encoding="utf-8" ?>', '', $html);
+
         } catch (\Exception $e) {
-            AiLog::error("Internal linking failed: " . $e->getMessage());
+            AiLog::error("Advanced Internal linking failed: " . $e->getMessage());
         }
 
         return $html;
