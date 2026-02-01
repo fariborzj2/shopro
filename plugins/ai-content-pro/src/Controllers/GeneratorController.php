@@ -16,10 +16,9 @@ class GeneratorController extends BaseController {
     }
 
     public function createBulk() {
-        $raw = file_get_contents('php://input');
-        $data = json_decode($raw, true);
+        $data = Request::all();
 
-        if (!$data || !isset($data['topics']) || !is_array($data['topics'])) {
+        if (empty($data['topics']) || !is_array($data['topics'])) {
              header('Content-Type: application/json');
              echo json_encode(['error' => 'Invalid Bulk Payload']);
              return;
@@ -32,17 +31,19 @@ class GeneratorController extends BaseController {
         }
 
         header('Content-Type: application/json');
-        echo json_encode(['success' => true, 'count' => $count]);
+        $response = ['success' => true, 'count' => $count];
+        if (isset($_SESSION['csrf_token'])) {
+            $response['new_csrf_token'] = $_SESSION['csrf_token'];
+        }
+        echo json_encode($response);
     }
 
     public function createJob() {
         // CSRF handled globally
 
-        $input = Request::input();
-        $raw = file_get_contents('php://input');
-        $data = json_decode($raw, true);
+        $data = Request::all();
 
-        if (!$data || !isset($data['type'])) {
+        if (empty($data['type'])) {
              header('Content-Type: application/json');
              echo json_encode(['error' => 'Invalid Payload']);
              return;
