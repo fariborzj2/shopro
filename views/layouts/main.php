@@ -80,7 +80,7 @@
     <script src="/js/jalali-datepicker.js" defer></script>
 
     <!-- TinyMCE -->
-    <script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
+    <script src="https://cdn.tiny.cloud/1/<?php echo \App\Models\Setting::getTinyMceApiKey(); ?>/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
 
      <?php \App\Core\Plugin\Assets::renderStyles(); ?>
 
