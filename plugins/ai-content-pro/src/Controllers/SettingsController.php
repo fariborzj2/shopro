@@ -5,29 +5,15 @@ namespace AiContentPro\Controllers;
 use AiContentPro\Models\AiSetting;
 use App\Core\Request;
 
-class SettingsController {
+class SettingsController extends BaseController {
 
     public function index() {
         // Load data
         $settings = AiSetting::getAll();
 
-        // Render View to String
-        ob_start();
-        extract(['settings' => $settings]);
-        $viewPath = __DIR__ . '/../../views/settings.php';
-        if (file_exists($viewPath)) {
-            require $viewPath;
-        } else {
-            echo "View not found: " . $viewPath;
-        }
-        $content = ob_get_clean();
-
-        $title = 'تنظیمات AI Content Pro';
-        if (file_exists(__DIR__ . '/../../../../views/layouts/main.php')) {
-            require __DIR__ . '/../../../../views/layouts/main.php';
-        } else {
-            echo $content;
-        }
+        $this->view('settings', [
+            'settings' => $settings
+        ], 'تنظیمات هوش مصنوعی');
     }
 
     public function update() {

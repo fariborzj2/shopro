@@ -11,6 +11,7 @@ try {
     $db->exec("DROP TABLE IF EXISTS ai_cp_settings");
     $db->exec("DROP TABLE IF EXISTS ai_cp_jobs");
     $db->exec("DROP TABLE IF EXISTS ai_cp_logs");
+    $db->exec("DROP TABLE IF EXISTS ai_cp_calendar");
 
 } catch (PDOException $e) {
     error_log("AiContentPro Uninstall Error: " . $e->getMessage());

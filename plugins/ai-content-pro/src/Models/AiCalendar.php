@@ -17,4 +17,16 @@ class AiCalendar {
         $stmt = $db->query("SELECT * FROM ai_cp_calendar ORDER BY due_date ASC");
         return $stmt->fetchAll(\PDO::FETCH_ASSOC);
     }
+
+    public static function delete($id) {
+        $db = Database::getConnection();
+        $stmt = $db->prepare("DELETE FROM ai_cp_calendar WHERE id = ?");
+        return $stmt->execute([$id]);
+    }
+
+    public static function updateStatus($id, $status) {
+        $db = Database::getConnection();
+        $stmt = $db->prepare("UPDATE ai_cp_calendar SET status = ? WHERE id = ?");
+        return $stmt->execute([$status, $id]);
+    }
 }

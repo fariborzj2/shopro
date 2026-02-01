@@ -51,4 +51,25 @@ class AiJob {
         $stmt = $db->prepare($sql);
         $stmt->execute($params);
     }
+
+    public static function getPaginated($page = 1, $limit = 20) {
+        $offset = ($page - 1) * $limit;
+        $db = Database::getConnection();
+        $stmt = $db->prepare("SELECT * FROM ai_cp_jobs ORDER BY created_at DESC LIMIT ? OFFSET ?");
+        $stmt->bindValue(1, $limit, \PDO::PARAM_INT);
+        $stmt->bindValue(2, $offset, \PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+    }
+
+    public static function countAll() {
+        $db = Database::getConnection();
+        return $db->query("SELECT COUNT(*) FROM ai_cp_jobs")->fetchColumn();
+    }
+
+    public static function getStats() {
+        $db = Database::getConnection();
+        $stmt = $db->query("SELECT status, COUNT(*) as count FROM ai_cp_jobs GROUP BY status");
+        return $stmt->fetchAll(\PDO::FETCH_KEY_PAIR);
+    }
 }
