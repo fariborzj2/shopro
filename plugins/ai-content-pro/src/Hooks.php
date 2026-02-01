@@ -22,14 +22,36 @@ class Hooks {
         if (class_exists('App\Core\Plugin\Filter')) {
             Filter::add('admin_menu_items', [self::class, 'addAdminMenu']);
         }
+
+        // Add Admin Scripts
+        if (class_exists('App\Core\Plugin\Assets')) {
+            \App\Core\Plugin\Assets::addScript('ai-cp-admin', '/plugins/ai-content-pro/admin.js');
+        }
     }
 
     public static function addAdminMenu($items) {
         $items[] = [
-            'label' => 'AI Content Pro',
-            'url' => '/ai-content-pro/settings',
-            'icon' => 'settings',
-            'permission' => 'settings'
+            'label' => 'هوش مصنوعی (Pro)',
+            'icon' => 'ai', // Make sure to handle this icon or use a fallback
+            'permission' => 'settings',
+            'children' => [
+                [
+                    'label' => 'داشبورد هوشمند',
+                    'url' => '/ai-content-pro',
+                ],
+                [
+                    'label' => 'تولید محتوا',
+                    'url' => '/ai-content-pro/generator',
+                ],
+                [
+                    'label' => 'تقویم محتوایی',
+                    'url' => '/ai-content-pro/calendar',
+                ],
+                [
+                    'label' => 'تنظیمات',
+                    'url' => '/ai-content-pro/settings',
+                ],
+            ]
         ];
         return $items;
     }

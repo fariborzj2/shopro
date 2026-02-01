@@ -3,9 +3,17 @@
 namespace AiContentPro\Controllers;
 
 use AiContentPro\Models\AiJob;
+use AiContentPro\Models\AiSetting;
 use App\Core\Request;
 
-class GeneratorController {
+class GeneratorController extends BaseController {
+
+    public function index() {
+        $settings = AiSetting::getAll();
+        $this->view('generator', [
+            'settings' => $settings
+        ], 'ابزار تولید محتوای هوشمند');
+    }
 
     public function createJob() {
         // CSRF handled globally

@@ -27,14 +27,20 @@ class ContentEngine {
         }
 
         $systemPrompt = "You are an expert SEO content writer fluent in {$language}. " .
-            "Your task is to write a comprehensive, engaging, and SEO-optimized article. " .
+            "Your task is to generate content based on the user request. " .
             "Strictly adhere to the following rules:\n" .
-            "1. Output Language: {$language} ONLY.\n" .
-            "2. Structure: Use H2 and H3 tags for headings. Do not use H1.\n" .
-            "3. Format: Return pure HTML content (paragraphs, lists, headings) without ```html``` code blocks or markdown.\n" .
-            "4. Tone: Professional yet accessible.\n" .
-            "5. Length: Comprehensive (approx 1000-1500 words).\n" .
-            "6. Content: informative, valuable, and original.";
+            "1. Output Language: {$language} ONLY.\n";
+
+        if (($options['format'] ?? '') === 'title') {
+            $systemPrompt .= "2. Format: Return ONLY the title text, no HTML, no quotes, no markdown.\n" .
+                             "3. Goal: Write a catchy, SEO-friendly headline for the topic.\n";
+        } else {
+            $systemPrompt .= "2. Structure: Use H2 and H3 tags for headings. Do not use H1.\n" .
+                             "3. Format: Return pure HTML content (paragraphs, lists, headings) without ```html``` code blocks or markdown.\n" .
+                             "4. Tone: Professional yet accessible.\n" .
+                             "5. Length: " . (($options['length'] ?? '') === 'short' ? 'Short and concise.' : 'Comprehensive (approx 1000-1500 words).') . "\n" .
+                             "6. Content: informative, valuable, and original.\n";
+        }
 
         if (!empty($options['keywords'])) {
             $systemPrompt .= "\n7. Focus Keywords: " . implode(', ', $options['keywords']);
@@ -52,14 +58,9 @@ class ContentEngine {
 
         $content = $this->gemini->generateContent($userPrompt, $systemPrompt);
 
-        // Internal Links Injection (Simple placeholder logic)
-        if (AiSetting::get('enable_internal_links') === '1' && !empty($content)) {
-            // In a real scenario, we would query DB for related posts.
-            // Here we just mock the logic or leave it to the post-processing.
-            // For now, let's ask Gemini to suggest internal links anchors? No, Gemini doesn't know our DB.
-            // Better: We append a note to Gemini to suggest where to link?
-            // Or we just accept that 'Internal link suggestions' might be a separate job.
-            // I'll stick to the current scope.
+        // Internal Links Injection
+        if (AiSetting::get('enable_internal_links') === '1' && !empty($content) && ($options['format'] ?? '') !== 'title') {
+            $content = $this->injectInternalLinks($content);
         }
 
         // Image Generation (Prompt)
@@ -81,6 +82,49 @@ class ContentEngine {
     private function generateImagePrompt($topic) {
         $systemPrompt = "Generate a highly detailed English image generation prompt (for Midjourney/DALL-E) representing the topic: {$topic}.";
         return $this->gemini->generateContent("Topic: " . $topic, $systemPrompt);
+    }
+
+    private function injectInternalLinks($html) {
+        try {
+            $posts = \App\Models\BlogPost::getAllPublished();
+            if (empty($posts)) return $html;
+
+            // Sort posts by title length DESC to match longest phrases first
+            usort($posts, function($a, $b) {
+                return mb_strlen($b['title'] ?? '') <=> mb_strlen($a['title'] ?? '');
+            });
+
+            // We only want to link a few times (e.g. max 5 links) to avoid spamming
+            $linkCount = 0;
+            $maxLinks = 5;
+            $linkedIds = [];
+
+            foreach ($posts as $post) {
+                if ($linkCount >= $maxLinks) break;
+
+                $title = $post['title'];
+                if (mb_strlen($title) < 5) continue;
+
+                $url = "/blog/" . ($post['category_slug'] ?? 'uncategorized') . "/{$post['id']}-{$post['slug']}";
+
+                // Use regex with negative lookahead to avoid linking inside existing <a> tags or headings
+                // This is a simplified version of the "Safe Injection"
+                $quotedTitle = preg_quote($title, '/');
+
+                // Pattern: match title not followed by </a> and not inside <h...>
+                // Actually, a safer way in PHP without DOM is:
+                $pattern = '/(?!(?:[^<]+>|[^>]+<\/a>))(' . $quotedTitle . ')/ui';
+
+                if (preg_match($pattern, $html)) {
+                    $html = preg_replace($pattern, '<a href="' . $url . '" class="text-primary-600 hover:underline font-medium">$1</a>', $html, 1);
+                    $linkCount++;
+                }
+            }
+        } catch (\Exception $e) {
+            AiLog::error("Internal linking failed: " . $e->getMessage());
+        }
+
+        return $html;
     }
 
     private function fetchUrlContent($url) {

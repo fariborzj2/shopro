@@ -78,7 +78,7 @@ class BlogPost
      */
     public static function getAllPublished()
     {
-        $sql = "SELECT bp.slug, bp.id, bp.created_at, bp.updated_at, bc.slug as category_slug
+        $sql = "SELECT bp.id, bp.title, bp.slug, bp.created_at, bp.updated_at, bc.slug as category_slug
                 FROM blog_posts bp
                 LEFT JOIN blog_categories bc ON bp.category_id = bc.id
                 WHERE bp.status = 'published'
