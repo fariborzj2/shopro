@@ -1,0 +1,17 @@
+{
+  "name": "AI News Automation",
+  "slug": "ai-news",
+  "version": "1.0.0",
+  "description": "Automated AI-driven news crawling, translation, and publishing.",
+  "author": "Jules",
+  "autoload": {
+    "psr-4": {
+      "AiNews\\": "src/"
+    }
+  },
+  "events": {
+    "onActivate": "AiNews\\Hooks::activate",
+    "onDeactivate": "AiNews\\Hooks::deactivate",
+    "onLoad": "AiNews\\Hooks::boot"
+  }
+}
