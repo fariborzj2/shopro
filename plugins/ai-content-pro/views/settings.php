@@ -34,9 +34,9 @@
                             <option value="gemini-2.0-pro-exp">Gemini 2.0 Pro (نسخه آزمایشی)</option>
                             <option value="gemini-2.0-flash-lite-preview">Gemini 2.0 Flash Lite</option>
                         </optgroup>
-                        <optgroup label="سری 2.5 و مدل‌های آینده">
-                            <option value="gemini-2.5-flash">Gemini 2.5 Flash (بزودی)</option>
-                            <option value="gemini-2.5-pro">Gemini 2.5 Pro (بزودی)</option>
+                        <optgroup label="سری 2.5 و 3 (جدیدترین)">
+                            <option value="gemini-2.5-flash">Gemini 2.5 Flash (پریویو)</option>
+                            <option value="gemini-3-flash-preview">Gemini 3 Flash (پریویو)</option>
                         </optgroup>
                         <option value="custom">مدل سفارشی (وارد کردن نام دستی)</option>
                     </select>

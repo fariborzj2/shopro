@@ -107,10 +107,13 @@ class QueueWorker {
 
             if ($attempts < $retryLimit) {
                 $this->retryJob($job['id'], $attempts, $e->getMessage());
-                AiLog::info("Job {$job['id']} failed (Attempt $attempts/$retryLimit). Retrying...");
+                AiLog::info("Job {$job['id']} failed (Attempt $attempts/$retryLimit). Retrying...", ['error' => $e->getMessage()]);
             } else {
                 AiJob::updateStatus($job['id'], 'failed', null, $e->getMessage());
-                AiLog::error("Job {$job['id']} failed permanently: " . $e->getMessage());
+                AiLog::error("Job {$job['id']} failed permanently: " . $e->getMessage(), [
+                    'trace' => $e->getTraceAsString(),
+                    'payload' => $job['payload']
+                ]);
             }
         }
     }
