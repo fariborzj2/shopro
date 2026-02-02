@@ -19,14 +19,21 @@ class GeminiService {
      *
      * @param string $prompt The user prompt
      * @param string $systemInstruction Optional system instruction
-     * @param string $model Model name (default: gemini-1.5-flash)
+     * @param string|null $model Model name
      * @param float $temperature
      * @return string|null Generated text or null on failure
      */
-    public function generateContent($prompt, $systemInstruction = '', $model = 'gemini-1.5-flash', $temperature = 0.7) {
+    public function generateContent($prompt, $systemInstruction = '', $model = null, $temperature = 0.7) {
         if (empty($this->apiKey)) {
             AiLog::error("Gemini API Key is missing.");
             return null;
+        }
+
+        if (!$model) {
+            $model = AiSetting::get('model_content', 'gemini-1.5-flash');
+            if ($model === 'custom') {
+                $model = AiSetting::get('custom_model_name', 'gemini-1.5-flash');
+            }
         }
 
         // Strictly follow Quickstart: Key as query parameter

@@ -8,7 +8,7 @@
         <?php csrf_field(); ?>
 
         <!-- API Configuration -->
-        <div class="bg-gray-50 dark:bg-gray-700/50 p-6 rounded-xl border border-gray-100 dark:border-gray-700">
+        <div class="bg-gray-50 dark:bg-gray-700/50 p-6 rounded-xl border border-gray-100 dark:border-gray-700" x-data="{ model: '<?php echo $settings['model_content'] ?? 'gemini-1.5-flash'; ?>' }">
             <h2 class="text-lg font-semibold text-gray-800 dark:text-white mb-4 flex items-center">
                 <span class="w-1 h-6 bg-blue-500 rounded-full ml-2"></span>
                 پیکربندی API
@@ -24,10 +24,20 @@
 
                 <div>
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">مدل پیش‌فرض</label>
-                    <select name="model_content" class="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors">
-                        <option value="gemini-1.5-flash" <?php echo ($settings['model_content'] ?? '') == 'gemini-1.5-flash' ? 'selected' : ''; ?>>Gemini 1.5 Flash</option>
-                        <option value="gemini-1.5-pro" <?php echo ($settings['model_content'] ?? '') == 'gemini-1.5-pro' ? 'selected' : ''; ?>>Gemini 1.5 Pro</option>
+                    <select name="model_content" x-model="model" class="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors">
+                        <option value="gemini-1.5-flash">Gemini 1.5 Flash</option>
+                        <option value="gemini-1.5-pro">Gemini 1.5 Pro</option>
+                        <option value="gemini-2.0-flash">Gemini 2.0 Flash</option>
+                        <option value="gemini-2.0-pro-exp">Gemini 2.0 Pro (Experimental)</option>
+                        <option value="custom">مدل سفارشی (وارد کردن نام)</option>
                     </select>
+                </div>
+
+                <div x-show="model === 'custom'" x-cloak>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">نام مدل سفارشی</label>
+                    <input type="text" name="custom_model_name" value="<?php echo htmlspecialchars($settings['custom_model_name'] ?? ''); ?>"
+                           class="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
+                           placeholder="مثلاً: gemini-2.5-pro">
                 </div>
             </div>
         </div>

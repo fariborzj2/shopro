@@ -78,6 +78,7 @@ class Hooks {
             'enable_comments' => '0',
             'enable_calendar' => '0',
             'model_content' => 'gemini-1.5-flash',
+            'custom_model_name' => '',
             'max_tokens_content' => '2000',
             'language' => 'fa',
             'seo_title_length' => '60',

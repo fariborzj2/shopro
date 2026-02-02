@@ -24,6 +24,11 @@
             method: 'POST',
             body: JSON.stringify({ type, payload })
         })
+        .then(res => {
+            // Trigger worker immediately
+            fetch('/admin/api/ai/process', { method: 'POST' }).catch(e => {});
+            return res;
+        })
         .then(res => res.json())
         .then(data => {
             if (data.new_csrf_token) {
@@ -83,6 +88,11 @@
         fetch('/admin/api/ai/jobs/bulk', {
             method: 'POST',
             body: JSON.stringify({ type: 'generate_article', topics })
+        })
+        .then(res => {
+            // Trigger worker
+            fetch('/admin/api/ai/process', { method: 'POST' }).catch(e => {});
+            return res;
         })
         .then(res => res.json())
         .then(data => {

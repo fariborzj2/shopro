@@ -36,6 +36,7 @@ class SettingsController extends BaseController {
             'enable_comments',
             'enable_calendar',
             'model_content',
+            'custom_model_name',
             'max_tokens_content',
             'seo_title_length',
             'seo_desc_length',
