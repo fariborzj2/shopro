@@ -36,8 +36,8 @@ class GeminiService {
             }
         }
 
-        // Strictly follow Quickstart: Key as query parameter
-        $url = $this->baseUrl . $model . ':generateContent?key=' . $this->apiKey;
+        // Strictly follow Quickstart: Key in header or query param
+        $url = $this->baseUrl . $model . ':generateContent';
 
         $payload = [
             'contents' => [
@@ -53,12 +53,16 @@ class GeminiService {
         ];
 
         if (!empty($systemInstruction)) {
-            $prompt = "System Instruction: " . $systemInstruction . "\n\nUser Request: " . $prompt;
-            $payload['contents'][0]['parts'][0]['text'] = $prompt;
+            $payload['system_instruction'] = [
+                'parts' => [
+                    ['text' => $systemInstruction]
+                ]
+            ];
         }
 
         $headers = [
-            'Content-Type: application/json'
+            'Content-Type: application/json',
+            'x-goog-api-key: ' . $this->apiKey
         ];
 
         try {
@@ -81,7 +85,7 @@ class GeminiService {
             }
 
             if ($httpCode !== 200) {
-                AiLog::error("Gemini API Error ($httpCode): " . $response);
+                AiLog::error("Gemini API Error ($httpCode): " . $response, ['model' => $model]);
                 return null;
             }
 

@@ -31,7 +31,10 @@
             }
 
             // Trigger worker AFTER token update
-            fetch('/admin/api/ai/process', { method: 'POST' }).catch(e => {});
+            fetch('/admin/api/ai/process', { method: 'POST' })
+                .then(r => r.json())
+                .then(d => { if (d.new_csrf_token) updateCsrfToken(d.new_csrf_token); })
+                .catch(e => {});
 
             if (data.job_id) {
                 this.jobId = data.job_id;
@@ -96,7 +99,10 @@
             }
 
             // Trigger worker
-            fetch('/admin/api/ai/process', { method: 'POST' }).catch(e => {});
+            fetch('/admin/api/ai/process', { method: 'POST' })
+                .then(r => r.json())
+                .then(d => { if (d.new_csrf_token) updateCsrfToken(d.new_csrf_token); })
+                .catch(e => {});
 
             if (data.success) {
                 showToast(`${data.count} کار به صف تولید اضافه شد.`, 'success');

@@ -186,7 +186,10 @@ function generateSimpleAi(type, payload, callback) {
         }
 
         // 2. Now trigger worker using the NEW token
-        fetch('/admin/api/ai/process', { method: 'POST' }).catch(e => console.error('Worker trigger failed', e));
+        fetch('/admin/api/ai/process', { method: 'POST' })
+            .then(res => res.json())
+            .then(d => { if (d.new_csrf_token) updateCsrfToken(d.new_csrf_token); })
+            .catch(e => console.error('Worker trigger failed', e));
 
         if (data.job_id) {
             pollSimpleStatus(data.job_id, callback);
