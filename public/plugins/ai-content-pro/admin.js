@@ -174,20 +174,20 @@ function generateSimpleAi(type, payload, callback) {
         body: JSON.stringify({ type, payload })
     })
     .then(res => {
-        // Trigger worker immediately to process this job
-        fetch('/admin/api/ai/process', { method: 'POST' }).catch(e => console.error('Worker trigger failed', e));
-        return res;
-    })
-    .then(res => {
         if (!res.ok) {
             return res.json().then(err => { throw err; });
         }
         return res.json();
     })
     .then(data => {
+        // 1. Update CSRF Token FIRST
         if (data.new_csrf_token) {
             updateCsrfToken(data.new_csrf_token);
         }
+
+        // 2. Now trigger worker using the NEW token
+        fetch('/admin/api/ai/process', { method: 'POST' }).catch(e => console.error('Worker trigger failed', e));
+
         if (data.job_id) {
             pollSimpleStatus(data.job_id, callback);
         } else {
