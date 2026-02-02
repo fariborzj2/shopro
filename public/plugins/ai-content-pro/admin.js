@@ -174,6 +174,11 @@ function generateSimpleAi(type, payload, callback) {
         body: JSON.stringify({ type, payload })
     })
     .then(res => {
+        // Trigger worker immediately to process this job
+        fetch('/admin/api/ai/process', { method: 'POST' }).catch(e => console.error('Worker trigger failed', e));
+        return res;
+    })
+    .then(res => {
         if (!res.ok) {
             return res.json().then(err => { throw err; });
         }
@@ -195,11 +200,11 @@ function generateSimpleAi(type, payload, callback) {
     });
 }
 
-function showToast(message, type = 'error') {
+window.showToast = function(message, type = 'error') {
     window.dispatchEvent(new CustomEvent('show-toast', { detail: { message, type } }));
 }
 
-function updateCsrfToken(token) {
+window.updateCsrfToken = function(token) {
     if (!token) return;
     const meta = document.querySelector('meta[name="csrf-token"]');
     if (meta) meta.setAttribute('content', token);
