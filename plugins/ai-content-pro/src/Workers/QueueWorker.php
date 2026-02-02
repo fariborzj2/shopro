@@ -25,9 +25,20 @@ class QueueWorker {
     }
 
     private function processJob($job) {
-        AiJob::updateStatus($job['id'], 'processing');
+        // Double check status to avoid double processing
+        $db = \App\Core\Database::getConnection();
+        $stmt = $db->prepare("UPDATE ai_cp_jobs SET status = 'processing', updated_at = NOW() WHERE id = ? AND status = 'pending'");
+        $stmt->execute([$job['id']]);
+
+        if ($stmt->rowCount() === 0) {
+            return; // Already processed or processing
+        }
 
         try {
+            if (empty(AiSetting::get('gemini_api_key'))) {
+                throw new \Exception("Gemini API Key is not configured in settings.");
+            }
+
             $payload = json_decode($job['payload'], true);
             $result = null;
 

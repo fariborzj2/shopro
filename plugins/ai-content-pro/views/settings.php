@@ -25,11 +25,20 @@
                 <div>
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">مدل پیش‌فرض</label>
                     <select name="model_content" x-model="model" class="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors">
-                        <option value="gemini-1.5-flash">Gemini 1.5 Flash</option>
-                        <option value="gemini-1.5-pro">Gemini 1.5 Pro</option>
-                        <option value="gemini-2.0-flash">Gemini 2.0 Flash</option>
-                        <option value="gemini-2.0-pro-exp">Gemini 2.0 Pro (Experimental)</option>
-                        <option value="custom">مدل سفارشی (وارد کردن نام)</option>
+                        <optgroup label="سری 1.5 (پایدار)">
+                            <option value="gemini-1.5-flash">Gemini 1.5 Flash</option>
+                            <option value="gemini-1.5-pro">Gemini 1.5 Pro</option>
+                        </optgroup>
+                        <optgroup label="سری 2.0 (جدید)">
+                            <option value="gemini-2.0-flash">Gemini 2.0 Flash (پیش‌فرض هوشمند)</option>
+                            <option value="gemini-2.0-pro-exp">Gemini 2.0 Pro (نسخه آزمایشی)</option>
+                            <option value="gemini-2.0-flash-lite-preview">Gemini 2.0 Flash Lite</option>
+                        </optgroup>
+                        <optgroup label="سری 2.5 و مدل‌های آینده">
+                            <option value="gemini-2.5-flash">Gemini 2.5 Flash (بزودی)</option>
+                            <option value="gemini-2.5-pro">Gemini 2.5 Pro (بزودی)</option>
+                        </optgroup>
+                        <option value="custom">مدل سفارشی (وارد کردن نام دستی)</option>
                     </select>
                 </div>
 

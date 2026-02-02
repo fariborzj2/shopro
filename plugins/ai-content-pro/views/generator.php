@@ -24,16 +24,15 @@
             method: 'POST',
             body: JSON.stringify({ type, payload })
         })
-        .then(res => {
-            // Trigger worker immediately
-            fetch('/admin/api/ai/process', { method: 'POST' }).catch(e => {});
-            return res;
-        })
         .then(res => res.json())
         .then(data => {
             if (data.new_csrf_token) {
                 updateCsrfToken(data.new_csrf_token);
             }
+
+            // Trigger worker AFTER token update
+            fetch('/admin/api/ai/process', { method: 'POST' }).catch(e => {});
+
             if (data.job_id) {
                 this.jobId = data.job_id;
                 this.pollStatus();
@@ -89,17 +88,16 @@
             method: 'POST',
             body: JSON.stringify({ type: 'generate_article', topics })
         })
-        .then(res => {
-            // Trigger worker
-            fetch('/admin/api/ai/process', { method: 'POST' }).catch(e => {});
-            return res;
-        })
         .then(res => res.json())
         .then(data => {
             this.loading = false;
             if (data.new_csrf_token) {
                 updateCsrfToken(data.new_csrf_token);
             }
+
+            // Trigger worker
+            fetch('/admin/api/ai/process', { method: 'POST' }).catch(e => {});
+
             if (data.success) {
                 showToast(`${data.count} کار به صف تولید اضافه شد.`, 'success');
                 this.bulkTopics = '';
