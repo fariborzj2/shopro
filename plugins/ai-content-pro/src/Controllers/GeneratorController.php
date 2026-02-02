@@ -10,8 +10,10 @@ class GeneratorController extends BaseController {
 
     public function index() {
         $settings = AiSetting::getAll();
+        $categories = \App\Models\BlogCategory::all();
         $this->view('generator', [
-            'settings' => $settings
+            'settings' => $settings,
+            'categories' => $categories
         ], 'ابزار تولید محتوای هوشمند');
     }
 
@@ -26,7 +28,16 @@ class GeneratorController extends BaseController {
 
         $count = 0;
         foreach ($data['topics'] as $topic) {
-            AiJob::create($data['type'] ?? 'generate_article', ['topic' => $topic]);
+            $payload = [
+                'topic' => $topic,
+                'save_to_blog' => $data['save_to_blog'] ?? false,
+                'category_id' => $data['category_id'] ?? null,
+                'post_status' => $data['post_status'] ?? 'draft',
+                'options' => [
+                    'format' => $data['format'] ?? 'article'
+                ]
+            ];
+            AiJob::create($data['type'] ?? 'generate_article', $payload);
             $count++;
         }
 

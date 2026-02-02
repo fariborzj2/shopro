@@ -34,6 +34,20 @@ class ContentEngine {
         if (($options['format'] ?? '') === 'title') {
             $systemPrompt .= "2. Format: Return ONLY the title text, no HTML, no quotes, no markdown.\n" .
                              "3. Goal: Write a catchy, SEO-friendly headline for the topic.\n";
+        } elseif (($options['format'] ?? '') === 'structured') {
+            $systemPrompt .= "2. Output Format: Return ONLY a valid JSON object.\n" .
+                             "3. JSON Schema: \n" .
+                             "{\n" .
+                             "  \"title\": \"Catchy Persian title\",\n" .
+                             "  \"slug\": \"english-slug-from-title\",\n" .
+                             "  \"excerpt\": \"Short 2-sentence summary (Farsi)\",\n" .
+                             "  \"content\": \"Full article content in valid HTML (H2, H3, P, UL tags). Do not include H1.\",\n" .
+                             "  \"meta_title\": \"SEO title (max 60 chars)\",\n" .
+                             "  \"meta_description\": \"SEO description (max 160 chars)\",\n" .
+                             "  \"meta_keywords\": [\"keyword1\", \"keyword2\", \"keyword3\"]\n" .
+                             "}\n" .
+                             "4. Language: All text fields except 'slug' and 'meta_keywords' must be in Persian.\n" .
+                             "5. Length: Content should be comprehensive (approx 1000-1500 words).";
         } else {
             $systemPrompt .= "2. Structure: Use H2 and H3 tags for headings. Do not use H1.\n" .
                              "3. Format: Return pure HTML content (paragraphs, lists, headings) without ```html``` code blocks or markdown.\n" .

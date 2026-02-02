@@ -37,23 +37,23 @@ class Hooks {
             'children' => [
                 [
                     'label' => 'داشبورد هوشمند',
-                    'url' => '/ai-content-pro',
+                    'url' => '/admin/ai-content-pro',
                 ],
                 [
                     'label' => 'تولید محتوا',
-                    'url' => '/ai-content-pro/generator',
+                    'url' => '/admin/ai-content-pro/generator',
                 ],
                 [
                     'label' => 'تقویم محتوایی',
-                    'url' => '/ai-content-pro/calendar',
+                    'url' => '/admin/ai-content-pro/calendar',
                 ],
                 [
                     'label' => 'گزارشات فنی',
-                    'url' => '/ai-content-pro/logs',
+                    'url' => '/admin/ai-content-pro/logs',
                 ],
                 [
                     'label' => 'تنظیمات',
-                    'url' => '/ai-content-pro/settings',
+                    'url' => '/admin/ai-content-pro/settings',
                 ],
             ]
         ];

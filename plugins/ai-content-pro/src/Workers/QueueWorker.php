@@ -101,6 +101,11 @@ class QueueWorker {
             AiJob::updateStatus($job['id'], 'completed', $result);
             AiLog::info("Job {$job['id']} completed successfully.");
 
+            // CMS Integration: Save to Blog if requested
+            if ($job['type'] === 'generate_article' && !empty($payload['save_to_blog'])) {
+                $this->saveToBlog($result, $payload);
+            }
+
         } catch (\Exception $e) {
             $retryLimit = (int) AiSetting::get('queue_retry_limit', 3);
             $attempts = (int) $job['attempts'] + 1;
@@ -122,6 +127,34 @@ class QueueWorker {
         $db = \App\Core\Database::getConnection();
         $stmt = $db->prepare("UPDATE ai_cp_jobs SET status = 'pending', attempts = ?, error_message = ?, updated_at = NOW() WHERE id = ?");
         $stmt->execute([$attempts, $message, $id]);
+    }
+
+    private function saveToBlog($result, $payload) {
+        try {
+            $data = is_array($result) ? $result : json_decode($result, true);
+            if (!$data || empty($data['title'])) {
+                AiLog::error("Failed to save to blog: Invalid structured result", ['result' => $result]);
+                return;
+            }
+
+            $postData = [
+                'category_id' => $payload['category_id'] ?? 1,
+                'author_id' => $_SESSION['admin_id'] ?? 1, // Fallback to 1 if not in session (e.g. cron)
+                'title' => $data['title'],
+                'slug' => $data['slug'] ?? '',
+                'content' => $data['content'] ?? '',
+                'excerpt' => $data['excerpt'] ?? '',
+                'status' => $payload['post_status'] ?? 'draft',
+                'meta_title' => $data['meta_title'] ?? null,
+                'meta_description' => $data['meta_description'] ?? null,
+                'meta_keywords' => $data['meta_keywords'] ?? []
+            ];
+
+            $postId = \App\Models\BlogPost::create($postData);
+            AiLog::info("Article automatically saved to blog. Post ID: $postId");
+        } catch (\Exception $e) {
+            AiLog::error("Failed to auto-save article to blog: " . $e->getMessage());
+        }
     }
 
     private function validatePersian($text) {

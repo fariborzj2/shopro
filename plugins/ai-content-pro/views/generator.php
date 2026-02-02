@@ -9,6 +9,9 @@
     topic: '<?php echo $_GET['topic'] ?? ''; ?>',
     sourceUrl: '',
     keywords: '',
+    saveToBlog: false,
+    categoryId: '',
+    postStatus: 'draft',
 
     // Calendar Generator State
     calendarTopic: '',
@@ -89,7 +92,14 @@
 
         fetch('/admin/api/ai/jobs/bulk', {
             method: 'POST',
-            body: JSON.stringify({ type: 'generate_article', topics })
+            body: JSON.stringify({
+                type: 'generate_article',
+                topics,
+                save_to_blog: this.saveToBlog,
+                category_id: this.categoryId,
+                post_status: this.postStatus,
+                format: this.saveToBlog ? 'structured' : 'article'
+            })
         })
         .then(res => res.json())
         .then(data => {
@@ -165,9 +175,45 @@
                         <input type="text" x-model="keywords" placeholder="لاغری, پیاده روی, سلامت" class="w-full px-4 py-2 text-sm rounded-xl border border-gray-200 dark:border-gray-600 outline-none">
                     </div>
                 </div>
+
+                <div class="p-6 bg-primary-50 dark:bg-primary-900/10 rounded-2xl border border-primary-100 dark:border-primary-800/30 space-y-4">
+                    <label class="flex items-center gap-3 cursor-pointer">
+                        <input type="checkbox" x-model="saveToBlog" class="w-5 h-5 text-primary-600 rounded">
+                        <span class="text-sm font-bold text-primary-900 dark:text-primary-300">ذخیره خودکار در لیست مقالات وبلاگ (CMS Integration)</span>
+                    </label>
+
+                    <div x-show="saveToBlog" x-transition class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
+                        <div>
+                            <label class="block text-xs font-bold text-gray-500 mb-1">انتخاب دسته‌بندی</label>
+                            <select x-model="categoryId" class="w-full px-3 py-2 text-sm rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 outline-none">
+                                <option value="">پیش‌فرض</option>
+                                <?php foreach ($categories as $cat): ?>
+                                    <option value="<?php echo $cat['id']; ?>"><?php echo htmlspecialchars($cat['name_fa']); ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-gray-500 mb-1">وضعیت انتشار</label>
+                            <select x-model="postStatus" class="w-full px-3 py-2 text-sm rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 outline-none">
+                                <option value="draft">پیش‌نویس (Draft)</option>
+                                <option value="published">انتشار فوری (Published)</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
             </div>
 
-            <button @click="createJob('generate_article', { topic, options: { source_url: sourceUrl, keywords: keywords.split(',') } })"
+            <button @click="createJob('generate_article', {
+                        topic,
+                        save_to_blog: saveToBlog,
+                        category_id: categoryId,
+                        post_status: postStatus,
+                        options: {
+                            source_url: sourceUrl,
+                            keywords: keywords.split(','),
+                            format: saveToBlog ? 'structured' : 'article'
+                        }
+                    })"
                     :disabled="!topic"
                     class="w-full py-4 bg-gradient-to-r from-primary-600 to-blue-500 hover:from-primary-700 hover:to-blue-600 disabled:opacity-50 text-white font-extrabold rounded-2xl shadow-lg shadow-primary-500/20 transition-all flex items-center justify-center gap-2 transform active:scale-[0.98]">
                 <?php partial('icon', ['name' => 'ai', 'class' => 'w-6 h-6']); ?>
