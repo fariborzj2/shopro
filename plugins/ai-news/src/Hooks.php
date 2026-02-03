@@ -32,15 +32,15 @@ class Hooks {
             'children' => [
                 [
                     'label' => 'داشبورد اتوماسیون',
-                    'url' => '/admin/ai-news',
+                    'url' => '/ai-news',
                 ],
                 [
                     'label' => 'منابع محتوا (Sources)',
-                    'url' => '/admin/ai-news/sources',
+                    'url' => '/ai-news/sources',
                 ],
                 [
                     'label' => 'تنظیمات خودکار',
-                    'url' => '/admin/ai-news/settings',
+                    'url' => '/ai-news/settings',
                 ],
             ]
         ];
