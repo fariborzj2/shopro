@@ -6,8 +6,12 @@ use App\Core\Database;
 
 class Source {
     public static function all() {
-        $db = Database::getConnection();
-        return $db->query("SELECT * FROM ai_news_sources ORDER BY created_at DESC")->fetchAll(\PDO::FETCH_ASSOC);
+        try {
+            $db = Database::getConnection();
+            return $db->query("SELECT * FROM ai_news_sources ORDER BY created_at DESC")->fetchAll(\PDO::FETCH_ASSOC);
+        } catch (\Exception $e) {
+            return $db->query("SELECT * FROM ai_news_sources ORDER BY id DESC")->fetchAll(\PDO::FETCH_ASSOC);
+        }
     }
 
     public static function find($id) {
