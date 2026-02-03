@@ -20,7 +20,16 @@ class AiNewsLog {
     public static function error($message, $context = []) { self::log('error', $message, $context); }
 
     public static function getLatest($limit = 50) {
-        $db = Database::getConnection();
-        return $db->query("SELECT * FROM ai_news_logs ORDER BY created_at DESC LIMIT $limit")->fetchAll(\PDO::FETCH_ASSOC);
+        try {
+            $db = Database::getConnection();
+            return $db->query("SELECT * FROM ai_news_logs ORDER BY created_at DESC LIMIT $limit")->fetchAll(\PDO::FETCH_ASSOC);
+        } catch (\Exception $e) {
+            // Fallback if created_at is missing
+            try {
+                return $db->query("SELECT * FROM ai_news_logs ORDER BY id DESC LIMIT $limit")->fetchAll(\PDO::FETCH_ASSOC);
+            } catch (\Exception $e2) {
+                return [];
+            }
+        }
     }
 }

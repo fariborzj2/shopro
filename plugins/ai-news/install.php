@@ -16,7 +16,10 @@ try {
         `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;");
 
-    // 2. History Table (Deduplication)
+    // Ensure columns exist for older versions
+    try { $db->exec("ALTER TABLE `ai_news_sources` ADD COLUMN `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP"); } catch(\Exception $e) {}
+
+    // 2. History Table
     $db->exec("CREATE TABLE IF NOT EXISTS `ai_news_history` (
         `id` INT AUTO_INCREMENT PRIMARY KEY,
         `source_id` INT NOT NULL,
@@ -29,6 +32,8 @@ try {
         INDEX `idx_url` (`original_url`(191)),
         FOREIGN KEY (`source_id`) REFERENCES `ai_news_sources`(`id`) ON DELETE CASCADE
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;");
+
+    try { $db->exec("ALTER TABLE `ai_news_history` ADD COLUMN `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP"); } catch(\Exception $e) {}
 
     // 3. Settings Table
     $db->exec("CREATE TABLE IF NOT EXISTS `ai_news_settings` (
@@ -45,6 +50,8 @@ try {
         `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;");
 
+    try { $db->exec("ALTER TABLE `ai_news_logs` ADD COLUMN `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP"); } catch(\Exception $e) {}
+
 } catch (Exception $e) {
-    error_log("AI News Installation Error: " . $e->getMessage());
+    error_log("AI News Installation/Fix Error: " . $e->getMessage());
 }

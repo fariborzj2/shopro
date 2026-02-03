@@ -56,6 +56,7 @@ App\Core\ErrorHandler::register();
 // ----------------------------
 require PROJECT_ROOT . '/app/Core/helpers.php';
 
+
 // ----------------------------
 // Initialize Plugins (after core, before routing)
 // ----------------------------
