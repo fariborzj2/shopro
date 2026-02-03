@@ -5,7 +5,9 @@
  * Usage: php plugins/ai-news/cron.php
  */
 
-define('PROJECT_ROOT', dirname(dirname(__DIR__)));
+if (!defined('PROJECT_ROOT')) {
+    define('PROJECT_ROOT', dirname(dirname(__DIR__)));
+}
 
 // 1. Basic Autoloader for Plugin and Core
 require_once PROJECT_ROOT . '/app/Core/Database.php';

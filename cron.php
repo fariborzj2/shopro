@@ -5,7 +5,9 @@
  * php cron.php
  */
 
-define('PROJECT_ROOT', __DIR__);
+if (!defined('PROJECT_ROOT')) {
+    define('PROJECT_ROOT', __DIR__);
+}
 
 // Load all plugins and check for cron.php
 $pluginDirs = scandir(PROJECT_ROOT . '/plugins');
