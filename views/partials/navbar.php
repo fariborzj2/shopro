@@ -3,7 +3,7 @@
     <!-- Left Side -->
     <div class="flex items-center gap-3">
         <!-- Mobile Menu Button -->
-        <button @click="sidebarOpen = true" class="p-2 -mr-2 text-gray-500 rounded-lg lg:hidden hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700">
+        <button @click="sidebarOpen = true" aria-label="باز کردن منو" class="p-2 -mr-2 text-gray-500 rounded-lg lg:hidden hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700">
             <?php partial('icon', ['name' => 'menu', 'class' => 'w-6 h-6']); ?>
         </button>
 
@@ -13,6 +13,7 @@
                 <?php partial('icon', ['name' => 'search', 'class' => 'w-5 h-5 text-gray-400 group-focus-within:text-primary-500 transition-colors']); ?>
             </span>
             <input type="text"
+                   aria-label="جستجو"
                    class="w-64 py-2 pr-10 pl-4 text-sm text-gray-700 bg-gray-100 border-none rounded-xl focus:ring-2 focus:ring-primary-500/50 focus:bg-white dark:bg-gray-700 dark:text-gray-200 dark:focus:bg-gray-800 transition-all"
                    placeholder="جستجو در پنل...">
         </div>
@@ -22,7 +23,7 @@
     <div class="flex items-center gap-3">
 
         <!-- Dark Mode Toggle -->
-        <button @click="toggleTheme()" class="p-2 text-gray-500 rounded-lg hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700 transition-colors" aria-label="Toggle Dark Mode">
+        <button @click="toggleTheme()" class="p-2 text-gray-500 rounded-lg hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700 transition-colors" aria-label="تغییر حالت شب">
             <span x-show="!darkMode">
                 <?php partial('icon', ['name' => 'moon', 'class' => 'w-5 h-5']); ?>
             </span>
@@ -32,14 +33,14 @@
         </button>
 
         <!-- Notifications -->
-        <button class="p-2 text-gray-500 rounded-lg hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700 relative transition-colors">
+        <button aria-label="اعلان‌ها" class="p-2 text-gray-500 rounded-lg hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700 relative transition-colors">
              <?php partial('icon', ['name' => 'bell', 'class' => 'w-6 h-6']); ?>
              <span class="absolute top-2 right-2 h-2 w-2 rounded-full bg-red-500 ring-2 ring-white dark:ring-gray-800"></span>
         </button>
 
         <!-- Profile Dropdown -->
         <div x-data="{ dropdownOpen: false }" class="relative" @click.away="dropdownOpen = false">
-            <button @click="dropdownOpen = !dropdownOpen" class="flex items-center gap-3 focus:outline-none p-1 pr-3 rounded-full hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors border border-transparent hover:border-gray-200 dark:hover:border-gray-600">
+            <button @click="dropdownOpen = !dropdownOpen" aria-haspopup="true" :aria-expanded="dropdownOpen" class="flex items-center gap-3 focus:outline-none p-1 pr-3 rounded-full hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors border border-transparent hover:border-gray-200 dark:hover:border-gray-600">
                 <div class="text-right hidden md:block">
                     <p class="text-sm font-bold text-gray-700 dark:text-gray-200">مدیر سیستم</p>
                     <p class="text-xs text-gray-500 dark:text-gray-400">Super Admin</p>

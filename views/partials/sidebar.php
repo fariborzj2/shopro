@@ -101,7 +101,7 @@ $superAdminItems = [
     <!-- Logo Area -->
     <div class="flex items-center justify-between h-16 px-6 border-b border-gray-100 dark:border-gray-700">
         <span class="text-xl font-extrabold text-primary-600 dark:text-primary-400 tracking-tight">پنل مدیریت</span>
-        <button @click="sidebarOpen = false" class="lg:hidden text-gray-500 hover:text-gray-700 dark:text-gray-400">
+        <button @click="sidebarOpen = false" aria-label="بستن منو" class="lg:hidden text-gray-500 hover:text-gray-700 dark:text-gray-400">
              <?php partial('icon', ['name' => 'close', 'class' => 'w-6 h-6']); ?>
         </button>
     </div>
@@ -112,7 +112,7 @@ $superAdminItems = [
             <?php if ($can($item['permission'])): ?>
                 <?php if (isset($item['children'])): ?>
                     <div x-data="{ open: <?php echo (strpos($_SERVER['REQUEST_URI'], '/admin/blog') !== false) ? 'true' : 'false'; ?> }">
-                        <button @click="open = !open" type="button"
+                        <button @click="open = !open" type="button" aria-haspopup="true" :aria-expanded="open"
                                 class="group w-full flex items-center px-3 py-2.5 text-sm font-medium rounded-xl transition-all duration-200 text-gray-600 hover:bg-gray-50 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-700/50 dark:hover:text-gray-100 justify-between">
                             <div class="flex items-center">
                                 <?php partial('icon', ['name' => $item['icon'], 'class' => 'ml-3 flex-shrink-0 h-5 w-5 transition-colors text-gray-400 group-hover:text-gray-500 dark:text-gray-500 dark:group-hover:text-gray-300']); ?>

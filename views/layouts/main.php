@@ -107,6 +107,7 @@
     </script>
 </head>
 <body class="bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-100 font-sans antialiased transition-colors duration-300">
+    <a href="#main-content" class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:right-4 focus:z-[100] focus:px-4 focus:py-2 focus:bg-primary-600 focus:text-white focus:rounded-lg">پرش به محتوای اصلی</a>
     <div class="flex h-screen overflow-hidden">
 
         <!-- Sidebar -->
@@ -119,7 +120,7 @@
             <?php partial('navbar'); ?>
 
             <!-- Main Content -->
-            <main class="flex-1 overflow-x-hidden overflow-y-auto bg-gray-50 dark:bg-gray-900 p-4 md:p-6 lg:p-8">
+            <main id="main-content" class="flex-1 overflow-x-hidden overflow-y-auto bg-gray-50 dark:bg-gray-900 p-4 md:p-6 lg:p-8">
                 <div class="container mx-auto max-w-7xl">
                     <!-- Alerts/Toasts -->
                     <?php if (isset($_GET['error_msg'])): ?>
