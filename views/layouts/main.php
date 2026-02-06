@@ -107,6 +107,11 @@
     </script>
 </head>
 <body class="bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-100 font-sans antialiased transition-colors duration-300">
+    <!-- Skip to Content -->
+    <a href="#main-content" class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:right-4 bg-primary-600 text-white px-4 py-2 rounded-lg z-[100]">
+        پرش به محتوای اصلی
+    </a>
+
     <div class="flex h-screen overflow-hidden">
 
         <!-- Sidebar -->
@@ -119,7 +124,7 @@
             <?php partial('navbar'); ?>
 
             <!-- Main Content -->
-            <main class="flex-1 overflow-x-hidden overflow-y-auto bg-gray-50 dark:bg-gray-900 p-4 md:p-6 lg:p-8">
+            <main id="main-content" class="flex-1 overflow-x-hidden overflow-y-auto bg-gray-50 dark:bg-gray-900 p-4 md:p-6 lg:p-8">
                 <div class="container mx-auto max-w-7xl">
                     <!-- Alerts/Toasts -->
                     <?php if (isset($_GET['error_msg'])): ?>
@@ -132,7 +137,7 @@
                                 <strong class="block font-bold text-sm">خطا</strong>
                                 <span class="text-sm"><?= htmlspecialchars(urldecode($_GET['error_msg'])) ?></span>
                             </div>
-                            <button @click="show = false" class="text-red-400 hover:text-red-600 p-1">
+                            <button @click="show = false" class="text-red-400 hover:text-red-600 p-1" aria-label="بستن">
                                 <?php partial('icon', ['name' => 'close', 'class' => 'w-4 h-4']); ?>
                             </button>
                         </div>
@@ -148,7 +153,7 @@
                                 <strong class="block font-bold text-sm">موفقیت</strong>
                                 <span class="text-sm"><?= htmlspecialchars(urldecode($_GET['success_msg'])) ?></span>
                             </div>
-                            <button @click="show = false" class="text-green-400 hover:text-green-600 p-1">
+                            <button @click="show = false" class="text-green-400 hover:text-green-600 p-1" aria-label="بستن">
                                 <?php partial('icon', ['name' => 'close', 'class' => 'w-4 h-4']); ?>
                             </button>
                         </div>
@@ -259,7 +264,7 @@
             <div class="bg-white dark:bg-gray-800 rounded-3xl shadow-2xl w-full max-w-2xl relative z-10 flex flex-col max-h-[85vh] transform transition-all border border-gray-100 dark:border-gray-700">
                 <div class="p-6 border-b border-gray-100 dark:border-gray-700 flex justify-between items-center">
                     <h3 class="text-xl font-extrabold text-gray-900 dark:text-white" x-text="title"></h3>
-                    <button @click="isOpen = false" class="text-gray-400 hover:text-gray-600">
+                    <button @click="isOpen = false" class="text-gray-400 hover:text-gray-600" aria-label="بستن">
                          <?php partial('icon', ['name' => 'close', 'class' => 'w-6 h-6']); ?>
                     </button>
                 </div>
