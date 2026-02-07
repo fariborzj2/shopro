@@ -8,6 +8,8 @@ if (is_array($post)) {
 <div x-data="{
     activeTab: 'main',
     imageUrl: '<?php echo isset($post->image_url) ? asset($post->image_url) : ''; ?>',
+    metaTitle: <?= htmlspecialchars(json_encode($post->meta_title ?? '', JSON_UNESCAPED_UNICODE), ENT_QUOTES, 'UTF-8') ?>,
+    metaDescription: <?= htmlspecialchars(json_encode($post->meta_description ?? '', JSON_UNESCAPED_UNICODE), ENT_QUOTES, 'UTF-8') ?>,
 
     previewImage(event) {
         const reader = new FileReader();
@@ -130,7 +132,7 @@ if (is_array($post)) {
                         <template x-for="(tag, index) in items" :key="index">
                             <span class="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-medium bg-indigo-50 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-400">
                                 <span x-text="typeof tag === 'object' ? tag.name : tag"></span>
-                                <button type="button" @click.stop="removeTag(index)" class="mr-1.5 text-indigo-400 hover:text-indigo-600 dark:text-indigo-500 dark:hover:text-indigo-300 focus:outline-none">
+                                <button type="button" @click.stop="removeTag(index)" class="mr-1.5 text-indigo-400 hover:text-indigo-600 dark:text-indigo-500 dark:hover:text-indigo-300 focus:outline-none" aria-label="حذف تگ">
                                     <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                                 </button>
                                 <input type="hidden" :name="fieldName" :value="getItemValue(tag)">
@@ -238,7 +240,7 @@ if (is_array($post)) {
         }'>
             <template x-for="(faq, index) in faqs" :key="index">
                 <div class="bg-gray-50 dark:bg-gray-700/50 rounded-xl p-4 border border-gray-200 dark:border-gray-600 relative group">
-                    <button type="button" @click="removeFaq(index)" class="absolute top-2 left-2 text-red-400 hover:text-red-600 transition-colors">
+                    <button type="button" @click="removeFaq(index)" class="absolute top-2 left-2 text-red-400 hover:text-red-600 transition-colors" aria-label="حذف سوال">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
                     </button>
 
@@ -267,8 +269,11 @@ if (is_array($post)) {
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
              <div class="col-span-1">
                 <label for="meta_title" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">عنوان متا (Meta Title)</label>
-                <input type="text" id="meta_title" name="meta_title" value="<?php echo htmlspecialchars($post->meta_title ?? ''); ?>" class="w-full rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white px-4 py-2.5 focus:ring-primary-500 focus:border-primary-500 shadow-sm">
-                <p class="text-xs text-gray-500 mt-1">عنوان نمایش داده شده در نتایج جستجو (معمولا کمتر از 60 کاراکتر)</p>
+                <input type="text" id="meta_title" name="meta_title" x-model="metaTitle" class="w-full rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white px-4 py-2.5 focus:ring-primary-500 focus:border-primary-500 shadow-sm">
+                <div class="flex justify-between mt-1">
+                    <p class="text-xs text-gray-500">عنوان نمایش داده شده در نتایج جستجو (معمولا کمتر از 60 کاراکتر)</p>
+                    <span class="text-xs transition-colors duration-200" :class="metaTitle.length > 60 ? 'text-red-500 font-bold' : 'text-gray-400'" x-text="metaTitle.length + ' / 60'"></span>
+                </div>
             </div>
 
             <div class="col-span-1">
@@ -288,7 +293,7 @@ if (is_array($post)) {
                         <template x-for="(tag, index) in items" :key="index">
                             <span class="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-medium bg-primary-50 text-primary-700 dark:bg-primary-900/30 dark:text-primary-400">
                                 <span x-text="tag"></span>
-                                <button type="button" @click.stop="removeTag(index)" class="mr-1.5 text-primary-400 hover:text-primary-600 dark:text-primary-500 dark:hover:text-primary-300 focus:outline-none">
+                                <button type="button" @click.stop="removeTag(index)" class="mr-1.5 text-primary-400 hover:text-primary-600 dark:text-primary-500 dark:hover:text-primary-300 focus:outline-none" aria-label="حذف تگ">
                                     <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                                 </button>
                                 <input type="hidden" :name="fieldName" :value="tag">
@@ -306,8 +311,11 @@ if (is_array($post)) {
 
              <div class="col-span-1 md:col-span-2">
                 <label for="meta_description" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">توضیحات متا (Meta Description)</label>
-                <textarea id="meta_description" name="meta_description" rows="3" class="w-full rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white px-4 py-2.5 focus:ring-primary-500 focus:border-primary-500 shadow-sm"><?php echo htmlspecialchars($post->meta_description ?? ''); ?></textarea>
-                <p class="text-xs text-gray-500 mt-1">توضیحات نمایش داده شده در نتایج جستجو (معمولا بین 150 تا 160 کاراکتر)</p>
+                <textarea id="meta_description" name="meta_description" x-model="metaDescription" rows="3" class="w-full rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white px-4 py-2.5 focus:ring-primary-500 focus:border-primary-500 shadow-sm"></textarea>
+                <div class="flex justify-between mt-1">
+                    <p class="text-xs text-gray-500">توضیحات نمایش داده شده در نتایج جستجو (معمولا بین 150 تا 160 کاراکتر)</p>
+                    <span class="text-xs transition-colors duration-200" :class="metaDescription.length > 160 ? 'text-red-500 font-bold' : 'text-gray-400'" x-text="metaDescription.length + ' / 160'"></span>
+                </div>
             </div>
         </div>
     </div>
