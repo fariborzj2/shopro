@@ -1,3 +1,3 @@
-## 2026-02-06 - [Persian Localization of A11y Features]
-**Learning:** For RTL (Persian) interfaces, accessibility enhancements like 'Skip to Content' links and ARIA labels must be localized in Persian (e.g., 'پرش به محتوای اصلی', 'باز کردن منو') to provide a consistent experience for screen reader users.
-**Action:** Always check the language/direction of the UI and provide localized labels for all hidden or icon-only interactive elements.
+## 2025-02-05 - [RTL Accessibility Polish]
+**Learning:** In RTL (Right-to-Left) applications, 'Skip to Content' links should be positioned appropriately (e.g., top-right) to match the visual flow and ensure keyboard focus is predictable.
+**Action:** Always include a localized Skip to Content link and ensure icon-only buttons have descriptive ARIA labels in the target language (Persian).
