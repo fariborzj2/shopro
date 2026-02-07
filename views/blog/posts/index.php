@@ -8,7 +8,7 @@
         <div class="flex flex-col sm:flex-row gap-3">
              <form method="GET" action="/admin/blog/posts" class="relative">
                 <input type="text" name="search" value="<?= htmlspecialchars($search ?? '') ?>" placeholder="جستجو در عنوان..." class="w-full sm:w-64 pl-10 pr-4 py-2 text-sm text-gray-700 bg-gray-50 dark:bg-gray-700/50 dark:text-gray-200 border border-gray-200 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all">
-                <button type="submit" class="absolute left-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 p-1">
+                <button type="submit" class="absolute left-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 p-1" aria-label="جستجو">
                     <?php partial('icon', ['name' => 'search', 'class' => 'w-4 h-4']); ?>
                 </button>
             </form>
@@ -148,12 +148,12 @@
                             </td>
                             <td class="px-6 py-4 text-sm text-center">
                                 <div class="flex items-center justify-center gap-3 opacity-0 group-hover:opacity-100 transition-opacity">
-                                    <a href="<?php echo url('blog/posts/edit/' . $post['id']); ?>" class="text-indigo-600 hover:text-indigo-900 dark:text-indigo-400 dark:hover:text-indigo-300 p-1 rounded-md hover:bg-indigo-50 dark:hover:bg-indigo-900/30" title="ویرایش">
+                                    <a href="<?php echo url('blog/posts/edit/' . $post['id']); ?>" class="text-indigo-600 hover:text-indigo-900 dark:text-indigo-400 dark:hover:text-indigo-300 p-1 rounded-md hover:bg-indigo-50 dark:hover:bg-indigo-900/30" title="ویرایش" aria-label="ویرایش">
                                         <?php partial('icon', ['name' => 'edit', 'class' => 'w-5 h-5']); ?>
                                     </a>
                                     <form action="<?php echo url('blog/posts/delete/' . $post['id']); ?>" method="POST" class="inline-block" onsubmit="return confirm('آیا از حذف این پست مطمئن هستید؟');">
                                         <?php echo csrf_field(); ?>
-                                        <button type="submit" class="text-gray-400 hover:text-red-600 dark:text-gray-500 dark:hover:text-red-400 p-1 rounded-md hover:bg-red-50 dark:hover:bg-red-900/30 transition-colors" title="حذف">
+                                        <button type="submit" class="text-gray-400 hover:text-red-600 dark:text-gray-500 dark:hover:text-red-400 p-1 rounded-md hover:bg-red-50 dark:hover:bg-red-900/30 transition-colors" title="حذف" aria-label="حذف">
                                             <?php partial('icon', ['name' => 'trash', 'class' => 'w-5 h-5']); ?>
                                         </button>
                                     </form>
