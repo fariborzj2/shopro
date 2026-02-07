@@ -9,6 +9,7 @@
 
         <!-- Search Input -->
         <div class="hidden md:block relative group">
+            <label for="admin-search" class="sr-only">جستجو در پنل</label>
             <span class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
                 <?php partial('icon', ['name' => 'search', 'class' => 'w-5 h-5 text-gray-400 group-focus-within:text-primary-500 transition-colors']); ?>
             </span>

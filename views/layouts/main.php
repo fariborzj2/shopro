@@ -133,7 +133,7 @@
                                 <strong class="block font-bold text-sm">خطا</strong>
                                 <span class="text-sm"><?= htmlspecialchars(urldecode($_GET['error_msg'])) ?></span>
                             </div>
-                            <button @click="show = false" class="text-red-400 hover:text-red-600 p-1">
+                            <button @click="show = false" class="text-red-400 hover:text-red-600 p-1" aria-label="بستن">
                                 <?php partial('icon', ['name' => 'close', 'class' => 'w-4 h-4']); ?>
                             </button>
                         </div>
@@ -149,7 +149,7 @@
                                 <strong class="block font-bold text-sm">موفقیت</strong>
                                 <span class="text-sm"><?= htmlspecialchars(urldecode($_GET['success_msg'])) ?></span>
                             </div>
-                            <button @click="show = false" class="text-green-400 hover:text-green-600 p-1">
+                            <button @click="show = false" class="text-green-400 hover:text-green-600 p-1" aria-label="بستن">
                                 <?php partial('icon', ['name' => 'close', 'class' => 'w-4 h-4']); ?>
                             </button>
                         </div>
@@ -260,7 +260,7 @@
             <div class="bg-white dark:bg-gray-800 rounded-3xl shadow-2xl w-full max-w-2xl relative z-10 flex flex-col max-h-[85vh] transform transition-all border border-gray-100 dark:border-gray-700">
                 <div class="p-6 border-b border-gray-100 dark:border-gray-700 flex justify-between items-center">
                     <h3 class="text-xl font-extrabold text-gray-900 dark:text-white" x-text="title"></h3>
-                    <button @click="isOpen = false" class="text-gray-400 hover:text-gray-600">
+                    <button @click="isOpen = false" class="text-gray-400 hover:text-gray-600" aria-label="بستن">
                          <?php partial('icon', ['name' => 'close', 'class' => 'w-6 h-6']); ?>
                     </button>
                 </div>
