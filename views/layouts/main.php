@@ -174,6 +174,8 @@
         x-data="{ show: false, message: '', type: 'error' }"
         @show-toast.window="show = true; message = $event.detail.message; type = $event.detail.type || 'error'; setTimeout(() => show = false, 5000)"
         x-show="show"
+        role="alert"
+        aria-live="assertive"
         x-transition:enter="transition ease-out duration-300"
         x-transition:enter-start="opacity-0 translate-y-2"
         x-transition:enter-end="opacity-100 translate-y-0"
@@ -219,17 +221,18 @@
         }
     }"
     @open-ai-prompt.window="open($event.detail.title, $event.detail.placeholder, $event.detail.callback)"
-    x-show="isOpen" x-cloak class="fixed inset-0 z-[70] overflow-y-auto">
+    x-show="isOpen" x-cloak class="fixed inset-0 z-[70] overflow-y-auto" role="dialog" aria-modal="true" aria-labelledby="ai-prompt-title">
         <div class="flex items-center justify-center min-h-screen p-4">
             <div class="fixed inset-0 bg-gray-900/60 backdrop-blur-sm transition-opacity" @click="isOpen = false"></div>
             <div class="bg-white dark:bg-gray-800 rounded-3xl shadow-2xl w-full max-w-md relative z-10 p-8 transform transition-all border border-gray-100 dark:border-gray-700">
-                <h3 class="text-xl font-extrabold text-gray-900 dark:text-white mb-4" x-text="title"></h3>
+                <h3 id="ai-prompt-title" class="text-xl font-extrabold text-gray-900 dark:text-white mb-4" x-text="title"></h3>
                 <div class="space-y-4">
                     <input type="text" x-model="value" x-ref="input" :placeholder="placeholder" @keydown.enter="submit"
+                           aria-labelledby="ai-prompt-title"
                            class="w-full px-4 py-3 rounded-2xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 focus:ring-2 focus:ring-primary-500 outline-none transition-all">
                     <div class="flex justify-end gap-3">
-                        <button @click="isOpen = false" class="px-6 py-2.5 text-gray-500 font-bold hover:bg-gray-100 dark:hover:bg-gray-700 rounded-xl transition-all">انصراف</button>
-                        <button @click="submit" class="px-8 py-2.5 bg-primary-600 text-white font-extrabold rounded-xl shadow-lg shadow-primary-500/30 hover:bg-primary-700 transition-all">تایید</button>
+                        <button @click="isOpen = false" title="انصراف و بستن" class="px-6 py-2.5 text-gray-500 font-bold hover:bg-gray-100 dark:hover:bg-gray-700 rounded-xl transition-all">انصراف</button>
+                        <button @click="submit" title="تایید و ارسال" class="px-8 py-2.5 bg-primary-600 text-white font-extrabold rounded-xl shadow-lg shadow-primary-500/30 hover:bg-primary-700 transition-all">تایید</button>
                     </div>
                 </div>
             </div>
@@ -254,22 +257,22 @@
         }
     }"
     @open-ai-suggestion.window="open($event.detail.title, $event.detail.content, $event.detail.callback)"
-    x-show="isOpen" x-cloak class="fixed inset-0 z-[70] overflow-y-auto">
+    x-show="isOpen" x-cloak class="fixed inset-0 z-[70] overflow-y-auto" role="dialog" aria-modal="true" aria-labelledby="ai-suggestion-title">
         <div class="flex items-center justify-center min-h-screen p-4">
             <div class="fixed inset-0 bg-gray-900/60 backdrop-blur-sm transition-opacity" @click="isOpen = false"></div>
             <div class="bg-white dark:bg-gray-800 rounded-3xl shadow-2xl w-full max-w-2xl relative z-10 flex flex-col max-h-[85vh] transform transition-all border border-gray-100 dark:border-gray-700">
                 <div class="p-6 border-b border-gray-100 dark:border-gray-700 flex justify-between items-center">
-                    <h3 class="text-xl font-extrabold text-gray-900 dark:text-white" x-text="title"></h3>
-                    <button @click="isOpen = false" class="text-gray-400 hover:text-gray-600" aria-label="بستن">
+                    <h3 id="ai-suggestion-title" class="text-xl font-extrabold text-gray-900 dark:text-white" x-text="title"></h3>
+                    <button @click="isOpen = false" class="text-gray-400 hover:text-gray-600" aria-label="بستن" title="بستن">
                          <?php partial('icon', ['name' => 'close', 'class' => 'w-6 h-6']); ?>
                     </button>
                 </div>
                 <div class="p-8 overflow-y-auto flex-1">
-                    <textarea x-model="content" rows="10" class="w-full px-4 py-3 rounded-2xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 focus:ring-2 focus:ring-primary-500 outline-none transition-all text-sm leading-relaxed"></textarea>
+                    <textarea x-model="content" rows="10" aria-labelledby="ai-suggestion-title" class="w-full px-4 py-3 rounded-2xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 focus:ring-2 focus:ring-primary-500 outline-none transition-all text-sm leading-relaxed"></textarea>
                 </div>
                 <div class="p-6 bg-gray-50 dark:bg-gray-900/50 border-t border-gray-100 dark:border-gray-700 flex justify-end gap-3 rounded-b-3xl">
-                    <button @click="isOpen = false" class="px-6 py-2.5 text-gray-500 font-bold hover:bg-gray-100 dark:hover:bg-gray-700 rounded-xl transition-all">رد کردن</button>
-                    <button @click="confirm" class="px-8 py-2.5 bg-emerald-600 text-white font-extrabold rounded-xl shadow-lg shadow-emerald-500/30 hover:bg-emerald-700 transition-all flex items-center gap-2">
+                    <button @click="isOpen = false" title="رد کردن این پیشنهاد" class="px-6 py-2.5 text-gray-500 font-bold hover:bg-gray-100 dark:hover:bg-gray-700 rounded-xl transition-all">رد کردن</button>
+                    <button @click="confirm" title="تایید و درج متن در ویرایشگر" class="px-8 py-2.5 bg-emerald-600 text-white font-extrabold rounded-xl shadow-lg shadow-emerald-500/30 hover:bg-emerald-700 transition-all flex items-center gap-2">
                         <?php partial('icon', ['name' => 'check', 'class' => 'w-5 h-5']); ?>
                         استفاده از این متن
                     </button>
